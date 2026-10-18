@@ -1,153 +1,196 @@
-# コネクタ別の入力・出力リファレンス
+# Zizai — VS Code 拡張機能
 
-- ラベル: #領域/コネクタ, #領域/エンジン
-- 確認日: 2026-10-17（作業ツリーの静的読取り）
-- 位置づけ: 現行実装の調査資料。Current Specificationではない。
-- 対象: UIで選択できる12コネクタ・39アクション。BaseConnectorと内部previewはアクション一覧の対象外。
-- 調査Task: [TASK-053](../../tasks/done/TASK-053/TASK-053.md)
+Jupyter Notebook（`.ipynb`）のセル内でコネクタとアクションを選び、フォームの設定から通常の Python コードを生成する拡張機能です。生成されたコードを確認・編集し、Jupyter 標準のセル実行で処理します。
 
-## コネクタ一覧
+対象は VS Code と Kiro IDE です。セル内フォームの実現方法と両 IDE の互換性は、技術検証で確認します。
 
-| コネクタ | 件数 | 用途 |
-| --- | --- | --- |
-| [BQConnector](bigquery.md) | 3 | BigQueryのSQL実行とテーブルへのデータロード |
-| [DuckConnector](duckdb.md) | 4 | ローカルDuckDBファイルの作成、SQL実行、表データの保存 |
-| [ExcelConnector](excel.md) | 3 | Excelブックの通常読込・範囲読込・出力 |
-| [CSVConnector](csv.md) | 2 | CSV／TSV等の表データの読込・出力 |
-| [PythonConnector](python.md) | 1 | 選択したPython環境の子プロセスでスクリプトのmain()を実行する |
-| [DataintegrationConnector](dataintegration.md) | 2 | 前段の表データにRENAMEリストと列名クレンジング、行フィルターを適用する |
-| [VectorConnector](vector.md) | 2 | 埋め込みモデルとFAISS／DuckDBを使うベクトルDB構築・検索 |
-| [ShellConnector](shell.md) | 1 | Windows BATをshell=Trueで実行する |
-| [SeleniumConnector](selenium.md) | 5 | SeleniumのChromeセッションを保持し、遷移・DOM操作・取得・待機・撮影を行う |
-| [ChromeConnector](chrome.md) | 1 | 許可URLをローカルChromeへ非同期に渡す |
-| [WindowsConnector](windows.md) | 10 | 変数定義、ファイル操作、検索、OS入力、待機、画面上のloop_tasksを扱う |
-| [PlotlyConnector](plotly.md) | 5 | 前段の表から5種類のグラフを作成し、ファイルへ保存する |
+**現在は設計資料とフォルダー構成を整備した段階です。** 以下は設計上の方針であり、拡張機能、Python ライブラリ、ビルド・起動・テスト設定は未実装です。現時点で実行できるアプリやインストールコマンドはありません。
 
-## 読み方・共通の入口
+## 目的と基本方針
 
-```python
-result = connector.execute(action, params, context)
+- Notebook 標準のコード編集、保存、セル実行、Run All、結果・例外表示を活用する。
+- 処理はコネクタ／アクション単位で拡張する。Python・Data・SQL は処理の例であり、固定の3分類として扱わない。
+- UI は入力と表示、Extension Host はセル操作と Python コード生成、Jupyter カーネルは Python 実行を担当する。
+- Python の変数、DataFrame、コネクタのインスタンスは、Notebook で選択した既存カーネルに保持する。
+- 標準 API と少数のコンポーネントで構成し、独自カーネル、独自実行サーバー、Node.js と Python 間の DataFrame 同期は設けない。
+
+## 全体構成
+
+```text
+VS Code / Kiro IDE
+└─ Jupyter Notebook (.ipynb)
+   ├─ UI：HTML / CSS / JavaScript
+   │  └─ 処理選択、フォーム入力、下書き編集、確定イベント
+   ├─ Extension Host：Node.js + VS Code Notebook API
+   │  └─ UI 通信、metadata 管理、Python コード生成、セル更新
+   └─ Jupyter 標準実行基盤
+      └─ Notebook で選択した既存 Python カーネル
+         ├─ 初期化セル：import とコネクタのインスタンス生成
+         ├─ 処理セル：インスタンスのメソッド呼び出し
+         └─ Python ライブラリ → 個別コネクタ
+
+実行結果・Python 例外は Notebook 標準のセル出力に表示
 ```
 
-- action: Action IDの文字列。例: read_csv。
-- params: アクション固有の引数辞書。保存flowではsteps[].params。
-- context: 前段結果、開始変数、実行内部情報を持つ辞書。全キーが業務入力という意味ではない。
-- result: 現在はDataFrame・文字列・list・scalar・None等。共通statusを持つ包装はまだない。失敗は基本的に例外でEngineへ伝播する。一部操作の成功表にはstatus等が列として入る。
-- 各資料の入力表は実行側で受け取る型・条件とUI宣言を併記。UIでの必須指定、実行側の省略時既定値、実行側で読まないUI項目を区別する。
-- 使用例は説明用の架空値。dfの出力例はrecords表現であり、実際の戻り値をJSON配列へ変更した意味ではない。日時・ID・処理件数・pathも実測値ではない。
-- Current Specificationは[コネクタ契約](../../features/connectors.md)と[データ契約](../../features/data-contract.md)。実装との不一致は各資料へ記録し、仕様を暗黙更新しない。
-
-### 前段データの参照と戻り値の登録
-
-```json
-{
-  "step_id": "step2",
-  "connector": "CSVConnector",
-  "action": "write_csv",
-  "params": {
-    "input_data": "step1",
-    "output_folder": "outputs",
-    "file_name": "items.csv"
-  },
-  "output_variable": "step2"
-}
-```
-
-- 前提: context["step1"]へ前段の有効な表を登録済みで、outputsフォルダが存在する。
-- input_data等のreference-only引数は裸のcontextキー。{{step1}}等のwrapperやnested参照を受理しない。[現行参照契約](../../features/data-contract.md#reference-expressions)
-- step_idとoutput_variableは区別。Engineの結果登録先はoutput_variableであり、step_idだけで必ず同名contextキーへ保存されると解釈しない。
-- 通常templateの{{step1.field}}は現行ではdfの先頭行の列等を取得する。DataFrameのschemaはattrs["ziz_schema"]。列単位のorigin_name／new_name／description／ziz_datatypeは[データ契約](../../features/data-contract.md#schema-item)を参照。
-- 現行Engineのreportにもstatus／result／error等がある。ただしreportは実行報告であり、Connectorが返すraw resultや、以下の新しいステップ結果形式と同一ではない。[現行実行報告](../../features/data-contract.md#execution-report)
-
-<a id="new-result-format"></a>
-## 新しいステップ結果形式の確認
-
-ステータス等を含む共通の保持形式は、TASK-048のresultType／result／meta。保存済み.zizdのstep設定ではなく、実行時に保持するstep結果の設計。製品Source・Current Specificationへは未反映。
-
-正本となる設計・決裁:
-
-- [TASK-048の現在の承認・残作業](../../tasks/active/TASK-048/TASK-048.md#approval)
-- [resultType／result／metaの概念](../../designs/TASK-048-step-result-requirements.md#result-envelope-v2)
-- [共通meta9項目](../../designs/TASK-048-action-result-design.md#common-meta-proposal)、[承認048-00-20261010-05](../../tasks/active/TASK-048/approval-log.md#048-00-20261010-05)
-- [全39Actionの最新型割当](../../designs/TASK-048-action-result-design.md#result-type-allocation)
-
-### 外側の構造
-
-| 項目 | 内容 | 状態・注意 |
-| --- | --- | --- |
-| resultType | dataframe／jsonで成果の保持形式を示す | 最新設計。成功／失敗の分類ではない。Action別詳細schemaは未確定部分あり |
-| result | 処理成果。DataFrame、file情報、取得値、辞書、list等 | result／metaの名称は決定済み。表以外の成果を一律metaへ移さない |
-| meta | 実行識別・状態・時刻・エラーとAction固有の実行情報 | 共通9項目の採用は承認済み。詳細分類・追加項目等は後続設計 |
-
-dataframeは内部のpandas.DataFrameを保持し、包装だけのためにrows／schemaへ分解・deep copyしない。jsonもJSON文字列ではなく、正規化したdict／list／scalar／Noneを保持する設計。画面・通信のserializationは別の境界。
-
-### 共通metaの9項目
-
-以下は承認済みの共通metaの要約。ID生成方式、errorコードの分類・既存例外との対応、キャンセル情報等の詳細は別途設計する。更新時はリンク先の設計・決裁を確認する。
-
-| 項目 | 意味 |
+| 構成要素 | 担当する処理 |
 | --- | --- |
-| run_id | フロー実行全体の識別子 |
-| execution_id | step実行1回の識別子。loopや再実行でも区別 |
-| step_id | フロー上のstep識別子 |
-| connector | 実行Connector |
-| action | 実行Action |
-| status | 完了状態。success／error／cancelled。キャンセル情報の詳細は別途 |
-| started_at | step処理開始。UTC日時文字列 |
-| finished_at | step処理終了。UTC日時文字列 |
-| error | 成功時null、失敗時code／messageのobject。コード分類・例外対応は別途 |
+| UI | 選択候補とフォームの表示、入力値の収集、下書き・確定イベントの通知 |
+| Extension Host | UI との通信、セル metadata・source の更新、Python コード生成、初期化セル管理 |
+| Notebook | 通常の Python source、セル metadata、標準出力の保存 |
+| Jupyter カーネル | Python 実行、変数・インスタンスの保持、標準の結果・例外表示 |
+| Python ライブラリ・コネクタ | 共通処理と、各アクションの個別処理 |
 
-表取得の概念例（Python。dfは取得したDataFrame、IDは架空値）:
+ファイル／フォルダー選択などの OS 連携は Extension Host が担当します。UI からセル source を直接生成せず、Extension Host が設定値からコードを作成します。import も通常のセル source に生成し、Jupyter 標準実行で評価します。
 
-```python
-{
-    "resultType": "dataframe",
-    "result": df,
-    "meta": {
-        "run_id": "run_example",
-        "execution_id": "execution_example",
-        "step_id": "step1",
-        "connector": "CSVConnector",
-        "action": "read_csv",
-        "status": "success",
-        "started_at": "2026-10-17T01:00:00Z",
-        "finished_at": "2026-10-17T01:00:01Z",
-        "error": None,
-    },
-}
+Notebook Renderer はセル出力を描画する機構です。通常のコードセル内の所定位置にフォームを常設できるかは未検証であり、UI の実装方式として採用済みとは扱いません。フォーム表示は Python 実行とは独立した責務とします。
+
+## Notebook 上の操作と動作
+
+### セルの種類
+
+| セル | 表示・動作 |
+| --- | --- |
+| Python セル | 通常の Python コード入力。アクション選択欄・詳細フォームは表示しない。コネクタへ切り替える共通選択 UI の表示方式は要検証 |
+| 処理セル | コネクタ／アクションの選択欄、状態表示、詳細フォーム、確定ボタン、Python source、標準出力 |
+| 初期化セル | import とコネクタのインスタンス生成を記載する通常の Python セル。選択欄・詳細フォームは表示しない |
+
+処理セルの選択欄とフォームは同じセル内に置き、フォームは選択欄の直下に縦1列で常時展開する方針です。Python コード欄も表示し、折りたたみは Notebook 標準機能を利用します。選択欄を1つにまとめるか2つに分けるか、具体的なラベルは未決定です。
+
+通常 Python への切り替えと、Python コネクタのアクション選択は別の操作です。
+
+### 選択・編集・確定・実行
+
+1. **コネクタ／アクションを選択する。** 確定ボタンを待たず、UI と必要な生成コードを反映する。初期化セルがなければ Notebook の先頭にコネクタごとの独立したセルを作成し、同じコネクタでは再利用する。
+2. **フォームを編集する。** 入力値を下書きとしてセル metadata に記録する。この段階では生成 Python source を変更しない。
+3. **確定する。** 入力を検証し、成功した場合に確定済み設定と生成 source を更新する。検証エラーは入力項目の直下に表示し、既存の確定値・source と下書きを保持する。
+4. **標準の ▶／Run All で実行する。** 選択・編集・確定だけでは Python を実行しない。Run All は Notebook の並び順に従い、単独実行では利用者が必要な初期化セルを先に実行する。
+5. **結果を確認し、通常の保存操作で Notebook を保存する。** 実行結果・Python 例外は標準出力に表示し、source・metadata・保存対象の出力は `.ipynb` に保持する。
+
+選択直後のコードはアクションの初期値・未設定状態から生成し、確定時のコードは確定済みパラメーターから生成する方針です。必須項目が未入力の場合の具体的なコードと扱いは未決定です。
+
+### 切り替え・手動編集・再実行
+
+- アクションを切り替えると、以前のアクションの下書き・確定済み設定を破棄し、新しいアクションの初期値を表示する。切り替え時の確認ダイアログは設けない。
+- 生成 Python source の手動編集を許可する。フォームへ逆反映せず、次の確定時にフォーム設定から再生成して上書きする。独自の上書き確認は設けない。
+- 通常 Python へ戻した際、同じ Notebook を開いている間の一時退避があれば元コードを復元する。Notebook を閉じた後の復元は保証しない。
+- 選択・確定によって source が変わった場合は、フォーム上部に「未更新」を表示し、前回結果を残す。再実行成功で解除し、失敗時は解除しない。下書き編集だけではこの状態を変更しない。
+- CSV・SQL などの入力ファイルは処理セルの実行ごとに読み直す。外部ファイルの変更監視は行わない。
+- セル削除・Undo は Notebook 標準機能を利用する。
+
+## 設定・状態の保持先
+
+| 対象 | 保持先・復元方針 |
+| --- | --- |
+| セルモード、コネクタ、アクション | セル metadata。Notebook 保存・再オープンで復元 |
+| 確定済み設定と編集中の下書き | 区別してセル metadata に保持。下書きも通常保存の対象であり、保存済みなら復元 |
+| 生成された Python コード | 通常のセル source |
+| 元 Python コードの退避 | Extension Host の一時メモリ。同じ Notebook を開いている間のみ |
+| 「未更新」などの実行状態 | 拡張機能の一時状態。実行成功の検出・再オープン後の復元方法は要検証 |
+| Python 変数・DataFrame・インスタンス | 選択した Jupyter カーネル。Node.js や metadata に複製しない |
+| 実行結果・Python 例外 | Notebook 標準出力。`.ipynb` に保存され得る |
+
+下書き更新で Notebook が未保存状態になることは許容します。metadata の正式キー、バージョン、入力ごとの更新と Undo・性能の整合性は詳細設計・技術検証で決めます。Notebook ごとのフォーム設定・拡張機能状態は独立させ、カーネルの変数共有は Jupyter の標準動作に従います。
+
+フォーム検証、描画、コード生成、セル更新、OS 連携の失敗は拡張機能側で扱います。Python 実行中の例外は Jupyter に委ね、初回では Node.js への独自の例外橋渡し通知を設けません。入力検証以外の具体的な通知形式は未決定です。
+
+## リリース範囲
+
+以下は設計上の区分です。いずれも実装・動作確認はこれから行います。
+
+| 区分 | 対象 |
+| --- | --- |
+| 初回：Notebook 共通機能 | 処理選択・切り替え、フォーム表示、Python コード生成、初期化セル生成・再利用、metadata 保存・復元、「未更新」表示、元コードの一時退避の7項目 |
+| 初回：コネクタ | CSV、Excel、DuckDB、BigQuery、Python、Data Integration、Shell の7種類 |
+| 次回：コネクタ | Plotly、Chrome、Windows の3種類 |
+| 優先度低い | Vector、Selenium、独自の結果表示 UI、100行単位のテーブルページネーション |
+| Jupyter 標準機能との結合検証 | セル実行・Run All、実行結果・Python 例外表示 |
+
+コネクタごとの引数、戻り値、例外、フォーム、Python API、生成コードは個別設計で定義します。[コネクタ参考資料](docs/research/connectors/README.md) は別アプリの仕様・実装に基づくもので、そのアクション数、実行方式、結果形式、Task・承認は今回の仕様として採用済みではありません。
+
+## 配布・導入の方針
+
+VS Code 拡張機能と自作 Python ライブラリを1つの ZIP にまとめ、利用者が任意の場所へ展開して手動でセットアップする方針です。Python 実行は利用者が選択した既存 Jupyter カーネルを利用します。
+
+拡張機能と Python ライブラリのバージョンは個別に管理します。初回リリースでは自動の互換性チェックを設けず、実行時エラーを基本とします。互換性チェック機能の追加は初回リリース後に検討します。
+
+Python ライブラリはフォーム経由を正式サポートし、通常の Python セルから直接利用する場合の公開 API 互換性は保証しない方針です。実際の配布物、ZIP 展開先からのライブラリ参照、拡張機能・依存ライブラリの導入手順は未実装・未検証です。
+
+## フォルダー構成
+
+アプリ本体は `apps/`、仕様と作業記録は `docs/`、検証コード・手順は `tests/` に配置します。以下は実装を配置するための構成で、空フォルダーは `.gitkeep` で保持しています。
+
+```text
+apps/
+  extension/       Extension Host：VS Code API、metadata、コード生成
+  gui/             Notebook UI：HTML / CSS / JavaScript
+  core/            Jupyter 内で利用する Python ライブラリの共通処理
+  connectors/      Python の個別コネクタ・アクション
+  common/          層をまたぐ共有契約・schema（形式は未決定）
+bin/               利用者向けの導入・起動補助スクリプトの配置先
+config/            ローカル設定と共有可能な設定例
+notebooks/         開発・操作確認用の .ipynb
+template/          Task、Notebook、設定のひな形（現在は Task のみ）
+tests/
+  unit/            単体テスト
+  integration/     層をまたぐ結合テスト
+  e2e/             VS Code / Jupyter での E2E テスト
+  manual/          デスクトップでの手動テスト手順
+scripts/           ビルド・検証・パッケージ化の開発補助
+docs/
+  features/        現行の責務・境界を整理したアーキテクチャと個別仕様
+  tasks/           作業のゴール・スコープ・結果
+  designs/         全体設計・Notebook UI 設計
+  research/        技術調査と別アプリの参考資料
+  decisions/       本プロジェクトの決定記録の配置先
+results/           ローカルの実行結果（内容は Git 管理対象外）
+logs/              ローカルのログ（内容は Git 管理対象外）
+.github/           GitHub 用設定の配置先
+.vscode/           共有可能な VS Code 開発設定の配置先
 ```
 
-file出力ではresultにfile_path／rows_written等、metaに実行状態等を置く案。これらのAction固有の項目名・取得範囲は最新型割当の評価対象であり、この例から全Actionの必須キーを増やさない。
+責務と境界は [アーキテクチャ](docs/features/architecture.md)、ソース配置の詳細は [apps の案内](apps/README.md)、検証の分類は [tests の案内](tests/README.md) を参照してください。
 
-### 決まっている振る舞いと残る詳細
+起動入口は VS Code の拡張機能マニフェスト（`package.json`）で定義する Extension Host のエントリーポイントになります。Python は Notebook からライブラリを利用する構成です。マニフェスト、依存関係・ロックファイル、対応バージョン、ビルド・デバッグ・テストコマンドは実装 Task で整備します。
 
-| 論点 | 確認した状態 |
+## 開発の進め方
+
+クラウドでコード作成・ビルド・自動テストを行い、対象ブランチ・コミットを GitHub 経由でデスクトップへ渡します。ユーザーテストはデスクトップの VS Code と Jupyter カーネルで実施します。現時点では起動設定がないため、F5 での拡張機能実行はまだできません。
+
+1. 担当 Task と関係する設計・仕様を確認し、ゴール・スコープ・制約・完了条件を整理する。
+2. 調査・設計を行い、必要な技術評価・承認を確認する。
+3. 変更に応じたテストケース・手動確認項目を作成または更新する。
+4. Task の範囲で実装し、実行手順を整える。
+5. 必要なテストを行い、失敗の修正・再検証と結果の記録を行う。
+6. 完了条件、未実行の確認、残作業を確認して Task を更新する。
+
+具体的な進め方と設定・データの扱いは [開発手順](docs/development.md)、作業の記録は [Task の案内](docs/tasks/README.md) と [Task のひな形](template/task.md) を参照してください。
+
+設計書にある開発順序は、セル選択・metadata → フォーム・コード生成 → 初期化セル → 初回7コネクタ → 状態・結合検証 → ZIP 配布という提案です。実装順序として確定したものではなく、まず下記の UI 実現可否を確認します。
+
+## 未決定事項と技術検証
+
+最優先は、通常の Jupyter Notebook コードセル内に選択 UI とフォームを常設し、コード欄・標準出力と共存させられるかの検証です。セル実行後の表示維持も確認し、実現できない場合は UI 方針を再協議します。
+
+- VS Code と Kiro IDE の Notebook API 互換性、セルへの UI 配置と通常 Python セル・初期化セルの表示制御。
+- 選択欄の個数・ラベル、フォーム定義の配置、必須項目が未入力の場合の生成コード。
+- metadata の正式キー・バージョン、下書き保存と dirty・Undo・性能の整合性、遅延保存などの方式。
+- UI／Host 間のメッセージ形式、セル識別子、非同期更新の競合処理、入力検証以外のエラー通知。
+- 実行成功の検出、「未更新」の再オープン後の復元、手動 source 編集時の状態、下書きだけを編集した場合の補助表示。
+- 初期化セルの識別・重複防止、移動・複製・削除・Undo、元コードの一時退避とセルの対応。
+- Python ライブラリの配置・依存解決、各コネクタの詳細仕様、Jupyter 標準実行との結合動作。
+- 参考候補の [zizai-form](https://github.com/tomohiro-ono-works/zizai-form) の NodeForm の再利用方式、ライセンス、CSS・イベント・ファイル選択連携。全面採用は未確定。
+- 将来の独自結果表示・ページネーションの通信方式（優先度低い）。
+
+未決定の API 名、metadata キー、schema、採用ライブラリを、README から推測で確定しません。
+
+## 設計資料と参照順序
+
+この README は、既存設計をまとめたプロジェクトの入口です。詳細の判断は次の順序で確認します。
+
+| 資料 | 役割 |
 | --- | --- |
-| 成果なし成功 | json＋null、meta.status=success。0行dfとは区別。共通6点として承認済み |
-| 失敗 | 全Actionをjson形式で記録し、meta.status／errorへ保持。errorはcode／messageのobjectを採用済み。失敗時のresult=null、コード分類・キャンセル詳細は設計対象 |
-| 未取得情報 | 定めた項目を残してnull。0件・空文字で未知を隠さない。承認済み |
-| 不足参照 | 存在しない列・key・範囲外位置はエラー。既存keyのnull値とは区別。承認済み |
-| 再実行失敗 | 今回の失敗を最新とし、前回成功を履歴として区別。保持方式・表示の詳細は未確定 |
-| SQL | 最終実行文がSELECTの場合だけdf。その他はjson。対象・処理件数はresult、Job ID・SQL種類・状態はmeta。追加件数照会やRETURNING行保持はしない。承認済み、Action別の詳細は設計中 |
-| Python | 実行前にdf／json選択。既定df。型不一致をエラーとし自動変換しない。承認済み、UI・保存項目・子processの詳細は未確定 |
-| JSON正規化 | Ownerの選定委任に基づく規則を設計へ記録。日時・Decimal・大整数・欠損等の表現を定義。製品未実装 |
-| browser_ref | JSONのresultから参照1値を後続へ渡す方式を承認。flow run内限定、手動発行は10分、失効時エラー等は052で承認。具体接続方式・対象・詳細schemaは別途 |
+| [01 全体設計](docs/designs/01全体設計.md) | 全体方針、責務、実行・配布・リリース範囲の正本 |
+| [02 Notebook UI 設計](docs/designs/02NotebookUI設計.md) | 全体設計に沿った UI、下書き・確定・保存・切り替えの詳細 |
+| [DESIGN.md](docs/designs/DESIGN.md) | 全体設計と重複する参考資料。追加の Renderer 制約の注意を本 README の全体構成へ統合 |
 
-browser_refでは、参照値はresult.browser_ref、有効期限はmeta.browser_ref_expires_at（UTC日時）へ返す承認済み設計。手動stepは発行から10分で、操作による延長なし。接続用stepを再実行すると新しい参照を発行する。期限切れはmeta.status=error、meta.error.code=BROWSER_REF_EXPIRED。flow全体の実行は終了時失効のため固定日時の期限はnull。これらは共通meta9項目へ全Action共通の必須項目を増やす意味ではない。
-
-根拠: [共通6点の決裁](../../tasks/active/TASK-048/approval-log.md#048-00-20261010-04)、[SQL方針](../../designs/TASK-048-action-result-design.md#sql-select-policy)、[Python型選択](../../designs/TASK-048-action-result-design.md#output-type-selection)、[JSON表現](../../designs/TASK-048-action-result-design.md#json-value-proposal)、[browser_ref](../../designs/TASK-048-action-result-design.md#selenium-json-reference)、[052の寿命承認](../../tasks/active/TASK-052/TASK-052.md#052-00-20261010-02)。
-
-### 参照記法と実装開始条件
-
-- 新しい明示参照は{{step1.result}}／{{step1.result[0]["価格"]}}／{{step2.meta.status}}等。記法は承認済み、現行parserで使えるという意味ではない。[明示参照設計](../../designs/TASK-048-action-result-design.md#explicit-references)
-- 全体の包装・共通metaの採用を、各Connectorの詳細schema・error分類・履歴方式まで確定した承認と解釈しない。
-- 現行のresult.metaという業務列・JSON keyと外側metaは別。新結果形式を既存の表へ暗黙に追加しない。
-- 製品実装にはTASK-047の実際の初期リリース・完了根拠、共通要件の承認、仕様変更を含む後続Taskの明示範囲が必要。今回の資料作成では開始条件を変更しない。[TASK-048の制約](../../tasks/active/TASK-048/TASK-048.md#constraints)
-- TASK-048の後段AR-01〜39は古い比較初案。最新RT割当・後続決裁を優先し、file成果を一律metaへ移す案やsessionをmetaへ置く案を最新契約として転記しない。
-
-## 調査方法・更新時の確認
-
-- 読取り対象: [UIカタログ](../../../apps/gui/config/config.js)、各Connector、[BaseConnector](../../../apps/core/base_connector.py)、[WorkflowEngine](../../../apps/core/workflow_engine.py)、関連仕様とTASK-048／052の決裁。
-- 調査範囲: dispatch、入力取得、出力構築、context参照、関連helperを静的に確認。Action集合と文書の網羅性・相対リンク・アンカーを検査。
-- 未実施: 製品の実行テスト、外部接続、課金、OS入力、実ブラウザー、モデル取得・実出力ファイル作成。本書を動作試験済みの保証として使わない。
-- 更新時: UIの追加・変更と実行側のparams／戻り値を照合。現行仕様との差異や未確認事項は明記。新設計は既存の正本へリンクし、この調査資料から独自に確定しない。
+本 README の統合では、この参照順序を用い、未検証項目を実装済みへ変更していません。資料の分類と元アプリ資料の扱いは [docs の案内](docs/README.md) を参照してください。
