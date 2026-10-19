@@ -12,16 +12,18 @@
 
 ## 未完了 Task の索引
 
-計画更新日：2026-10-19。6領域の親Taskと38件のSubtaskを整理しました。今回の依頼はMarkdownによるタスク整理までで、全て未着手です。Task作成はアプリ実装・技術検証・出荷の着手許可を意味しません。
+計画更新日：2026-10-19。6領域の親Taskと38件のSubtaskを整理しました。作成時点の依頼はMarkdownによるタスク整理までで、全て未着手でした。追加依頼によりTASK-001-01のみAPI調査・試作準備を実施し、現在は両IDEの実機確認待ちで保留です。UI成立は未判定、他Subtaskは未着手です。Task作成自体はアプリ実装・出荷の着手許可を意味しません。
 
 | ID | 名前 | 主担当領域 | 状態 |
 | --- | --- | --- | --- |
-| [TASK-001](active/TASK-001/TASK-001.md) | Notebook UIの成立性と初回共通操作 | Notebook UI | 未着手 |
+| [TASK-001](active/TASK-001/TASK-001.md) | Notebook UIの成立性と初回共通操作 | Notebook UI | 進行中（01は実機待ち） |
 | [TASK-002](active/TASK-002/TASK-002.md) | Extension HostのNotebook管理 | VS Code 拡張機能本体 | 未着手 |
 | [TASK-003](active/TASK-003/TASK-003.md) | Jupyter内Python共通基盤 | Python 共通基盤 | 未着手 |
 | [TASK-004](active/TASK-004/TASK-004.md) | 初回7コネクタの個別処理 | コネクタ | 未着手 |
 | [TASK-005](active/TASK-005/TASK-005.md) | 層間共通契約の具体化と整合 | 共通契約 | 未着手 |
 | [TASK-006](active/TASK-006/TASK-006.md) | 開発環境・全体検証・初回配布 | 開発運用・プロジェクト管理 | 未着手 |
+
+TASK-001-01の[調査・判定](../research/notebook-ui/TASK-001-01.md) と [デスクトップ手順](../../tests/manual/TASK-001-01.md) を参照してください。標準APIの制約と試験的API候補を記録済みですが、成立を前提とする後続の開始条件は満たしていません。
 
 ### 工程の使い分け
 
