@@ -10,7 +10,7 @@
 
 利用者が合意した「セルツールバーへボタンを追加し、選択メニューを開く」方式の最小試作を進める。利用者の追加指示により、**今回はVS Codeのみを対象とし、Kiroは対象外**。製品全体のKiro対応を取り消す判断ではなく、過去の未実施結果を合格へ変更するものでもない。
 
-作業ブランチは `spike/task-001-01-notebook-ui`、開始時commitは `a0313f0`。正本は `tests/notebook-ui-gate/toolbar*.cjs` と `toolbar.package.json`、prepareによる生成物はGit無視対象の `dist/toolbar/`。同フォルダーのHTMLフォーム用先行実験は保持し、今回の生成物・API依存と分離する。本体の `apps/`、コネクタ、正式な契約やセル識別方式、Python実行処理は実装しない。
+作業ブランチは `spike/task-001-01-notebook-ui`、開始時commitは `a0313f0`、試作コードの確定版は `c2486174b5445d7c1f73de51dc1c47b3522c984d`。正本は `tests/notebook-ui-gate/toolbar*.cjs` と `toolbar.package.json`、prepareによる生成物はGit無視対象の `dist/toolbar/`。同フォルダーのHTMLフォーム用先行実験は保持し、今回の生成物・API依存と分離する。本体の `apps/`、コネクタ、正式な契約やセル識別方式、Python実行処理は実装しない。
 
 ## 標準APIで確認できたこと
 
