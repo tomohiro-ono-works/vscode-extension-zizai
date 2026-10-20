@@ -2,24 +2,28 @@
 
 本番コードではない。`apps/` へ取り込まず、正式なmetadata・通信契約・コネクタを定義しない。
 
-**現在の対象（2026-10-20）はVS Codeのセルツールバー。** [今回の手順](../manual/TASK-001-01-toolbar.md) を使い、F5で **TASK-001-01: Cell Toolbar (PROTOTYPE)** を起動する。Kiroは今回の対象外。
+**現在の対象（2026-10-20）はセル右下の言語選択の隣。** [今回の手順](../manual/TASK-001-01-statusbar.md) を使い、F5で **TASK-001-01: Beside Cell Language (PROTOTYPE)** を起動する。Kiroは今回の対象外。右上ツールバー版とは位置が異なり、新版の実機確認は未実施。
 
-`toolbar` は標準APIのボタン＋選択メニューだけを含む試作0.0.2。選択はHostの一時メモリだけに保持し、セルsource・metadata・outputを変更せず、Pythonも実行しない。HTMLフォーム・Renderer・試験的APIは生成物に含まれない。
+`statusbar` は標準セルステータスバー＋QuickPickの試作0.0.3。表示ボタンはセル下部、選択一覧は画面上部に開く。セルの直下へ展開するメニューではない。選択はHostメモリのみで、source・metadata・output・言語を変更せずPythonも実行しない。OutputChannelを作らず、診断はconsoleとJSONレポートを使う。
 
-- [API調査・現在の判定](../../docs/research/notebook-ui/TASK-001-01-toolbar.md)
-- [対象版・デスクトップ手順・返却項目](../manual/TASK-001-01-toolbar.md)
+- [API調査・起動エラーの調査・現在の判定](../../docs/research/notebook-ui/TASK-001-01-statusbar.md)
+- [対象版・起動・確認操作](../manual/TASK-001-01-statusbar.md)
 - [Task](../../docs/tasks/active/TASK-001/TASK-001.md#task-001-01)
+
+旧 `toolbar` 0.0.2は右上ツールバーの比較履歴として保持する。[旧結果](../../docs/research/notebook-ui/TASK-001-01-toolbar.md) は新版の合格根拠にはしない。
 
 先行調査の `stable` は標準Status Barと出力Rendererの対照実験、`insets` は試験的 `editorInsets` の実験。拡張IDは全モードとも `zizai-lab.task-001-01-probe` なので同時起動しない。
 
-依存パッケージ・ビルドツールは不要。ソースの `package.json` と `toolbar.package.json` は生成元であり、直接ロードしない。準備スクリプトが共有ソースを無視対象の `dist/<mode>/` へコピーし、実験モードだけに `enabledApiProposals` を付ける。
+依存パッケージ・ビルドツールは不要。ソースの `package.json`、`toolbar.package.json`、`statusbar.package.json` は生成元であり、直接ロードしない。準備スクリプトが共有ソースを無視対象の `dist/<mode>/` へコピーし、実験モードだけに `enabledApiProposals` を付ける。
 
 ```sh
 node tests/notebook-ui-gate/prepare.mjs stable
 node tests/notebook-ui-gate/prepare.mjs insets
 node tests/notebook-ui-gate/prepare.mjs toolbar
+node tests/notebook-ui-gate/prepare.mjs statusbar
 node tests/notebook-ui-gate/check.mjs
 node tests/notebook-ui-gate/toolbar-state.test.cjs
+node tests/notebook-ui-gate/statusbar.test.cjs
 ```
 
 上記は構成・fixtureの検査にすぎず、VS Codeを起動せず、UIの合格を示さない。F5の設定はリポジトリ直下の `.vscode/launch.json` にある。

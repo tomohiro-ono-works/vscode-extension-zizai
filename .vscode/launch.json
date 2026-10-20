@@ -2,11 +2,40 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "TASK-001-01: Beside Cell Language (PROTOTYPE)",
+      "type": "extensionHost",
+      "request": "launch",
+      "runtimeExecutable": "${execPath}",
+      "args": [
+        "--extensionDevelopmentPath=${workspaceFolder}/tests/notebook-ui-gate/dist/statusbar",
+        "${workspaceFolder}/tests/notebook-ui-gate/dist/statusbar/probe.code-workspace",
+        "${workspaceFolder}/tests/notebook-ui-gate/dist/statusbar/fixtures/empty.ipynb"
+      ],
+      "preLaunchTask": "TASK-001-01: prepare cell footer probe"
+    },
+    {
+      "name": "TASK-001-01: Startup Diagnostics (installed extensions disabled)",
+      "type": "extensionHost",
+      "request": "launch",
+      "runtimeExecutable": "${execPath}",
+      "args": [
+        "--extensionDevelopmentPath=${workspaceFolder}/tests/notebook-ui-gate/dist/statusbar",
+        "--disable-extensions",
+        "--log=trace"
+      ],
+      "preLaunchTask": "TASK-001-01: prepare cell footer probe",
+      "env": {
+        "NODE_OPTIONS": "--trace-deprecation"
+      }
+    },
+    {
       "name": "TASK-001-01: Cell Toolbar (PROTOTYPE)",
       "type": "extensionHost",
       "request": "launch",
       "runtimeExecutable": "${execPath}",
-      "args": ["--extensionDevelopmentPath=${workspaceFolder}/tests/notebook-ui-gate/dist/toolbar"],
+      "args": [
+        "--extensionDevelopmentPath=${workspaceFolder}/tests/notebook-ui-gate/dist/toolbar"
+      ],
       "preLaunchTask": "TASK-001-01: prepare cell toolbar probe"
     },
     {
@@ -14,7 +43,9 @@
       "type": "extensionHost",
       "request": "launch",
       "runtimeExecutable": "${execPath}",
-      "args": ["--extensionDevelopmentPath=${workspaceFolder}/tests/notebook-ui-gate/dist/stable"],
+      "args": [
+        "--extensionDevelopmentPath=${workspaceFolder}/tests/notebook-ui-gate/dist/stable"
+      ],
       "preLaunchTask": "TASK-001-01: prepare stable probe"
     },
     {

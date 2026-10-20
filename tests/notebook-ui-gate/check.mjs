@@ -46,3 +46,14 @@ for (const item of manifest.contributes.menus['zizaiProbe.cellMenu']) assert(com
 assert.deepEqual((await readdir(toolbar)).sort(), ['fixtures', 'mode.json', 'package.json', 'role.cjs', 'toolbar-state.cjs', 'toolbar.cjs']);
 assert((await json(path.join(toolbar, 'fixtures', 'empty.ipynb'))).cells.every(cell => cell.execution_count === null && cell.outputs.length === 0));
 console.log('PASS: three isolated manifests and fixtures; toolbar has no HTML/renderer/proposed API. UI NOT tested.');
+const statusbar = path.join(root, 'dist', 'statusbar');
+const footerManifest = await json(path.join(statusbar, 'package.json'));
+assert.equal(footerManifest.version, '0.0.3');
+assert.equal(footerManifest.main, './statusbar.cjs');
+assert.equal(footerManifest.enabledApiProposals, undefined);
+assert.equal(footerManifest.contributes.notebookRenderer, undefined);
+assert.equal(footerManifest.contributes.menus['notebook/cell/title'], undefined);
+assert.equal((await json(path.join(statusbar, 'probe.code-workspace'))).settings['notebook.showCellStatusBar'], 'visible');
+assert.deepEqual((await readdir(statusbar)).sort(), ['fixtures', 'mode.json', 'package.json', 'probe.code-workspace', 'role.cjs', 'statusbar.cjs', 'toolbar-state.cjs']);
+assert((await json(path.join(statusbar, 'fixtures', 'empty.ipynb'))).cells.every(cell => cell.execution_count === null && cell.outputs.length === 0));
+console.log('PASS: footer build has no title-toolbar contribution, HTML or proposed API. Desktop placement NOT tested.');
