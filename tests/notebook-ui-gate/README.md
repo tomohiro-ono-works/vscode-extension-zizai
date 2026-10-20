@@ -2,7 +2,7 @@
 
 本番コードではない。`apps/` へ取り込まず、正式なmetadata・通信契約・コネクタを定義しない。
 
-**現在の対象（2026-10-20）はセル右下の言語選択の隣。** [今回の手順](../manual/TASK-001-01-statusbar.md) を使い、F5で **TASK-001-01: Beside Cell Language (PROTOTYPE)** を起動する。Kiroは今回の対象外。右上ツールバー版とは位置が異なり、新版の実機確認は未実施。
+**現在の対象（2026-10-20）はセル右下の言語選択の隣。** [今回の手順](../manual/TASK-001-01-statusbar.md) を使い、F5で **TASK-001-01: Beside Cell Language (PROTOTYPE)** を起動する。Kiroは今回の対象外。新版の希望位置への表示・選択・初期化非表示は実機確認済み。起動時のOutputChannel関連エラーは再発しており、次は診断起動で比較する。
 
 `statusbar` は標準セルステータスバー＋QuickPickの試作0.0.3。表示ボタンはセル下部、選択一覧は画面上部に開く。セルの直下へ展開するメニューではない。選択はHostメモリのみで、source・metadata・output・言語を変更せずPythonも実行しない。OutputChannelを作らず、診断はconsoleとJSONレポートを使う。
 

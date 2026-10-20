@@ -22,12 +22,16 @@
 
 返してほしい情報は **S1〜S3の結果と、言語選択の隣が分かる画面1枚**。従来ログの再送は不要。異常がある場合だけ、別ウィンドウのCtrl+Shift+P → **Zizai Probe: Report Cell Status Bar** で開くJSONの内容を返す。版・選択・設定値を含むが、sourceや実データは記録しない。
 
+## 現在の実施結果
+
+2026-10-20、S1・S2の選択変更とセル別保持・S3は画面／報告／JSONログで確認済み。同じUI操作やログの再送は不要。S2のEscキャンセルは実機未実施。起動エラーは新版でも再発したため、次は以下の診断起動との比較だけを行う。
+
 ## エラーが再発した場合だけ行う診断
 
 前回のエラーは [調査記録](../../docs/research/notebook-ui/TASK-001-01-statusbar.md#起動時のエラー調査) に分けて記載。原因の起点は未特定なので、新版で消えたかも記録する。
 
 1. 通常の起動で、警告が出た時点（F5直後／Notebookを開く時／閉じる時）と、別ウィンドウが残ったかを記録。正常な標準機能を一通りテストする必要はない。
-2. 通常の別ウィンドウを閉じ、**TASK-001-01: Startup Diagnostics (installed extensions disabled)** でF5。これは `--disable-extensions` でインストール済み拡張を外し、開発対象の試作を比較する設定。Jupyterも無効なのでNotebook表示テストはしない。起動直後と終了時の警告有無だけを比較する。
+2. 通常の別ウィンドウを閉じ、**TASK-001-01: Startup Diagnostics (installed extensions disabled)** でF5。これは `--disable-extensions` でインストール済み拡張を外し、開発対象の試作を比較する設定。Jupyterも無効なのでNotebook表示テストはしない。別ウィンドウでCtrl+Shift+P → **Zizai Probe: Report Cell Status Bar** を実行し、開発対象を明示的に起動する（Notebookを開かないと自動起動されないため）。JSONにactivatedとprobeVersion:0.0.3があることを確認する。その後、起動直後・コマンド実行時・終了時の警告有無だけを比較する。
 3. 診断用は `--log=trace` と `NODE_OPTIONS=--trace-deprecation` を指定する。後者が対象プロセスへ引き継がれればDEP0169の呼出元stackが出る。起動元CLI等、別プロセスの警告には効かない場合がある。stackが出なければ特定完了とはしない。
 4. 再発した側の「デバッグコンソール」と、別ウィンドウの「表示 → 出力 → Log (Extension Host)」で該当時刻の前後を保存する。名称は表示言語によって異なる。必要なら **Developer: Open Logs Folder** で該当セッションのexthostログを探す。個人パス等は伏せる。
 
