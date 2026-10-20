@@ -2,6 +2,13 @@
   "version": "2.0.0",
   "tasks": [
     {
+      "label": "TASK-001-01: prepare cell toolbar probe",
+      "type": "process",
+      "command": "node",
+      "args": ["tests/notebook-ui-gate/prepare.mjs", "toolbar"],
+      "problemMatcher": []
+    },
+    {
       "label": "TASK-001-01: prepare stable probe",
       "type": "process",
       "command": "node",

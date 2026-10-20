@@ -2,6 +2,14 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "TASK-001-01: Cell Toolbar (PROTOTYPE)",
+      "type": "extensionHost",
+      "request": "launch",
+      "runtimeExecutable": "${execPath}",
+      "args": ["--extensionDevelopmentPath=${workspaceFolder}/tests/notebook-ui-gate/dist/toolbar"],
+      "preLaunchTask": "TASK-001-01: prepare cell toolbar probe"
+    },
+    {
       "name": "TASK-001-01: Stable API control (PROTOTYPE)",
       "type": "extensionHost",
       "request": "launch",

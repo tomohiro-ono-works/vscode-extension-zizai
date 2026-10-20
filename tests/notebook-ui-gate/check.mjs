@@ -1,6 +1,6 @@
 // Offline packaging/fixture checks only. These cannot prove Notebook UI works.
 import assert from 'node:assert/strict';
-import { readFile, access } from 'node:fs/promises';
+import { readFile, access, readdir } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import roles from './role.cjs';
@@ -34,4 +34,15 @@ for (const mode of ['stable', 'insets']) {
     if (outputs.length) assert.deepEqual(Object.keys(outputs[0].data), manifest.contributes.notebookRenderer[0].mimeTypes);
   }
 }
-console.log('PASS: two isolated manifests, resources, unexecuted empty/control fixtures. UI NOT tested.');
+const toolbar = path.join(root, 'dist', 'toolbar');
+const manifest = await json(path.join(toolbar, 'package.json'));
+assert.equal(manifest.main, './toolbar.cjs');
+assert.equal(manifest.enabledApiProposals, undefined);
+assert.equal(manifest.contributes.notebookRenderer, undefined);
+assert.equal(manifest.contributes.menus['notebook/cell/title'][0].submenu, manifest.contributes.submenus[0].id);
+assert.match(manifest.contributes.menus['notebook/cell/title'][0].when, /notebookCellResource in zizaiProbe\.toolbarCells/);
+const commands = new Set(manifest.contributes.commands.map(command => command.command));
+for (const item of manifest.contributes.menus['zizaiProbe.cellMenu']) assert(commands.has(item.command));
+assert.deepEqual((await readdir(toolbar)).sort(), ['fixtures', 'mode.json', 'package.json', 'role.cjs', 'toolbar-state.cjs', 'toolbar.cjs']);
+assert((await json(path.join(toolbar, 'fixtures', 'empty.ipynb'))).cells.every(cell => cell.execution_count === null && cell.outputs.length === 0));
+console.log('PASS: three isolated manifests and fixtures; toolbar has no HTML/renderer/proposed API. UI NOT tested.');
