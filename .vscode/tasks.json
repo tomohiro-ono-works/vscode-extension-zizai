@@ -1,0 +1,54 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "TASK-001-02: prepare NodeForm Webview probe",
+      "type": "process",
+      "command": "node",
+      "args": [
+        "tests/nodeform-reuse/prepare-webview.mjs"
+      ],
+      "problemMatcher": []
+    },
+    {
+      "label": "TASK-001-01: prepare cell footer probe",
+      "type": "process",
+      "command": "node",
+      "args": [
+        "tests/notebook-ui-gate/prepare.mjs",
+        "statusbar"
+      ],
+      "problemMatcher": []
+    },
+    {
+      "label": "TASK-001-01: prepare cell toolbar probe",
+      "type": "process",
+      "command": "node",
+      "args": [
+        "tests/notebook-ui-gate/prepare.mjs",
+        "toolbar"
+      ],
+      "problemMatcher": []
+    },
+    {
+      "label": "TASK-001-01: prepare stable probe",
+      "type": "process",
+      "command": "node",
+      "args": [
+        "tests/notebook-ui-gate/prepare.mjs",
+        "stable"
+      ],
+      "problemMatcher": []
+    },
+    {
+      "label": "TASK-001-01: prepare proposed probe",
+      "type": "process",
+      "command": "node",
+      "args": [
+        "tests/notebook-ui-gate/prepare.mjs",
+        "insets"
+      ],
+      "problemMatcher": []
+    }
+  ]
+}

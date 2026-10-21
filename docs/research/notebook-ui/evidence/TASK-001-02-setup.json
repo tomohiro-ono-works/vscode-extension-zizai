@@ -1,0 +1,95 @@
+{
+  "checkedAt": "2026-10-21T07:35:30.906999+00:00",
+  "sourceCommit": "563403cf698c045ed01e22d2e85bb07288610c2e",
+  "scope": "TASK-001-02 prototype preparation only; VS Code and Windows not run",
+  "environment": {
+    "os": "Linux",
+    "node": "v24.19.0",
+    "git": "git version 2.52.0",
+    "proxyConfigured": true
+  },
+  "upstreamCommit": "f08bfc73350d04e9238b43fa4dbcfdb81fa5150e",
+  "isolation": {
+    "copiedTrackedProbeInputs": true,
+    "initialCachePresent": false,
+    "existingWorkspaceDistChanged": false
+  },
+  "runs": [
+    {
+      "id": "P0",
+      "command": "node tests/nodeform-reuse/prepare-webview.mjs",
+      "initialCachePresent": false,
+      "exitCode": 1,
+      "result": "environment failure",
+      "error": "fetch failed: getaddrinfo EAI_AGAIN raw.githubusercontent.com"
+    },
+    {
+      "id": "P1",
+      "command": "node --use-env-proxy tests/nodeform-reuse/prepare-webview.mjs",
+      "initialCachePresent": false,
+      "exitCode": 0,
+      "result": "pass",
+      "proxyAndCaPreserved": true,
+      "artifactsVerified": true
+    },
+    {
+      "id": "P2",
+      "command": "node --import ./deny-fetch.mjs tests/nodeform-reuse/prepare-webview.mjs",
+      "initialCachePresent": true,
+      "exitCode": 0,
+      "result": "pass",
+      "fetchAttempts": 0,
+      "artifactHashesMatchP1": true
+    },
+    {
+      "id": "P3",
+      "command": "node --import ./deny-fetch.mjs tests/nodeform-reuse/prepare-webview.mjs",
+      "input": "temporary cached JS appended with a comment; restored after run",
+      "exitCode": 1,
+      "expectedExitCode": 1,
+      "result": "pass (rejects mismatched cache)",
+      "error": "src/node-form.js: pinned upstream blob mismatch",
+      "fetchAttempts": 0,
+      "existingArtifactsPreserved": true
+    }
+  ],
+  "fetchGuardSource": "let count=0; globalThis.fetch=async()=>{count++;throw Error('NETWORK_DISABLED_BY_SETUP_PROBE');};process.on('exit',()=>console.error(JSON.stringify({fetchAttempts:count})));",
+  "upstreamFiles": [
+    {
+      "path": "src/node-form.js",
+      "gitBlob": "e1c24cadbd01b2cad228f58a6504a7d82335c514",
+      "bytes": 37985
+    },
+    {
+      "path": "src/node-form.css",
+      "gitBlob": "13bf86a1f5145178f97a868fd835a78d0419c0de",
+      "bytes": 5249
+    },
+    {
+      "path": "LICENSE",
+      "gitBlob": "f94f9d5131a475bada426d8e8a4bf001c4c1207e",
+      "bytes": 2366
+    }
+  ],
+  "generatedFilesSha256": {
+    "package.json": "a93675f02e429b4848eabe9cc9fb0cfbca84ef84ffd7c03e1e681afb418511f5",
+    "provenance.json": "e817feb0a2916748a8278b6adfef06335817968c8b75fdbe353c410c7937e21f",
+    "resources/UPSTREAM-LICENSE": "9106705376915ba0c749a66141f9a0d542819f1ff9bbb5e2ad32f052a91d12ab",
+    "resources/ZIZAI-PERMISSION.md": "69a06b77c6ec9e57af689a8725c622901ceadac342f3aac048e1d88644f8b6a6",
+    "resources/node-form.css": "7f0921393275fa1ad5f8f8e15098e85af9d694c4991a7b93a2a85d5c596c853e",
+    "resources/node-form.js": "1c8f3cd57361e1cae805349c32962d264ee37cead4fec967145e5ea30829a565",
+    "vscode-theme-probe.css": "05d8d615f7d44fbdb47145798c722928f673dc5853f569d48fc83447d0498962",
+    "webview-client.mjs": "bfdba887510456e1a9015a9fac58180dbeacac20c58fad73bf827aeb4f73438b",
+    "webview.cjs": "9b19b3c5bdfbcc7843035cb6d535951e0f30e86ddbed28dbae89a3269a344553"
+  },
+  "provenance": {
+    "upstreamCommit": "f08bfc73350d04e9238b43fa4dbcfdb81fa5150e",
+    "patchSha256": "dfaa36591b6701605a4c321c6a14ccaacb25372d0d926c2d1f889d883bfced7a",
+    "themeSha256": "05d8d615f7d44fbdb47145798c722928f673dc5853f569d48fc83447d0498962"
+  },
+  "limitations": [
+    "Node 24 proxy option tested only in this cloud; do not add it unconditionally to Node 20 desktop startup",
+    "Node 20 and fresh Windows download not tested",
+    "VS Code F5, Webview CSP enforcement, actual theme and OS dialogs not tested"
+  ]
+}

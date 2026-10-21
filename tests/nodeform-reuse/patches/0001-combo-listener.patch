@@ -1,0 +1,10 @@
+--- a/src/node-form.js
++++ b/src/node-form.js
+@@ -197,6 +197,7 @@
+     }
+ 
+     function openMenu(forceAll) {
++      close();
+       render(input.value, forceAll);
+       open = true;
+       menu.hidden = false;

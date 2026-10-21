@@ -1,0 +1,170 @@
+{
+  "task": "TASK-006-01",
+  "checked_at": "2026-10-21T13:23:58.308332+00:00",
+  "baseline_commit": "3e7465b5cbeaf3e912a0f3b5dc8c22226839e6db",
+  "branch": "research/task-005-01-boundaries",
+  "scope": "Read-only local inventory and static source checks; no preparation, dependency installation, product build, IDE launch, kernel, or release run.",
+  "cloud": {
+    "os": "Linux",
+    "architecture": "x86_64",
+    "node": "v24.19.0",
+    "npm": "11.9.0",
+    "python": "3.12.14",
+    "git": "git version 2.52.0",
+    "code_cli_available": false,
+    "python_packages": {
+      "jupyter_client": null,
+      "ipykernel": null,
+      "playwright": "1.62.0",
+      "pytest": null
+    }
+  },
+  "desktop_observation": {
+    "source": "docs/research/notebook-ui/evidence/2026-10-20-statusbar.jsonl",
+    "observed_at": "2026-10-20T08:50:06.266Z",
+    "os": "win32",
+    "vscode": "1.142.0",
+    "extension_host_node": "v24.21.0",
+    "python_extension": "2026.10.0",
+    "jupyter_extension": "2025.9.1",
+    "python_execution_performed": false,
+    "kernel_label": "Python 3.14.3",
+    "kernel_label_source": "docs/research/notebook-ui/TASK-001-01-statusbar.md",
+    "kernel_runtime_version_verified": false
+  },
+  "repository": {
+    "product_root_package_json": false,
+    "product_pyproject_toml": false,
+    "product_files": {
+      "apps/extension": [
+        "apps/extension/.gitkeep"
+      ],
+      "apps/core": [
+        "apps/core/.gitkeep"
+      ],
+      "apps/connectors": [
+        "apps/connectors/.gitkeep"
+      ],
+      "apps/common": [
+        "apps/common/.gitkeep"
+      ],
+      "apps/gui": [
+        "apps/gui/.gitkeep"
+      ]
+    },
+    "script_files": [
+      "scripts/.gitkeep"
+    ],
+    "github_files": [
+      ".github/.gitkeep"
+    ],
+    "lockfiles": [],
+    "prototype_manifests": [
+      {
+        "path": "tests/notebook-ui-gate/package.json",
+        "name": "task-001-01-probe",
+        "version": "0.0.1",
+        "engines": {
+          "vscode": "^1.105.0"
+        },
+        "npm_dependencies": []
+      },
+      {
+        "path": "tests/notebook-ui-gate/statusbar.package.json",
+        "name": "task-001-01-probe",
+        "version": "0.0.3",
+        "engines": {
+          "vscode": "^1.105.0"
+        },
+        "npm_dependencies": []
+      },
+      {
+        "path": "tests/notebook-ui-gate/toolbar.package.json",
+        "name": "task-001-01-probe",
+        "version": "0.0.2",
+        "engines": {
+          "vscode": "^1.105.0"
+        },
+        "npm_dependencies": []
+      }
+    ],
+    "f5_launch_configs": 6,
+    "f5_prepare_tasks": 5,
+    "f5_references_valid": true,
+    "f5_uses_selected_vscode_runtime": true
+  },
+  "sources": [
+    {
+      "path": ".vscode/launch.json",
+      "sha256": "a0f057c9150389b955738a813b9e56599c3e6324533ea6b32c261b31e6c6b4d8",
+      "bytes": 2559
+    },
+    {
+      "path": ".vscode/tasks.json",
+      "sha256": "6f0277e599d8068b0e4e8d083a83f2338b8bd633af4945c788208b4b4f8be281",
+      "bytes": 1207
+    },
+    {
+      "path": "tests/notebook-ui-gate/package.json",
+      "sha256": "c2c7b27ec3e38b8ce3104f4b13a0830ec49db909e430088e3c48e44c32f1ae19",
+      "bytes": 1025
+    },
+    {
+      "path": "tests/notebook-ui-gate/statusbar.package.json",
+      "sha256": "109c2730883a23d1756fb03b4ef76e4e77afa56c76312d1c9dc61a95c01acc2f",
+      "bytes": 948
+    },
+    {
+      "path": "tests/notebook-ui-gate/toolbar.package.json",
+      "sha256": "fbe15ad741be678a4b408fe095fcc438cc40afa755b3cada09ef8a39c0ff17a0",
+      "bytes": 1506
+    },
+    {
+      "path": "tests/notebook-ui-gate/prepare.mjs",
+      "sha256": "df71b0511bc3edd7d98e9a891bcc7f7591fcab4b2808026332f3c2dc1be07510",
+      "bytes": 1714
+    },
+    {
+      "path": "tests/nodeform-reuse/prepare-webview.mjs",
+      "sha256": "a2f3b8c8373392c7caa4104ec9b5f353180e923f9072fcceb57228010b2e567e",
+      "bytes": 3646
+    },
+    {
+      "path": "docs/research/notebook-ui/evidence/2026-10-20-statusbar.jsonl",
+      "sha256": "f7cc08d2128d12821f07143597cf7b6db38e4d94e0bdec0a773e0fd698657d65",
+      "bytes": 900
+    },
+    {
+      "path": "docs/research/notebook-ui/evidence/TASK-001-02-setup.json",
+      "sha256": "3596f158db68ad7301c69b89f9e2ab8239d3ab445fee1c0473c67f9c98b08f39",
+      "bytes": 3807
+    },
+    {
+      "path": "docs/research/python-import/TASK-003-01.md",
+      "sha256": "5aa9fbcf7569eaf1c2d5d4aa9d47525f53eebf02a0ff4acd5e48877c48141356",
+      "bytes": 11270
+    },
+    {
+      "path": "docs/research/connectors/evidence/TASK-004-01-sources.json",
+      "sha256": "4b993dcd3a0489cdce49a0e67e94b096b5fbde304ae8c3afcab6dc509af4c0e4",
+      "bytes": 21838
+    },
+    {
+      "path": "docs/decisions/nodeform-reuse-permission.md",
+      "sha256": "69a06b77c6ec9e57af689a8725c622901ceadac342f3aac048e1d88644f8b6a6",
+      "bytes": 1049
+    }
+  ],
+  "status": {
+    "local_inventory": "pass",
+    "f5_static_references": "pass",
+    "product_build": "not implemented",
+    "dependency_resolution": "not performed",
+    "vsix": "not produced",
+    "python_distribution": "not produced",
+    "release_zip": "not produced",
+    "ci": "not configured",
+    "desktop_this_task": "not performed",
+    "kiro": "out of scope"
+  }
+}

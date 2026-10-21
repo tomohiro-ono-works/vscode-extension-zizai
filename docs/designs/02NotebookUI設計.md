@@ -1,6 +1,6 @@
 # 02 Notebook UI詳細設計 — Zizai
 
-更新日：2026-10-18  
+更新日：2026-10-19  
 対象：VS Code / Kiro IDE 上の Jupyter Notebook（`.ipynb`）  
 状態：UI方針12項目はヒアリング確定。API依存部分は技術検証待ち。
 
@@ -8,7 +8,7 @@
 
 Notebook標準のPythonコードセルと実行基盤を活用し、セル内でコネクタ・アクションを選び、アクション固有フォームからPythonコードを生成できるUIを定義する。本書は共通Notebook UI、セル表示、編集・保存・状態遷移、Extension Hostとの概念I/Fを扱う。各アクションの引数、処理、Python APIシグネチャ、結果データの詳細は対象外とする。
 
-優先順位は `01全体設計.md`（正本）→ 本書で確定したNotebook UI詳細 → `DESIGN.md`（旧試作の参考）の順。本書は全体設計を無言で上書きしない。とくにフォーム下書きのmetadata保存は、本設計で追加する詳細仕様として明示する。
+優先順位は [01全体設計.md](01全体設計.md)（正本）→ 本書で確定したNotebook UI詳細 → [DESIGN.md](DESIGN.md)（全体設計と重複する参考資料）の順。本書は全体設計を無言で上書きしない。とくにフォーム下書きのmetadata保存は、本設計で追加する詳細仕様として明示する。
 
 ## 2. 前提・変更しない全体設計
 
@@ -23,8 +23,12 @@ Notebook標準のPythonコードセルと実行基盤を活用し、セル内で
 
 ## 3. 用語とセル種別
 
+UIの呼称は、利用者と合意した [HTMLフォーム／セルツールバーの整理](../decisions/2026-10-19-notebook-ui-terms.md) に従う。今回の「セルにボタン／プルダウンを追加する」という話はセルツールバーの選択メニューを指す。以下の従来のHTMLフォーム配置案と区別し、セルツールバーの操作までHTMLフォームの常設条件で判断しない。詳細フォームの要否・配置を今回の呼称整理で変更したものではない。
+
 | 用語 | 意味 |
 |---|---|
+| HTMLフォーム | HTMLで描画する入力欄・プルダウン等。セルツールバーとは区別する |
+| セルツールバー | Notebookのセルの操作ボタンと、そこから開くメニュー。Zizai拡張のUIの一部 |
 | コネクタ/アクション選択プルダウン | コネクタとそのアクションを選ぶセル内UI。Python選択も含む |
 | アクション詳細設定フォーム | 選択したアクションに必要な入力を編集・確定するUI |
 | Pythonセル | ユーザーが任意のPythonコードを書く通常コードセル。Python選択時にフォームとアクション選択は不要 |
@@ -239,8 +243,9 @@ Pythonを選んだ場合は通常のPythonコード入力として扱い、**ア
 
 ## 14. 参照
 
-- 正本：`01全体設計.md`（2026-10-18）
-- 旧試作参考：`DESIGN.md`（2026-10-17）。固定Python/Data/SQL、Polars固定、100行ページネーションなど正本と異なる方針は採用しない。
+- 全体方針の正本：[01全体設計.md](01全体設計.md)。
+- 補足参考：[DESIGN.md](DESIGN.md)。現在の本文は全体設計とほぼ同じで、Rendererの制約に関する補足を含む。過去の固定Python/Data/SQL、Polars固定、100行ページネーションを今回の方針として採用する根拠にはしない。
+- 統合したプロジェクトの案内：[README.md](../../README.md)。
 - フォーム参考：<https://github.com/tomohiro-ono-works/zizai-form> / <https://github.com/tomohiro-ono-works/zizai-form/blob/main/README.md>
 - VS Code Notebook API：<https://code.visualstudio.com/api/extension-guides/notebook>
 - VS Code API Reference：<https://code.visualstudio.com/api/references/vscode-api>

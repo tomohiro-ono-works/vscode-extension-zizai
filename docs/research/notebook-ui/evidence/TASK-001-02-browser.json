@@ -1,0 +1,58 @@
+{
+  "upstreamCommit": "f08bfc73350d04e9238b43fa4dbcfdb81fa5150e",
+  "python": "3.12.14",
+  "surface": "standalone upstream sample, not Notebook or Webview",
+  "browser": "154.0.8037.57",
+  "sampleLoaded": true,
+  "resourceLoading": "injected local source in blank page",
+  "pageErrors": [],
+  "checks": [
+    {
+      "name": "values, validation, restore without notification, original values untouched",
+      "status": "pass",
+      "details": {
+        "restoreNotified": 0,
+        "original": "before"
+      }
+    },
+    {
+      "name": "user input emits change and separate forms keep separate values",
+      "status": "pass",
+      "details": {
+        "first": "edited",
+        "second": "two"
+      }
+    },
+    {
+      "name": "visible_if hides validation but retains value in getParams",
+      "status": "pass",
+      "details": {
+        "hiddenValueExported": true
+      }
+    },
+    {
+      "name": "simulated file selection result and cancellation",
+      "status": "pass",
+      "details": {
+        "dialog": "simulated DOM events only"
+      }
+    },
+    {
+      "name": "destroy removes DOM and ignores a pending browse result",
+      "status": "pass",
+      "details": {
+        "lateResultIgnored": true
+      }
+    },
+    {
+      "name": "combo releases document pointerdown listeners after repeated input and destroy",
+      "status": "fail",
+      "details": "document pointerdown listeners remaining: 2"
+    }
+  ],
+  "baseCssDarkParent": {
+    "foreground": "rgb(238, 238, 238)",
+    "background": "rgb(255, 255, 255)"
+  },
+  "upstreamModified": false
+}

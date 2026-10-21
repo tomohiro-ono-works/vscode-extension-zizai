@@ -1,0 +1,37 @@
+{
+  "name": "task-001-01-probe",
+  "displayName": "Zizai TASK-001-01 Cell Toolbar PROTOTYPE",
+  "description": "Throwaway standard Notebook cell toolbar probe. Not the Zizai application.",
+  "version": "0.0.2",
+  "publisher": "zizai-lab",
+  "private": true,
+  "engines": { "vscode": "^1.105.0" },
+  "main": "./toolbar.cjs",
+  "activationEvents": ["onNotebook:jupyter-notebook"],
+  "contributes": {
+    "commands": [
+      { "command": "zizaiProbe.empty", "title": "Zizai Probe: Open Empty Notebook" },
+      { "command": "zizaiProbe.report", "title": "Zizai Probe: Report Toolbar State" },
+      { "command": "zizaiProbe.choosePython", "title": "通常Python（試作）" },
+      { "command": "zizaiProbe.chooseFake", "title": "架空コネクタ（試作）" }
+    ],
+    "submenus": [
+      { "id": "zizaiProbe.cellMenu", "label": "Zizai（試作）", "icon": "$(list-selection)" }
+    ],
+    "menus": {
+      "notebook/cell/title": [{
+        "submenu": "zizaiProbe.cellMenu",
+        "group": "inline@5",
+        "when": "notebookType == jupyter-notebook && notebookCellType == code && notebookCellResource in zizaiProbe.toolbarCells"
+      }],
+      "zizaiProbe.cellMenu": [
+        { "command": "zizaiProbe.choosePython", "group": "1_mode@1" },
+        { "command": "zizaiProbe.chooseFake", "group": "1_mode@2" }
+      ],
+      "commandPalette": [
+        { "command": "zizaiProbe.choosePython", "when": "false" },
+        { "command": "zizaiProbe.chooseFake", "when": "false" }
+      ]
+    }
+  }
+}

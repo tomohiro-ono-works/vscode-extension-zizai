@@ -1,0 +1,69 @@
+/* TASK-001-02 PROTOTYPE. Overlay for evaluation; not an adopted product theme. */
+.node-form {
+  color: var(--vscode-foreground, var(--vscode-input-foreground, inherit));
+  font-family: var(--vscode-font-family, inherit);
+  font-size: var(--vscode-font-size, inherit);
+}
+
+.node-form .node-form__input,
+.node-form .node-form__textarea,
+.node-form .node-form__select {
+  color: var(--vscode-input-foreground);
+  background: var(--vscode-input-background);
+  border-color: var(--vscode-contrastBorder, var(--vscode-input-border, transparent));
+}
+
+.node-form .node-form__combo-button,
+.node-form .node-form__browse-button,
+.node-form .node-form__define-values-add,
+.node-form .node-form__define-values-remove,
+.node-form .node-form__filter-add,
+.node-form .node-form__filter-remove,
+.node-form .node-form__coordinate-button,
+.node-form .node-form__display-button {
+  color: var(--vscode-button-foreground);
+  background: var(--vscode-button-background);
+  border-color: var(--vscode-contrastBorder, var(--vscode-button-border, transparent));
+}
+
+.node-form .node-form__combo-menu,
+.node-form .node-form__combo-option {
+  color: var(--vscode-dropdown-foreground);
+  background: var(--vscode-dropdown-background);
+  border-color: var(--vscode-contrastBorder, var(--vscode-dropdown-border, transparent));
+}
+
+.node-form .node-form__combo-option:hover,
+.node-form .node-form__combo-option:focus-visible {
+  color: var(--vscode-list-hoverForeground, var(--vscode-dropdown-foreground));
+  background: var(--vscode-list-hoverBackground, var(--vscode-dropdown-background));
+}
+
+.node-form .node-form__required,
+.node-form .node-form__error {
+  color: var(--vscode-errorForeground);
+}
+
+.node-form .node-form__field--invalid .node-form__input,
+.node-form .node-form__field--invalid .node-form__textarea,
+.node-form .node-form__field--invalid .node-form__select {
+  border-color: var(--vscode-inputValidation-errorBorder, var(--vscode-errorForeground));
+}
+
+.node-form .node-form__input:focus,
+.node-form .node-form__textarea:focus,
+.node-form .node-form__select:focus,
+.node-form button:focus-visible {
+  outline: 1px solid var(--vscode-focusBorder);
+  outline-offset: 1px;
+}
+
+.node-form .node-form__combo-empty {
+  color: var(--vscode-descriptionForeground, var(--vscode-dropdown-foreground));
+}
+
+.node-form .node-form__empty {
+  color: var(--vscode-descriptionForeground, var(--vscode-input-foreground));
+  background: var(--vscode-editor-background, var(--vscode-input-background));
+  border-color: var(--vscode-contrastBorder, var(--vscode-input-border, transparent));
+}
