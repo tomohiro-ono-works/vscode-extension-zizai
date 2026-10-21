@@ -2,6 +2,16 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "TASK-001-02: NodeForm Reuse (PROTOTYPE)",
+      "type": "extensionHost",
+      "request": "launch",
+      "runtimeExecutable": "${execPath}",
+      "args": [
+        "--extensionDevelopmentPath=${workspaceFolder}/tests/nodeform-reuse/dist/webview"
+      ],
+      "preLaunchTask": "TASK-001-02: prepare NodeForm Webview probe"
+    },
+    {
       "name": "TASK-001-01: Beside Cell Language (PROTOTYPE)",
       "type": "extensionHost",
       "request": "launch",

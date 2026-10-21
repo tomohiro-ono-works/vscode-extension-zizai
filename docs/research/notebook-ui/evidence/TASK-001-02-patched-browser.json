@@ -1,0 +1,124 @@
+{
+  "upstreamCommit": "f08bfc73350d04e9238b43fa4dbcfdb81fa5150e",
+  "python": "3.12.14",
+  "surface": "standalone upstream sample, not Notebook or Webview",
+  "browser": "154.0.8037.57",
+  "sampleLoaded": true,
+  "resourceLoading": "injected local source in blank page",
+  "pageErrors": [],
+  "checks": [
+    {
+      "name": "values, validation, restore without notification, original values untouched",
+      "status": "pass",
+      "details": {
+        "restoreNotified": 0,
+        "original": "before"
+      }
+    },
+    {
+      "name": "user input emits change and separate forms keep separate values",
+      "status": "pass",
+      "details": {
+        "first": "edited",
+        "second": "two"
+      }
+    },
+    {
+      "name": "visible_if hides validation but retains value in getParams",
+      "status": "pass",
+      "details": {
+        "hiddenValueExported": true
+      }
+    },
+    {
+      "name": "simulated file selection result and cancellation",
+      "status": "pass",
+      "details": {
+        "dialog": "simulated DOM events only"
+      }
+    },
+    {
+      "name": "destroy removes DOM and ignores a pending browse result",
+      "status": "pass",
+      "details": {
+        "lateResultIgnored": true
+      }
+    },
+    {
+      "name": "combo releases document pointerdown listeners after repeated input and destroy",
+      "status": "pass",
+      "details": {
+        "remaining": 0
+      }
+    }
+  ],
+  "baseCssDarkParent": {
+    "foreground": "rgb(238, 238, 238)",
+    "background": "rgb(255, 255, 255)"
+  },
+  "variant": "patched-prototype",
+  "patchSha256": "dfaa36591b6701605a4c321c6a14ccaacb25372d0d926c2d1f889d883bfced7a",
+  "sourceCheckoutModified": false,
+  "themeChecks": [
+    {
+      "name": "light",
+      "status": "pass",
+      "actual": {
+        "input": "rgb(255, 255, 255)",
+        "inputText": "rgb(32, 32, 32)",
+        "textarea": "rgb(255, 255, 255)",
+        "select": "rgb(255, 255, 255)",
+        "button": "rgb(0, 122, 204)",
+        "buttonText": "rgb(255, 255, 255)",
+        "menu": "rgb(255, 255, 255)",
+        "border": "rgb(136, 136, 136)",
+        "focus": "rgb(0, 144, 241)",
+        "error": "rgb(161, 38, 13)",
+        "outside": "rgb(7, 8, 9)"
+      },
+      "mismatches": {}
+    },
+    {
+      "name": "dark",
+      "status": "pass",
+      "actual": {
+        "input": "rgb(60, 60, 60)",
+        "inputText": "rgb(238, 238, 238)",
+        "textarea": "rgb(60, 60, 60)",
+        "select": "rgb(60, 60, 60)",
+        "button": "rgb(14, 99, 156)",
+        "buttonText": "rgb(255, 255, 255)",
+        "menu": "rgb(45, 45, 45)",
+        "border": "rgb(136, 136, 136)",
+        "focus": "rgb(0, 144, 241)",
+        "error": "rgb(244, 135, 113)",
+        "outside": "rgb(7, 8, 9)"
+      },
+      "mismatches": {}
+    },
+    {
+      "name": "high-contrast",
+      "status": "pass",
+      "actual": {
+        "input": "rgb(0, 0, 0)",
+        "inputText": "rgb(255, 255, 255)",
+        "textarea": "rgb(0, 0, 0)",
+        "select": "rgb(0, 0, 0)",
+        "button": "rgb(0, 0, 0)",
+        "buttonText": "rgb(255, 255, 255)",
+        "menu": "rgb(0, 0, 0)",
+        "border": "rgb(255, 255, 0)",
+        "focus": "rgb(0, 255, 255)",
+        "error": "rgb(255, 128, 128)",
+        "outside": "rgb(7, 8, 9)"
+      },
+      "mismatches": {}
+    }
+  ],
+  "themeOverrideSha256": "05d8d615f7d44fbdb47145798c722928f673dc5853f569d48fc83447d0498962",
+  "upstreamTest": {
+    "exitCode": 0,
+    "stdout": "node-form tests passed",
+    "stderr": ""
+  }
+}

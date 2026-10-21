@@ -1,6 +1,6 @@
 # TASK-001-02 NodeForm単体評価
 
-評価用であり、製品実装やNotebook内のHTMLフォーム常設試作ではない。上流コードを変更せず、独立したChromiumページでAPI・DOMイベント・破棄動作を調べる。OSダイアログは開かず、ファイル選択結果はDOMイベントで模擬する。
+評価用であり、製品実装やNotebook内のHTMLフォーム常設試作ではない。固定した上流コードと検証用パッチを分け、独立したChromiumページでAPI・DOMイベント・破棄動作を調べる。OSダイアログは開かず、ファイル選択結果はDOMイベントで模擬する。
 
 取得元は [zizai-form](https://github.com/tomohiro-ono-works/zizai-form)、対象commitは `f08bfc73350d04e9238b43fa4dbcfdb81fa5150e`。[Zizai向け利用許諾](../../docs/decisions/nodeform-reuse-permission.md) を記録済み。上流のLICENSEは維持する。上流コードはこのリポジトリにvendorせず、外部の一時チェックアウトを使う。
 
@@ -19,7 +19,7 @@ python tests/nodeform-reuse/browser-probe.py ../zizai-form-check --chromium /pat
 
 Playwrightが未導入の場合は、検証用Python環境へ `python -m pip install playwright` で導入する。システムのChromiumを指定しない場合は、Playwrightの `python -m playwright install chromium` でブラウザを準備する。この場合、`--chromium` に準備した実行ファイルを指定する。クラウドでは既存のPlaywrightと `/usr/bin/chromium` を使い、追加導入はしていない。
 
-スクリプトは上流4ファイルのGit blob hashを照合してから実行する。検査対象ファイルが違う版／改変版なら停止する。ブラウザのローカルファイルURL制限に依存しないよう、取得済みJSとサンプルHTMLを空ページへ注入する。サンプルHTMLの外部scriptタグ2個をメモリ上で省き、同じ取得済みJSを先に読み込む。上流ファイル自体は変更しない。この方法では実URL読み込みやCSP適合を検証できない。
+スクリプトは上流4ファイルのGit blob hashを照合してから実行する。検査対象ファイルが違う版／改変版なら停止する。ブラウザのローカルファイルURL制限に依存しないよう、取得済みJSとサンプルHTMLを空ページへ注入する。サンプルHTMLの外部scriptタグ2個をメモリ上で省き、同じ取得済みJSを先に読み込む。元のチェックアウト自体は変更しない。`--patched` では外部一時コピーにだけ同梱patchを適用し、上流の既存テストもそのコピーで再実行する。この方法では実URL読み込みやCSP適合を検証できない。
 
 クラウドの標準sandboxではChromiumが `setsockopt: Operation not permitted` で起動できず、ネットワーク権限を追加したコマンド実行では起動した。file://表示は `ERR_BLOCKED_BY_ADMINISTRATOR` となったため、上記のページ注入方式で評価した。独立ページへの表示はIDE・Webviewの合格にはしない。
 
@@ -36,7 +36,7 @@ Playwrightが未導入の場合は、検証用Python環境へ `python -m pip ins
 | 破棄時のDOM削除と遅延したbrowse結果の無視 | 合格 |
 | comboへ3回入力し、破棄後にdocumentのpointerdownリスナーが残らない | **不合格：2件残る** |
 
-既知の不合格を隠さず、スクリプト全体の終了コードは **1**。イベント計測は検証ページのdocument.addEventListener／removeEventListenerを包んでpointerdownの登録数を数える。上流本体には計測コードを加えていない。
+既知の不合格を隠さず、未修正版でのスクリプト全体の終了コードは **1**。イベント計測は検証ページのdocument.addEventListener／removeEventListenerを包んでpointerdownの登録数を数える。上流本体には計測コードを加えていない。
 
 別の暗色親要素を持つページで上流CSSを読み込み、前景 `rgb(238, 238, 238)` に対して背景 `rgb(255, 255, 255)` を観測した。これは固定白背景の確認であり、VS Codeテーマ試験の結果ではない。
 
@@ -44,4 +44,39 @@ Playwrightが未導入の場合は、検証用Python環境へ `python -m pip ins
 
 - ブラウザ単体のAPI・DOM検査であり、Renderer／Webview／Notebook source・metadata・Python実行を扱わない。
 - 部品APIの候補適性と、comboのリスナー修正・テーマ調整が必要なことを判断するための材料。
-- 上流の修正、製品へのvendor配置、正式な共通契約、サイドパネル等への配置変更は行っていない。
+- 上流リポジトリへの修正送信、製品へのvendor配置、正式な共通契約、サイドパネル等への配置変更は行っていない。
+
+## 検証用の修正と配色調整
+
+利用者の「進めて下さい」により、TASK-001-02の評価範囲で再現不具合の修正と配色調整を実施した。上流リポジトリや製品コードは変更していない。
+
+- `patches/0001-combo-listener.patch` は、comboのメニューを再表示する直前に前のoutsideリスナーを解除する1行の追加。元commitへ `git apply --check` を通し、元チェックアウトを一時コピーしてから適用する。
+- `vscode-theme-probe.css` は検証専用の上書きCSS。node-form内に限定して入力・ボタン・候補メニュー・エラー・フォーカス・枠線へVS CodeのCSS変数を使う。上流CSSは編集しない。
+- ブラウザの配色検査は、Light／Dark／High Contrastを模した変数値を注入し、入力・textarea・select・ボタン・メニューの色、枠線、エラー、フォーカスとフォーム外への非干渉を比較する。実際のVS CodeテーマやHigh Contrastの実機試験とは区別する。
+
+```sh
+python tests/nodeform-reuse/browser-probe.py ../zizai-form-check --chromium /path/to/chromium --patched --theme-checks --theme-override tests/nodeform-reuse/vscode-theme-probe.css --report /path/to/patched-result.json
+```
+
+[修正後のJSON](../../docs/research/notebook-ui/evidence/TASK-001-02-patched-browser.json) は上流テスト合格、ブラウザ単体6件・配色3条件すべて合格、終了コード0。comboの破棄後のdocument.pointerdownは2件から0件へ減った。patchと上書きCSSのSHA-256もレポートへ記録する。
+
+比較用に、[配色調整前のJSON](../../docs/research/notebook-ui/evidence/TASK-001-02-theme-before.json) はパッチ適用済みの単体6件が合格、CSS未調整の配色3条件が不合格で終了コード1。最初の未修正版の不合格記録も書き換えない。修正後JSONのbaseCssDarkParentは上流CSSだけの観測を保持し、上書き後の値はthemeChecksで確認する。
+
+取り込み時は上流commit・patch・上書きCSS・利用許諾をセットで追跡する。これらはTASK-001-02の評価物で、Notebook内フォームの配置や正式なvendor方式を決めるものではない。
+
+## VS Codeでの評価用Webview
+
+[実機手順F1〜F6](../manual/TASK-001-02-nodeform.md) を追加した。検証拡張0.0.1、拡張IDは `zizai-lab.task-001-02-nodeform-probe`。F5の **TASK-001-02: NodeForm Reuse (PROTOTYPE)** で起動する。これは部品のIDE適合を確認するための一時的なタブであり、製品のフォーム配置を採用したものではない。
+
+`prepare-webview.mjs` は固定commitの3ファイルを取得またはローカルから読み、Git blob hashを照合する。dist/upstream/へ元ファイルをキャッシュし、外部一時コピーでpatchを適用してからdist/webview/を生成する。生成したmanifestにRendererや提案APIは含めず、上流LICENSEと本プロジェクト向けの許諾記録を保持する。生成物へ直接patchしない。
+
+```sh
+node tests/nodeform-reuse/prepare-webview.mjs ../zizai-form-check
+node tests/nodeform-reuse/webview-host.test.cjs
+```
+
+クラウドではローカル固定commitからの生成と、キャッシュ再利用による引数なし生成を確認済み。初回の直接ダウンロード・F5での実起動はデスクトップ未実施。Nodeの子プロセス起動に制限があるsandboxでは生成に権限付き実行が必要だった。
+
+`webview-host.test.cjs` はVS Code APIアダプターで、キャンセル・不正要求・閉じたパネルへの遅延結果・並行要求・環境情報・CSP宣言を検査する4件。最初は並行要求のケースが失敗し、保留せずキャンセル結果を返す修正後に4件合格。実際のCSP適用・OSダイアログ・Webview描画はこのテストの対象外。
+
+仮のDOM／Hostメッセージはこの検証拡張内だけのもの。選択パスはフォームへ返すだけで内容を読まず、PythonやNotebookを操作しない。OutputChannelは作らない。実機結果が返るまでは、TaskのIDE適合は未実施のまま保持する。

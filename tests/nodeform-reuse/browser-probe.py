@@ -1,6 +1,6 @@
-"""TASK-001-02 evaluation only. Runs unchanged upstream in Chromium, not VS Code.
+"""TASK-001-02 evaluation only. Runs pinned upstream or a prototype patch in Chromium, not VS Code.
 
-Usage: python browser-probe.py /path/to/pinned/zizai-form [--chromium PATH]
+Usage: python browser-probe.py /path/to/pinned/zizai-form [--chromium PATH] [--patched] [--theme-checks] [--theme-override CSS]
 No Python kernel, real OS dialog, connector, or product integration is exercised.
 """
 import argparse
@@ -8,6 +8,8 @@ import hashlib
 import json
 import platform
 import shutil
+import subprocess
+import tempfile
 from pathlib import Path
 from playwright.sync_api import sync_playwright
 
@@ -15,6 +17,9 @@ parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument("upstream", type=Path)
 parser.add_argument("--chromium", default=shutil.which("chromium"))
 parser.add_argument("--report", type=Path)
+parser.add_argument("--theme-checks", action="store_true")
+parser.add_argument("--theme-override", type=Path)
+parser.add_argument("--patched", action="store_true", help="Apply the evaluation-only combo patch to a temporary copy")
 args = parser.parse_args()
 EXPECTED = {
     "src/node-form.js": "e1c24cadbd01b2cad228f58a6504a7d82335c514",
@@ -27,6 +32,18 @@ for name, expected in EXPECTED.items():
     actual = hashlib.sha1(b"blob " + str(len(data)).encode() + b"\0" + data).hexdigest()
     if actual != expected:
         raise SystemExit(f"Pinned upstream blob mismatch: {name}")
+patch_sha256 = None
+if args.patched:
+    patch = Path(__file__).resolve().parent / "patches/0001-combo-listener.patch"
+    patch_sha256 = hashlib.sha256(patch.read_bytes()).hexdigest()
+    patch_temp = tempfile.TemporaryDirectory(prefix="nodeform-patched-")
+    shutil.copytree(args.upstream, patch_temp.name, dirs_exist_ok=True,
+                    ignore=shutil.ignore_patterns(".git", "node_modules"))
+    subprocess.run(["git", "apply", "--check", str(patch)], cwd=patch_temp.name, check=True)
+    subprocess.run(["git", "apply", str(patch)], cwd=patch_temp.name, check=True)
+    args.upstream = Path(patch_temp.name)
+upstream_test = subprocess.run(["node", str(args.upstream.resolve() / "test/node-form.test.js")],
+                               capture_output=True, text=True)
 with sync_playwright() as pw:
     browser = pw.chromium.launch(executable_path=args.chromium, headless=True, args=["--no-sandbox"])
     page = browser.new_page()
@@ -153,15 +170,81 @@ with sync_playwright() as pw:
     style_page.set_content('<body style="color:rgb(238,238,238);background:rgb(30,30,30)"><div class="node-form"><input class="node-form__input"></div></body>')
     style_page.add_style_tag(path=str(args.upstream / "src/node-form.css"))
     colors = style_page.locator("input").evaluate("el => ({ foreground: getComputedStyle(el).color, background: getComputedStyle(el).backgroundColor })")
+    theme_results = []
+    if args.theme_checks:
+        fixtures = {
+            "light": {"input": "rgb(255, 255, 255)", "foreground": "rgb(32, 32, 32)",
+                      "button": "rgb(0, 122, 204)", "buttonText": "rgb(255, 255, 255)",
+                      "menu": "rgb(255, 255, 255)", "border": "rgb(136, 136, 136)",
+                      "focus": "rgb(0, 144, 241)", "error": "rgb(161, 38, 13)"},
+            "dark": {"input": "rgb(60, 60, 60)", "foreground": "rgb(238, 238, 238)",
+                     "button": "rgb(14, 99, 156)", "buttonText": "rgb(255, 255, 255)",
+                     "menu": "rgb(45, 45, 45)", "border": "rgb(136, 136, 136)",
+                     "focus": "rgb(0, 144, 241)", "error": "rgb(244, 135, 113)"},
+            "high-contrast": {"input": "rgb(0, 0, 0)", "foreground": "rgb(255, 255, 255)",
+                              "button": "rgb(0, 0, 0)", "buttonText": "rgb(255, 255, 255)",
+                              "menu": "rgb(0, 0, 0)", "border": "rgb(255, 255, 0)",
+                              "focus": "rgb(0, 255, 255)", "error": "rgb(255, 128, 128)"},
+        }
+        for name, theme in fixtures.items():
+            target = browser.new_page()
+            target.set_content('<body><input id="outside" style="background:rgb(7,8,9)"><div class="node-form">'
+                               '<input class="node-form__input"><textarea class="node-form__textarea"></textarea>'
+                               '<select class="node-form__select"><option>test</option></select>'
+                               '<button class="node-form__browse-button">test</button>'
+                               '<div class="node-form__combo-menu">test</div>'
+                               '<div class="node-form__error">test</div></div></body>')
+            variables = {
+                "input-background": theme["input"], "input-foreground": theme["foreground"],
+                "input-border": theme["border"], "button-background": theme["button"],
+                "button-foreground": theme["buttonText"], "dropdown-background": theme["menu"],
+                "dropdown-foreground": theme["foreground"], "dropdown-border": theme["border"],
+                "focusBorder": theme["focus"], "errorForeground": theme["error"],
+            }
+            if name == "high-contrast":
+                variables["contrastBorder"] = theme["border"]
+            target.evaluate("vars => { for (const [key, value] of Object.entries(vars)) document.documentElement.style.setProperty('--vscode-' + key, value); }", variables)
+            target.add_style_tag(path=str(args.upstream / "src/node-form.css"))
+            if args.theme_override:
+                target.add_style_tag(path=str(args.theme_override))
+            target.locator(".node-form__input").focus()
+            actual = target.evaluate("""() => {
+                const css = cls => getComputedStyle(document.querySelector(cls));
+                return { input: css('.node-form__input').backgroundColor,
+                    inputText: css('.node-form__input').color,
+                    textarea: css('.node-form__textarea').backgroundColor,
+                    select: css('.node-form__select').backgroundColor,
+                    button: css('.node-form__browse-button').backgroundColor,
+                    buttonText: css('.node-form__browse-button').color,
+                    menu: css('.node-form__combo-menu').backgroundColor,
+                    border: css('.node-form__input').borderTopColor,
+                    focus: css('.node-form__input').outlineColor,
+                    error: css('.node-form__error').color,
+                    outside: css('#outside').backgroundColor };
+            }""")
+            expected = {"input": theme["input"], "inputText": theme["foreground"],
+                        "textarea": theme["input"], "select": theme["input"],
+                        "button": theme["button"], "buttonText": theme["buttonText"],
+                        "menu": theme["menu"], "border": theme["border"], "focus": theme["focus"],
+                        "error": theme["error"], "outside": "rgb(7, 8, 9)"}
+            mismatches = {key: {"expected": value, "actual": actual[key]}
+                          for key, value in expected.items() if actual[key] != value}
+            theme_results.append({"name": name, "status": "fail" if mismatches else "pass",
+                                  "actual": actual, "mismatches": mismatches})
+            target.close()
     report = {"upstreamCommit": "f08bfc73350d04e9238b43fa4dbcfdb81fa5150e",
               "python": platform.python_version(), "surface": "standalone upstream sample, not Notebook or Webview", "browser": browser.version,
               "sampleLoaded": sample_loaded, "resourceLoading": "injected local source in blank page", "pageErrors": errors, "checks": results,
-              "baseCssDarkParent": colors, "upstreamModified": False}
+              "baseCssDarkParent": colors, "variant": "patched-prototype" if args.patched else "upstream",
+              "patchSha256": patch_sha256, "sourceCheckoutModified": False,
+              "themeChecks": theme_results,
+              "themeOverrideSha256": hashlib.sha256(args.theme_override.read_bytes()).hexdigest() if args.theme_override else None,
+              "upstreamTest": {"exitCode": upstream_test.returncode, "stdout": upstream_test.stdout.strip(), "stderr": upstream_test.stderr.strip()}}
     output = json.dumps(report, ensure_ascii=False, indent=2)
     if args.report:
         args.report.parent.mkdir(parents=True, exist_ok=True)
         args.report.write_text(output + "\n", encoding="utf-8")
     print(output)
     browser.close()
-    if errors or any(item["status"] == "fail" for item in results):
+    if upstream_test.returncode or errors or any(item["status"] == "fail" for item in results + theme_results):
         raise SystemExit(1)
