@@ -1,0 +1,42 @@
+# Dependencies and generated build files
+node_modules/
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+dist/
+build/
+*.egg-info/
+*.vsix
+
+# Test and tool output
+coverage/
+.coverage
+htmlcov/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.uv-cache/
+.ipynb_checkpoints/
+
+# Local environment files; only sanitized examples may be shared
+.env
+.env.*
+!.env.example
+config/*
+!config/README.md
+!config/*.example.json
+!config/*.example.yaml
+!config/*.example.yml
+!config/.gitkeep
+
+# Runtime data
+results/*
+!results/.gitkeep
+logs/*
+!logs/.gitkeep
+
+# Operating system metadata
+.DS_Store
+Thumbs.db
+desktop.ini

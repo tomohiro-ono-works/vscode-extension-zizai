@@ -1,8 +1,9 @@
 # ZizAI Agent Router
 
-- Rules updated: 2026-10-05
+- Rules updated: 2026-10-19
 
 - Start with [docs/README.md](docs/README.md), then read the assigned file under `docs/tasks/active/`.
+- Before creating or splitting a Task, read [Task/Subtask authoring rules](docs/tasks/task-rules.md) and use the linked templates.
 - Read the Task's `References` before opening unrelated documentation. Load only the sections needed for the current decision.
 - Current Specifications are under `docs/features/`; repository architecture is defined in `docs/features/architecture.md`.
 - Implementation and verification rules are defined in `docs/features/coding-rules.md`; cleanup and responsibility changes use `docs/features/refactor-policy.md`.
