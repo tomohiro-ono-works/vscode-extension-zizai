@@ -1,0 +1,90 @@
+{
+  "checkedAt": "2026-10-21T12:10:14.206468+00:00",
+  "sourceProjectCommit": "5afd8a15aa98e91731b3e2c6cd21e3e67674ee98",
+  "branch": "research/task-005-01-boundaries",
+  "method": "Versioned official documentation, dependency manifest, and separate ordinary-Python subprocess probe",
+  "sources": [
+    {
+      "repository": "python/cpython",
+      "ref": "v3.12.13",
+      "path": "Doc/library/sys_path_init.rst",
+      "url": "https://raw.githubusercontent.com/python/cpython/v3.12.13/Doc/library/sys_path_init.rst",
+      "sha256": "bd4f5ca8c5d8a244f8585fb5114c6276fe29f76f4108c06373a77e49e63c57fc",
+      "bytes": 5455
+    },
+    {
+      "repository": "python/cpython",
+      "ref": "v3.12.13",
+      "path": "Doc/reference/import.rst",
+      "url": "https://raw.githubusercontent.com/python/cpython/v3.12.13/Doc/reference/import.rst",
+      "sha256": "254308eb33b5c2b13622126a29ac90d2a65f4b9565e99f9e4bd4e22b0e397cad",
+      "bytes": 43097
+    },
+    {
+      "repository": "python/cpython",
+      "ref": "v3.12.13",
+      "path": "Doc/using/cmdline.rst",
+      "url": "https://raw.githubusercontent.com/python/cpython/v3.12.13/Doc/using/cmdline.rst",
+      "sha256": "d13736a61946be39fa8f7bab1c1a6206815912890b3a5ab017ca8971c192e8fa",
+      "bytes": 38553
+    },
+    {
+      "repository": "python/cpython",
+      "ref": "v3.12.13",
+      "path": "Doc/installing/index.rst",
+      "url": "https://raw.githubusercontent.com/python/cpython/v3.12.13/Doc/installing/index.rst",
+      "sha256": "3c1dfb2b8168f126bf68f5b3cad7c30202da0f36c3199f0cda4f5907209e3006",
+      "bytes": 9414
+    },
+    {
+      "repository": "ipython/ipykernel",
+      "ref": "v6.30.1",
+      "path": "pyproject.toml",
+      "url": "https://raw.githubusercontent.com/ipython/ipykernel/v6.30.1/pyproject.toml",
+      "sha256": "3914933d804d2cf1047ec9d60d37bc651ea4789282fc78c0d3a90d301cb9f35b",
+      "bytes": 8760
+    },
+    {
+      "repository": "jupyter/jupyter_client",
+      "ref": "v8.6.3",
+      "path": "docs/kernels.rst",
+      "url": "https://raw.githubusercontent.com/jupyter/jupyter_client/v8.6.3/docs/kernels.rst",
+      "sha256": "4b93c7249c2fea1f525e92c677bf77bf9ad65ea4eb20b1db10f7119a5855b5fc",
+      "bytes": 9356
+    }
+  ],
+  "ipykernelCandidate": {
+    "ref": "v6.30.1",
+    "requiresPython": ">=3.9",
+    "dependencies": [
+      "debugpy>=1.6.5",
+      "ipython>=7.23.1",
+      "comm>=0.1.1",
+      "traitlets>=5.4.0",
+      "jupyter_client>=8.0.0",
+      "jupyter_core>=4.12,!=5.0.*",
+      "nest_asyncio>=1.4",
+      "tornado>=6.2",
+      "matplotlib-inline>=0.1",
+      "appnope>=0.1.2;platform_system==\"Darwin\"",
+      "pyzmq>=25",
+      "psutil>=5.7",
+      "packaging>=22"
+    ],
+    "installed": false,
+    "runtimeCompatibilityVerified": false
+  },
+  "probeSha256": "d34bccb860e1174512555a8420a5ff68b16cc99145a6cd3f6264cadc96c349f7",
+  "kernelComparisonCases": {
+    "K1": "not run",
+    "K2": "not run",
+    "K3": "not run",
+    "K4": "not run",
+    "K5": "not run",
+    "K6": "not run"
+  },
+  "adoptedPackageName": null,
+  "adoptedImportMethod": null,
+  "kernelOrEnvironmentConfigChanged": false,
+  "productOrConnectorImplemented": false
+}

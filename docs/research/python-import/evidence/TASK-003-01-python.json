@@ -1,0 +1,168 @@
+{
+  "checkedAt": "2026-10-21T12:08:58.683806+00:00",
+  "scope": "Temporary fixture imports in ordinary Python subprocesses only",
+  "prototype": true,
+  "vscodeRun": false,
+  "jupyterKernelRun": false,
+  "python": "3.12.14",
+  "platform": "Linux",
+  "pythonTargetAssumption": "3.12.13 (not tested)",
+  "probeSha256": "d34bccb860e1174512555a8420a5ff68b16cc99145a6cd3f6264cadc96c349f7",
+  "jupyterClientAvailable": false,
+  "ipykernelAvailable": false,
+  "persistentEnvironmentModified": false,
+  "packagesInstalled": false,
+  "fixtures": {
+    "root_a": {
+      "zizai_import_probe_00301/__init__.py": "origin = 'source-a'\n",
+      "zizai_import_probe_00301/dependency.py": "import zizai_missing_dependency_00301\n",
+      "zizai_import_probe_00301/operation.py": "def fail():\n    raise ValueError('prototype failure')\n"
+    },
+    "root_b": {
+      "zizai_import_probe_00301/__init__.py": "origin = 'source-b'\n"
+    }
+  },
+  "cases": [
+    {
+      "id": "I1",
+      "case": "no search path",
+      "codeTemplate": "import zizai_import_probe_00301",
+      "startupPythonPathRoot": null,
+      "expected": {
+        "exitCode": 1,
+        "errorType": "ModuleNotFoundError",
+        "text": "zizai_import_probe_00301"
+      },
+      "observed": {
+        "exitCode": 1,
+        "stdout": "",
+        "error": "ModuleNotFoundError: No module named 'zizai_import_probe_00301'"
+      },
+      "passed": true
+    },
+    {
+      "id": "I2",
+      "case": "absolute sys.path from another cwd",
+      "codeTemplate": "import sys; sys.path.insert(0, {root_a!r}); import zizai_import_probe_00301 as p; print(p.origin)",
+      "startupPythonPathRoot": null,
+      "expected": {
+        "exitCode": 0,
+        "errorType": null,
+        "text": "source-a\n"
+      },
+      "observed": {
+        "exitCode": 0,
+        "stdout": "source-a\n",
+        "error": null
+      },
+      "passed": true
+    },
+    {
+      "id": "I3",
+      "case": "PYTHONPATH before process start",
+      "codeTemplate": "import zizai_import_probe_00301 as p; print(p.origin)",
+      "startupPythonPathRoot": "root_a",
+      "expected": {
+        "exitCode": 0,
+        "errorType": null,
+        "text": "source-a\n"
+      },
+      "observed": {
+        "exitCode": 0,
+        "stdout": "source-a\n",
+        "error": null
+      },
+      "passed": true
+    },
+    {
+      "id": "I4",
+      "case": "PYTHONPATH changed after process start",
+      "codeTemplate": "import os; os.environ['PYTHONPATH'] = {root_a!r}; import zizai_import_probe_00301",
+      "startupPythonPathRoot": null,
+      "expected": {
+        "exitCode": 1,
+        "errorType": "ModuleNotFoundError",
+        "text": "zizai_import_probe_00301"
+      },
+      "observed": {
+        "exitCode": 1,
+        "stdout": "",
+        "error": "ModuleNotFoundError: No module named 'zizai_import_probe_00301'"
+      },
+      "passed": true
+    },
+    {
+      "id": "I5",
+      "case": "cached module survives search path change",
+      "codeTemplate": "import sys; sys.path.insert(0, {root_a!r}); import zizai_import_probe_00301 as p; sys.path.insert(0, {root_b!r}); import zizai_import_probe_00301 as q; print(q.origin); print(p is q)",
+      "startupPythonPathRoot": null,
+      "expected": {
+        "exitCode": 0,
+        "errorType": null,
+        "text": "source-a\nTrue\n"
+      },
+      "observed": {
+        "exitCode": 0,
+        "stdout": "source-a\nTrue\n",
+        "error": null
+      },
+      "passed": true
+    },
+    {
+      "id": "I6",
+      "case": "fresh process loads the other root",
+      "codeTemplate": "import zizai_import_probe_00301 as p; print(p.origin)",
+      "startupPythonPathRoot": "root_b",
+      "expected": {
+        "exitCode": 0,
+        "errorType": null,
+        "text": "source-b\n"
+      },
+      "observed": {
+        "exitCode": 0,
+        "stdout": "source-b\n",
+        "error": null
+      },
+      "passed": true
+    },
+    {
+      "id": "I7",
+      "case": "dependency missing",
+      "codeTemplate": "import sys; sys.path.insert(0, {root_a!r}); import zizai_import_probe_00301.dependency",
+      "startupPythonPathRoot": null,
+      "expected": {
+        "exitCode": 1,
+        "errorType": "ModuleNotFoundError",
+        "text": "zizai_missing_dependency_00301"
+      },
+      "observed": {
+        "exitCode": 1,
+        "stdout": "",
+        "error": "ModuleNotFoundError: No module named 'zizai_missing_dependency_00301'"
+      },
+      "passed": true
+    },
+    {
+      "id": "I8",
+      "case": "operation raises ordinary Python error",
+      "codeTemplate": "import sys; sys.path.insert(0, {root_a!r}); from zizai_import_probe_00301.operation import fail; fail()",
+      "startupPythonPathRoot": null,
+      "expected": {
+        "exitCode": 1,
+        "errorType": "ValueError",
+        "text": "prototype failure"
+      },
+      "observed": {
+        "exitCode": 1,
+        "stdout": "",
+        "error": "ValueError: prototype failure"
+      },
+      "passed": true
+    }
+  ],
+  "limitations": [
+    "Windows and Jupyter not run",
+    "No real library, dependency installation or ZIP tested",
+    "No formal package name or import method adopted"
+  ]
+}
