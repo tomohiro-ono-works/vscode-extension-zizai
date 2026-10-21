@@ -11,6 +11,8 @@
 
 初回のGitHub取得が難しい場合は、[上流の取得手順](../nodeform-reuse/README.md#再現) で固定commitを取得し、ルートで `node tests/nodeform-reuse/prepare-webview.mjs ../zizai-form-check` を実行する。その後F5を押すとキャッシュから準備する。上流の改変版や改行変換されたファイルはhash不一致で停止するため、cloneはcore.autocrlf=falseで行う。
 
+初回取得・生成とキャッシュ再利用は[クラウドで確認済み](../nodeform-reuse/README.md#キャッシュなしの初回セットアップ確認)。このクラウドではNode 24の環境プロキシ利用が必要だった。WindowsのF5起動・ネットワーク条件を確認した結果ではなく、共通の起動設定にはこのオプションを追加していない。
+
 ## 確認する操作
 
 実データを入力せず、ファイルは検証用の空ファイルやフォルダーを使う。選択した内容の読み取り・Python実行・Notebook変更は行わない。

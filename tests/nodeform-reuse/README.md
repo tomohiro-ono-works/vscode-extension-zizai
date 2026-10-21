@@ -75,7 +75,36 @@ node tests/nodeform-reuse/prepare-webview.mjs ../zizai-form-check
 node tests/nodeform-reuse/webview-host.test.cjs
 ```
 
-クラウドではローカル固定commitからの生成と、キャッシュ再利用による引数なし生成を確認済み。初回の直接ダウンロード・F5での実起動はデスクトップ未実施。Nodeの子プロセス起動に制限があるsandboxでは生成に権限付き実行が必要だった。
+クラウドではローカル固定commitからの生成、キャッシュなしの初回取得、キャッシュ再利用、破損キャッシュの拒否を確認済み。F5での実起動とWindowsでの初回取得は未実施。Nodeの子プロセス起動に制限があるsandboxでは生成に権限付き実行が必要だった。
+
+### キャッシュなしの初回セットアップ確認
+
+2026-10-21、開始版 `563403c` の検証ソースと許諾文書を、同じ相対配置の一時領域へコピーした。dist/をコピーせず、既存の作業環境のキャッシュ・生成物を変更せずに確認した。[実行結果とファイルhash](../../docs/research/notebook-ui/evidence/TASK-001-02-setup.json) を参照。
+
+| ケース | 実際の結果 |
+| --- | --- |
+| P0：空キャッシュで引数なし実行 | クラウドでは `fetch failed`／`EAI_AGAIN raw.githubusercontent.com`、終了1。継承したプロキシを使わないNodeの取得経路で失敗 |
+| P1：Nodeの環境プロキシ利用を有効化して初回実行 | 終了0。JS／CSS／LICENSEの3ファイルが固定blob hashと一致。patch、テーマCSS、許諾、manifestを含む生成9ファイルを検査 |
+| P2：P1のキャッシュを使い、fetchを明示的に拒否して再生成 | 終了0、fetch呼出0回。生成9ファイルのhashはP1と一致 |
+| P3：一時コピーのキャッシュJS末尾へコメントを追加して実行 | 期待通り終了1、`pinned upstream blob mismatch`。fetch呼出0回、既存生成物は変更されない。検査後に一時キャッシュを元へ戻した |
+
+初回取得の再現は、dist/が存在しない検証用コピーのルートで次を実行する。JS／CSS／LICENSEを固定commitから取得するので、ネットワーク上で `raw.githubusercontent.com` に到達できる必要がある。
+
+```sh
+node tests/nodeform-reuse/prepare-webview.mjs
+```
+
+このクラウドのNode 24.19.0では、上記は直接接続のDNS解決で失敗し、既存のプロキシ・CA設定を保持した次の実行で成功した。
+
+```sh
+node --use-env-proxy tests/nodeform-reuse/prepare-webview.mjs
+```
+
+`--use-env-proxy` は今回のNode 24で確認した環境条件。Node 20を含む全対応版で使えるオプションとは扱わず、共通のF5設定へ追加しない。Windowsでこのオプションが必要とは判断していない。プロキシ経由で取得できない環境では、上記の固定commitのローカル取得元を指定する手順を使う。
+
+P2／P3では、報告JSONの `fetchGuardSource` を `deny-fetch.mjs` として検証用コピーのルートに置き、`node --import ./deny-fetch.mjs tests/nodeform-reuse/prepare-webview.mjs` で実行した。P3は一時キャッシュだけを変更する。通常の準備コマンドでは改変キャッシュを自動的に上書きしないので、意図しない版を使って検証を続行することはない。
+
+### Hostテストの境界
 
 `webview-host.test.cjs` はVS Code APIアダプターで、キャンセル・不正要求・閉じたパネルへの遅延結果・並行要求・環境情報・CSP宣言を検査する4件。最初は並行要求のケースが失敗し、保留せずキャンセル結果を返す修正後に4件合格。実際のCSP適用・OSダイアログ・Webview描画はこのテストの対象外。
 
