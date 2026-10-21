@@ -1,0 +1,263 @@
+{
+  "checkedAt": "2026-10-21T11:46:12.426809+00:00",
+  "sourceProjectCommit": "c53c60ac9964461023766eeb58b521256b2303ee",
+  "branch": "research/task-005-01-boundaries",
+  "method": "Pinned source and public declaration inspection; local hash and cited-structure checks only",
+  "ideStarted": false,
+  "kernelStarted": false,
+  "behaviorTestsRun": false,
+  "kiro": "out of scope by user instruction",
+  "sources": [
+    {
+      "repository": "microsoft/vscode",
+      "commit": "d956e8a6ac5d904486557eea07e1d6bd62a4d36f",
+      "rawBaseUrl": "https://raw.githubusercontent.com/microsoft/vscode/d956e8a6ac5d904486557eea07e1d6bd62a4d36f/",
+      "files": [
+        {
+          "path": "extensions/ipynb/src/deserializers.ts",
+          "sha256": "2f2a809e88e3d09d12a9abffc94c397edeed30eace7ad20d8f16a385830d716e",
+          "bytes": 13019
+        },
+        {
+          "path": "extensions/ipynb/src/ipynbMain.ts",
+          "sha256": "c216f5ee019937bf827190b55cf1ab475a1137ee75c42185fd3114cd0fa3674e",
+          "bytes": 4859
+        },
+        {
+          "path": "extensions/ipynb/src/notebookSerializer.ts",
+          "sha256": "e4b65ca3f818742cd319ccb2d599cafa821f2823c5a2cd83c89b592b55306563",
+          "bytes": 3280
+        },
+        {
+          "path": "extensions/ipynb/src/serializers.ts",
+          "sha256": "dca3f56482466956bb62a25d6181cb117d814a573b590e5e717eecf58e8c7e4a",
+          "bytes": 17510
+        },
+        {
+          "path": "package.json",
+          "sha256": "1a1cda954fa040dc53b925c98fc06b49fc0c95a5b6846e6b92c66b3dc29485e4",
+          "bytes": 15723
+        },
+        {
+          "path": "src/vs/workbench/api/common/extHostBulkEdits.ts",
+          "sha256": "9be46865d7bc69bc270189f22b3732c5a8ce1156032ec0705af40e29f78384d9",
+          "bytes": 1787
+        },
+        {
+          "path": "src/vs/workbench/api/common/extHostNotebookDocument.ts",
+          "sha256": "cd8516ada88c2770aafeb25e1850319222af85147037653e809866dc5087a703",
+          "bytes": 16123
+        },
+        {
+          "path": "src/vs/workbench/api/common/extHostNotebookDocuments.ts",
+          "sha256": "b69887e73bc551f22cc314ca22d1a259d12961876737b50c1ba903a6b5b3e549",
+          "bytes": 2156
+        },
+        {
+          "path": "src/vs/workbench/api/common/extHostNotebookKernels.ts",
+          "sha256": "6adabe774ecb5f4812d8b0db1d37a1e30c33e03742d6739565e673e4d90d4ac3",
+          "bytes": 32088
+        },
+        {
+          "path": "src/vs/workbench/api/common/extHostTypeConverters.ts",
+          "sha256": "d61eb0ecb7dd822fec63da45e49be1e0510985753adc83c8a35d7cf100b9f396",
+          "bytes": 155704
+        },
+        {
+          "path": "src/vs/workbench/api/common/extHostTypes.ts",
+          "sha256": "a51fb1e45692b54262964a042e7225b377f07f9a6062adc7f2e925a4da614117",
+          "bytes": 110607
+        },
+        {
+          "path": "src/vs/workbench/api/common/extHostTypes/notebooks.ts",
+          "sha256": "c4a90d7c04bf4fa283217155674a54d57634962fb255b127908db56af5ce7dfa",
+          "bytes": 8500
+        },
+        {
+          "path": "src/vs/workbench/api/common/extHostTypes/workspaceEdit.ts",
+          "sha256": "325fc4e16df3c524a33049ee55657ff4f124ca6fee74e3c0daec5a3eb993e8be",
+          "bytes": 8327
+        },
+        {
+          "path": "src/vs/workbench/contrib/bulkEdit/browser/bulkCellEdits.ts",
+          "sha256": "ea7b56c2cb556595c2ba131c6e70e51beb73cb08c7e0f2cb5153e3fea70dc9e0",
+          "bytes": 4579
+        },
+        {
+          "path": "src/vs/workbench/contrib/bulkEdit/browser/bulkEditService.ts",
+          "sha256": "0b48ad5c421c459c9c19bf92b8b5b5b600f16066d7f02bcd1d4c4f1a72106e4e",
+          "bytes": 14472
+        },
+        {
+          "path": "src/vs/workbench/contrib/notebook/browser/contrib/clipboard/notebookClipboard.ts",
+          "sha256": "18d19010209f649682525df1605459046d559eebc83a27ba96b54f07c2cec9b2",
+          "bytes": 22011
+        },
+        {
+          "path": "src/vs/workbench/contrib/notebook/browser/controller/cellOperations.ts",
+          "sha256": "ceb8ea87bfc0279d43b5800c7a55fe8fb58d59befeeac8c20b3444d8eb6923cd",
+          "bytes": 24790
+        },
+        {
+          "path": "src/vs/workbench/contrib/notebook/browser/controller/editActions.ts",
+          "sha256": "e5243d3140fec9467313322dc975a16ebabaa8599422ec308811189c4fe79e26",
+          "bytes": 28131
+        },
+        {
+          "path": "src/vs/workbench/contrib/notebook/browser/services/notebookExecutionStateServiceImpl.ts",
+          "sha256": "fe8820e8cd967469ecbc2ed37b8f199f3ce635d77a316e186748d70bad59bf10",
+          "bytes": 22538
+        },
+        {
+          "path": "src/vs/workbench/contrib/notebook/common/model/notebookCellTextModel.ts",
+          "sha256": "81784420dea879b8a2c852a1f058a53a67d69ed753d422d4eae36e56ef068e12",
+          "bytes": 20535
+        },
+        {
+          "path": "src/vs/workbench/contrib/notebook/common/model/notebookTextModel.ts",
+          "sha256": "c75173576ec28d556be502835ba16d37ca8500a450ebd9c8d03ace98354739cf",
+          "bytes": 51210
+        },
+        {
+          "path": "src/vs/workbench/contrib/notebook/common/notebookCommon.ts",
+          "sha256": "9ea38751a2b42e025c1759b4c0a2b0db14b946f61424e699fa552535534a361e",
+          "bytes": 38074
+        },
+        {
+          "path": "src/vscode-dts/vscode.d.ts",
+          "sha256": "1fc60f012cdde89eceaf26cfe4401e9d0862d9d38062115224fee1564e6ee774",
+          "bytes": 742500
+        },
+        {
+          "path": "src/vscode-dts/vscode.proposed.notebookCellExecution.d.ts",
+          "sha256": "98ca840049e6e6f7c767d4d0b08e164fe7adec0fe0633d10dd44fa371abdffec",
+          "bytes": 2076
+        },
+        {
+          "path": "src/vscode-dts/vscode.proposed.notebookDeprecated.d.ts",
+          "sha256": "a4d2d20d562500582816945c213d90b00d0765aba73eb125d7a334c69992c54f",
+          "bytes": 522
+        },
+        {
+          "path": "src/vscode-dts/vscode.proposed.notebookExecution.d.ts",
+          "sha256": "64b09ba61179ce7d9ecbf170e4eabb1e8cf7ca722d5491c7223ea287911d54b7",
+          "bytes": 1549
+        }
+      ],
+      "packageVersion": "1.142.0"
+    },
+    {
+      "repository": "microsoft/vscode-jupyter",
+      "commit": "fc61dfe2fd70a3d62d3ce0fef580757e7d64b81c",
+      "rawBaseUrl": "https://raw.githubusercontent.com/microsoft/vscode-jupyter/fc61dfe2fd70a3d62d3ce0fef580757e7d64b81c/",
+      "files": [
+        {
+          "path": "package.json",
+          "sha256": "98dc37bda3a321c1117f2259bd5ac6dbd863e9a1756ae4f684da3bf794f44bb0",
+          "bytes": 113738
+        },
+        {
+          "path": "src/kernels/execution/cellExecution.ts",
+          "sha256": "26ef89736748d1ab634a74da1e9a4be8da1974f1956cfe6d456103b352918100",
+          "bytes": 22712
+        }
+      ],
+      "packageVersion": "2025.9.1"
+    }
+  ],
+  "observations": [
+    {
+      "id": "A01",
+      "statement": "Cell index is mutable and the standard cell interface does not define a persistent cell ID",
+      "references": [
+        "S1",
+        "S2",
+        "S3"
+      ]
+    },
+    {
+      "id": "A02",
+      "statement": "Move notifications contain remove/add changes for the same runtime cell objects",
+      "references": [
+        "S2"
+      ]
+    },
+    {
+      "id": "A03",
+      "statement": "Inspected duplicate and clipboard paths use cloneNotebookCellTextModel with empty metadata",
+      "references": [
+        "S4",
+        "S5",
+        "S6"
+      ]
+    },
+    {
+      "id": "A04",
+      "statement": "NotebookEdit cell metadata update becomes a full metadata replacement",
+      "references": [
+        "S1",
+        "S7",
+        "S10"
+      ]
+    },
+    {
+      "id": "A05",
+      "statement": "Extension-host applyEdit supplies text version but no notebook version; mixed-edit atomicity is not established",
+      "references": [
+        "S1",
+        "S8",
+        "S9",
+        "S13"
+      ]
+    },
+    {
+      "id": "A06",
+      "statement": "ipynb cell metadata is nested under API metadata.metadata; persisted changes participate in dirty/undo according to model and serializer",
+      "references": [
+        "S10",
+        "S11",
+        "S12"
+      ]
+    },
+    {
+      "id": "A07",
+      "statement": "Standard execution summary has optional success, order and timing; no executed source, settings version or execution ID",
+      "references": [
+        "S1",
+        "S13"
+      ]
+    },
+    {
+      "id": "A08",
+      "statement": "Internal execution ID and state exist but are not part of the public summary; inspected proposals concern controller-owned execution",
+      "references": [
+        "S14",
+        "S15"
+      ]
+    },
+    {
+      "id": "A09",
+      "statement": "ipynb reopen reconstructs execution order without proving last-run success or source/settings correspondence",
+      "references": [
+        "S11",
+        "S12"
+      ]
+    },
+    {
+      "id": "A10",
+      "statement": "Jupyter captures source or an override before requestExecute; success/failure/cancelled or empty execution can end differently",
+      "references": [
+        "S16"
+      ]
+    }
+  ],
+  "desktopCases": {
+    "D1": "not run",
+    "D2": "not run",
+    "D3": "not run",
+    "D4": "not run",
+    "D5": "not run",
+    "D6": "not run"
+  },
+  "conclusion": "Static research finished for this phase; TASK-002-01 remains in progress pending desktop evidence. No formal API or metadata schema adopted."
+}
