@@ -1,3 +1,41 @@
+# Taskの入口
+
+2026-10-22更新。作業範囲・進捗・判断・結果・残作業はGitHub Issuesを正本とします。既存のTask Markdownは移行元の記録で、今後の進捗更新先ではありません。
+
+[全Issue](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues?q=is%3Aissue) · [親Task](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues?q=is%3Aissue+label%3Atask) · [Task・Subtask運用ルール](task-rules.md)
+
+## 親Task
+
+状態はリンク先Issueで確認します。この索引には状態を二重記録しません。
+
+| Task ID | 作業 | Issue |
+| --- | --- | --- |
+| TASK-001 | Notebook UIの成立性と初回共通操作 | [#1](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/1) |
+| TASK-002 | Extension HostのNotebook管理 | [#2](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/2) |
+| TASK-003 | Jupyter内Python共通基盤 | [#3](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/3) |
+| TASK-004 | 初回7コネクタの個別処理 | [#4](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/4) |
+| TASK-005 | 層間共通契約の具体化と整合 | [#5](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/5) |
+| TASK-006 | 開発環境・全体検証・初回配布 | [#6](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/6) |
+| TASK-007 | VS Code試作の起動・終了時エラーの原因調査 | [#7](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/7) |
+
+## 完了履歴
+
+- [今回のアーキテクチャと責務分担の整理 / #48](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/48)
+- [プロジェクト向けのフォルダー・資料整理 / #47](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/47)
+- [設計資料を統合したプロジェクト README の作成 / #46](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/46)
+
+## 書式と資料の扱い
+
+- [親Task本文のひな形](../../template/task.md)と[作業Issue本文のひな形](../../template/subtask.md)をIssueへコピーして使います。Task実行記録のMarkdownは新規作成しません。
+- 設計・調査・決定記録、tests/manual/の実機手順、evidence/のJSON・JSONLとテストコードは保持し、Issueから参照します。TASKというファイル名だけで削除対象にしません。
+- 親子・開始条件・共同検討はIssue本文のリンクで管理します。GitHub標準のSub-issue／依存フィールドとProjectsは未設定です。
+- 固定コミットへの原文リンクは履歴参照です。現在の作業手順はこの入口と現行の運用ルールを確認します。
+
+<details>
+<summary>移行前の索引・進捗・作成履歴（参考記録）</summary>
+
+以下は移行時の記録です。旧active/done方式や過去の状態を現在の更新手順として使いません。
+
 # Task の管理
 
 - [Task・Subtask の作成ルール](task-rules.md)：領域・工程、粒度、ID・配置、記載項目、完了判定の基準。
@@ -16,15 +54,15 @@
 
 | ID | 名前 | 主担当領域 | 状態 |
 | --- | --- | --- | --- |
-| [TASK-001](active/TASK-001/TASK-001.md) | Notebook UIの成立性と初回共通操作 | Notebook UI | 進行中（01完了・02実機待ち） |
-| [TASK-002](active/TASK-002/TASK-002.md) | Extension HostのNotebook管理 | VS Code 拡張機能本体 | 進行中（01静的調査済み・実機未実施） |
-| [TASK-003](active/TASK-003/TASK-003.md) | Jupyter内Python共通基盤 | Python 共通基盤 | 進行中（01調査完了・カーネル未検証） |
-| [TASK-004](active/TASK-004/TASK-004.md) | 初回7コネクタの個別処理 | コネクタ | 進行中（01完了・02設計準備） |
-| [TASK-005](active/TASK-005/TASK-005.md) | 層間共通契約の具体化と整合 | 共通契約 | 進行中（01完了・03設計準備） |
-| [TASK-006](active/TASK-006/TASK-006.md) | 開発環境・全体検証・初回配布 | 開発運用・プロジェクト管理 | 進行中（01環境棚卸し・配布候補） |
-| [TASK-007](active/TASK-007/TASK-007.md) | VS Code試作の起動・終了時エラーの原因調査 | 開発運用・プロジェクト管理 | 未着手（既存成果引き継ぎ） |
+| [TASK-001](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/1) | Notebook UIの成立性と初回共通操作 | Notebook UI | 進行中（01完了・02実機待ち） |
+| [TASK-002](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/2) | Extension HostのNotebook管理 | VS Code 拡張機能本体 | 進行中（01静的調査済み・実機未実施） |
+| [TASK-003](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/3) | Jupyter内Python共通基盤 | Python 共通基盤 | 進行中（01調査完了・カーネル未検証） |
+| [TASK-004](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/4) | 初回7コネクタの個別処理 | コネクタ | 進行中（01完了・02設計準備） |
+| [TASK-005](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/5) | 層間共通契約の具体化と整合 | 共通契約 | 進行中（01完了・03設計準備） |
+| [TASK-006](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/6) | 開発環境・全体検証・初回配布 | 開発運用・プロジェクト管理 | 進行中（01環境棚卸し・配布候補） |
+| [TASK-007](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/7) | VS Code試作の起動・終了時エラーの原因調査 | 開発運用・プロジェクト管理 | 未着手（既存成果引き継ぎ） |
 
-TASK-001-01の[現在の調査・判定](../research/notebook-ui/TASK-001-01-statusbar.md) と [セル下部版の操作・診断手順](../../tests/manual/TASK-001-01-statusbar.md) を参照してください。旧右上版の証跡は履歴として保持し、新版の画面合格へ流用しません。HTMLフォーム常設や正式UI契約を確定した意味ではありません。起動・終了時のエラーは[TASK-007](active/TASK-007/TASK-007.md)で扱い、TASK-001-01の調査完了と区別します。
+TASK-001-01の[現在の調査・判定](../research/notebook-ui/TASK-001-01-statusbar.md) と [セル下部版の操作・診断手順](../../tests/manual/TASK-001-01-statusbar.md) を参照してください。旧右上版の証跡は履歴として保持し、新版の画面合格へ流用しません。HTMLフォーム常設や正式UI契約を確定した意味ではありません。起動・終了時のエラーは[TASK-007](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/7)で扱い、TASK-001-01の調査完了と区別します。
 
 [TASK-001-02の部品比較・採用条件](../research/notebook-ui/TASK-001-02.md) を追加しました。候補の取得元・commit・API・CSS・イベント・LICENSEと利用許諾を確認済み。上流テストは合格し、[ブラウザ単体評価](../../tests/nodeform-reuse/README.md)は修正後に単体6件・配色3条件が合格です。初回の不合格証跡は保持しています。[IDE実機手順F1〜F6](../../tests/manual/TASK-001-02-nodeform.md) を準備しました。IDEでの実行は未実施で、全面採用は確定していません。
 
@@ -83,8 +121,10 @@ TASK-001-01の[現在の調査・判定](../research/notebook-ui/TASK-001-01-sta
 
 ## 完了した作業記録
 
-- [フォルダー・資料整理](done/2026-10-19-project-structure.md)
-- [README の設計統合](done/2026-10-19-readme-integration.md)
-- [アーキテクチャと責務分担](done/2026-10-19-project-architecture.md)
+- [フォルダー・資料整理](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/47)
+- [README の設計統合](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/46)
+- [アーキテクチャと責務分担](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/48)
 
 `docs/research/` の資料に登場する元アプリの Task 番号や承認は、このプロジェクトの Task・承認記録ではありません。
+
+</details>
