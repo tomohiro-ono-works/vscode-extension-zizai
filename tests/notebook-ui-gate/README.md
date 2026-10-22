@@ -2,13 +2,13 @@
 
 本番コードではない。`apps/` へ取り込まず、正式なmetadata・通信契約・コネクタを定義しない。
 
-**現在の対象（2026-10-20）はセル右下の言語選択の隣。** [今回の手順](../manual/TASK-001-01-statusbar.md) を使い、F5で **TASK-001-01: Beside Cell Language (PROTOTYPE)** を起動する。Kiroは今回の対象外。新版の希望位置への表示・選択・初期化非表示は実機確認済み。起動時のOutputChannel関連エラーは再発しており、[TASK-007](../../docs/tasks/active/TASK-007/TASK-007.md)へ未解決のまま移管。TASK-001-01は選択UIの調査として完了。
+**現在の対象（2026-10-20）はセル右下の言語選択の隣。** [今回の手順](../manual/TASK-001-01-statusbar.md) を使い、F5で **TASK-001-01: Beside Cell Language (PROTOTYPE)** を起動する。Kiroは今回の対象外。新版の希望位置への表示・選択・初期化非表示は実機確認済み。起動時のOutputChannel関連エラーは再発しており、[TASK-007](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/7)へ未解決のまま移管。TASK-001-01は選択UIの調査として完了。
 
 `statusbar` は標準セルステータスバー＋QuickPickの試作0.0.3。表示ボタンはセル下部、選択一覧は画面上部に開く。セルの直下へ展開するメニューではない。選択はHostメモリのみで、source・metadata・output・言語を変更せずPythonも実行しない。OutputChannelを作らず、診断はconsoleとJSONレポートを使う。
 
 - [API調査・起動エラーの調査・現在の判定](../../docs/research/notebook-ui/TASK-001-01-statusbar.md)
 - [対象版・起動・確認操作](../manual/TASK-001-01-statusbar.md)
-- [Task](../../docs/tasks/active/TASK-001/TASK-001.md#task-001-01)
+- [Task](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/8)
 
 旧 `toolbar` 0.0.2は右上ツールバーの比較履歴として保持する。[旧結果](../../docs/research/notebook-ui/TASK-001-01-toolbar.md) は新版の合格根拠にはしない。
 

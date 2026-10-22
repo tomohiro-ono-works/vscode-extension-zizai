@@ -6,7 +6,7 @@
 
 - [呼称と選択UIの合意](../../decisions/2026-10-19-notebook-ui-terms.md)
 - [試作](../../../tests/notebook-ui-gate/README.md)／[今回の操作手順](../../../tests/manual/TASK-001-01-toolbar.md)
-- [Task](../../tasks/active/TASK-001/TASK-001.md#task-001-01)
+- [Task](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/8)
 
 ## 今回の範囲
 
