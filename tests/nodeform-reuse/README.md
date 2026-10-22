@@ -77,6 +77,25 @@ node tests/nodeform-reuse/webview-host.test.cjs
 
 クラウドではローカル固定commitからの生成、キャッシュなしの初回取得、キャッシュ再利用、破損キャッシュの拒否を確認済み。F5での実起動とWindowsでの初回取得は未実施。Nodeの子プロセス起動に制限があるsandboxでは生成に権限付き実行が必要だった。
 
+### patchの改行と回帰テスト
+
+Windowsから、準備中の `git apply --check` が `src/node-form.js:197` で失敗した報告を受けた。ローカルの調査結果は `i/lf w/crlf`、`core.autocrlf=true`。固定上流はLFのままなので、patchだけがCRLFへ変換されるとクラウドでも同じ失敗を再現する。
+
+`prepare-webview.mjs` と `browser-probe.py --patched` は、patchのCRLFをメモリ上でLFに揃え、標準入力から `git apply --check -`／`git apply -` へ渡す。元のpatch・上流ファイル・Git設定は変更しない。上流のblob hash照合も維持するため、上流ファイル自体を改行変換した場合は引き続き拒否する。
+
+一時コピーから親のGitリポジトリを探索しないよう、Git子プロセスの `GIT_CEILING_DIRECTORIES` を一時コピーの親ディレクトリへ指定する。さらにそのコマンド内だけ `-c core.autocrlf=false -c core.eol=lf` を指定し、グローバル設定による生成JSのCRLF変換も防ぐ。ユーザーの設定ファイルには書き込まない。
+
+`provenance.json` とブラウザ報告の `patchSha256` は元のpatchファイル、追加した `appliedPatchSha256` は実際に適用したLFの内容を表す。patchの改行だけが違う場合、前者は異なり、後者と生成したフォーム資源は一致する。
+
+```sh
+node tests/nodeform-reuse/prepare-webview.mjs
+node --test tests/nodeform-reuse/prepare-webview.test.mjs
+```
+
+最初のコマンドで固定上流3ファイルをキャッシュする。回帰テストはそのキャッシュを一時領域へコピーし、fetchを拒否して実際のGitで検査する。LF／CRLF、祖先Gitリポジトリとローカル／グローバルautocrlf、修正行の実適用、生成物・来歴の一致、改変／改行変換した上流の拒否、不正patchの拒否と既存生成物保持を確認する7件。利用者のGit設定や既存キャッシュを変更しない。
+
+2026-10-22、修正前は7件中4件合格・CRLF関連3件失敗、修正後は7件合格。[結果と対象版](../../docs/research/notebook-ui/evidence/TASK-001-02-patch-line-endings.json) を参照。Python側も修正前のCRLF失敗を再現し、修正後はLF／CRLFそれぞれ上流テスト・機能6件・配色3条件が合格した。Windowsで修正版を準備・起動した結果は未確認。
+
 ### キャッシュなしの初回セットアップ確認
 
 2026-10-21、開始版 `563403c` の検証ソースと許諾文書を、同じ相対配置の一時領域へコピーした。dist/をコピーせず、既存の作業環境のキャッシュ・生成物を変更せずに確認した。[実行結果とファイルhash](../../docs/research/notebook-ui/evidence/TASK-001-02-setup.json) を参照。

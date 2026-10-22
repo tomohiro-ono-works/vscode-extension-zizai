@@ -1,0 +1,303 @@
+{
+  "task": "TASK-001-02",
+  "date": "2026-10-22",
+  "scope": "Evaluation-only patch application; no IDE or Windows GUI launched in cloud",
+  "baseline": {
+    "branch": "spike/task-001-01-notebook-ui",
+    "commit": "5b4d6e4738c4e86731c3f0d1607841c71b0587f5",
+    "upstreamCommit": "f08bfc73350d04e9238b43fa4dbcfdb81fa5150e"
+  },
+  "desktopBeforeFix": {
+    "source": "https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/9#issuecomment-6333322138",
+    "additionalLineEndingEvidence": "User supplied git command output in this chat on 2026-10-22",
+    "os": "Windows 11 Home Build 26300 x64",
+    "vscode": "1.142.0",
+    "node": "24.14.1",
+    "git": "2.52.0.windows.1",
+    "commit": "ad79c9de6bdac6b0015dd2ca994448b8c7d89530",
+    "repositoryRootConfirmed": true,
+    "branch": "spike/task-001-01-notebook-ui",
+    "trackedChanges": false,
+    "patchEol": "i/lf w/crlf attr/",
+    "coreAutocrlf": "true",
+    "prepareExitCode": 1,
+    "failure": "git apply --check: src/node-form.js:197: patch does not apply",
+    "hostUnitTestsPassed": 4,
+    "developmentHostStarted": false,
+    "F1-F6": "not-run"
+  },
+  "cloudEnvironment": {
+    "os": "Linux",
+    "node": "24.19.0",
+    "git": "2.52.0",
+    "python": "3.12.14",
+    "playwright": "1.62.0",
+    "chromium": "154.0.8037.57",
+    "sandbox": "Additional network permission needed to spawn Node/Git and Chromium; cached Node tests explicitly deny fetch"
+  },
+  "beforeFix": {
+    "nodeRegression": {
+      "command": "node --test --test-reporter=tap tests/nodeform-reuse/prepare-webview.test.mjs",
+      "exitCode": 1,
+      "total": 7,
+      "passed": 4,
+      "failed": 3,
+      "failures": [
+        "CRLF patch with LF source",
+        "CRLF patch beneath ancestor Git repository with core.autocrlf=true",
+        "LF/CRLF payload comparison stopped at CRLF preparation"
+      ],
+      "observedFailure": "src/node-form.js:197: patch does not apply"
+    },
+    "pythonProbe": {
+      "patchEol": "CRLF",
+      "arguments": "--patched --chromium /usr/bin/chromium",
+      "exitCode": 1,
+      "observedFailure": "src/node-form.js:197: patch does not apply; browser not started"
+    }
+  },
+  "fix": {
+    "method": "Normalize only patch CRLF to LF in memory; git apply --check - and git apply - via stdin",
+    "upstreamBlobChecksUnchanged": true,
+    "gitSettingsChanged": false,
+    "originalPatchChanged": false,
+    "rawPatchSha256LF": "dfaa36591b6701605a4c321c6a14ccaacb25372d0d926c2d1f889d883bfced7a",
+    "rawPatchSha256CRLF": "5b97e788d70dfc0183da9df43347eb2bd982a4c7fc6ce9593edd2d1312855dd7",
+    "appliedPatchSha256": "dfaa36591b6701605a4c321c6a14ccaacb25372d0d926c2d1f889d883bfced7a",
+    "temporaryGitIsolation": "Child process GIT_CEILING_DIRECTORIES points to parent of temporary copy; git -c core.autocrlf=false -c core.eol=lf apply; no persistent config changes"
+  },
+  "afterFix": {
+    "nodeRegression": {
+      "exitCode": 0,
+      "total": 7,
+      "passed": 7,
+      "failed": 0,
+      "assertions": [
+        "LF and CRLF prepare offline with pinned cache",
+        "CRLF works beneath ancestor Git repository with core.autocrlf=true",
+        "Identical payload hashes except raw patch provenance",
+        "Distinct raw hashes, same appliedPatchSha256",
+        "Modified and CRLF-converted upstream rejected without changing existing build",
+        "Invalid patch context rejected without changing existing build",
+        "Temporary working copies removed",
+        "Ancestor and isolated global autocrlf=true cannot change generated patched JS to CRLF; inserted close() checked in all successful variants"
+      ]
+    },
+    "allNodeTests": {
+      "command": "node --test --test-reporter=tap tests/notebook-ui-gate/statusbar.test.cjs tests/notebook-ui-gate/toolbar-state.test.cjs tests/nodeform-reuse/webview-host.test.cjs tests/nodeform-reuse/prepare-webview.test.mjs",
+      "exitCode": 0,
+      "total": 20,
+      "passed": 20,
+      "failed": 0,
+      "cases": [
+        "LF patch prepares the pinned cached sources without network access",
+        "CRLF patch prepares the same pinned LF upstream successfully",
+        "CRLF patch also works beneath an ancestor Git repository with core.autocrlf=true",
+        "LF and CRLF patches yield identical payloads and preserve raw/applied patch provenance",
+        "rejects modified upstream bytes and preserves the existing build",
+        "rejects CRLF-converted upstream bytes and preserves the existing build",
+        "invalid patch context still fails before replacing the existing build",
+        "cancel returns a correlated result and malformed requests do not open dialogs",
+        "closing the panel during a dialog prevents a late postMessage",
+        "a concurrent second request receives cancellation instead of staying pending",
+        "environment report carries provenance and HTML uses nonce-based scripts",
+        "provides a right-side selector before execution; init has none",
+        "selection changes only the clicked cell and leaves notebook data unchanged",
+        "cancel leaves the previous selection unchanged",
+        "closing a notebook while selection is open rejects a stale result",
+        "deactivation during selection causes no late event or OutputChannel creation",
+        "empty-output fixture exposes ordinary/action cells and hides init",
+        "selection targets clicked cell, remains independent across notebooks and refresh",
+        "rejects init, stale or missing cell arguments and unsupported choices",
+        "ordinary notebooks and non-Python/markup cells are not probe targets"
+      ]
+    },
+    "prepareInWorkingCheckout": {
+      "command": "node tests/nodeform-reuse/prepare-webview.mjs /tmp/zizai-form-task00102",
+      "exitCode": 0,
+      "generatedProvenance": {
+        "upstreamCommit": "f08bfc73350d04e9238b43fa4dbcfdb81fa5150e",
+        "patchSha256": "dfaa36591b6701605a4c321c6a14ccaacb25372d0d926c2d1f889d883bfced7a",
+        "appliedPatchSha256": "dfaa36591b6701605a4c321c6a14ccaacb25372d0d926c2d1f889d883bfced7a",
+        "themeSha256": "05d8d615f7d44fbdb47145798c722928f673dc5853f569d48fc83447d0498962"
+      }
+    },
+    "browser": {
+      "LF": {
+        "browser": "154.0.8037.57",
+        "patchSha256": "dfaa36591b6701605a4c321c6a14ccaacb25372d0d926c2d1f889d883bfced7a",
+        "appliedPatchSha256": "dfaa36591b6701605a4c321c6a14ccaacb25372d0d926c2d1f889d883bfced7a",
+        "themeOverrideSha256": "05d8d615f7d44fbdb47145798c722928f673dc5853f569d48fc83447d0498962",
+        "pageErrors": [],
+        "checks": [
+          {
+            "name": "values, validation, restore without notification, original values untouched",
+            "status": "pass",
+            "details": {
+              "restoreNotified": 0,
+              "original": "before"
+            }
+          },
+          {
+            "name": "user input emits change and separate forms keep separate values",
+            "status": "pass",
+            "details": {
+              "first": "edited",
+              "second": "two"
+            }
+          },
+          {
+            "name": "visible_if hides validation but retains value in getParams",
+            "status": "pass",
+            "details": {
+              "hiddenValueExported": true
+            }
+          },
+          {
+            "name": "simulated file selection result and cancellation",
+            "status": "pass",
+            "details": {
+              "dialog": "simulated DOM events only"
+            }
+          },
+          {
+            "name": "destroy removes DOM and ignores a pending browse result",
+            "status": "pass",
+            "details": {
+              "lateResultIgnored": true
+            }
+          },
+          {
+            "name": "combo releases document pointerdown listeners after repeated input and destroy",
+            "status": "pass",
+            "details": {
+              "remaining": 0
+            }
+          }
+        ],
+        "upstreamTest": {
+          "exitCode": 0,
+          "stdout": "node-form tests passed",
+          "stderr": ""
+        },
+        "themeChecks": [
+          {
+            "name": "light",
+            "status": "pass",
+            "mismatches": {}
+          },
+          {
+            "name": "dark",
+            "status": "pass",
+            "mismatches": {}
+          },
+          {
+            "name": "high-contrast",
+            "status": "pass",
+            "mismatches": {}
+          }
+        ],
+        "exitCode": 0,
+        "conditions": "Temporary copies under ancestor Git repository; local and isolated global core.autocrlf=true"
+      },
+      "CRLF": {
+        "browser": "154.0.8037.57",
+        "patchSha256": "5b97e788d70dfc0183da9df43347eb2bd982a4c7fc6ce9593edd2d1312855dd7",
+        "appliedPatchSha256": "dfaa36591b6701605a4c321c6a14ccaacb25372d0d926c2d1f889d883bfced7a",
+        "themeOverrideSha256": "05d8d615f7d44fbdb47145798c722928f673dc5853f569d48fc83447d0498962",
+        "pageErrors": [],
+        "checks": [
+          {
+            "name": "values, validation, restore without notification, original values untouched",
+            "status": "pass",
+            "details": {
+              "restoreNotified": 0,
+              "original": "before"
+            }
+          },
+          {
+            "name": "user input emits change and separate forms keep separate values",
+            "status": "pass",
+            "details": {
+              "first": "edited",
+              "second": "two"
+            }
+          },
+          {
+            "name": "visible_if hides validation but retains value in getParams",
+            "status": "pass",
+            "details": {
+              "hiddenValueExported": true
+            }
+          },
+          {
+            "name": "simulated file selection result and cancellation",
+            "status": "pass",
+            "details": {
+              "dialog": "simulated DOM events only"
+            }
+          },
+          {
+            "name": "destroy removes DOM and ignores a pending browse result",
+            "status": "pass",
+            "details": {
+              "lateResultIgnored": true
+            }
+          },
+          {
+            "name": "combo releases document pointerdown listeners after repeated input and destroy",
+            "status": "pass",
+            "details": {
+              "remaining": 0
+            }
+          }
+        ],
+        "upstreamTest": {
+          "exitCode": 0,
+          "stdout": "node-form tests passed",
+          "stderr": ""
+        },
+        "themeChecks": [
+          {
+            "name": "light",
+            "status": "pass",
+            "mismatches": {}
+          },
+          {
+            "name": "dark",
+            "status": "pass",
+            "mismatches": {}
+          },
+          {
+            "name": "high-contrast",
+            "status": "pass",
+            "mismatches": {}
+          }
+        ],
+        "exitCode": 0,
+        "conditions": "Temporary copies under ancestor Git repository; local and isolated global core.autocrlf=true"
+      }
+    },
+    "browserCommand": "python <temporary-copy>/browser-probe.py /tmp/zizai-form-task00102 --patched --theme-checks --theme-override tests/nodeform-reuse/vscode-theme-probe.css --chromium /usr/bin/chromium --report <temporary-report>.json; run with LF and CRLF patch copies; original checkout unchanged"
+  },
+  "sourceSha256": {
+    "tests/nodeform-reuse/prepare-webview.mjs": "6db4eb8d1c1d414d82f9ceb919eb0c6ea813c3907f857e138ac3012c00f6f096",
+    "tests/nodeform-reuse/prepare-webview.test.mjs": "03bd7d6a4a2a31152ee515151fc858ed12ec168b1b77e3bf83b9c36b58af5095",
+    "tests/nodeform-reuse/browser-probe.py": "1130758891deaa7567076e6d68a1e79cc1c02eebb1780da519dfaf16a5f967cd",
+    "tests/nodeform-reuse/vscode-theme-probe.css": "05d8d615f7d44fbdb47145798c722928f673dc5853f569d48fc83447d0498962"
+  },
+  "remaining": {
+    "windowsPreparationAfterFix": "not-run",
+    "vscodeDevelopmentHostAfterFix": "not-run",
+    "F1-F6": "not-run",
+    "kiro": "excluded by user",
+    "notebookPermanentHtmlForm": "not established",
+    "productionAdoption": "not decided",
+    "TASK-007": "separate; unchanged"
+  },
+  "reviewRegression": {
+    "beforeAdditionalFix": "Patch-input normalization alone returned exit0 but ancestor/global core.autocrlf=true converted patched JS to CRLF; strengthened generated-payload assertion failed",
+    "afterAdditionalFix": "Temporary Git discovery boundary plus command-only EOL settings; same payload assertion passes",
+    "skippedPatchInActualFixtureObserved": false
+  }
+}

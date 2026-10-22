@@ -13,6 +13,21 @@
 
 初回取得・生成とキャッシュ再利用は[クラウドで確認済み](../nodeform-reuse/README.md#キャッシュなしの初回セットアップ確認)。このクラウドではNode 24の環境プロキシ利用が必要だった。WindowsのF5起動・ネットワーク条件を確認した結果ではなく、共通の起動設定にはこのオプションを追加していない。
 
+### 2026-10-22の準備エラー後の再試行
+
+[実機報告](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/9#issuecomment-6333322138) では、準備中の `git apply --check` が失敗し、Development Host起動とF1〜F6には進めなかった。その後、patchが `i/lf w/crlf`、`core.autocrlf=true` と確認された。[改行対応](../nodeform-reuse/README.md#patchの改行と回帰テスト) を含む最新版を次の順で試す。Git設定変更・キャッシュ削除・patchの手編集は不要。
+
+リポジトリ直下、`git status --short --branch` で未コミット変更がないことを確認して実行する。
+
+```sh
+git switch spike/task-001-01-notebook-ui
+git pull --ff-only
+git rev-parse HEAD
+node tests/nodeform-reuse/prepare-webview.mjs
+```
+
+期待結果は終了コード0と `Prepared TASK-001-02 Webview PROTOTYPE:`。成功したら上記のF5設定で起動し、F1〜F6を進める。失敗したらそこで止め、commit SHA・準備コマンドの全文ログ・`git ls-files --eol tests/nodeform-reuse/patches/0001-combo-listener.patch` を返す。準備の成功とIDE適合は別に判定する。既知の起動／終了時警告のTASK-007とも区別する。
+
 ## 確認する操作
 
 実データを入力せず、ファイルは検証用の空ファイルやフォルダーを使う。選択した内容の読み取り・Python実行・Notebook変更は行わない。
@@ -26,7 +41,7 @@
 | F5 | VS Codeの「基本設定: 配色テーマ」でLight／Dark／High Contrastのテーマに切り替える | 入力・候補・ボタン・エラー・フォーカス枠が読める。暗いテーマで入力欄だけ白くならず、フォーム外へCSSが広がらない。確認したテーマ名を記録 |
 | F6 | コマンドをもう一度実行して2つ目のフォームタブを開き、別の名前を入力する | 一方の値や再作成操作が他方へ反映されない |
 
-「環境を報告」ボタンはIDE／Host Node／OS／試作版／上流commit／patchとCSSのhashを表示する。フォーム値や選択したパスは報告に含めない。返してほしい情報は **F1〜F6の結果、確認したテーマ名、環境報告JSON**。表示に問題がある場合だけ画面かエラーログを付ける。
+「環境を報告」ボタンはIDE／Host Node／OS／試作版／上流commit／元patch・適用patch・CSSのhashを表示する。フォーム値や選択したパスは報告に含めない。返してほしい情報は **確認したcommit SHA、F1〜F6の結果、確認したテーマ名、環境報告JSON**。表示に問題がある場合だけ画面かエラーログを付ける。
 
 ## 判定の境界
 
