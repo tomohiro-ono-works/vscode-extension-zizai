@@ -42,7 +42,7 @@ VS Code / Kiro IDE
 
 ファイル／フォルダー選択などの OS 連携は Extension Host が担当します。UI からセル source を直接生成せず、Extension Host が設定値からコードを作成します。import も通常のセル source に生成し、Jupyter 標準実行で評価します。
 
-詳細フォームの配置は[サイドバー方式へ変更](docs/decisions/2026-10-22-notebook-sidebar.md)しました。Notebook Rendererは標準出力用で、フォーム配置には使いません。対象セルの切替・下書き保存・確定処理の[設計案](docs/features/notebook-sidebar.md)はレビュー対象であり、サイドバーの製品実装や実機適合は未確認です。フォーム表示はPython実行と独立します。
+詳細フォームの配置は[サイドバー方式へ変更](docs/decisions/2026-10-22-notebook-sidebar.md)しました。Notebook Rendererは標準出力用で、フォーム配置には使いません。対象セルの切替・下書き保存・確定処理の[設計](docs/features/notebook-sidebar.md)は2026-10-23に利用者が承認し、サイドバーの製品実装や実機適合は未確認です。フォーム表示はPython実行と独立します。
 
 ## Notebook 上の操作と動作
 

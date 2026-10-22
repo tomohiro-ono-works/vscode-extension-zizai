@@ -1,8 +1,8 @@
-# Notebookのサイドバー設定UI — 設計案
+# Notebookのサイドバー設定UI — 設計
 
-更新日：2026-10-22。担当：[TASK-001-03](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/10)。
+更新日：2026-10-23。担当：[TASK-001-03](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/10)。
 
-**詳細フォームのサイドバー配置は[利用者選択により決定済み](../decisions/2026-10-22-notebook-sidebar.md)。本書の操作・状態・通知の具体案はレビュー待ち。製品実装の完了や正式な共通契約を示す文書ではない。**
+**配置方針に続き、本書の操作・状態・通知の案は2026-10-23の利用者の「そうですね。進めてOKです。」で承認された。[承認記録](../decisions/2026-10-22-notebook-sidebar.md)を参照する。実装計画の作成へ進む承認であり、正式な共通契約の確定・製品実装・PR統合の完了とは区別する。**
 
 ## 目的と成功条件
 
@@ -62,7 +62,7 @@
 
 NodeFormは固定版 `f08bfc73350d04e9238b43fa4dbcfdb81fa5150e` に対する評価済みpatch・テーマCSS・Host連携を土台とする候補。[利用許諾](../decisions/nodeform-reuse-permission.md)を引き継ぎ、上流原本と利用側アダプター・生成物を分ける。評価用の仮メッセージや保存方式を正式な契約に昇格させない。
 
-WebviewViewは[VS Code公式サンプル](https://github.com/microsoft/vscode-extension-samples/tree/main/webview-view-sample)の標準APIによる候補。表示面・メッセージ・状態保持の基本は[公式Webviewガイド](https://code.visualstudio.com/api/extension-guides/webview)を参照する。資料確認日：2026-10-22。実際にサポートするIDE版とKiroの成立は別途確認する。
+WebviewViewは[VS Code公式サンプル](https://github.com/microsoft/vscode-extension-samples/tree/main/webview-view-sample)の標準APIによる候補。表示面・メッセージ・状態保持の基本は[公式Webviewガイド](https://code.visualstudio.com/api/extension-guides/webview)を参照する。資料確認日：2026-10-22。正式対象はVS Codeのみで、Kiroは任意の参考利用とする。[対象IDEの既存判断](https://github.com/tomohiro-ono-works/vscode-extension-zizai/blob/40db82f55483f403c311bddea087ef3765e0ba1f/docs/decisions/2026-10-22-vscode-distribution-scope.md)に従い、実際の対応版・最低版・製品での適合は別途確認する。
 
 UIはPython生成・実行・任意のOS操作を持たない。ファイル選択はHostへ依頼する。Webviewにはローカルの許可したリソースだけを渡し、nonce等によるCSPと受信値の検証を保つ。フォーム値・選択パス・sourceを環境報告や診断ログへ追加しない。
 
@@ -107,3 +107,7 @@ UIはPython生成・実行・任意のOS操作を持たない。ファイル選�
 AGENTS.mdが示す `docs/features/coding-rules.md` は確認したmainに存在しない。ルートの `coding-rules.md` は旧アプリのEngine・Bridge・別Taskの承認等を含むため自動適用しない。本書では既存の[責務](architecture.md)・[Task運用](../tasks/task-rules.md)で確認できる文書編集に限定し、製品の具体的な編集スコープ確定前に適用する規約を整理する。
 
 サイドバーの製品実装・実機確認は未実施。既存のWindows評価用WebviewのF1〜F6・自動14件合格の[記録](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/9#issuecomment-6338373073)は部品評価の根拠として参照する。TASK-001-02、TASK-001-03、親Task、出荷の完了をこの文書だけで宣言しない。
+
+## 実装計画の準備
+
+[実装計画の前提整理版](../superpowers/plans/2026-10-23-notebook-sidebar.md)に担当境界・候補ファイル・検査単位・開始条件をまとめる。共通契約、適用規約、製品のHost／開発入口が未確定で、製品実装へ移行できる計画の確定版ではない。
