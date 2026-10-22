@@ -626,5 +626,798 @@
       "https://docs.cloud.google.com/docs/authentication/provide-credentials-adc",
       "https://openpyxl.readthedocs.io/en/stable/"
     ]
+  },
+  "dependency_resolution_2026_10_23": {
+    "checked_on": "2026-10-23",
+    "timezone": "Asia/Tokyo",
+    "scope": "Comparative dependency resolution only; no installation, uninstallation, library import, product build, IDE or kernel execution.",
+    "roots": [
+      "pandas==3.0.1",
+      "numpy==2.4.2",
+      "openpyxl==3.1.5",
+      "duckdb==1.4.2",
+      "google-cloud-bigquery==3.40.0",
+      "google-auth==2.47.0"
+    ],
+    "command_arguments": [
+      "py",
+      "-B",
+      "-m",
+      "pip",
+      "--isolated",
+      "--disable-pip-version-check",
+      "--no-cache-dir",
+      "--log",
+      "<artifact>/dependency-dry-run-20261023.log",
+      "install",
+      "--dry-run",
+      "--ignore-installed",
+      "--only-binary=:all:",
+      "--no-input",
+      "--progress-bar",
+      "off",
+      "--index-url",
+      "https://pypi.org/simple",
+      "--platform",
+      "win_amd64",
+      "--python-version",
+      "3.14",
+      "--implementation",
+      "cp",
+      "--abi",
+      "cp314",
+      "--report",
+      "<artifact>/dependency-dry-run-20261023.json",
+      "pandas==3.0.1",
+      "numpy==2.4.2",
+      "openpyxl==3.1.5",
+      "duckdb==1.4.2",
+      "google-cloud-bigquery==3.40.0",
+      "google-auth==2.47.0"
+    ],
+    "exit_code": 0,
+    "report_sha256": "912fb718a1b3e81a8cd07cd764683904ab193b6f93aaf9f98d0d3fff09a2e708",
+    "pip_version": "25.3",
+    "environment": {
+      "implementation_name": "cpython",
+      "implementation_version": "3.14.3",
+      "os_name": "nt",
+      "platform_machine": "AMD64",
+      "platform_release": "11",
+      "platform_system": "Windows",
+      "platform_version": "10.0.26300",
+      "python_full_version": "3.14.3",
+      "platform_python_implementation": "CPython",
+      "python_version": "3.14",
+      "sys_platform": "win32"
+    },
+    "py_gil_disabled": 0,
+    "package_count": 30,
+    "requested_count": 6,
+    "transitive_count": 24,
+    "packages": [
+      {
+        "name": "pandas",
+        "version": "3.0.1",
+        "requested": true,
+        "requires_python": ">=3.11",
+        "requires_dist": [
+          "numpy>=1.26.0; python_version < \"3.14\"",
+          "numpy>=2.3.3; python_version >= \"3.14\"",
+          "python-dateutil>=2.8.2",
+          "tzdata; sys_platform == \"win32\"",
+          "tzdata; sys_platform == \"emscripten\"",
+          "hypothesis>=6.116.0; extra == \"test\"",
+          "pytest>=8.3.4; extra == \"test\"",
+          "pytest-xdist>=3.6.1; extra == \"test\"",
+          "pyarrow>=13.0.0; extra == \"pyarrow\"",
+          "bottleneck>=1.4.2; extra == \"performance\"",
+          "numba>=0.60.0; extra == \"performance\"",
+          "numexpr>=2.10.2; extra == \"performance\"",
+          "scipy>=1.14.1; extra == \"computation\"",
+          "xarray>=2024.10.0; extra == \"computation\"",
+          "fsspec>=2024.10.0; extra == \"fss\"",
+          "s3fs>=2024.10.0; extra == \"aws\"",
+          "gcsfs>=2024.10.0; extra == \"gcp\"",
+          "odfpy>=1.4.1; extra == \"excel\"",
+          "openpyxl>=3.1.5; extra == \"excel\"",
+          "python-calamine>=0.3.0; extra == \"excel\"",
+          "pyxlsb>=1.0.10; extra == \"excel\"",
+          "xlrd>=2.0.1; extra == \"excel\"",
+          "xlsxwriter>=3.2.0; extra == \"excel\"",
+          "pyarrow>=13.0.0; extra == \"parquet\"",
+          "pyarrow>=13.0.0; extra == \"feather\"",
+          "pyiceberg>=0.8.1; extra == \"iceberg\"",
+          "tables>=3.10.1; extra == \"hdf5\"",
+          "pyreadstat>=1.2.8; extra == \"spss\"",
+          "SQLAlchemy>=2.0.36; extra == \"postgresql\"",
+          "psycopg2>=2.9.10; extra == \"postgresql\"",
+          "adbc-driver-postgresql>=1.2.0; extra == \"postgresql\"",
+          "SQLAlchemy>=2.0.36; extra == \"mysql\"",
+          "pymysql>=1.1.1; extra == \"mysql\"",
+          "SQLAlchemy>=2.0.36; extra == \"sql-other\"",
+          "adbc-driver-postgresql>=1.2.0; extra == \"sql-other\"",
+          "adbc-driver-sqlite>=1.2.0; extra == \"sql-other\"",
+          "beautifulsoup4>=4.12.3; extra == \"html\"",
+          "html5lib>=1.1; extra == \"html\"",
+          "lxml>=5.3.0; extra == \"html\"",
+          "lxml>=5.3.0; extra == \"xml\"",
+          "matplotlib>=3.9.3; extra == \"plot\"",
+          "jinja2>=3.1.5; extra == \"output-formatting\"",
+          "tabulate>=0.9.0; extra == \"output-formatting\"",
+          "PyQt5>=5.15.9; extra == \"clipboard\"",
+          "qtpy>=2.4.2; extra == \"clipboard\"",
+          "zstandard>=0.23.0; extra == \"compression\"",
+          "pytz>=2024.2; extra == \"timezone\"",
+          "adbc-driver-postgresql>=1.2.0; extra == \"all\"",
+          "adbc-driver-sqlite>=1.2.0; extra == \"all\"",
+          "beautifulsoup4>=4.12.3; extra == \"all\"",
+          "bottleneck>=1.4.2; extra == \"all\"",
+          "fastparquet>=2024.11.0; extra == \"all\"",
+          "fsspec>=2024.10.0; extra == \"all\"",
+          "gcsfs>=2024.10.0; extra == \"all\"",
+          "html5lib>=1.1; extra == \"all\"",
+          "hypothesis>=6.116.0; extra == \"all\"",
+          "jinja2>=3.1.5; extra == \"all\"",
+          "lxml>=5.3.0; extra == \"all\"",
+          "matplotlib>=3.9.3; extra == \"all\"",
+          "numba>=0.60.0; extra == \"all\"",
+          "numexpr>=2.10.2; extra == \"all\"",
+          "odfpy>=1.4.1; extra == \"all\"",
+          "openpyxl>=3.1.5; extra == \"all\"",
+          "psycopg2>=2.9.10; extra == \"all\"",
+          "pyarrow>=13.0.0; extra == \"all\"",
+          "pyiceberg>=0.8.1; extra == \"all\"",
+          "pymysql>=1.1.1; extra == \"all\"",
+          "PyQt5>=5.15.9; extra == \"all\"",
+          "pyreadstat>=1.2.8; extra == \"all\"",
+          "pytest>=8.3.4; extra == \"all\"",
+          "pytest-xdist>=3.6.1; extra == \"all\"",
+          "python-calamine>=0.3.0; extra == \"all\"",
+          "pytz>=2024.2; extra == \"all\"",
+          "pyxlsb>=1.0.10; extra == \"all\"",
+          "qtpy>=2.4.2; extra == \"all\"",
+          "scipy>=1.14.1; extra == \"all\"",
+          "s3fs>=2024.10.0; extra == \"all\"",
+          "SQLAlchemy>=2.0.36; extra == \"all\"",
+          "tables>=3.10.1; extra == \"all\"",
+          "tabulate>=0.9.0; extra == \"all\"",
+          "xarray>=2024.10.0; extra == \"all\"",
+          "xlrd>=2.0.1; extra == \"all\"",
+          "xlsxwriter>=3.2.0; extra == \"all\"",
+          "zstandard>=0.23.0; extra == \"all\""
+        ],
+        "license_expression": null,
+        "license_first_line": "BSD 3-Clause License",
+        "license_classifiers": [
+          "License :: OSI Approved :: BSD License"
+        ],
+        "url": "https://files.pythonhosted.org/packages/09/f8/8ce132104074f977f907442790eaae24e27bce3b3b454e82faa3237ff098/pandas-3.0.1-cp314-cp314-win_amd64.whl",
+        "hashes": {
+          "sha256": "93325b0fe372d192965f4cca88d97667f49557398bbf94abdda3bf1b591dbe66"
+        }
+      },
+      {
+        "name": "numpy",
+        "version": "2.4.2",
+        "requested": true,
+        "requires_python": ">=3.11",
+        "requires_dist": [],
+        "license_expression": "BSD-3-Clause AND 0BSD AND MIT AND Zlib AND CC0-1.0",
+        "license_first_line": "",
+        "license_classifiers": [],
+        "url": "https://files.pythonhosted.org/packages/05/cb/eff72a91b2efdd1bc98b3b8759f6a1654aa87612fc86e3d87d6fe4f948c4/numpy-2.4.2-cp314-cp314-win_amd64.whl",
+        "hashes": {
+          "sha256": "068cdb2d0d644cdb45670810894f6a0600797a69c05f1ac478e8d31670b8ee75"
+        }
+      },
+      {
+        "name": "openpyxl",
+        "version": "3.1.5",
+        "requested": true,
+        "requires_python": ">=3.8",
+        "requires_dist": [
+          "et-xmlfile"
+        ],
+        "license_expression": null,
+        "license_first_line": "MIT",
+        "license_classifiers": [
+          "License :: OSI Approved :: MIT License"
+        ],
+        "url": "https://files.pythonhosted.org/packages/c0/da/977ded879c29cbd04de313843e76868e6e13408a94ed6b987245dc7c8506/openpyxl-3.1.5-py2.py3-none-any.whl",
+        "hashes": {
+          "sha256": "5282c12b107bffeef825f4617dc029afaf41d0ea60823bbb665ef3079dc79de2"
+        }
+      },
+      {
+        "name": "duckdb",
+        "version": "1.4.2",
+        "requested": true,
+        "requires_python": ">=3.9.0",
+        "requires_dist": [
+          "ipython; extra == \"all\"",
+          "fsspec; extra == \"all\"",
+          "numpy; extra == \"all\"",
+          "pandas; extra == \"all\"",
+          "pyarrow; extra == \"all\"",
+          "adbc-driver-manager; extra == \"all\""
+        ],
+        "license_expression": null,
+        "license_first_line": "",
+        "license_classifiers": [
+          "License :: OSI Approved :: MIT License"
+        ],
+        "url": "https://files.pythonhosted.org/packages/25/5e/6f5ebaabc12c6db62f471f86b5c9c8debd57f11aa1b2acbbcc4c68683238/duckdb-1.4.2-cp314-cp314-win_amd64.whl",
+        "hashes": {
+          "sha256": "dfcc56a83420c0dec0b83e97a6b33addac1b7554b8828894f9d203955591218c"
+        }
+      },
+      {
+        "name": "google-cloud-bigquery",
+        "version": "3.40.0",
+        "requested": true,
+        "requires_python": ">=3.9",
+        "requires_dist": [
+          "google-api-core[grpc]<3.0.0,>=2.11.1",
+          "google-auth<3.0.0,>=2.14.1",
+          "google-cloud-core<3.0.0,>=2.4.1",
+          "google-resumable-media<3.0.0,>=2.0.0",
+          "packaging>=24.2.0",
+          "python-dateutil<3.0.0,>=2.8.2",
+          "requests<3.0.0,>=2.21.0",
+          "google-cloud-bigquery-storage<3.0.0,>=2.18.0; extra == \"bqstorage\"",
+          "grpcio<2.0.0,>=1.47.0; extra == \"bqstorage\"",
+          "grpcio<2.0.0,>=1.49.1; python_version >= \"3.11\" and extra == \"bqstorage\"",
+          "grpcio<2.0.0,>=1.75.1; python_version >= \"3.14\" and extra == \"bqstorage\"",
+          "pyarrow>=4.0.0; extra == \"bqstorage\"",
+          "pandas>=1.3.0; extra == \"pandas\"",
+          "pandas-gbq>=0.26.1; extra == \"pandas\"",
+          "grpcio<2.0.0,>=1.47.0; extra == \"pandas\"",
+          "grpcio<2.0.0,>=1.49.1; python_version >= \"3.11\" and extra == \"pandas\"",
+          "grpcio<2.0.0,>=1.75.1; python_version >= \"3.14\" and extra == \"pandas\"",
+          "pyarrow>=3.0.0; extra == \"pandas\"",
+          "db-dtypes<2.0.0,>=1.0.4; extra == \"pandas\"",
+          "ipywidgets>=7.7.1; extra == \"ipywidgets\"",
+          "ipykernel>=6.2.0; extra == \"ipywidgets\"",
+          "geopandas<2.0.0,>=0.9.0; extra == \"geopandas\"",
+          "Shapely<3.0.0,>=1.8.4; extra == \"geopandas\"",
+          "ipython>=7.23.1; extra == \"ipython\"",
+          "bigquery-magics>=0.6.0; extra == \"ipython\"",
+          "matplotlib<=3.9.2,>=3.7.1; python_version == \"3.9\" and extra == \"matplotlib\"",
+          "matplotlib>=3.10.3; python_version >= \"3.10\" and extra == \"matplotlib\"",
+          "tqdm<5.0.0,>=4.23.4; extra == \"tqdm\"",
+          "opentelemetry-api>=1.1.0; extra == \"opentelemetry\"",
+          "opentelemetry-sdk>=1.1.0; extra == \"opentelemetry\"",
+          "opentelemetry-instrumentation>=0.20b0; extra == \"opentelemetry\"",
+          "proto-plus<2.0.0,>=1.22.3; extra == \"bigquery-v2\"",
+          "protobuf!=4.21.0,!=4.21.1,!=4.21.2,!=4.21.3,!=4.21.4,!=4.21.5,<7.0.0,>=3.20.2; extra == \"bigquery-v2\"",
+          "google-cloud-bigquery[bigquery_v2,bqstorage,geopandas,ipython,ipywidgets,matplotlib,opentelemetry,pandas,tqdm]; extra == \"all\""
+        ],
+        "license_expression": "Apache-2.0",
+        "license_first_line": "",
+        "license_classifiers": [],
+        "url": "https://files.pythonhosted.org/packages/90/6a/90a04270dd60cc70259b73744f6e610ae9a158b21ab50fb695cca0056a3d/google_cloud_bigquery-3.40.0-py3-none-any.whl",
+        "hashes": {
+          "sha256": "0469bcf9e3dad3cab65b67cce98180c8c0aacf3253d47f0f8e976f299b49b5ab"
+        }
+      },
+      {
+        "name": "google-auth",
+        "version": "2.47.0",
+        "requested": true,
+        "requires_python": ">=3.8",
+        "requires_dist": [
+          "pyasn1-modules>=0.2.1",
+          "rsa<5,>=3.1.4",
+          "cryptography>=38.0.3; extra == \"cryptography\"",
+          "aiohttp<4.0.0,>=3.6.2; extra == \"aiohttp\"",
+          "requests<3.0.0,>=2.20.0; extra == \"aiohttp\"",
+          "cryptography; extra == \"enterprise-cert\"",
+          "pyopenssl; extra == \"enterprise-cert\"",
+          "pyopenssl>=20.0.0; extra == \"pyopenssl\"",
+          "cryptography>=38.0.3; extra == \"pyopenssl\"",
+          "pyjwt>=2.0; extra == \"pyjwt\"",
+          "cryptography>=38.0.3; extra == \"pyjwt\"",
+          "pyu2f>=0.1.5; extra == \"reauth\"",
+          "requests<3.0.0,>=2.20.0; extra == \"requests\"",
+          "grpcio; extra == \"testing\"",
+          "flask; extra == \"testing\"",
+          "freezegun; extra == \"testing\"",
+          "oauth2client; extra == \"testing\"",
+          "pyjwt>=2.0; extra == \"testing\"",
+          "cryptography>=38.0.3; extra == \"testing\"",
+          "pytest; extra == \"testing\"",
+          "pytest-cov; extra == \"testing\"",
+          "pytest-localserver; extra == \"testing\"",
+          "pyopenssl>=20.0.0; extra == \"testing\"",
+          "cryptography>=38.0.3; extra == \"testing\"",
+          "pyu2f>=0.1.5; extra == \"testing\"",
+          "responses; extra == \"testing\"",
+          "urllib3; extra == \"testing\"",
+          "packaging; extra == \"testing\"",
+          "aiohttp<4.0.0,>=3.6.2; extra == \"testing\"",
+          "requests<3.0.0,>=2.20.0; extra == \"testing\"",
+          "aioresponses; extra == \"testing\"",
+          "pytest-asyncio; extra == \"testing\"",
+          "pyopenssl<24.3.0; extra == \"testing\"",
+          "aiohttp<3.10.0; extra == \"testing\"",
+          "urllib3; extra == \"urllib3\"",
+          "packaging; extra == \"urllib3\""
+        ],
+        "license_expression": null,
+        "license_first_line": "Apache 2.0",
+        "license_classifiers": [
+          "License :: OSI Approved :: Apache Software License"
+        ],
+        "url": "https://files.pythonhosted.org/packages/db/18/79e9008530b79527e0d5f79e7eef08d3b179b7f851cfd3a2f27822fbdfa9/google_auth-2.47.0-py3-none-any.whl",
+        "hashes": {
+          "sha256": "c516d68336bfde7cf0da26aab674a36fedcf04b37ac4edd59c597178760c3498"
+        }
+      },
+      {
+        "name": "google-api-core",
+        "version": "2.42.0",
+        "requested": false,
+        "requires_python": ">=3.10",
+        "requires_dist": [
+          "googleapis-common-protos<2.0.0,>=1.69.2",
+          "protobuf<8.0.0,>=6.33.5",
+          "proto-plus<2.0.0,>=1.26.1",
+          "google-auth<3.0.0,>=2.14.1",
+          "requests<3.0.0,>=2.33.0",
+          "opentelemetry-api<2.0.0,>=1.44.0",
+          "google-auth[aiohttp]<3.0.0,>=2.14.1; extra == \"async-rest\"",
+          "aiohttp>=3.13.4; extra == \"async-rest\"",
+          "grpcio<2.0.0,>=1.59.0; extra == \"grpc\"",
+          "grpcio<2.0.0,>=1.75.1; python_version >= \"3.14\" and extra == \"grpc\"",
+          "grpcio-status<2.0.0,>=1.59.0; extra == \"grpc\"",
+          "grpcio-status<2.0.0,>=1.75.1; python_version >= \"3.14\" and extra == \"grpc\"",
+          "opentelemetry-instrumentation-grpc<1.0.0,>=0.65b0; extra == \"tracing\"",
+          "opentelemetry-sdk<2.0.0,>=1.44.0; extra == \"testing\""
+        ],
+        "license_expression": null,
+        "license_first_line": "Apache 2.0",
+        "license_classifiers": [
+          "License :: OSI Approved :: Apache Software License"
+        ],
+        "url": "https://files.pythonhosted.org/packages/28/ca/fb2a5b38366bcb12990c80384b920f04b968fd834cf98be67d306c374612/google_api_core-2.42.0-py3-none-any.whl",
+        "hashes": {
+          "sha256": "b1bdf4f72dc4f910736ce4ba49038352effbbc309579215107649b22973a1317"
+        }
+      },
+      {
+        "name": "google-cloud-core",
+        "version": "2.8.0",
+        "requested": false,
+        "requires_python": ">=3.10",
+        "requires_dist": [
+          "google-api-core<3.0.0,>=2.28.0",
+          "google-auth!=2.24.0,!=2.25.0,<3.0.0,>=2.14.1",
+          "grpcio<2.0.0,>=1.59.0; extra == \"grpc\"",
+          "grpcio<2.0.0,>=1.75.1; python_version >= \"3.14\" and extra == \"grpc\"",
+          "grpcio-status<2.0.0,>=1.59.0; extra == \"grpc\"",
+          "grpcio-status<2.0.0,>=1.75.1; python_version >= \"3.14\" and extra == \"grpc\""
+        ],
+        "license_expression": null,
+        "license_first_line": "Apache 2.0",
+        "license_classifiers": [
+          "License :: OSI Approved :: Apache Software License"
+        ],
+        "url": "https://files.pythonhosted.org/packages/12/ed/1b09640a565e5d34d4e517463f65a67a11f9dcdeb6b6e8220f2d06aaf489/google_cloud_core-2.8.0-py3-none-any.whl",
+        "hashes": {
+          "sha256": "e235b0952f7ffe7b9c71a4cf96b506d9cfb557e22557c412f0df9b7068b5d007"
+        }
+      },
+      {
+        "name": "google-resumable-media",
+        "version": "2.11.0",
+        "requested": false,
+        "requires_python": ">= 3.10",
+        "requires_dist": [
+          "google-crc32c<2.0.0,>=1.0.0",
+          "requests<3.0.0,>=2.18.0; extra == \"requests\"",
+          "aiohttp<4.0.0,>=3.6.2; extra == \"aiohttp\"",
+          "google-auth<3.0.0,>=2.14.1; extra == \"aiohttp\""
+        ],
+        "license_expression": null,
+        "license_first_line": "Apache 2.0",
+        "license_classifiers": [
+          "License :: OSI Approved :: Apache Software License"
+        ],
+        "url": "https://files.pythonhosted.org/packages/5e/2e/4f0a152f2e576e496f31ba1c3c62ed174a8878d06008916a7edc58b1bb28/google_resumable_media-2.11.0-py3-none-any.whl",
+        "hashes": {
+          "sha256": "f43d15e6a7f818f762eaead0f369c551f8275a4179c9d6225d0d259f49b87b5d"
+        }
+      },
+      {
+        "name": "google-crc32c",
+        "version": "1.9.0",
+        "requested": false,
+        "requires_python": ">=3.10",
+        "requires_dist": [],
+        "license_expression": null,
+        "license_first_line": "Apache-2.0",
+        "license_classifiers": [],
+        "url": "https://files.pythonhosted.org/packages/d3/fd/81cefea6adae7bd92abb23d4567d199f6485a20ec0a305ca5fa04c52b9c5/google_crc32c-1.9.0-cp314-cp314-win_amd64.whl",
+        "hashes": {
+          "sha256": "af73200fa9791ccd380f3598235dba8d82b8af0905df045b3dc60b59836e8ddd"
+        }
+      },
+      {
+        "name": "googleapis-common-protos",
+        "version": "1.75.5",
+        "requested": false,
+        "requires_python": ">=3.10",
+        "requires_dist": [
+          "protobuf<8.0.0,>=6.33.5",
+          "grpcio<2.0.0,>=1.59.0; extra == \"grpc\""
+        ],
+        "license_expression": "Apache-2.0",
+        "license_first_line": "",
+        "license_classifiers": [],
+        "url": "https://files.pythonhosted.org/packages/65/b9/6b29500a1c581ff4d77fd83c6568d068bee06f1b139fb6eb0a4f2d4bce8a/googleapis_common_protos-1.75.5-py3-none-any.whl",
+        "hashes": {
+          "sha256": "d7285525c23039db98f2463e6d5a4f9b958b94d497f03a844ece3259c4e72d5d"
+        }
+      },
+      {
+        "name": "grpcio",
+        "version": "1.84.1",
+        "requested": false,
+        "requires_python": ">=3.10",
+        "requires_dist": [
+          "typing-extensions~=4.12",
+          "grpcio-tools>=1.84.1; extra == \"protobuf\""
+        ],
+        "license_expression": "Apache-2.0",
+        "license_first_line": "",
+        "license_classifiers": [],
+        "url": "https://files.pythonhosted.org/packages/b8/d9/ee50fe67481254c45c9b709b31ba468e4c90925018f4507c424369a9abd5/grpcio-1.84.1-cp314-cp314-win_amd64.whl",
+        "hashes": {
+          "sha256": "3875f4c4caf0c54ac370b66322f0bf2d46e9d21414be36ea8b7f618badb3b87c"
+        }
+      },
+      {
+        "name": "grpcio-status",
+        "version": "1.84.1",
+        "requested": false,
+        "requires_python": ">=3.10",
+        "requires_dist": [
+          "protobuf<8.0.0,>=6.33.5",
+          "grpcio>=1.84.1",
+          "googleapis-common-protos>=1.5.5"
+        ],
+        "license_expression": "Apache-2.0",
+        "license_first_line": "",
+        "license_classifiers": [],
+        "url": "https://files.pythonhosted.org/packages/c7/e2/b9a35118c6c231a3710a0b4f2174da87f2c09045e743c1edc221b4659900/grpcio_status-1.84.1-py3-none-any.whl",
+        "hashes": {
+          "sha256": "5a1455bf5b39fe2a3d09d71661e59c97622c73888ad11f13109ce82220b88218"
+        }
+      },
+      {
+        "name": "opentelemetry-api",
+        "version": "1.45.1",
+        "requested": false,
+        "requires_python": ">=3.10",
+        "requires_dist": [
+          "typing-extensions>=4.5.0"
+        ],
+        "license_expression": "Apache-2.0",
+        "license_first_line": "",
+        "license_classifiers": [],
+        "url": "https://files.pythonhosted.org/packages/1e/41/f7dcf80b81ee8e71c1a2b59f14208bc723edbd89ed027a73b175abf6348e/opentelemetry_api-1.45.1-py3-none-any.whl",
+        "hashes": {
+          "sha256": "b31553efa588ae44bc306f863c785c5333a9ecc091248c6ee68b4b6c87fdedfb"
+        }
+      },
+      {
+        "name": "proto-plus",
+        "version": "1.29.0",
+        "requested": false,
+        "requires_python": ">=3.10",
+        "requires_dist": [
+          "protobuf<8.0.0,>=6.33.5",
+          "google-api-core>=2.25.0; extra == \"testing\""
+        ],
+        "license_expression": null,
+        "license_first_line": "Apache 2.0",
+        "license_classifiers": [
+          "License :: OSI Approved :: Apache Software License"
+        ],
+        "url": "https://files.pythonhosted.org/packages/b1/05/a3ef5b1161498e7b5a2a60288a9cf41b9149e94555423a43ec536737ac1a/proto_plus-1.29.0-py3-none-any.whl",
+        "hashes": {
+          "sha256": "8acd070469a7aaf43f440b022ef9757c8cac1a9f866e933f59ae98669ddc6c8b"
+        }
+      },
+      {
+        "name": "protobuf",
+        "version": "7.36.2",
+        "requested": false,
+        "requires_python": ">=3.10",
+        "requires_dist": [],
+        "license_expression": null,
+        "license_first_line": "3-Clause BSD License",
+        "license_classifiers": [],
+        "url": "https://files.pythonhosted.org/packages/8a/55/b77bda4e5e5f5971fb51b07663694690e9afdb9402136c16a522bd621cad/protobuf-7.36.2-cp310-abi3-win_amd64.whl",
+        "hashes": {
+          "sha256": "a300819d441e078a5608c0d3c709796bb548136058fda017ae51d425b44fd353"
+        }
+      },
+      {
+        "name": "python-dateutil",
+        "version": "2.9.0.post0",
+        "requested": false,
+        "requires_python": "!=3.0.*,!=3.1.*,!=3.2.*,>=2.7",
+        "requires_dist": [
+          "six >=1.5"
+        ],
+        "license_expression": null,
+        "license_first_line": "Dual License",
+        "license_classifiers": [
+          "License :: OSI Approved :: BSD License",
+          "License :: OSI Approved :: Apache Software License"
+        ],
+        "url": "https://files.pythonhosted.org/packages/ec/57/56b9bcc3c9c6a792fcbaf139543cee77261f3651ca9da0c93f5c1221264b/python_dateutil-2.9.0.post0-py2.py3-none-any.whl",
+        "hashes": {
+          "sha256": "a8b2bc7bffae282281c8140a97d3aa9c14da0b136dfe83f850eea9a5f7470427"
+        }
+      },
+      {
+        "name": "requests",
+        "version": "2.34.2",
+        "requested": false,
+        "requires_python": ">=3.10",
+        "requires_dist": [
+          "charset_normalizer<4,>=2",
+          "idna<4,>=2.5",
+          "urllib3<3,>=1.26",
+          "certifi>=2023.5.7",
+          "PySocks!=1.5.7,>=1.5.6; extra == \"socks\"",
+          "chardet<8,>=3.0.2; extra == \"use-chardet-on-py3\""
+        ],
+        "license_expression": null,
+        "license_first_line": "Apache-2.0",
+        "license_classifiers": [
+          "License :: OSI Approved :: Apache Software License"
+        ],
+        "url": "https://files.pythonhosted.org/packages/a0/f4/c67b0b3f1b9245e8d266f0f112c500d50e5b4e83cb6f3b71b6528104182a/requests-2.34.2-py3-none-any.whl",
+        "hashes": {
+          "sha256": "2a0d60c172f83ac6ab31e4554906c0f3b3588d37b5cb939b1c061f4907e278e0"
+        }
+      },
+      {
+        "name": "charset-normalizer",
+        "version": "3.5.2",
+        "requested": false,
+        "requires_python": ">=3.7",
+        "requires_dist": [],
+        "license_expression": null,
+        "license_first_line": "MIT",
+        "license_classifiers": [],
+        "url": "https://files.pythonhosted.org/packages/d1/78/5ed86f743d4bc350db307e7636419a0a5ee1d91806d30c7f667bd5c80dae/charset_normalizer-3.5.2-cp314-cp314-win_amd64.whl",
+        "hashes": {
+          "sha256": "e4e81e09c1578b8df602e3db08b0b3ea0a6947ad612f52bf8dc5ea8d47691f0c"
+        }
+      },
+      {
+        "name": "idna",
+        "version": "3.20",
+        "requested": false,
+        "requires_python": ">=3.9",
+        "requires_dist": [
+          "ruff >= 0.16.0 ; extra == \"all\"",
+          "mypy >= 1.11.2 ; extra == \"all\"",
+          "ty >= 0.0.37 ; extra == \"all\"",
+          "pytest >= 8.3.2 ; extra == \"all\"",
+          "hypothesis >= 6.141.1 ; extra == \"all\"",
+          "coverage >= 7.10.0 ; extra == \"all\""
+        ],
+        "license_expression": "BSD-3-Clause",
+        "license_first_line": "",
+        "license_classifiers": [],
+        "url": "https://files.pythonhosted.org/packages/58/a2/bb081bab032533a855d44de1d56f8e8426114ff1ba5d1f07a438a0a654f8/idna-3.20-py3-none-any.whl",
+        "hashes": {
+          "sha256": "ab7ae7122974553370f0bdb919e1a960b2cd1bc1ef0276416d896db81c14582c"
+        }
+      },
+      {
+        "name": "rsa",
+        "version": "4.9.1",
+        "requested": false,
+        "requires_python": ">=3.6,<4",
+        "requires_dist": [
+          "pyasn1 (>=0.1.3)"
+        ],
+        "license_expression": null,
+        "license_first_line": "Apache-2.0",
+        "license_classifiers": [
+          "License :: OSI Approved :: Apache Software License"
+        ],
+        "url": "https://files.pythonhosted.org/packages/64/8d/0133e4eb4beed9e425d9a98ed6e081a55d195481b7632472be1af08d2f6b/rsa-4.9.1-py3-none-any.whl",
+        "hashes": {
+          "sha256": "68635866661c6836b8d39430f97a996acbd61bfa49406748ea243539fe239762"
+        }
+      },
+      {
+        "name": "typing_extensions",
+        "version": "4.16.0",
+        "requested": false,
+        "requires_python": ">=3.9",
+        "requires_dist": [],
+        "license_expression": "PSF-2.0",
+        "license_first_line": "",
+        "license_classifiers": [],
+        "url": "https://files.pythonhosted.org/packages/49/d3/b8441a820a491ddfc024b0b0cf0393375b75ea13866d9c66727e54c2fc80/typing_extensions-4.16.0-py3-none-any.whl",
+        "hashes": {
+          "sha256": "481caa481374e813c1b176ada14e97f1f67a4539ce9cfeb3f350d78d6370c2e8"
+        }
+      },
+      {
+        "name": "urllib3",
+        "version": "2.8.0",
+        "requested": false,
+        "requires_python": ">=3.10",
+        "requires_dist": [
+          "brotli>=1.2.0; (platform_python_implementation == 'CPython') and extra == 'brotli'",
+          "brotlicffi>=1.2.0.0; (platform_python_implementation != 'CPython') and extra == 'brotli'",
+          "h2<5,>=4; extra == 'h2'",
+          "pysocks!=1.5.7,<2.0,>=1.5.6; extra == 'socks'",
+          "backports-zstd>=1.0.0; (python_version < '3.14') and extra == 'zstd'"
+        ],
+        "license_expression": "MIT",
+        "license_first_line": "",
+        "license_classifiers": [],
+        "url": "https://files.pythonhosted.org/packages/92/9d/c4e665119135114480843e7ab388fa94d8480650450e6f8e26b70d323a4c/urllib3-2.8.0-py3-none-any.whl",
+        "hashes": {
+          "sha256": "0cf3cae568d36aa9576b28dfb35f11328f1cb974ca7647d9475ebb86c75ac6e3"
+        }
+      },
+      {
+        "name": "certifi",
+        "version": "2026.10.19",
+        "requested": false,
+        "requires_python": ">=3.7",
+        "requires_dist": [],
+        "license_expression": null,
+        "license_first_line": "MPL-2.0",
+        "license_classifiers": [
+          "License :: OSI Approved :: Mozilla Public License 2.0 (MPL 2.0)"
+        ],
+        "url": "https://files.pythonhosted.org/packages/c4/51/29046e48f693c54e5b7412216d447a1d8362c9653148d98c02cdf65fa733/certifi-2026.10.19-py3-none-any.whl",
+        "hashes": {
+          "sha256": "42d35340cc5b9ba78e818ddbff0c5b1c2b779de448a340fd1b989f5fa8670e1b"
+        }
+      },
+      {
+        "name": "packaging",
+        "version": "26.3",
+        "requested": false,
+        "requires_python": ">=3.9",
+        "requires_dist": [],
+        "license_expression": "Apache-2.0 OR BSD-2-Clause",
+        "license_first_line": "",
+        "license_classifiers": [],
+        "url": "https://files.pythonhosted.org/packages/63/34/ba1c580383c9eada3711951fef0795c80b829a078d72188184bcab9dd527/packaging-26.3-py3-none-any.whl",
+        "hashes": {
+          "sha256": "d7193f7c8e4e93f444fde0262bf90af30e16fa0ad0ad44cb553c87339b23cd1c"
+        }
+      },
+      {
+        "name": "pyasn1",
+        "version": "0.6.4",
+        "requested": false,
+        "requires_python": ">=3.8",
+        "requires_dist": [],
+        "license_expression": null,
+        "license_first_line": "BSD-2-Clause",
+        "license_classifiers": [],
+        "url": "https://files.pythonhosted.org/packages/9a/3b/6163796d69c3977d1e4287bea4a6979161cbbdd170ebb430511e8e1999ce/pyasn1-0.6.4-py3-none-any.whl",
+        "hashes": {
+          "sha256": "deda9277cfd454080ec40b207fb6df82206a3a2688735233cdcd8d3d565f088b"
+        }
+      },
+      {
+        "name": "pyasn1_modules",
+        "version": "0.4.2",
+        "requested": false,
+        "requires_python": ">=3.8",
+        "requires_dist": [
+          "pyasn1<0.7.0,>=0.6.1"
+        ],
+        "license_expression": null,
+        "license_first_line": "BSD",
+        "license_classifiers": [
+          "License :: OSI Approved :: BSD License"
+        ],
+        "url": "https://files.pythonhosted.org/packages/47/8d/d529b5d697919ba8c11ad626e835d4039be708a35b0d22de83a269a6682c/pyasn1_modules-0.4.2-py3-none-any.whl",
+        "hashes": {
+          "sha256": "29253a9207ce32b64c3ac6600edc75368f98473906e8fd1043bd6b5b1de2c14a"
+        }
+      },
+      {
+        "name": "six",
+        "version": "1.17.0",
+        "requested": false,
+        "requires_python": ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*",
+        "requires_dist": [],
+        "license_expression": null,
+        "license_first_line": "MIT",
+        "license_classifiers": [
+          "License :: OSI Approved :: MIT License"
+        ],
+        "url": "https://files.pythonhosted.org/packages/b7/ce/149a00dd41f10bc29e5921b496af8b574d8413afcd5e30dfa0ed46c2cc5e/six-1.17.0-py2.py3-none-any.whl",
+        "hashes": {
+          "sha256": "4721f391ed90541fddacab5acf947aa0d3dc7d27b2e1e8eda2be8970586c3274"
+        }
+      },
+      {
+        "name": "et_xmlfile",
+        "version": "2.0.0",
+        "requested": false,
+        "requires_python": ">=3.8",
+        "requires_dist": [],
+        "license_expression": null,
+        "license_first_line": "MIT",
+        "license_classifiers": [
+          "License :: OSI Approved :: MIT License"
+        ],
+        "url": "https://files.pythonhosted.org/packages/c1/8b/5fe2cc11fee489817272089c4203e679c63b570a5aaeb18d852ae3cbba6a/et_xmlfile-2.0.0-py3-none-any.whl",
+        "hashes": {
+          "sha256": "7a91720bc756843502c3b7504c77b8fe44217c85c537d85037f0f536151b2caa"
+        }
+      },
+      {
+        "name": "tzdata",
+        "version": "2026.5",
+        "requested": false,
+        "requires_python": ">=2",
+        "requires_dist": [],
+        "license_expression": null,
+        "license_first_line": "Apache-2.0",
+        "license_classifiers": [],
+        "url": "https://files.pythonhosted.org/packages/94/21/1e5995a1c920cce14e4bffae20c665ec10e7ed03ab25e006cd741092b718/tzdata-2026.5-py2.py3-none-any.whl",
+        "hashes": {
+          "sha256": "b683bd1b6659ddcd810ff02ad09ba821d4bf1065072805063eb35c49617905ac"
+        }
+      }
+    ],
+    "scope_limits": [
+      "This is the comparison set, not the product dependency declaration or lock",
+      "Selected versions and wheel URLs with SHA256 are not runtime/import verification",
+      "No candidate BigQuery pandas/bqstorage extras were requested",
+      "Artifact license files and bundled native code not reviewed",
+      "Selected Notebook kernel not verified",
+      "No dependency/environment installation was performed"
+    ],
+    "upstream_ui": {
+      "issue": "https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/9",
+      "pr": 50,
+      "head": "4a03b08482fd44f5afb19fb71ac0fa5bd168a0cb",
+      "decision_path": "docs/decisions/2026-10-22-notebook-sidebar.md",
+      "decision_blob_sha": "266d1905fe4c700503749d61df1d919444737e65",
+      "design_path": "docs/features/notebook-sidebar.md",
+      "design_blob_sha": "9a6c0620cbc6b1ad5814785fa857ac4ec0b45009",
+      "status": "Sidebar placement selected by user; detailed interactions and product suitability remain unapproved/unverified.",
+      "shared_spec_paths": [
+        "README.md",
+        "docs/designs/01全体設計.md",
+        "docs/designs/02NotebookUI設計.md",
+        "docs/features/architecture.md"
+      ]
+    },
+    "stable_api": {
+      "repository": "microsoft/vscode",
+      "commit": "d956e8a6ac5d904486557eea07e1d6bd62a4d36f",
+      "path": "src/vscode-dts/vscode.d.ts",
+      "blob_sha": "bd520cf7bb88454e99bd15da13c6b9c6ac56fd65",
+      "confirmed_symbols": [
+        "WebviewViewProvider",
+        "registerWebviewViewProvider",
+        "NotebookEdit",
+        "NotebookEdit.updateCellMetadata"
+      ],
+      "product_validation": false
+    }
   }
 }
