@@ -259,5 +259,545 @@
     "D5": "not run",
     "D6": "not run"
   },
-  "conclusion": "Static research finished for this phase; TASK-002-01 remains in progress pending desktop evidence. No formal API or metadata schema adopted."
+  "conclusion": "Static research finished for this phase; TASK-002-01 remains in progress pending desktop evidence. No formal API or metadata schema adopted.",
+  "continuations": [
+    {
+      "checkedAt": "2026-10-22T04:29:01.327724+00:00",
+      "sourceProjectCommit": "f8e0492c5e98274d55fc2ccf3de02ccb754a279e",
+      "branch": "research/task-005-01-boundaries",
+      "method": "Pinned-source SHA-256 comparison, static marker checks, and manual control-flow inspection. No source compilation or behavior test.",
+      "previousSourcesHashVerified": 28,
+      "newSources": [
+        {
+          "reference": "S17",
+          "repository": "microsoft/vscode",
+          "commit": "d956e8a6ac5d904486557eea07e1d6bd62a4d36f",
+          "path": "src/vs/workbench/api/browser/mainThreadBulkEdits.ts",
+          "url": "https://github.com/microsoft/vscode/blob/d956e8a6ac5d904486557eea07e1d6bd62a4d36f/src/vs/workbench/api/browser/mainThreadBulkEdits.ts",
+          "sha256": "bf31b425405065f1c7d14203c157aa0f5aaee9a37dd03ddc8997cdcd2f5c7e05",
+          "gitBlobSha1": "a82377228dc6f315b4ef24538ec3bc7014301940",
+          "bytes": 4381
+        },
+        {
+          "reference": "S18",
+          "repository": "microsoft/vscode",
+          "commit": "d956e8a6ac5d904486557eea07e1d6bd62a4d36f",
+          "path": "src/vs/workbench/contrib/bulkEdit/browser/bulkTextEdits.ts",
+          "url": "https://github.com/microsoft/vscode/blob/d956e8a6ac5d904486557eea07e1d6bd62a4d36f/src/vs/workbench/contrib/bulkEdit/browser/bulkTextEdits.ts",
+          "sha256": "0e0135fdfbc0c6fa4783731ee153db14f2b6823aedd39a962c3c7ced7479d2d6",
+          "gitBlobSha1": "7813739c162824a6d6568982e82a621497f2f8a1",
+          "bytes": 12134
+        }
+      ],
+      "checks": [
+        {
+          "id": "C01",
+          "path": "src/vs/workbench/api/common/extHostBulkEdits.ts",
+          "sha256": "9be46865d7bc69bc270189f22b3732c5a8ce1156032ec0705af40e29f78384d9",
+          "matches": [
+            {
+              "marker": "getNotebookDocumentVersion: () => undefined",
+              "lines": [
+                27
+              ]
+            },
+            {
+              "marker": "WorkspaceEdit.from(edit, this._versionInformationProvider)",
+              "lines": [
+                32
+              ]
+            }
+          ],
+          "result": "matched",
+          "kind": "static-source-text; manually inspected surrounding control flow"
+        },
+        {
+          "id": "C02",
+          "path": "src/vs/workbench/api/common/extHostTypes/workspaceEdit.ts",
+          "sha256": "325fc4e16df3c524a33049ee55657ff4f124ca6fee74e3c0daec5a3eb993e8be",
+          "matches": [
+            {
+              "marker": "// append edit to the end",
+              "lines": [
+                158
+              ]
+            },
+            {
+              "marker": "editType: CellEditType.Metadata, index, metadata: cellMetadata",
+              "lines": [
+                114
+              ]
+            }
+          ],
+          "result": "matched",
+          "kind": "static-source-text; manually inspected surrounding control flow"
+        },
+        {
+          "id": "C03",
+          "path": "src/vs/workbench/contrib/bulkEdit/browser/bulkEditService.ts",
+          "sha256": "0b48ad5c421c459c9c19bf92b8b5b5b600f16066d7f02bcd1d4c4f1a72106e4e",
+          "matches": [
+            {
+              "marker": "Object.getPrototypeOf(this._edits[i - 1])",
+              "lines": [
+                107
+              ]
+            },
+            {
+              "marker": "await this._performTextEdits",
+              "lines": [
+                130
+              ]
+            },
+            {
+              "marker": "await this._performCellEdits",
+              "lines": [
+                132
+              ]
+            },
+            {
+              "marker": "this._logService.error(err);",
+              "lines": [
+                273
+              ]
+            },
+            {
+              "marker": "throw err;",
+              "lines": [
+                274
+              ]
+            }
+          ],
+          "result": "matched",
+          "kind": "static-source-text; manually inspected surrounding control flow"
+        },
+        {
+          "id": "C04",
+          "path": "src/vs/workbench/api/browser/mainThreadBulkEdits.ts",
+          "sha256": "bf31b425405065f1c7d14203c157aa0f5aaee9a37dd03ddc8997cdcd2f5c7e05",
+          "matches": [
+            {
+              "marker": "this._bulkEditService.apply(edits",
+              "lines": [
+                33
+              ]
+            },
+            {
+              "marker": "IGNORING workspace edit",
+              "lines": [
+                34
+              ]
+            },
+            {
+              "marker": "return false;",
+              "lines": [
+                35
+              ]
+            }
+          ],
+          "result": "matched",
+          "kind": "static-source-text; manually inspected surrounding control flow"
+        },
+        {
+          "id": "C05",
+          "path": "src/vs/workbench/contrib/bulkEdit/browser/bulkTextEdits.ts",
+          "sha256": "0e0135fdfbc0c6fa4783731ee153db14f2b6823aedd39a962c3c7ced7479d2d6",
+          "matches": [
+            {
+              "marker": "this._validateBeforePrepare();",
+              "lines": [
+                296
+              ]
+            },
+            {
+              "marker": "const validation = this._validateTasks(tasks);",
+              "lines": [
+                305
+              ]
+            },
+            {
+              "marker": "task.apply(reason);",
+              "lines": [
+                315
+              ]
+            }
+          ],
+          "result": "matched",
+          "kind": "static-source-text; manually inspected surrounding control flow"
+        },
+        {
+          "id": "C06",
+          "path": "src/vs/workbench/contrib/notebook/common/model/notebookTextModel.ts",
+          "sha256": "c75173576ec28d556be502835ba16d37ca8500a450ebd9c8d03ace98354739cf",
+          "matches": [
+            {
+              "marker": "private _isCellMetadataChanged",
+              "lines": [
+                1064
+              ]
+            },
+            {
+              "marker": "a[key as keyof NotebookCellMetadata] !== b[key as keyof NotebookCellMetadata]",
+              "lines": [
+                1068
+              ]
+            },
+            {
+              "marker": "const triggerDirtyChange = this._isCellMetadataChanged",
+              "lines": [
+                1120
+              ]
+            },
+            {
+              "marker": "new CellMetadataEdit",
+              "lines": [
+                1125
+              ]
+            }
+          ],
+          "result": "matched",
+          "kind": "static-source-text; manually inspected surrounding control flow"
+        },
+        {
+          "id": "C07",
+          "path": "extensions/ipynb/src/ipynbMain.ts",
+          "sha256": "c216f5ee019937bf827190b55cf1ab475a1137ee75c42185fd3114cd0fa3674e",
+          "matches": [
+            {
+              "marker": "transientCellMetadata: {",
+              "lines": [
+                43,
+                57
+              ]
+            },
+            {
+              "marker": "metadata: false,",
+              "lines": [
+                46,
+                60
+              ]
+            }
+          ],
+          "result": "matched",
+          "kind": "static-source-text; manually inspected surrounding control flow"
+        },
+        {
+          "id": "C08",
+          "path": "src/vs/workbench/contrib/notebook/common/model/notebookTextModel.ts",
+          "sha256": "c75173576ec28d556be502835ba16d37ca8500a450ebd9c8d03ace98354739cf",
+          "matches": [
+            {
+              "marker": "private _increaseVersionId(transient: boolean)",
+              "lines": [
+                931
+              ]
+            },
+            {
+              "marker": "this._versionId = this._versionId + 1;",
+              "lines": [
+                932
+              ]
+            },
+            {
+              "marker": "internalMetadata: cell.internalMetadata, transient: true",
+              "lines": [
+                1159
+              ]
+            },
+            {
+              "marker": "this._increaseVersionId(this._operationManager.isUndoStackEmpty()",
+              "lines": [
+                660
+              ]
+            }
+          ],
+          "result": "matched",
+          "kind": "static-source-text; manually inspected surrounding control flow"
+        },
+        {
+          "id": "C09",
+          "path": "src/vs/workbench/api/common/extHostNotebookDocument.ts",
+          "sha256": "cd8516ada88c2770aafeb25e1850319222af85147037653e809866dc5087a703",
+          "matches": [
+            {
+              "marker": "// -- compact cellChanges",
+              "lines": [
+                287
+              ]
+            },
+            {
+              "marker": "const existing = map.get(relaxedCellChange.cell);",
+              "lines": [
+                292
+              ]
+            },
+            {
+              "marker": "...result.cellChanges[existing]",
+              "lines": [
+                304
+              ]
+            },
+            {
+              "marker": "...relaxedCellChange",
+              "lines": [
+                299,
+                305
+              ]
+            },
+            {
+              "marker": "document: this._cells[rawEvent.index].apiCell.document",
+              "lines": [
+                270,
+                273
+              ]
+            }
+          ],
+          "result": "matched",
+          "kind": "static-source-text; manually inspected surrounding control flow"
+        },
+        {
+          "id": "C10",
+          "path": "extensions/ipynb/src/serializers.ts",
+          "sha256": "dca3f56482466956bb62a25d6181cb117d814a573b590e5e717eecf58e8c7e4a",
+          "matches": [
+            {
+              "marker": "Also do not read the value of executionSummary here",
+              "lines": [
+                102
+              ]
+            },
+            {
+              "marker": "execution_count: cellMetadata.execution_count ?? null,",
+              "lines": [
+                105
+              ]
+            },
+            {
+              "marker": "metadata: cellMetadata.metadata",
+              "lines": [
+                108
+              ]
+            }
+          ],
+          "result": "matched",
+          "kind": "static-source-text; manually inspected surrounding control flow"
+        },
+        {
+          "id": "C11",
+          "path": "extensions/ipynb/src/deserializers.ts",
+          "sha256": "2f2a809e88e3d09d12a9abffc94c397edeed30eace7ad20d8f16a385830d716e",
+          "matches": [
+            {
+              "marker": "const hasExecutionCount",
+              "lines": [
+                317
+              ]
+            },
+            {
+              "marker": "? { executionOrder: cell.execution_count as number }",
+              "lines": [
+                322
+              ]
+            }
+          ],
+          "result": "matched",
+          "kind": "static-source-text; manually inspected surrounding control flow"
+        },
+        {
+          "id": "C12",
+          "path": "src/vs/workbench/contrib/notebook/common/model/notebookTextModel.ts",
+          "sha256": "c75173576ec28d556be502835ba16d37ca8500a450ebd9c8d03ace98354739cf",
+          "matches": [
+            {
+              "marker": "private isOnlyEditingMetadataOnNewCells",
+              "lines": [
+                615
+              ]
+            },
+            {
+              "marker": "if (computeUndoRedo && this.isOnlyEditingMetadataOnNewCells(rawEdits))",
+              "lines": [
+                641
+              ]
+            },
+            {
+              "marker": "this._operationManager.appendPreviousOperation()",
+              "lines": [
+                642
+              ]
+            },
+            {
+              "marker": "previous.tag === 'notebookUndoRedoElement'",
+              "lines": [
+                156
+              ]
+            }
+          ],
+          "result": "matched",
+          "kind": "static-source-text; manually inspected surrounding control flow"
+        },
+        {
+          "id": "C13",
+          "path": "src/vs/workbench/contrib/bulkEdit/browser/bulkEditService.ts",
+          "sha256": "0b48ad5c421c459c9c19bf92b8b5b5b600f16066d7f02bcd1d4c4f1a72106e4e",
+          "matches": [
+            {
+              "marker": "this._performTextEdits(<ResourceTextEdit[]>group, this._undoRedoGroup",
+              "lines": [
+                130
+              ]
+            },
+            {
+              "marker": "this._performCellEdits(<ResourceNotebookCellEdit[]>group, this._undoRedoGroup",
+              "lines": [
+                132
+              ]
+            }
+          ],
+          "result": "matched",
+          "kind": "static-source-text; manually inspected surrounding control flow"
+        }
+      ],
+      "observations": [
+        {
+          "id": "B01",
+          "statement": "Mixed text/notebook edits are applied as sequential type groups; later failure is converted to false without a rollback of earlier groups in the inspected call path. Text version checks are local to the text group.",
+          "references": [
+            "S7",
+            "S8",
+            "S9",
+            "S17",
+            "S18"
+          ],
+          "checks": [
+            "C01",
+            "C02",
+            "C03",
+            "C04",
+            "C05"
+          ],
+          "desktopCases": [
+            "D3"
+          ],
+          "scope": "Control-flow finding; actual partial application and Undo not reproduced in an IDE."
+        },
+        {
+          "id": "B02",
+          "statement": "Non-transient cell metadata values are compared with !==; a new nested metadata object can create an Undo/dirty-classified change even when JSON values match.",
+          "references": [
+            "S10",
+            "S12"
+          ],
+          "checks": [
+            "C06",
+            "C07"
+          ],
+          "desktopCases": [
+            "D2",
+            "D6"
+          ],
+          "scope": "Conditional source path; actual dirty state, counts and responsiveness not measured."
+        },
+        {
+          "id": "B03",
+          "statement": "Notebook version increments include transient internal-execution-metadata changes; version is not a dedicated configuration generation or persisted-change signal.",
+          "references": [
+            "S10",
+            "S13",
+            "S14"
+          ],
+          "checks": [
+            "C08"
+          ],
+          "desktopCases": [
+            "D4",
+            "D6"
+          ],
+          "scope": "Source trace only; no execution events observed."
+        },
+        {
+          "id": "B04",
+          "statement": "Cell changes within one notification are compacted by runtime cell object and later same-name fields replace earlier ones; TextDocument fields are current object references, not sent-source snapshots.",
+          "references": [
+            "S2"
+          ],
+          "checks": [
+            "C09"
+          ],
+          "desktopCases": [
+            "D1",
+            "D4",
+            "D5"
+          ],
+          "scope": "Public notification representation; timing and cross-event ordering unverified."
+        },
+        {
+          "id": "B05",
+          "statement": "The ipynb serializer saves execution_count from API metadata and explicitly avoids reading executionSummary for it; deserialization reconstructs executionOrder only from a positive count.",
+          "references": [
+            "S11",
+            "S12"
+          ],
+          "checks": [
+            "C10",
+            "C11"
+          ],
+          "desktopCases": [
+            "D2",
+            "D4"
+          ],
+          "scope": "Pinned built-in serializer; installed extension behavior and save/reopen not exercised."
+        },
+        {
+          "id": "B06",
+          "statement": "Metadata-only edits on newly added cells have a branch that appends to the previous notebook Undo operation; common mixed-edit UndoRedoGroup does not imply an atomic rollback.",
+          "references": [
+            "S9",
+            "S10"
+          ],
+          "checks": [
+            "C12",
+            "C13"
+          ],
+          "desktopCases": [
+            "D3",
+            "D6"
+          ],
+          "scope": "Undo implementation branches inspected; no keyboard Undo/Redo verification."
+        }
+      ],
+      "ideStarted": false,
+      "kernelStarted": false,
+      "behaviorTestsRun": false,
+      "diagnosticExtensionCreated": false,
+      "launchConfigurationChanged": false,
+      "desktopCases": [
+        {
+          "id": "D1",
+          "status": "not-run"
+        },
+        {
+          "id": "D2",
+          "status": "not-run"
+        },
+        {
+          "id": "D3",
+          "status": "not-run"
+        },
+        {
+          "id": "D4",
+          "status": "not-run"
+        },
+        {
+          "id": "D5",
+          "status": "not-run"
+        },
+        {
+          "id": "D6",
+          "status": "not-run"
+        }
+      ],
+      "conclusion": "Static findings refined. TASK-002-01 remains in progress; desktop applicability, event order, partial application, persistence and performance remain unverified. No product contracts or implementation changed."
+    }
+  ]
 }
