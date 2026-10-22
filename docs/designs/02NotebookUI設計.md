@@ -1,7 +1,7 @@
 # 02 Notebook UI詳細設計 — Zizai
 
-更新日：2026-10-19  
-対象：VS Code / Kiro IDE 上の Jupyter Notebook（`.ipynb`）  
+更新日：2026-10-22  
+対象：VS Code 上の Jupyter Notebook（`.ipynb`）。Kiroは任意の互換利用に限り、動作保証・必須検証の対象外  
 状態：UI方針12項目はヒアリング確定。API依存部分は技術検証待ち。
 
 ## 1. 目的・適用範囲
@@ -201,7 +201,7 @@ Pythonを選んだ場合は通常のPythonコード入力として扱い、**ア
 ## 11. 技術検証が必須の項目
 
 1. **最優先・実装可否ゲート**：JavaScript / HTML / CSSで構築するプルダウンとフォームを、通常のJupyter Notebookコードセル内の所定の位置に常設できるかを検証する。フォーム描画はPythonコード実行とは独立した責務である。Notebook Rendererは原則としてセル出力データの描画機構であるため、標準のPython source・セル出力と共存させる配置方法、およびセル実行後のフォーム維持方法を検証する。実現できない場合はUI方針を再協議する。
-2. VS CodeとKiro IDEで同一UIとNotebook編集APIが機能するか。
+2. 正式対象版のVS CodeでUIとNotebook編集APIが機能するか。Kiroは参考確認のみとし、未確認・不適合を初回リリースの必須条件にしない。
 3. 入力ごとのmetadata更新、dirty/Undo、保存・再オープン・下書き復元が標準Notebook動作と整合するか。
 4. コネクタ/アクション切替直後のsource更新、確定時のsource更新、Jupyter標準実行・Run Allの整合性。
 5. 「未更新」の実行成功検出が独自Python実行処理なしに可能か。実行後フォーム状態の維持。
