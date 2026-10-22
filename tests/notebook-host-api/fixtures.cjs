@@ -6,6 +6,7 @@ function cell(label, source) {
 const env = `import sys, importlib.metadata as m, json\nprint(json.dumps({'python': sys.version, 'ipykernel': m.version('ipykernel'), 'jupyter_client': m.version('jupyter_client')}, indent=2))\n`;
 const wait = label => `import time\nprint('${label} started', flush=True)\ntime.sleep(90)\nprint('${label} finished', flush=True)\n`;
 const cases = {
+  'D4-basic': [cell('environment', env), cell('success', "print('diagnostic success')\n"), cell('empty', ''), cell('exception', "raise ValueError('fictional diagnostic exception')\n")],
   'D1-structure': [cell('A', '# D1-A: move this cell\nvalue_a = 101\n'), cell('B', '# D1-B\nvalue_b = 202\n'), cell('C', '# D1-C\nvalue_c = 303\n')],
   'D2-save': [cell('D2', '# D2: metadata-only must preserve this source\nfictional_value = 42\n')],
   'D3-mixed': [cell('D3', '# D3 baseline\nfictional_value = 10\n')],

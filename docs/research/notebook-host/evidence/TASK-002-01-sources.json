@@ -1163,5 +1163,10 @@
     "harnessSmokePassed": true,
     "actualUserCasesAccepted": false,
     "historicalStaticFlagsUnchanged": true
+  },
+  "desktopObservations": {
+    "evidence": "TASK-002-01-windows-observations-20261023.json",
+    "scope": "D1/D2/D3/D4/D6 partial runtime observations; D5 not yet performed",
+    "allCasesAccepted": false
   }
 }

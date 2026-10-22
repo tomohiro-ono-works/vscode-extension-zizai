@@ -60,6 +60,10 @@
 
 ## D4：標準実行の観測
 
+`D4-basic.ipynb` は環境版・成功・空セル・意図的例外の4セルを1回の標準Run Allで観測する補助Notebook。最後のValueErrorは期待するテスト結果。記録コマンドの選択ミスや複数Undoが混在した場合は、マーカー名だけで実操作を確定せず、APIイベントとユーザー報告を対応づける。既存ログで対応できる回はRecord Stepの操作を省略できる。
+
+実行中のmetadata-settingとsource-changedを同じ実行中に順に行う場合は、個別条件を独立に行った結果と混同せず、変更時刻と終了要約の対応を複合条件として記録する。
+
 まず `D4-environment` を標準セル▶で実行し、Python／ipykernel／jupyter_client版を標準出力と保存JSONから採取する。CLIのPythonと選択カーネルの一致はこの時点で判定する。
 
 | 架空Notebook | 標準UIで行うこと | 追加観測 |

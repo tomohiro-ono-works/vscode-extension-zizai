@@ -15,6 +15,10 @@
 
 Node.jsのみで準備でき、npm依存の追加・インストールは不要。
 
+`automated.cjs` はD2・D3・D6、`structure.cjs` はD1の上方向複製・標準コピー貼付・削除とUndo/Redoを公開API／標準コマンドで観測する実VS Code用テスト入口。実行方法は下記スモークと同じ `--extensionTestsPath` を該当ファイルへ変更する。`structure-delete.cjs` は削除条件だけの関連再確認。手動Notebookと分離したAUTO名の架空ファイル、別user-data-dirを使う。
+
+自動確認は各 `results/task-002-01/*-result.local.json` とrawLog参照へ記録する。`completed` はランナーの完走であり、全ケース合格ではない。D3はfalse後の部分適用とUndoの実値を、D6は性能閾値未定・20msの観測待ちを含む計測条件を保持する。削除Redoはセル数の期待不一致を検出し、フォーカス再明示後も未解決。これを診断側の期待に合わせて成功へ書き換えない。
+
 ```powershell
 node tests/notebook-host-api/prepare.mjs
 node --test tests/notebook-host-api/model.test.cjs
