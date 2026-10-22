@@ -68,6 +68,19 @@
         "--enable-proposed-api=zizai-lab.task-001-01-probe"
       ],
       "preLaunchTask": "TASK-001-01: prepare proposed probe"
+    },
+    {
+      "name": "TASK-002-01: Notebook Host API (DIAGNOSTIC)",
+      "type": "extensionHost",
+      "request": "launch",
+      "runtimeExecutable": "${execPath}",
+      "args": [
+        "--extensionDevelopmentPath=${workspaceFolder}/tests/notebook-host-api/dist",
+        "--user-data-dir=${workspaceFolder}/config/task-002-01-desktop",
+        "${workspaceFolder}/tests/notebook-host-api/dist/probe.code-workspace",
+        "${workspaceFolder}/results/task-002-01/workspace/D1-structure.ipynb"
+      ],
+      "preLaunchTask": "TASK-002-01: prepare Notebook Host API probe"
     }
   ]
 }

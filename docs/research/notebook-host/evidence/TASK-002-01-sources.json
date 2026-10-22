@@ -1154,5 +1154,14 @@
       ],
       "conclusion": "B07-B09 refine pending D4/D5 observations. TASK-002-01 and parent TASK-002 remain in progress; no formal design adopted or subsequent Subtask started."
     }
-  ]
+  ],
+  "desktopPreparation": {
+    "recordedAt": "2026-10-22T15:49:47.621Z",
+    "evidence": "TASK-002-01-windows-preparation-20261023.json",
+    "base": "85358a0147fb49221c807f3acc6b78fc8f555c95",
+    "diagnosticBranch": "codex/task-002-01-desktop",
+    "harnessSmokePassed": true,
+    "actualUserCasesAccepted": false,
+    "historicalStaticFlagsUnchanged": true
+  }
 }
