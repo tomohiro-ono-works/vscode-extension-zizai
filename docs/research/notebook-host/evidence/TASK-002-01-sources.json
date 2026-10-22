@@ -798,6 +798,361 @@
         }
       ],
       "conclusion": "Static findings refined. TASK-002-01 remains in progress; desktop applicability, event order, partial application, persistence and performance remain unverified. No product contracts or implementation changed."
+    },
+    {
+      "checkedAt": "2026-10-22T13:43:25Z",
+      "sourceProjectCommit": "e4d0f92a47144e636631536e1344f8f21d9ad597",
+      "branch": "research/task-005-01-boundaries",
+      "method": "Pinned UTF-8 source inspection, SHA-256 and Git-blob SHA-1 calculation, exact source-marker checks and manual control-flow inspection. No compilation or behavior tests.",
+      "scope": "Continue TASK-002-01 static research under existing constraints; no desktop cases, product implementation, diagnostic extension, launch configuration, contracts or Current Specification changes.",
+      "previousSourcesHashVerified": 2,
+      "previousSources": [
+        {
+          "path": "src/kernels/execution/cellExecution.ts",
+          "sha256": "26ef89736748d1ab634a74da1e9a4be8da1974f1956cfe6d456103b352918100",
+          "gitBlobSha1": "b4d9608943df2aefec2bd75bd2cb65cffa9fbf3f",
+          "bytes": 22712
+        },
+        {
+          "path": "src/vs/workbench/api/common/extHostNotebookKernels.ts",
+          "sha256": "6adabe774ecb5f4812d8b0db1d37a1e30c33e03742d6739565e673e4d90d4ac3",
+          "gitBlobSha1": "26ba550555f255812c6d94f190569b89992b337d",
+          "bytes": 32088
+        }
+      ],
+      "newSources": [
+        {
+          "reference": "S19",
+          "repository": "microsoft/vscode-jupyter",
+          "commit": "fc61dfe2fd70a3d62d3ce0fef580757e7d64b81c",
+          "path": "src/kernels/execution/cellExecutionQueue.ts",
+          "url": "https://github.com/microsoft/vscode-jupyter/blob/fc61dfe2fd70a3d62d3ce0fef580757e7d64b81c/src/kernels/execution/cellExecutionQueue.ts",
+          "sha256": "40fb88ea2c1e34bfd1b97907aa69913bc23683ee15fb6e41b816d83ec70ae0d8",
+          "gitBlobSha1": "baf0f2097e4fc33d11729175befb15a1ee9499ff",
+          "bytes": 14695
+        },
+        {
+          "reference": "S20",
+          "repository": "microsoft/vscode-jupyter",
+          "commit": "fc61dfe2fd70a3d62d3ce0fef580757e7d64b81c",
+          "path": "src/kernels/execution/cellExecutionCreator.ts",
+          "url": "https://github.com/microsoft/vscode-jupyter/blob/fc61dfe2fd70a3d62d3ce0fef580757e7d64b81c/src/kernels/execution/cellExecutionCreator.ts",
+          "sha256": "ca59c03d50b5283b959c87abd9dc6649dd28484397d3711d50b8e5cad42c4c1e",
+          "gitBlobSha1": "1a1d5b18c9287f78030374d94eb0d3a7f186b17f",
+          "bytes": 6414
+        }
+      ],
+      "checks": [
+        {
+          "id": "Q01",
+          "path": "src/kernels/execution/cellExecutionQueue.ts",
+          "matches": [
+            {
+              "marker": "this.queueOfCellsToExecute.find((item) => item.cell === cell)",
+              "lines": [
+                87,
+                115
+              ]
+            },
+            {
+              "marker": "return existingCellExecution;",
+              "lines": [
+                90
+              ]
+            },
+            {
+              "marker": "const kernelConnection = await this.session;",
+              "lines": [
+                191
+              ]
+            },
+            {
+              "marker": "const itemToExecute = this.queueOfItemsToExecute[0];",
+              "lines": [
+                206
+              ]
+            },
+            {
+              "marker": ".start(kernelConnection)",
+              "lines": [
+                220
+              ]
+            }
+          ],
+          "result": "matched",
+          "kind": "static-source-text; surrounding control flow manually inspected",
+          "sha256": "40fb88ea2c1e34bfd1b97907aa69913bc23683ee15fb6e41b816d83ec70ae0d8"
+        },
+        {
+          "id": "Q02",
+          "path": "src/kernels/execution/cellExecution.ts",
+          "matches": [
+            {
+              "marker": "this.execute(this.codeOverride || this.cell.document.getText().replace(/\\r\\n/g, '\\n'), session)",
+              "lines": [
+                189
+              ]
+            },
+            {
+              "marker": "this.request = kernelConnection.requestExecute(",
+              "lines": [
+                422
+              ]
+            },
+            {
+              "marker": "                    code,",
+              "lines": [
+                424
+              ]
+            }
+          ],
+          "result": "matched",
+          "kind": "static-source-text; surrounding control flow manually inspected",
+          "sha256": "26ef89736748d1ab634a74da1e9a4be8da1974f1956cfe6d456103b352918100"
+        },
+        {
+          "id": "Q03",
+          "path": "src/kernels/execution/cellExecution.ts",
+          "matches": [
+            {
+              "marker": "private get isEmptyCodeCell(): boolean {",
+              "lines": [
+                334
+              ]
+            },
+            {
+              "marker": "return this.cell.document.getText().trim().length === 0;",
+              "lines": [
+                335
+              ]
+            },
+            {
+              "marker": "if (this.isEmptyCodeCell) {",
+              "lines": [
+                349
+              ]
+            },
+            {
+              "marker": "this.execution.executionOrder = undefined;",
+              "lines": [
+                352
+              ]
+            },
+            {
+              "marker": "this.execution?.end(undefined);",
+              "lines": [
+                165,
+                205,
+                354,
+                367
+              ]
+            },
+            {
+              "marker": "this.execution?.end(success === 'success', this.endTime);",
+              "lines": [
+                357
+              ]
+            }
+          ],
+          "result": "matched",
+          "kind": "static-source-text; surrounding control flow manually inspected",
+          "sha256": "26ef89736748d1ab634a74da1e9a4be8da1974f1956cfe6d456103b352918100"
+        },
+        {
+          "id": "Q04",
+          "path": "src/kernels/execution/cellExecution.ts",
+          "matches": [
+            {
+              "marker": "this.cancelRequested = true;",
+              "lines": [
+                255
+              ]
+            },
+            {
+              "marker": "if (this.started && !forced && this.execution?.started) {",
+              "lines": [
+                256
+              ]
+            },
+            {
+              "marker": "await this.result.catch(noop);",
+              "lines": [
+                261
+              ]
+            },
+            {
+              "marker": "this.cancelHandled = true;",
+              "lines": [
+                268
+              ]
+            },
+            {
+              "marker": "this.completedDueToCancellation();",
+              "lines": [
+                118,
+                270
+              ]
+            }
+          ],
+          "result": "matched",
+          "kind": "static-source-text; surrounding control flow manually inspected",
+          "sha256": "26ef89736748d1ab634a74da1e9a4be8da1974f1956cfe6d456103b352918100"
+        },
+        {
+          "id": "Q05",
+          "path": "src/kernels/execution/cellExecution.ts",
+          "matches": [
+            {
+              "marker": "workspace.onDidCloseTextDocument(",
+              "lines": [
+                102
+              ]
+            },
+            {
+              "marker": "if (e === this.cell.document) {",
+              "lines": [
+                106
+              ]
+            },
+            {
+              "marker": "this.request?.dispose(); // NOSONAR",
+              "lines": [
+                113
+              ]
+            },
+            {
+              "marker": "if (this.started && !this._completed) {",
+              "lines": [
+                117
+              ]
+            },
+            {
+              "marker": "return !this.cell.document.isClosed;",
+              "lines": [
+                390
+              ]
+            }
+          ],
+          "result": "matched",
+          "kind": "static-source-text; surrounding control flow manually inspected",
+          "sha256": "26ef89736748d1ab634a74da1e9a4be8da1974f1956cfe6d456103b352918100"
+        },
+        {
+          "id": "Q06",
+          "path": "src/kernels/execution/cellExecutionCreator.ts",
+          "matches": [
+            {
+              "marker": "this._impl.end(success, endTime, this.errorInfo);",
+              "lines": [
+                80
+              ]
+            },
+            {
+              "marker": "CellExecutionCreator._map.delete(cell);",
+              "lines": [
+                157
+              ]
+            },
+            {
+              "marker": "CellExecutionCreator._map.set(cell, result);",
+              "lines": [
+                161
+              ]
+            }
+          ],
+          "result": "matched",
+          "kind": "static-source-text; surrounding control flow manually inspected",
+          "sha256": "ca59c03d50b5283b959c87abd9dc6649dd28484397d3711d50b8e5cad42c4c1e"
+        }
+      ],
+      "observations": [
+        {
+          "id": "B07",
+          "statement": "The inspected queue reuses an existing execution for the same cell object. After session/earlier-item waits, start reads a truthy override or current cell source before requestExecute; enqueue-time source and each repeated request are not separate executed generations.",
+          "references": [
+            "S16",
+            "S19"
+          ],
+          "checks": [
+            "Q01",
+            "Q02"
+          ],
+          "desktopCases": [
+            "D4"
+          ],
+          "scope": "Conditional inspected queue path; all standard command callers and runtime ordering were not verified."
+        },
+        {
+          "id": "B08",
+          "statement": "endCellTask checks current document emptiness instead of submitted code. The empty branch clears executionOrder and forwards undefined before success/failure handling; the execution wrapper forwards that success value to the standard execution.",
+          "references": [
+            "S16",
+            "S20"
+          ],
+          "checks": [
+            "Q03",
+            "Q06"
+          ],
+          "desktopCases": [
+            "D4"
+          ],
+          "scope": "Nonempty submission followed by an empty current document reaches this branch conditionally; no IDE reproduction or kernel result observation."
+        },
+        {
+          "id": "B09",
+          "statement": "Non-forced cancellation may await a running execution result instead of ending it immediately. The close callback checks document object identity and disposes the request, conditionally reporting local cancellation. These paths do not by themselves establish kernel interruption completion.",
+          "references": [
+            "S16"
+          ],
+          "checks": [
+            "Q04",
+            "Q05"
+          ],
+          "desktopCases": [
+            "D4",
+            "D5"
+          ],
+          "scope": "Local callback/control-flow finding only; actual close/cancellation event ordering and kernel-stop behavior unverified."
+        }
+      ],
+      "verification": {
+        "staticCheckCount": 6,
+        "markerCount": 27,
+        "matchedSourceLocations": 32,
+        "existingEvidencePreserved": true
+      },
+      "ideStarted": false,
+      "kernelStarted": false,
+      "behaviorTestsRun": false,
+      "diagnosticExtensionCreated": false,
+      "launchConfigurationChanged": false,
+      "desktopCases": [
+        {
+          "id": "D1",
+          "status": "not-run"
+        },
+        {
+          "id": "D2",
+          "status": "not-run"
+        },
+        {
+          "id": "D3",
+          "status": "not-run"
+        },
+        {
+          "id": "D4",
+          "status": "not-run"
+        },
+        {
+          "id": "D5",
+          "status": "not-run"
+        },
+        {
+          "id": "D6",
+          "status": "not-run"
+        }
+      ],
+      "conclusion": "B07-B09 refine pending D4/D5 observations. TASK-002-01 and parent TASK-002 remain in progress; no formal design adopted or subsequent Subtask started."
     }
   ]
 }
