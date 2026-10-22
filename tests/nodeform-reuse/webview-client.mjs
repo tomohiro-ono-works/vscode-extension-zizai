@@ -12,10 +12,10 @@ const forms = { 'Probe.run': [
   { key: 'folder', label: 'フォルダー選択', kind: 'dir' }
 ] };
 let editor;
-function mount() {
+function mount(params = {}) {
   editor?.destroy();
-  editor = window.NodeForm.mount({ root, node: { connector: 'Probe', action: 'run', form: {} }, forms,
-    onChange(_params, change) { status.textContent = `${change.key} を変更しました`; } });
+  editor = window.NodeForm.mount({ root, node: { connector: 'Probe', action: 'run', form: params }, forms,
+    onChange(params, change) { host.setState({ form: params }); status.textContent = `${change.key} を変更しました`; } });
   result.textContent = '';
 }
 root.addEventListener('nodeform:browse-request', event => {
@@ -33,6 +33,6 @@ document.getElementById('validate').addEventListener('click', () => {
   const validation = editor.validate();
   status.textContent = validation.valid ? '入力検証OK' : '項目のエラーを確認してください';
 });
-document.getElementById('remount').addEventListener('click', () => { mount(); status.textContent = 'フォームを作り直しました'; });
+document.getElementById('remount').addEventListener('click', () => { mount(); host.setState({ form: editor.getParams() }); status.textContent = 'フォームを作り直しました'; });
 document.getElementById('report').addEventListener('click', () => host.postMessage({ type: 'report' }));
-mount();
+mount(host.getState()?.form);

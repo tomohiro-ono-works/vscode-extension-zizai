@@ -128,3 +128,15 @@ P2／P3では、報告JSONの `fetchGuardSource` を `deny-fetch.mjs` として�
 `webview-host.test.cjs` はVS Code APIアダプターで、キャンセル・不正要求・閉じたパネルへの遅延結果・並行要求・環境情報・CSP宣言を検査する4件。最初は並行要求のケースが失敗し、保留せずキャンセル結果を返す修正後に4件合格。実際のCSP適用・OSダイアログ・Webview描画はこのテストの対象外。
 
 仮のDOM／Hostメッセージはこの検証拡張内だけのもの。選択パスはフォームへ返すだけで内容を読まず、PythonやNotebookを操作しない。OutputChannelは作らない。実機結果が返るまでは、TaskのIDE適合は未実施のまま保持する。
+
+### Webview再表示時の入力保持
+
+評価用クライアントはVS CodeのWebview単位の `getState`／`setState` でフォーム値を保存し、タブを非表示にして文書が再作成された場合も復元する。「フォームを作り直す」はそのパネルのフォームと保存値だけを初期化する。候補・条件付き項目・ファイル／フォルダーの選択パスもフォーム値として保持するが、内容の読み込み、環境報告JSONへの追加、OutputChannelへの出力は行わない。この状態保持は評価用タブだけの処理であり、製品の保存契約を定義しない。
+
+次のコマンドで準備7件・Host4件・クライアント3件をまとめて確認する。Windowsの回帰テストでは `--import` の取得拒否ガードをfile URLとして渡す。
+
+```sh
+node --test tests/nodeform-reuse/prepare-webview.test.mjs tests/nodeform-reuse/webview-host.test.cjs tests/nodeform-reuse/webview-client.test.cjs
+```
+
+`webview-client.test.cjs` は実クライアントスクリプトを別々のJS文書として起動し、値の復元、再作成後の初期化、パネル間の分離を検査する。VS Code APIとNodeFormの公開APIはアダプターで置き換えており、実WebviewでのF6合格を示すものではない。生成後にF5で起動し、[実機手順F6](../manual/TASK-001-02-nodeform.md) の同じエディターグループ内でのタブ往復と、一方だけのフォーム再作成を確認する。

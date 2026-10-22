@@ -5,7 +5,7 @@ import assert from 'node:assert/strict';
 import { cp, mkdir, mkdtemp, readFile, readdir, rm, writeFile } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 import { execFileSync, spawnSync } from 'node:child_process';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import os from 'node:os';
 import path from 'node:path';
 
@@ -50,7 +50,7 @@ async function fixture(t, { crlf = false, parentRepository = false } = {}) {
     env.GIT_CONFIG_GLOBAL = path.join(area, 'global-gitconfig');
     await writeFile(env.GIT_CONFIG_GLOBAL, '[core]\n\tautocrlf = true\n');
   }
-  const run = () => spawnSync(process.execPath, ['--import', guard, path.join(root, 'prepare-webview.mjs')], {
+  const run = () => spawnSync(process.execPath, ['--import', pathToFileURL(guard).href, path.join(root, 'prepare-webview.mjs')], {
     cwd: project, env, encoding: 'utf8'
   });
   return { root, cache, patch, temp, run, target: path.join(root, 'dist', 'webview') };
