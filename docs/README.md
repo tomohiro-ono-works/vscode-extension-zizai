@@ -3,7 +3,7 @@
 ## 開発時の入口
 
 1. [プロジェクト README](../README.md) で、目的・構成・動作・現在の実装状況を確認する。
-2. [開発手順](development.md) と [Task の案内](tasks/README.md) を読み、担当 Task のゴール・スコープ・制約・完了条件を確認する。
+2. [開発手順](development.md) と [Task の案内](tasks/README.md) を読み、担当Issueと親Issueのゴール・スコープ・制約・完了条件を確認する。
 3. 下記の参照順序で関係する設計を確認し、個別仕様・決定記録がある場合は併せて読む。
 
 ## 資料の配置と状態
@@ -11,7 +11,7 @@
 | 配置先 | 用途 | 現在の状態 |
 | --- | --- | --- |
 | `features/` | 現行の責務・境界を整理したアーキテクチャと個別仕様 | [architecture.md](features/architecture.md) に今回の責務を整理。全体方針の正本は `designs/01全体設計.md` |
-| [tasks/](tasks/README.md) | Task と作業結果 | `active/` と `done/` に分けて記録する |
+| [tasks/](tasks/README.md) | Issueへの入口と運用ルール | 作業範囲・進捗・判断・結果はGitHub Issuesで管理。既存のTask Markdownは移行元の記録 |
 | `designs/` | 本プロジェクトの設計 | 下記の既存設計書を配置 |
 | `research/` | 技術調査・参考資料 | 元アプリのコネクタ資料を配置 |
 | `decisions/` | 本プロジェクトの判断と承認の記録 | 実際に判断・承認が行われた際に記録する |
@@ -41,7 +41,7 @@ GitHub に後から追加されていた README は [別アプリの文書管理
 <a id="document-responsibilities"></a>
 ## 文書と Task の役割
 
-Task の領域・工程、Task／Subtask の分割、ID・配置、必須項目、完了判定は [Task・Subtask の作成ルール](tasks/task-rules.md) を基準にします。仕様・設計には製品の動作と責務、Task には作業範囲・結果を記録し、資料索引やテスト定義と内容を重複させないようにします。
+Task の領域・工程、Task／Subtask の分割、ID・Issueの関係、必須項目、完了判定は [Task・Subtask の作成ルール](tasks/task-rules.md) を基準にします。仕様・設計には製品の動作と責務、TaskのIssueには作業範囲・結果を記録し、資料索引やテスト定義と内容を重複させないようにします。
 
 <a id="approval-boundaries"></a>
 ## 判断・承認の扱い
