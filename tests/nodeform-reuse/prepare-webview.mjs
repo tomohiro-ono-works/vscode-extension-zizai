@@ -35,8 +35,16 @@ try {
     await writeFile(path.join(temp, name), data);
   }
   const patch = path.join(root, 'patches', '0001-combo-listener.patch');
-  execFileSync('git', ['apply', '--check', patch], { cwd: temp });
-  execFileSync('git', ['apply', patch], { cwd: temp });
+  const patchBytes = await readFile(patch);
+  // A Windows checkout may use CRLF. Normalize only the patch input; pinned
+  // upstream bytes and their Git blob verification remain unchanged.
+  const appliedPatch = Buffer.from(patchBytes.toString('utf8').replace(/\r\n/g, '\n'));
+  // Keep an ancestor repository's attributes/settings out of this temporary copy.
+  const patchOptions = { cwd: temp, input: appliedPatch,
+    env: { ...process.env, GIT_CEILING_DIRECTORIES: path.dirname(temp) } };
+  const gitApply = ['-c', 'core.autocrlf=false', '-c', 'core.eol=lf', 'apply'];
+  execFileSync('git', [...gitApply, '--check', '-'], patchOptions);
+  execFileSync('git', [...gitApply, '-'], patchOptions);
   await rm(target, { recursive: true, force: true });
   await mkdir(path.join(target, 'resources'), { recursive: true });
   for (const name of ['node-form.js', 'node-form.css']) await cp(path.join(temp, 'src', name), path.join(target, 'resources', name));
@@ -45,7 +53,8 @@ try {
   for (const name of ['webview.cjs', 'webview-client.mjs', 'vscode-theme-probe.css']) await cp(path.join(root, name), path.join(target, name));
   await writeFile(path.join(target, 'provenance.json'), JSON.stringify({
     upstreamCommit: commit,
-    patchSha256: createHash('sha256').update(await readFile(patch)).digest('hex'),
+    patchSha256: createHash('sha256').update(patchBytes).digest('hex'),
+    appliedPatchSha256: createHash('sha256').update(appliedPatch).digest('hex'),
     themeSha256: createHash('sha256').update(await readFile(path.join(root, 'vscode-theme-probe.css'))).digest('hex')
   }, null, 2) + '\n');
   await writeFile(path.join(target, 'package.json'), JSON.stringify({

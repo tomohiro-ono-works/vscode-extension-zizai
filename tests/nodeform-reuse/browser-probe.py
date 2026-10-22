@@ -6,6 +6,7 @@ No Python kernel, real OS dialog, connector, or product integration is exercised
 import argparse
 import hashlib
 import json
+import os
 import platform
 import shutil
 import subprocess
@@ -33,14 +34,21 @@ for name, expected in EXPECTED.items():
     if actual != expected:
         raise SystemExit(f"Pinned upstream blob mismatch: {name}")
 patch_sha256 = None
+applied_patch_sha256 = None
 if args.patched:
     patch = Path(__file__).resolve().parent / "patches/0001-combo-listener.patch"
-    patch_sha256 = hashlib.sha256(patch.read_bytes()).hexdigest()
+    patch_bytes = patch.read_bytes()
+    patch_sha256 = hashlib.sha256(patch_bytes).hexdigest()
+    # Match the packaging probe: normalize patch input, never pinned source bytes.
+    applied_patch_bytes = patch_bytes.replace(b"\r\n", b"\n")
+    applied_patch_sha256 = hashlib.sha256(applied_patch_bytes).hexdigest()
     patch_temp = tempfile.TemporaryDirectory(prefix="nodeform-patched-")
     shutil.copytree(args.upstream, patch_temp.name, dirs_exist_ok=True,
                     ignore=shutil.ignore_patterns(".git", "node_modules"))
-    subprocess.run(["git", "apply", "--check", str(patch)], cwd=patch_temp.name, check=True)
-    subprocess.run(["git", "apply", str(patch)], cwd=patch_temp.name, check=True)
+    patch_env = {**os.environ, "GIT_CEILING_DIRECTORIES": str(Path(patch_temp.name).parent)}
+    git_apply = ["git", "-c", "core.autocrlf=false", "-c", "core.eol=lf", "apply"]
+    subprocess.run(git_apply + ["--check", "-"], cwd=patch_temp.name, env=patch_env, input=applied_patch_bytes, check=True)
+    subprocess.run(git_apply + ["-"], cwd=patch_temp.name, env=patch_env, input=applied_patch_bytes, check=True)
     args.upstream = Path(patch_temp.name)
 upstream_test = subprocess.run(["node", str(args.upstream.resolve() / "test/node-form.test.js")],
                                capture_output=True, text=True)
@@ -237,6 +245,7 @@ with sync_playwright() as pw:
               "sampleLoaded": sample_loaded, "resourceLoading": "injected local source in blank page", "pageErrors": errors, "checks": results,
               "baseCssDarkParent": colors, "variant": "patched-prototype" if args.patched else "upstream",
               "patchSha256": patch_sha256, "sourceCheckoutModified": False,
+              "appliedPatchSha256": applied_patch_sha256,
               "themeChecks": theme_results,
               "themeOverrideSha256": hashlib.sha256(args.theme_override.read_bytes()).hexdigest() if args.theme_override else None,
               "upstreamTest": {"exitCode": upstream_test.returncode, "stdout": upstream_test.stdout.strip(), "stderr": upstream_test.stderr.strip()}}
