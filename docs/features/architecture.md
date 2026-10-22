@@ -1,17 +1,19 @@
 <a id="architecture"></a>
 # アーキテクチャと責務分担
 
-更新日：2026-10-19。
+更新日：2026-10-22。
 
 このプロジェクトの VS Code 拡張機能について、全体設計にある構成・責務・状態の所有者・境界を整理した資料です。[01 全体設計](../designs/01全体設計.md) を基準とし、Notebook の操作・保存の詳細は [02 Notebook UI 設計](../designs/02NotebookUI設計.md) に従います。
 
 **設計上の責務を記載しています。アプリの実装・技術検証は未完了です。** 具体的な API 名、metadata キー、パッケージ構成、UI 配置方式を、この資料で新しく確定しません。
 
 <a id="runtime-topology"></a>
+正式対象はVS Codeのみ。Kiroは任意の互換利用として扱い、動作保証・専用対応・必須検証を求めない。[2026-10-22の判断記録](../decisions/2026-10-22-vscode-distribution-scope.md)に従う。
+
 ## 実行時の構成
 
 ```text
-VS Code / Kiro IDE
+VS Code
 └─ Jupyter Notebook (.ipynb)
    ├─ UI：HTML / CSS / JavaScript
    │  └─ 選択、フォーム入力、下書き・確定イベント
@@ -94,7 +96,7 @@ Notebook ごとのフォーム設定・拡張機能状態は独立させます�
 
 最優先は、通常のコードセル内に選択 UI とフォームを常設し、source・標準出力と共存・維持できるかの確認です。Notebook Renderer はセル出力の描画機構であり、その採用だけでセル内 UI が成立するとは扱いません。
 
-- VS Code / Kiro IDE の互換性、UI の配置・表示維持、NodeForm など参考部品の採用可否。
+- 正式対象版のVS CodeでのAPI適合性、UIの配置・表示維持、NodeFormなど参考部品の採用可否。
 - metadata の正式キー、更新と dirty・Undo・性能、UI／Host 間のメッセージと非同期競合。
 - 初期化セルと処理セルの識別、移動・複製・削除・Undo、元コード退避との対応。
 - 実行成功の検出、「未更新」の状態遷移・再オープン時の復元。
