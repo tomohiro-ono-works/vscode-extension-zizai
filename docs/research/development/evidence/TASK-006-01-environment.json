@@ -166,5 +166,119 @@
     "ci": "not configured",
     "desktop_this_task": "not performed",
     "kiro": "out of scope"
+  },
+  "design_review_2026_10_22": {
+    "checked_at": "2026-10-22T13:31:48Z",
+    "client_date": "2026-10-22",
+    "client_timezone": "Asia/Tokyo",
+    "baseline_commit": "92044772fe3f7d6e9df16d1d111a5be088341722",
+    "status": "Design proposal and read-only inventory; not adopted; no product implementation, installation, build, kernel or IDE test.",
+    "observations": [
+      {
+        "command": "Get-Command code,kiro,python,py,node,npm,git -ErrorAction SilentlyContinue | Select-Object Name,CommandType",
+        "exit_code": 1,
+        "result": {
+          "found": [
+            "code.cmd",
+            "python.exe",
+            "py.exe",
+            "node.exe",
+            "npm.ps1",
+            "git.exe"
+          ],
+          "not_found_on_path": [
+            "kiro"
+          ]
+        },
+        "interpretation": "PATH discovery only. Does not prove Kiro is not installed."
+      },
+      {
+        "command": "code --version",
+        "exit_code": 0,
+        "stdout": [
+          "1.143.0",
+          "2d0b7506a36c1d6db9a466440131a8e01eab2289",
+          "x64"
+        ],
+        "warning": {
+          "code": "EPERM",
+          "syscall": "chdir",
+          "source": "<workspace>",
+          "destination": "<installed-vscode-directory>"
+        },
+        "interpretation": "Version output accompanied by sandbox permission error. Not a clean CLI confirmation; no retry or IDE launch performed."
+      },
+      {
+        "command": "py -B -c 'import sys,json,importlib.metadata as m; names=[\"pip\",\"ipykernel\",\"jupyter_client\"]; installed={d.metadata[\"Name\"].lower():d.version for d in m.distributions()}; print(json.dumps({\"python\":sys.version.split()[0],\"packages\":{n:installed.get(n) for n in names}},ensure_ascii=False))'",
+        "exit_code": 0,
+        "result": {
+          "python": "3.14.3",
+          "packages": {
+            "pip": "25.3",
+            "ipykernel": "7.4.0",
+            "jupyter_client": "8.10.0"
+          }
+        },
+        "interpretation": "Default py interpreter and installed distribution metadata only; no package import or kernel runtime verification."
+      },
+      {
+        "command": "node --version; npm.cmd --version; git --version",
+        "exit_code": 0,
+        "stdout": [
+          "v24.14.1",
+          "11.11.0",
+          "git version 2.52.0.windows.1"
+        ]
+      }
+    ],
+    "selected_notebook_kernel_verified": false,
+    "extension_host_node_verified": false,
+    "gui_or_kernel_launched": false,
+    "unresolved_required_rule_files": [
+      "docs/features/coding-rules.md",
+      "docs/features/refactor-policy.md"
+    ],
+    "repository_checks": {
+      "tree_sha": "0b5f84fbb0a9f8618ba3ec114baa2b4c25864526",
+      "product_implementation_files": "apps/{extension,gui,core,connectors,common} contain only .gitkeep",
+      "product_manifest_present": false,
+      "product_python_distribution_settings_present": false
+    },
+    "references": [
+      {
+        "path": "docs/research/python-import/TASK-003-01.md",
+        "blob_sha": "a675e2aa18e83f9debc8a5fce8215292755ed6d6"
+      },
+      {
+        "path": "docs/research/notebook-ui/TASK-001-02-placement.md",
+        "blob_sha": "4fad981b9ec62992506297ac02c76c52602deb14"
+      },
+      {
+        "path": "docs/research/contracts/TASK-005-01.md",
+        "blob_sha": "0798785a70d40feeed958e2ae1756247006da5d5"
+      },
+      {
+        "path": "AGENTS.md",
+        "blob_sha": "d589818c8ca7ac3814176443c65211e664cee68b"
+      },
+      {
+        "path": "docs/tasks/task-rules.md",
+        "blob_sha": "a36c3fa42fcf6fc0b3fe4a717d4bc04fc77fb8d8"
+      }
+    ],
+    "online_sources": [
+      "https://code.visualstudio.com/api/references/extension-manifest",
+      "https://code.visualstudio.com/api/advanced-topics/using-proposed-api",
+      "https://packaging.python.org/en/latest/tutorials/packaging-projects/",
+      "https://pip.pypa.io/en/stable/user_guide/#running-pip"
+    ],
+    "unresolved_design_inputs": [
+      "UI placement and proposed API conditions",
+      "Python package boundary and canonical paths",
+      "contract generation and synchronization",
+      "dependency versions, platform support and license permissions",
+      "target IDE/kernel environment verification"
+    ],
+    "environment_setup_performed": false
   }
 }
