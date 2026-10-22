@@ -280,5 +280,351 @@
       "target IDE/kernel environment verification"
     ],
     "environment_setup_performed": false
+  },
+  "dependency_review_2026_10_22": {
+    "checked_at": "2026-10-22T14:16:49.405412+00:00",
+    "scope": "Read-only PyPI JSON metadata; no dependency installation or execution.",
+    "target_candidate": "CPython 3.14 standard ABI on Windows x86-64; minimum or supported versions not determined.",
+    "packages": [
+      {
+        "name": "db-dtypes",
+        "version": "1.8.0",
+        "source_url": "https://pypi.org/pypi/db-dtypes/json",
+        "selection": "current metadata observation only; not a selected version",
+        "requires_python": ">=3.10",
+        "license_expression": null,
+        "license_classifiers": [
+          "License :: OSI Approved :: Apache Software License"
+        ],
+        "candidate_files": [
+          {
+            "filename": "db_dtypes-1.8.0-py3-none-any.whl",
+            "requires_python": ">=3.10",
+            "yanked": false,
+            "size": 18402,
+            "digests": {
+              "blake2b_256": "e09f6fb7be8c232e480e3dbb093ba864bfb3edd163cc2097f3dd42d0fc20caf0",
+              "md5": "0cdcabffdafbb96bd4b1694e8ba13f48",
+              "sha256": "8f6d6b9565532171b006f509fbe4faa0ae74dc9b60a54a92b041755d71d7c970"
+            },
+            "url": "https://files.pythonhosted.org/packages/e0/9f/6fb7be8c232e480e3dbb093ba864bfb3edd163cc2097f3dd42d0fc20caf0/db_dtypes-1.8.0-py3-none-any.whl"
+          }
+        ],
+        "license_summary": "None",
+        "requirements_relevant": [
+          "numpy<=2.2.6,>=1.24.0; python_version == \"3.10\"",
+          "numpy>=1.24.0; python_version != \"3.10\"",
+          "packaging>=24.2.0",
+          "pandas<4.0.0,>=1.5.3",
+          "pyarrow>=13.0.0"
+        ]
+      },
+      {
+        "name": "duckdb",
+        "version": "1.4.2",
+        "source_url": "https://pypi.org/pypi/duckdb/1.4.2/json",
+        "selection": "fixed upstream comparison version",
+        "requires_python": ">=3.9.0",
+        "license_expression": null,
+        "license_classifiers": [
+          "License :: OSI Approved :: MIT License"
+        ],
+        "candidate_files": [
+          {
+            "filename": "duckdb-1.4.2-cp312-cp312-win_amd64.whl",
+            "requires_python": ">=3.9.0",
+            "yanked": false,
+            "size": 12330737,
+            "digests": {
+              "blake2b_256": "955ebe05f46a290ea27630c112ff9e01fd01f585e599967fc52fe2edc7bc2039",
+              "md5": "7bf1571a99b5c7376d8791a2d37fb895",
+              "sha256": "769440f4507c20542ae2e5b87f6c6c6d3f148c0aa8f912528f6c97e9aedf6a21"
+            },
+            "url": "https://files.pythonhosted.org/packages/95/5e/be05f46a290ea27630c112ff9e01fd01f585e599967fc52fe2edc7bc2039/duckdb-1.4.2-cp312-cp312-win_amd64.whl"
+          },
+          {
+            "filename": "duckdb-1.4.2-cp314-cp314-win_amd64.whl",
+            "requires_python": ">=3.9.0",
+            "yanked": false,
+            "size": 12830520,
+            "digests": {
+              "blake2b_256": "255e6f5ebaabc12c6db62f471f86b5c9c8debd57f11aa1b2acbbcc4c68683238",
+              "md5": "aca1cc27a902061831c9ac33377cd194",
+              "sha256": "dfcc56a83420c0dec0b83e97a6b33addac1b7554b8828894f9d203955591218c"
+            },
+            "url": "https://files.pythonhosted.org/packages/25/5e/6f5ebaabc12c6db62f471f86b5c9c8debd57f11aa1b2acbbcc4c68683238/duckdb-1.4.2-cp314-cp314-win_amd64.whl"
+          }
+        ],
+        "license_summary": "None",
+        "requirements_relevant": []
+      },
+      {
+        "name": "google-auth",
+        "version": "2.47.0",
+        "source_url": "https://pypi.org/pypi/google-auth/2.47.0/json",
+        "selection": "fixed upstream comparison version",
+        "requires_python": ">=3.8",
+        "license_expression": null,
+        "license_classifiers": [
+          "License :: OSI Approved :: Apache Software License"
+        ],
+        "candidate_files": [
+          {
+            "filename": "google_auth-2.47.0-py3-none-any.whl",
+            "requires_python": ">=3.8",
+            "yanked": false,
+            "size": 234867,
+            "digests": {
+              "blake2b_256": "db1879e9008530b79527e0d5f79e7eef08d3b179b7f851cfd3a2f27822fbdfa9",
+              "md5": "636da55fd23db4a3a22f6a2239ccf533",
+              "sha256": "c516d68336bfde7cf0da26aab674a36fedcf04b37ac4edd59c597178760c3498"
+            },
+            "url": "https://files.pythonhosted.org/packages/db/18/79e9008530b79527e0d5f79e7eef08d3b179b7f851cfd3a2f27822fbdfa9/google_auth-2.47.0-py3-none-any.whl"
+          }
+        ],
+        "license_summary": "Apache 2.0",
+        "requirements_relevant": [
+          "pyasn1-modules>=0.2.1",
+          "rsa<5,>=3.1.4"
+        ]
+      },
+      {
+        "name": "google-cloud-bigquery",
+        "version": "3.40.0",
+        "source_url": "https://pypi.org/pypi/google-cloud-bigquery/3.40.0/json",
+        "selection": "fixed upstream comparison version",
+        "requires_python": ">=3.9",
+        "license_expression": "Apache-2.0",
+        "license_classifiers": [],
+        "candidate_files": [
+          {
+            "filename": "google_cloud_bigquery-3.40.0-py3-none-any.whl",
+            "requires_python": ">=3.9",
+            "yanked": false,
+            "size": 261335,
+            "digests": {
+              "blake2b_256": "906a90a04270dd60cc70259b73744f6e610ae9a158b21ab50fb695cca0056a3d",
+              "md5": "b1e36ce89e4fd02b01100efff9d2aecd",
+              "sha256": "0469bcf9e3dad3cab65b67cce98180c8c0aacf3253d47f0f8e976f299b49b5ab"
+            },
+            "url": "https://files.pythonhosted.org/packages/90/6a/90a04270dd60cc70259b73744f6e610ae9a158b21ab50fb695cca0056a3d/google_cloud_bigquery-3.40.0-py3-none-any.whl"
+          }
+        ],
+        "license_summary": "None",
+        "requirements_relevant": [
+          "google-api-core[grpc]<3.0.0,>=2.11.1",
+          "google-auth<3.0.0,>=2.14.1",
+          "google-cloud-core<3.0.0,>=2.4.1",
+          "google-resumable-media<3.0.0,>=2.0.0",
+          "packaging>=24.2.0",
+          "python-dateutil<3.0.0,>=2.8.2",
+          "requests<3.0.0,>=2.21.0",
+          "google-cloud-bigquery-storage<3.0.0,>=2.18.0; extra == \"bqstorage\"",
+          "grpcio<2.0.0,>=1.47.0; extra == \"bqstorage\"",
+          "grpcio<2.0.0,>=1.49.1; python_version >= \"3.11\" and extra == \"bqstorage\"",
+          "grpcio<2.0.0,>=1.75.1; python_version >= \"3.14\" and extra == \"bqstorage\"",
+          "pyarrow>=4.0.0; extra == \"bqstorage\"",
+          "pandas>=1.3.0; extra == \"pandas\"",
+          "pandas-gbq>=0.26.1; extra == \"pandas\"",
+          "grpcio<2.0.0,>=1.47.0; extra == \"pandas\"",
+          "grpcio<2.0.0,>=1.49.1; python_version >= \"3.11\" and extra == \"pandas\"",
+          "grpcio<2.0.0,>=1.75.1; python_version >= \"3.14\" and extra == \"pandas\"",
+          "pyarrow>=3.0.0; extra == \"pandas\"",
+          "db-dtypes<2.0.0,>=1.0.4; extra == \"pandas\""
+        ]
+      },
+      {
+        "name": "numpy",
+        "version": "2.4.2",
+        "source_url": "https://pypi.org/pypi/numpy/2.4.2/json",
+        "selection": "fixed upstream comparison version",
+        "requires_python": ">=3.11",
+        "license_expression": "BSD-3-Clause AND 0BSD AND MIT AND Zlib AND CC0-1.0",
+        "license_classifiers": [],
+        "candidate_files": [
+          {
+            "filename": "numpy-2.4.2-cp312-cp312-win_amd64.whl",
+            "requires_python": ">=3.11",
+            "yanked": false,
+            "size": 12314210,
+            "digests": {
+              "blake2b_256": "920f7ceaaeaacb40567071e94dbf2c9480c0ae453d5bb4f52bea3892c39dc83c",
+              "md5": "add03ad54a20759ec3bdc890aeec5913",
+              "sha256": "209fae046e62d0ce6435fcfe3b1a10537e858249b3d9b05829e2a05218296a85"
+            },
+            "url": "https://files.pythonhosted.org/packages/92/0f/7ceaaeaacb40567071e94dbf2c9480c0ae453d5bb4f52bea3892c39dc83c/numpy-2.4.2-cp312-cp312-win_amd64.whl"
+          },
+          {
+            "filename": "numpy-2.4.2-cp314-cp314-win_amd64.whl",
+            "requires_python": ">=3.11",
+            "yanked": false,
+            "size": 12443072,
+            "digests": {
+              "blake2b_256": "05cbeff72a91b2efdd1bc98b3b8759f6a1654aa87612fc86e3d87d6fe4f948c4",
+              "md5": "05cb97d18b0fad3d875b881ce4206af9",
+              "sha256": "068cdb2d0d644cdb45670810894f6a0600797a69c05f1ac478e8d31670b8ee75"
+            },
+            "url": "https://files.pythonhosted.org/packages/05/cb/eff72a91b2efdd1bc98b3b8759f6a1654aa87612fc86e3d87d6fe4f948c4/numpy-2.4.2-cp314-cp314-win_amd64.whl"
+          }
+        ],
+        "license_summary": "None",
+        "requirements_relevant": []
+      },
+      {
+        "name": "openpyxl",
+        "version": "3.1.5",
+        "source_url": "https://pypi.org/pypi/openpyxl/3.1.5/json",
+        "selection": "fixed upstream comparison version",
+        "requires_python": ">=3.8",
+        "license_expression": null,
+        "license_classifiers": [
+          "License :: OSI Approved :: MIT License"
+        ],
+        "candidate_files": [
+          {
+            "filename": "openpyxl-3.1.5-py2.py3-none-any.whl",
+            "requires_python": ">=3.8",
+            "yanked": false,
+            "size": 250910,
+            "digests": {
+              "blake2b_256": "c0da977ded879c29cbd04de313843e76868e6e13408a94ed6b987245dc7c8506",
+              "md5": "05a1b34e9893bab14dd70c7645c4ddcb",
+              "sha256": "5282c12b107bffeef825f4617dc029afaf41d0ea60823bbb665ef3079dc79de2"
+            },
+            "url": "https://files.pythonhosted.org/packages/c0/da/977ded879c29cbd04de313843e76868e6e13408a94ed6b987245dc7c8506/openpyxl-3.1.5-py2.py3-none-any.whl"
+          }
+        ],
+        "license_summary": "MIT",
+        "requirements_relevant": [
+          "et-xmlfile"
+        ]
+      },
+      {
+        "name": "pandas",
+        "version": "3.0.1",
+        "source_url": "https://pypi.org/pypi/pandas/3.0.1/json",
+        "selection": "fixed upstream comparison version",
+        "requires_python": ">=3.11",
+        "license_expression": null,
+        "license_classifiers": [
+          "License :: OSI Approved :: BSD License"
+        ],
+        "candidate_files": [
+          {
+            "filename": "pandas-3.0.1-cp312-cp312-win_amd64.whl",
+            "requires_python": ">=3.11",
+            "yanked": false,
+            "size": 9741627,
+            "digests": {
+              "blake2b_256": "750867cc404b3a966b6df27b38370ddd96b3b023030b572283d035181854aac5",
+              "md5": "b8c46f94f632ba1fbb665c6ef0dc5c0d",
+              "sha256": "536232a5fe26dd989bd633e7a0c450705fdc86a207fec7254a55e9a22950fe43"
+            },
+            "url": "https://files.pythonhosted.org/packages/75/08/67cc404b3a966b6df27b38370ddd96b3b023030b572283d035181854aac5/pandas-3.0.1-cp312-cp312-win_amd64.whl"
+          },
+          {
+            "filename": "pandas-3.0.1-cp314-cp314-win_amd64.whl",
+            "requires_python": ">=3.11",
+            "yanked": false,
+            "size": 9862099,
+            "digests": {
+              "blake2b_256": "09f88ce132104074f977f907442790eaae24e27bce3b3b454e82faa3237ff098",
+              "md5": "2019c298e1ce0b25873fafd9c2d5cd83",
+              "sha256": "93325b0fe372d192965f4cca88d97667f49557398bbf94abdda3bf1b591dbe66"
+            },
+            "url": "https://files.pythonhosted.org/packages/09/f8/8ce132104074f977f907442790eaae24e27bce3b3b454e82faa3237ff098/pandas-3.0.1-cp314-cp314-win_amd64.whl"
+          }
+        ],
+        "license_summary": "BSD 3-Clause License\n         \n         Copyright (c) 2008-2011, AQR Capital Management, LLC, Lambda Foundry, Inc. and PyData Development Team\n         All rights reserved.\n         \n         Copyright (c) 2011-2026, Open source contributors.\n       ",
+        "requirements_relevant": [
+          "numpy>=1.26.0; python_version < \"3.14\"",
+          "numpy>=2.3.3; python_version >= \"3.14\"",
+          "python-dateutil>=2.8.2",
+          "tzdata; sys_platform == \"win32\"",
+          "tzdata; sys_platform == \"emscripten\""
+        ]
+      },
+      {
+        "name": "pyarrow",
+        "version": "26.0.0",
+        "source_url": "https://pypi.org/pypi/pyarrow/json",
+        "selection": "current metadata observation only; not a selected version",
+        "requires_python": ">=3.11",
+        "license_expression": "Apache-2.0",
+        "license_classifiers": [],
+        "candidate_files": [
+          {
+            "filename": "pyarrow-26.0.0-cp312-cp312-win_amd64.whl",
+            "requires_python": ">=3.11",
+            "yanked": false,
+            "size": 28567581,
+            "digests": {
+              "blake2b_256": "543c1783aab1dac28e175dcf26dfc7123725efc474caecaed91e8a34cb89cad0",
+              "md5": "1e6e8ee3a53782e0a49b9e38fd183553",
+              "sha256": "cc903e1069e9dd5e9dcf780324c0112e27e051e422ecfaff574fb33ed65d9160"
+            },
+            "url": "https://files.pythonhosted.org/packages/54/3c/1783aab1dac28e175dcf26dfc7123725efc474caecaed91e8a34cb89cad0/pyarrow-26.0.0-cp312-cp312-win_amd64.whl"
+          },
+          {
+            "filename": "pyarrow-26.0.0-cp314-cp314-win_amd64.whl",
+            "requires_python": ">=3.11",
+            "yanked": false,
+            "size": 29237858,
+            "digests": {
+              "blake2b_256": "1effa74892c50aaf1f9f744a84493e08a2f99221e77c39d2d4a926de21a99edf",
+              "md5": "c93180a51f9148be60cb07054c59a7cc",
+              "sha256": "4a5fa8dc70dd50808990ff36faf44088e357b353d86c7682dd92d4b78d4c97d5"
+            },
+            "url": "https://files.pythonhosted.org/packages/1e/ff/a74892c50aaf1f9f744a84493e08a2f99221e77c39d2d4a926de21a99edf/pyarrow-26.0.0-cp314-cp314-win_amd64.whl"
+          }
+        ],
+        "license_summary": "None",
+        "requirements_relevant": []
+      }
+    ],
+    "errors": [],
+    "decision": {
+      "formal_ide": "VS Code",
+      "kiro": "optional compatibility only; no mandatory testing or support guarantee",
+      "distribution": "VSIX + self-authored Python wheel in one ZIP",
+      "user_instruction": "VSCodeのみを想定して、kiroはVSCodeベースだから、つかえたらいいね。　くらいでOKです。",
+      "prior_distribution_approval": "一旦、wheelとvsix案でOKです",
+      "additional_installs": "VSIX and Python packages only, assuming an existing working Notebook environment"
+    },
+    "query": {
+      "script": "inspect_dependency_metadata.py (local research helper; standard library urllib.request only)",
+      "first_attempt": "DNS lookup failed under sandbox; no metadata obtained",
+      "retry": "Same read-only query succeeded after sandbox escalation approval",
+      "downloads": "JSON metadata only; no wheel/sdist downloaded",
+      "install_or_resolver_run": false,
+      "imports_or_kernel_run": false
+    },
+    "fixed_connector_source": {
+      "repository": "tomohiro-ono-works/zizai",
+      "commit": "64a1be160c06f4a6924b2fcdb6d007f22b1fce78",
+      "path": "apps/connectors/bigquery_connector.py",
+      "blob_sha": "1cf1a0ce2584b858be936e702f228c045f5e9e29",
+      "observations": [
+        "Missing default credentials triggers gcloud login retry",
+        "google_auth_login invokes external gcloud",
+        "Query results iterated as rows and converted using own helper",
+        "load_data calls load_table_from_json"
+      ],
+      "code_reuse_authorized_by_this_review": false
+    },
+    "scope_limits": [
+      "Metadata and candidate file presence do not prove complete dependency resolution or runtime compatibility",
+      "Latest metadata observation for pyarrow/db-dtypes is not a version selection",
+      "No artifact license-text/bundled third-party review",
+      "No product source, manifest, lock, launch configuration or installed environment changed",
+      "No IDE or kernel runtime validation",
+      "CPython 3.14 standard ABI Windows x64 is a validation candidate, not a minimum-version guarantee"
+    ],
+    "online_sources": [
+      "https://pip.pypa.io/en/stable/cli/pip_install/#cmdoption-only-binary",
+      "https://google-auth.readthedocs.io/en/latest/user-guide.html#credentials-and-account-types",
+      "https://docs.cloud.google.com/docs/authentication/provide-credentials-adc",
+      "https://openpyxl.readthedocs.io/en/stable/"
+    ]
   }
 }
