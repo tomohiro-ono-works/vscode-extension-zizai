@@ -26,6 +26,8 @@
 
 ## デスクトップでのユーザーテスト
 
+正式対象と必須検証はVS Codeのみとする。Kiroは任意の参考確認で、未実施・不適合をTask完了や出荷の必須条件にしない。対応方針は[全体設計](designs/01全体設計.md)と[判断記録](decisions/2026-10-22-vscode-distribution-scope.md)に従う。Pythonや依存の具体的な対応版は、[環境・依存の設計](research/development/TASK-006-01.md)で候補と検証済みを区別する。
+
 - テスト対象のブランチ・コミットをローカルで取得し、その版に対応する依存関係を導入・ビルドする。
 - 製品の起動設定を実装した後、VS CodeのExtension Development HostとJupyterのPythonカーネルで確認する。製品用デバッグ・VSIX作成は未整備。既存の.vscode/launch.jsonは試作・診断用であり、[セル下部UI](../tests/manual/TASK-001-01-statusbar.md)と[NodeForm評価](../tests/manual/TASK-001-02-nodeform.md)のF5手順がある。
 - Notebook UI、セル source / metadata、標準のセル実行、保存・再オープンを、Task の完了条件に応じて確認する。

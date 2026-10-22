@@ -2,7 +2,7 @@
 
 Jupyter Notebook（`.ipynb`）のセル内でコネクタとアクションを選び、フォームの設定から通常の Python コードを生成する拡張機能です。生成されたコードを確認・編集し、Jupyter 標準のセル実行で処理します。
 
-対象は VS Code と Kiro IDE です。セル内フォームの実現方法と両 IDE の互換性は、技術検証で確認します。
+正式対象はVS Codeです。Kiroは利用できればよい参考対象で、動作保証・必須検証の対象には含めません。セル内フォームの実現方法は、VS Code上の技術検証で確認します。
 
 **現在は調査・設計と試作評価の段階です。** 製品本体の拡張機能・Python ライブラリ・ビルド・配布は未実装です。評価用コードとF5設定はtests/と.vscode/にあり、[セル下部の選択UI](tests/manual/TASK-001-01-statusbar.md) と [NodeForm評価用タブ](tests/manual/TASK-001-02-nodeform.md) の手順を用意しています。製品をインストールできる状態とは区別します。
 
@@ -17,7 +17,7 @@ Jupyter Notebook（`.ipynb`）のセル内でコネクタとアクションを�
 ## 全体構成
 
 ```text
-VS Code / Kiro IDE
+VS Code
 └─ Jupyter Notebook (.ipynb)
    ├─ UI：HTML / CSS / JavaScript
    │  └─ 処理選択、フォーム入力、下書き編集、確定イベント
@@ -171,7 +171,7 @@ logs/              ローカルのログ（内容は Git 管理対象外）
 
 最優先は、通常の Jupyter Notebook コードセル内に選択 UI とフォームを常設し、コード欄・標準出力と共存させられるかの検証です。セル実行後の表示維持も確認し、実現できない場合は UI 方針を再協議します。
 
-- VS Code と Kiro IDE の Notebook API 互換性、セルへの UI 配置と通常 Python セル・初期化セルの表示制御。
+- 正式対象版のVS CodeでのNotebook API適合性、セルへのUI配置と通常Pythonセル・初期化セルの表示制御。
 - 選択欄の個数・ラベル、フォーム定義の配置、必須項目が未入力の場合の生成コード。
 - metadata の正式キー・バージョン、下書き保存と dirty・Undo・性能の整合性、遅延保存などの方式。
 - UI／Host 間のメッセージ形式、セル識別子、非同期更新の競合処理、入力検証以外のエラー通知。
