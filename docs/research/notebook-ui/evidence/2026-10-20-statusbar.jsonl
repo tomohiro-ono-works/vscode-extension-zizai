@@ -1,0 +1,4 @@
+{"time":"2026-10-20T08:45:55.621Z","event":"activated","mode":"statusbar","probeVersion":"0.0.3"}
+{"time":"2026-10-20T08:49:20.323Z","event":"selected","mode":"statusbar","cell":1,"selected":"fake"}
+{"time":"2026-10-20T08:49:33.902Z","event":"selected","mode":"statusbar","cell":2,"selected":"python"}
+{"time":"2026-10-20T08:50:06.266Z","event":"snapshot","mode":"statusbar","app":"Visual Studio Code","vscodeApiVersion":"1.142.0","platform":"win32","extensionHostNode":"v24.21.0","probeVersion":"0.0.3","pythonExtension":"2026.10.0","jupyterExtension":"2025.9.1","showCellStatusBar":"visible","notebooks":[{"type":"jupyter-notebook","cells":[{"index":0,"role":"init","selected":null,"outputTypes":[],"executionOrder":null},{"index":1,"role":"python","selected":"fake","outputTypes":[],"executionOrder":null},{"index":2,"role":"action","selected":"python","outputTypes":[],"executionOrder":null}]}]}

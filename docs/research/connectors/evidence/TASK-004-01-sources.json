@@ -1,0 +1,536 @@
+{
+  "task": "TASK-004-01",
+  "research_date": "2026-10-21",
+  "workspace_baseline": "38f4e97054672e3be2c198a3a75b7d605fd7f14c",
+  "branch": "research/task-005-01-boundaries",
+  "scope": "Static research only; no original source execution, dependency installation, service login, SQL, BAT, or product changes.",
+  "upstream": {
+    "repository": "tomohiro-ono-works/zizai",
+    "commit": "64a1be160c06f4a6924b2fcdb6d007f22b1fce78",
+    "commit_date": "2026-09-23T11:45:48Z",
+    "observed_ref": "refs/heads/main",
+    "tree_truncated": false,
+    "ref_url": "https://api.github.com/repos/tomohiro-ono-works/zizai/git/ref/heads/main",
+    "tree_url": "https://api.github.com/repos/tomohiro-ono-works/zizai/git/trees/64a1be160c06f4a6924b2fcdb6d007f22b1fce78?recursive=1",
+    "metadata_url": "https://api.github.com/repos/tomohiro-ono-works/zizai",
+    "project_version": "0.0.0",
+    "requires_python": ">=3.11,<3.12",
+    "package_build_enabled": false,
+    "relevant_dependency_declarations": {
+      "pandas": "3.0.1",
+      "numpy": "2.4.2",
+      "openpyxl": "3.1.5",
+      "duckdb": "1.4.2",
+      "google-cloud-bigquery": "3.40.0",
+      "google-auth": "2.47.0"
+    },
+    "dependency_resolution_and_third_party_license_review": "not performed",
+    "lockfile": {
+      "path": "uv.lock",
+      "git_blob_sha": "d40ff36fcabb66a97eaeb26811e36c7dffbbc2fe",
+      "content_reviewed": false
+    }
+  },
+  "provenance": {
+    "local_import_commit": "07307fdc5c412e3bb09293b84af5e27a1bc412fe",
+    "local_organization_commit": "1a469a0c82deead4600ec6e4b17014a8f9f14ef1",
+    "original_reference_inspection_date": "2026-10-17",
+    "exact_original_source_commit": "not recorded; current fixed comparison is not proof of the original worktree",
+    "upstream_original_reference_docs_present": false,
+    "method_line_reference_matches": 32
+  },
+  "license": {
+    "status": "reuse permission unconfirmed",
+    "github_metadata_license": null,
+    "root_license_file_present": false,
+    "project_license_field_present": false,
+    "connector_license_header_found": false,
+    "vendor_license_paths": [
+      "apps/gui/vendor/zizai-app-shell/LICENSE",
+      "apps/gui/vendor/zizai-catalog-panel/LICENSE",
+      "apps/gui/vendor/zizai-data-viewer/LICENSE",
+      "apps/gui/vendor/zizai-editor-markdown/LICENSE",
+      "apps/gui/vendor/zizai-form/LICENSE",
+      "apps/gui/vendor/zizai-highlighter-sql/LICENSE",
+      "apps/gui/vendor/zizai-workflow-designer/LICENSE"
+    ],
+    "vendor_and_nodeform_permissions_apply_to_connectors": false
+  },
+  "sources": [
+    {
+      "path": "apps/connectors/csv_connector.py",
+      "url": "https://github.com/tomohiro-ono-works/zizai/blob/64a1be160c06f4a6924b2fcdb6d007f22b1fce78/apps/connectors/csv_connector.py",
+      "git_blob_sha": "754011280d9f4e5576da9452e947eb89e2593129",
+      "sha256": "d137ae61443f2de507acbc27f6ebb3106aa709ec1cf3877ef53ef6f1e48f99c3",
+      "byte_count": 9733,
+      "blob_verified": true,
+      "imports": [
+        "import os",
+        "import time",
+        "from typing import Any",
+        "import pandas as pd",
+        "from apps.core.base_connector import BaseConnector"
+      ]
+    },
+    {
+      "path": "apps/connectors/excel_connector.py",
+      "url": "https://github.com/tomohiro-ono-works/zizai/blob/64a1be160c06f4a6924b2fcdb6d007f22b1fce78/apps/connectors/excel_connector.py",
+      "git_blob_sha": "bd9f94905aaa66733adcf310c85b8d576f73a9c9",
+      "sha256": "ba86eb35a9d6b971b37f8b48e0a09cecdcf10a57a80293c2d0cbc8e021eb5b08",
+      "byte_count": 25396,
+      "blob_verified": true,
+      "imports": [
+        "import os",
+        "import posixpath",
+        "import time",
+        "import zipfile",
+        "from datetime import datetime, date",
+        "from typing import Any",
+        "import xml.etree.ElementTree as ET",
+        "import pandas as pd",
+        "from openpyxl import load_workbook",
+        "from openpyxl.utils.cell import column_index_from_string, get_column_letter",
+        "from apps.core.base_connector import BaseConnector"
+      ]
+    },
+    {
+      "path": "apps/connectors/duckdb_connector.py",
+      "url": "https://github.com/tomohiro-ono-works/zizai/blob/64a1be160c06f4a6924b2fcdb6d007f22b1fce78/apps/connectors/duckdb_connector.py",
+      "git_blob_sha": "e3fea5780541dd2b20c656feade7be788c60b55b",
+      "sha256": "0aede05b98cecc0215cf26be32c9e3164a222540635891814ee589b063d2d9c2",
+      "byte_count": 8163,
+      "blob_verified": true,
+      "imports": [
+        "from __future__ import annotations",
+        "import os",
+        "from datetime import datetime",
+        "from typing import Any, Optional",
+        "import pandas as pd",
+        "from apps.core.base_connector import BaseConnector",
+        "import duckdb"
+      ]
+    },
+    {
+      "path": "apps/connectors/bigquery_connector.py",
+      "url": "https://github.com/tomohiro-ono-works/zizai/blob/64a1be160c06f4a6924b2fcdb6d007f22b1fce78/apps/connectors/bigquery_connector.py",
+      "git_blob_sha": "1cf1a0ce2584b858be936e702f228c045f5e9e29",
+      "sha256": "dfc59086755540a8dcb99fde3755398d0271d9d62369f69d75d022558436ac0b",
+      "byte_count": 26055,
+      "blob_verified": true,
+      "imports": [
+        "from typing import Optional, List, Dict, Any",
+        "import os",
+        "from datetime import datetime, date, time, timezone",
+        "from decimal import Decimal",
+        "import json",
+        "import re",
+        "from google.cloud import bigquery",
+        "from google.auth.exceptions import DefaultCredentialsError",
+        "import pandas as pd",
+        "from apps.core.base_connector import BaseConnector",
+        "from apps.core.type_registry import build_dataframe_schema, resolve_bigquery_type, split_struct_field, split_top_level",
+        "import subprocess",
+        "import sys"
+      ]
+    },
+    {
+      "path": "apps/connectors/python_connector.py",
+      "url": "https://github.com/tomohiro-ono-works/zizai/blob/64a1be160c06f4a6924b2fcdb6d007f22b1fce78/apps/connectors/python_connector.py",
+      "git_blob_sha": "ac6fa48bc6dbbc00a83f4e1875b50f70e4294dfb",
+      "sha256": "e458ca0182f691d36cc500d0b3bacff05642dbf3d40974eb6fd0f8b3aedc7716",
+      "byte_count": 5409,
+      "blob_verified": true,
+      "imports": [
+        "import json",
+        "import os",
+        "import shutil",
+        "import subprocess",
+        "import sys",
+        "import tempfile",
+        "from typing import Any",
+        "from apps.core.base_connector import BaseConnector"
+      ]
+    },
+    {
+      "path": "apps/connectors/dataintegration_connector.py",
+      "url": "https://github.com/tomohiro-ono-works/zizai/blob/64a1be160c06f4a6924b2fcdb6d007f22b1fce78/apps/connectors/dataintegration_connector.py",
+      "git_blob_sha": "a166b9438cc4a3804a22905924fa562d998b5e81",
+      "sha256": "1c53949ec50cbeabb699a119d53d95050b4455f5fcfce6f408102e527fa6156c",
+      "byte_count": 17744,
+      "blob_verified": true,
+      "imports": [
+        "from __future__ import annotations",
+        "import copy",
+        "import math",
+        "import os",
+        "import re",
+        "from typing import Any",
+        "import pandas as pd",
+        "from apps.core.base_connector import BaseConnector"
+      ]
+    },
+    {
+      "path": "apps/connectors/shell_connector.py",
+      "url": "https://github.com/tomohiro-ono-works/zizai/blob/64a1be160c06f4a6924b2fcdb6d007f22b1fce78/apps/connectors/shell_connector.py",
+      "git_blob_sha": "0007333a9f5823e3a76a3cede087deb2d5610c97",
+      "sha256": "27866c6b5e7a2aa3a6f3807ae6040b4016f0f776d8024d700d8f787cf5decea7",
+      "byte_count": 2702,
+      "blob_verified": true,
+      "imports": [
+        "from datetime import datetime, timezone",
+        "import os",
+        "import subprocess",
+        "from typing import Any",
+        "import pandas as pd",
+        "from apps.core.base_connector import BaseConnector"
+      ]
+    },
+    {
+      "path": "apps/core/base_connector.py",
+      "url": "https://github.com/tomohiro-ono-works/zizai/blob/64a1be160c06f4a6924b2fcdb6d007f22b1fce78/apps/core/base_connector.py",
+      "git_blob_sha": "edf851f7675e7d4dc7fcfe53367ee2b10a399787",
+      "sha256": "0d21d2cd0d8453b9b682fa972f929b16a55e6108c2781e570bdeefa5e7264775",
+      "byte_count": 22746,
+      "blob_verified": true,
+      "imports": [
+        "from abc import ABC, abstractmethod",
+        "import json",
+        "import math",
+        "import re",
+        "from decimal import Decimal, InvalidOperation",
+        "import pandas as pd",
+        "from apps.core.type_registry import build_dataframe_schema"
+      ]
+    },
+    {
+      "path": "apps/gui/config/config.js",
+      "url": "https://github.com/tomohiro-ono-works/zizai/blob/64a1be160c06f4a6924b2fcdb6d007f22b1fce78/apps/gui/config/config.js",
+      "git_blob_sha": "0b5f0e4d1c806e8db07f635c9fe742b419a8a469",
+      "sha256": "2aae250df384a3d732e2c243cf8e4834dd2405a1d3cc2996f0d1f1126c1f3958",
+      "byte_count": 35697,
+      "blob_verified": true
+    },
+    {
+      "path": "README.md",
+      "url": "https://github.com/tomohiro-ono-works/zizai/blob/64a1be160c06f4a6924b2fcdb6d007f22b1fce78/README.md",
+      "git_blob_sha": "8caa645f32305fccef2d6b73c446d6fa95ff9729",
+      "sha256": "7a6800f089074620403a54c772f1d139118147f3ed2de0f1817cb28fcdd4b464",
+      "byte_count": 5811,
+      "blob_verified": true
+    },
+    {
+      "path": "pyproject.toml",
+      "url": "https://github.com/tomohiro-ono-works/zizai/blob/64a1be160c06f4a6924b2fcdb6d007f22b1fce78/pyproject.toml",
+      "git_blob_sha": "03b94aa1e2a50465256bd0724bc938471325be53",
+      "sha256": "6b91e7cbfc8c1854e75f74ca9c381550155ed22880ab9d59d9a5e848b0c35944",
+      "byte_count": 2805,
+      "blob_verified": true
+    },
+    {
+      "path": "apps/core/type_registry.py",
+      "url": "https://github.com/tomohiro-ono-works/zizai/blob/64a1be160c06f4a6924b2fcdb6d007f22b1fce78/apps/core/type_registry.py",
+      "git_blob_sha": "00f9ce5903171f189761b7aff7b5d7cfb05a9591",
+      "sha256": "74ddebcfcd0c0c630989102cea6c40ee44495070bc877f7d23993737eedde7ac",
+      "byte_count": 9629,
+      "blob_verified": true,
+      "imports": [
+        "from dataclasses import dataclass",
+        "from datetime import date, datetime, time",
+        "from decimal import Decimal",
+        "import re",
+        "import numpy as np",
+        "import pandas as pd",
+        "from pandas.api.types import is_bool_dtype, is_datetime64_any_dtype, is_float_dtype, is_integer_dtype, is_timedelta64_dtype, is_string_dtype"
+      ]
+    }
+  ],
+  "local_sources": [
+    {
+      "path": "docs/research/connectors/README.md",
+      "sha256": "e15e161f915ffc1bca885f5bb50b3a292bd682d5490a0330b5c235394e1e09c7",
+      "byte_count": 12937
+    },
+    {
+      "path": "docs/research/connectors/csv.md",
+      "sha256": "78cd8b6196db2d681653c21576ae1cd595a491c6ee2741997d479b2571a0573c",
+      "byte_count": 8728
+    },
+    {
+      "path": "docs/research/connectors/excel.md",
+      "sha256": "0f56a4702eb08e00ca875f0be3f1208a2bbfefba0d5dda5036e1373e4d642c2a",
+      "byte_count": 11147
+    },
+    {
+      "path": "docs/research/connectors/duckdb.md",
+      "sha256": "c52c7b651a31f5ac00c334cfa1e99b61b69407e79bf3ae0f64beff6dcb9ae3c2",
+      "byte_count": 11651
+    },
+    {
+      "path": "docs/research/connectors/bigquery.md",
+      "sha256": "dcc15fe1ee2bbdb1c718dd3f1128ee94bf7147100287e008273fd41fb7f53fdb",
+      "byte_count": 12661
+    },
+    {
+      "path": "docs/research/connectors/python.md",
+      "sha256": "b004c172f66de9d4ba11272185e1ad0a4bec0b6fba7b9b58036e67b61b9ca189",
+      "byte_count": 5793
+    },
+    {
+      "path": "docs/research/connectors/dataintegration.md",
+      "sha256": "22517f714b5ba852edf523f4769b106947f259e05a5d0a1436f13a9ac27ce068",
+      "byte_count": 9134
+    },
+    {
+      "path": "docs/research/connectors/shell.md",
+      "sha256": "24c27de56681edc30747bb5c3482ecac4a76c26324d92fb0e483c79ae534bc40",
+      "byte_count": 5491
+    }
+  ],
+  "connector_count": 7,
+  "candidate_count": 16,
+  "candidates": [
+    {
+      "id": "C01",
+      "connector": "CSV",
+      "action": "read_csv",
+      "adoption": "undecided",
+      "source_path": "apps/connectors/csv_connector.py",
+      "class_name": "CSVConnector",
+      "execute_line": 61,
+      "method_line": 114,
+      "source_url": "https://github.com/tomohiro-ono-works/zizai/blob/64a1be160c06f4a6924b2fcdb6d007f22b1fce78/apps/connectors/csv_connector.py#L114",
+      "ui_form_path": "apps/gui/config/config.js",
+      "ui_form_line": 229,
+      "local_reference": "docs/research/connectors/csv.md#read_csv"
+    },
+    {
+      "id": "C02",
+      "connector": "CSV",
+      "action": "write_csv",
+      "adoption": "undecided",
+      "source_path": "apps/connectors/csv_connector.py",
+      "class_name": "CSVConnector",
+      "execute_line": 61,
+      "method_line": 219,
+      "source_url": "https://github.com/tomohiro-ono-works/zizai/blob/64a1be160c06f4a6924b2fcdb6d007f22b1fce78/apps/connectors/csv_connector.py#L219",
+      "ui_form_path": "apps/gui/config/config.js",
+      "ui_form_line": 248,
+      "local_reference": "docs/research/connectors/csv.md#write_csv"
+    },
+    {
+      "id": "E01",
+      "connector": "Excel",
+      "action": "read_excel",
+      "adoption": "undecided",
+      "source_path": "apps/connectors/excel_connector.py",
+      "class_name": "ExcelConnector",
+      "execute_line": 207,
+      "method_line": 434,
+      "source_url": "https://github.com/tomohiro-ono-works/zizai/blob/64a1be160c06f4a6924b2fcdb6d007f22b1fce78/apps/connectors/excel_connector.py#L434",
+      "ui_form_path": "apps/gui/config/config.js",
+      "ui_form_line": 265,
+      "local_reference": "docs/research/connectors/excel.md#read_excel"
+    },
+    {
+      "id": "E02",
+      "connector": "Excel",
+      "action": "write_excel",
+      "adoption": "undecided",
+      "source_path": "apps/connectors/excel_connector.py",
+      "class_name": "ExcelConnector",
+      "execute_line": 207,
+      "method_line": 513,
+      "source_url": "https://github.com/tomohiro-ono-works/zizai/blob/64a1be160c06f4a6924b2fcdb6d007f22b1fce78/apps/connectors/excel_connector.py#L513",
+      "ui_form_path": "apps/gui/config/config.js",
+      "ui_form_line": 275,
+      "local_reference": "docs/research/connectors/excel.md#write_excel"
+    },
+    {
+      "id": "E03",
+      "connector": "Excel",
+      "action": "read_excel_range",
+      "adoption": "undecided",
+      "source_path": "apps/connectors/excel_connector.py",
+      "class_name": "ExcelConnector",
+      "execute_line": 207,
+      "method_line": 463,
+      "source_url": "https://github.com/tomohiro-ono-works/zizai/blob/64a1be160c06f4a6924b2fcdb6d007f22b1fce78/apps/connectors/excel_connector.py#L463",
+      "ui_form_path": "apps/gui/config/config.js",
+      "ui_form_line": 284,
+      "local_reference": "docs/research/connectors/excel.md#read_excel_range"
+    },
+    {
+      "id": "D01",
+      "connector": "DuckDB",
+      "action": "create_db_file",
+      "adoption": "undecided",
+      "source_path": "apps/connectors/duckdb_connector.py",
+      "class_name": "DuckConnector",
+      "execute_line": 18,
+      "method_line": 106,
+      "source_url": "https://github.com/tomohiro-ono-works/zizai/blob/64a1be160c06f4a6924b2fcdb6d007f22b1fce78/apps/connectors/duckdb_connector.py#L106",
+      "ui_form_path": "apps/gui/config/config.js",
+      "ui_form_line": 186,
+      "local_reference": "docs/research/connectors/duckdb.md#create_db_file"
+    },
+    {
+      "id": "D02",
+      "connector": "DuckDB",
+      "action": "execute_sql_file",
+      "adoption": "undecided",
+      "source_path": "apps/connectors/duckdb_connector.py",
+      "class_name": "DuckConnector",
+      "execute_line": 18,
+      "method_line": 126,
+      "source_url": "https://github.com/tomohiro-ono-works/zizai/blob/64a1be160c06f4a6924b2fcdb6d007f22b1fce78/apps/connectors/duckdb_connector.py#L126",
+      "ui_form_path": "apps/gui/config/config.js",
+      "ui_form_line": 192,
+      "local_reference": "docs/research/connectors/duckdb.md#execute_sql_file"
+    },
+    {
+      "id": "D03",
+      "connector": "DuckDB",
+      "action": "execute_sql",
+      "adoption": "undecided",
+      "source_path": "apps/connectors/duckdb_connector.py",
+      "class_name": "DuckConnector",
+      "execute_line": 18,
+      "method_line": 134,
+      "source_url": "https://github.com/tomohiro-ono-works/zizai/blob/64a1be160c06f4a6924b2fcdb6d007f22b1fce78/apps/connectors/duckdb_connector.py#L134",
+      "ui_form_path": "apps/gui/config/config.js",
+      "ui_form_line": 199,
+      "local_reference": "docs/research/connectors/duckdb.md#execute_sql"
+    },
+    {
+      "id": "D04",
+      "connector": "DuckDB",
+      "action": "create_table",
+      "adoption": "undecided",
+      "source_path": "apps/connectors/duckdb_connector.py",
+      "class_name": "DuckConnector",
+      "execute_line": 18,
+      "method_line": 153,
+      "source_url": "https://github.com/tomohiro-ono-works/zizai/blob/64a1be160c06f4a6924b2fcdb6d007f22b1fce78/apps/connectors/duckdb_connector.py#L153",
+      "ui_form_path": "apps/gui/config/config.js",
+      "ui_form_line": 205,
+      "local_reference": "docs/research/connectors/duckdb.md#create_table"
+    },
+    {
+      "id": "B01",
+      "connector": "BigQuery",
+      "action": "execute_sql",
+      "adoption": "undecided",
+      "source_path": "apps/connectors/bigquery_connector.py",
+      "class_name": "BQConnector",
+      "execute_line": 154,
+      "method_line": 497,
+      "source_url": "https://github.com/tomohiro-ono-works/zizai/blob/64a1be160c06f4a6924b2fcdb6d007f22b1fce78/apps/connectors/bigquery_connector.py#L497",
+      "ui_form_path": "apps/gui/config/config.js",
+      "ui_form_line": 162,
+      "local_reference": "docs/research/connectors/bigquery.md#execute_sql"
+    },
+    {
+      "id": "B02",
+      "connector": "BigQuery",
+      "action": "execute_sql_file",
+      "adoption": "undecided",
+      "source_path": "apps/connectors/bigquery_connector.py",
+      "class_name": "BQConnector",
+      "execute_line": 154,
+      "method_line": 549,
+      "source_url": "https://github.com/tomohiro-ono-works/zizai/blob/64a1be160c06f4a6924b2fcdb6d007f22b1fce78/apps/connectors/bigquery_connector.py#L549",
+      "ui_form_path": "apps/gui/config/config.js",
+      "ui_form_line": 169,
+      "local_reference": "docs/research/connectors/bigquery.md#execute_sql_file"
+    },
+    {
+      "id": "B03",
+      "connector": "BigQuery",
+      "action": "load_data",
+      "adoption": "undecided",
+      "source_path": "apps/connectors/bigquery_connector.py",
+      "class_name": "BQConnector",
+      "execute_line": 154,
+      "method_line": 565,
+      "source_url": "https://github.com/tomohiro-ono-works/zizai/blob/64a1be160c06f4a6924b2fcdb6d007f22b1fce78/apps/connectors/bigquery_connector.py#L565",
+      "ui_form_path": "apps/gui/config/config.js",
+      "ui_form_line": 176,
+      "local_reference": "docs/research/connectors/bigquery.md#load_data"
+    },
+    {
+      "id": "P01",
+      "connector": "Python",
+      "action": "execute_python",
+      "adoption": "undecided",
+      "source_path": "apps/connectors/python_connector.py",
+      "class_name": "PythonConnector",
+      "execute_line": 18,
+      "method_line": 83,
+      "source_url": "https://github.com/tomohiro-ono-works/zizai/blob/64a1be160c06f4a6924b2fcdb6d007f22b1fce78/apps/connectors/python_connector.py#L83",
+      "ui_form_path": "apps/gui/config/config.js",
+      "ui_form_line": 358,
+      "local_reference": "docs/research/connectors/python.md#execute_python"
+    },
+    {
+      "id": "I01",
+      "connector": "Data Integration",
+      "action": "replace_fields_forrenamelist",
+      "adoption": "undecided",
+      "source_path": "apps/connectors/dataintegration_connector.py",
+      "class_name": "DataintegrationConnector",
+      "execute_line": 37,
+      "method_line": 44,
+      "source_url": "https://github.com/tomohiro-ono-works/zizai/blob/64a1be160c06f4a6924b2fcdb6d007f22b1fce78/apps/connectors/dataintegration_connector.py#L44",
+      "ui_form_path": "apps/gui/config/config.js",
+      "ui_form_line": 363,
+      "local_reference": "docs/research/connectors/dataintegration.md#replace_fields_forrenamelist"
+    },
+    {
+      "id": "I02",
+      "connector": "Data Integration",
+      "action": "filter_rows",
+      "adoption": "undecided",
+      "source_path": "apps/connectors/dataintegration_connector.py",
+      "class_name": "DataintegrationConnector",
+      "execute_line": 37,
+      "method_line": 82,
+      "source_url": "https://github.com/tomohiro-ono-works/zizai/blob/64a1be160c06f4a6924b2fcdb6d007f22b1fce78/apps/connectors/dataintegration_connector.py#L82",
+      "ui_form_path": "apps/gui/config/config.js",
+      "ui_form_line": 390,
+      "local_reference": "docs/research/connectors/dataintegration.md#filter_rows"
+    },
+    {
+      "id": "S01",
+      "connector": "Shell",
+      "action": "execute_bat",
+      "adoption": "undecided",
+      "source_path": "apps/connectors/shell_connector.py",
+      "class_name": "ShellConnector",
+      "execute_line": 12,
+      "method_line": 21,
+      "source_url": "https://github.com/tomohiro-ono-works/zizai/blob/64a1be160c06f4a6924b2fcdb6d007f22b1fce78/apps/connectors/shell_connector.py#L21",
+      "ui_form_path": "apps/gui/config/config.js",
+      "ui_form_line": 354,
+      "local_reference": "docs/research/connectors/shell.md#execute_bat"
+    }
+  ],
+  "unresolved": [
+    "Q01",
+    "Q02",
+    "Q03",
+    "Q04",
+    "Q05",
+    "Q06",
+    "Q07",
+    "Q08",
+    "Q09"
+  ],
+  "runtime_checks": {
+    "local_file_and_dataframe_operations": "not performed",
+    "bigquery_auth_query_load": "not performed",
+    "python_connector_execution": "not performed",
+    "windows_bat_encoding_arguments": "not performed",
+    "vscode_notebook_integration": "not performed"
+  },
+  "kiro": "out of scope per user instruction"
+}

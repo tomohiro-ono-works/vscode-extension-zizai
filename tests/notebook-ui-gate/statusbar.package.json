@@ -1,0 +1,39 @@
+{
+  "name": "task-001-01-probe",
+  "displayName": "Zizai TASK-001-01 Cell Footer PROTOTYPE",
+  "description": "Throwaway selector beside the cell language picker. Not the Zizai application.",
+  "version": "0.0.3",
+  "publisher": "zizai-lab",
+  "private": true,
+  "engines": {
+    "vscode": "^1.105.0"
+  },
+  "main": "./statusbar.cjs",
+  "activationEvents": [
+    "onNotebook:jupyter-notebook"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "zizaiProbe.empty",
+        "title": "Zizai Probe: Open Empty Notebook"
+      },
+      {
+        "command": "zizaiProbe.reportStatusBar",
+        "title": "Zizai Probe: Report Cell Status Bar"
+      },
+      {
+        "command": "zizaiProbe.pickCellMode",
+        "title": "Zizai Probe: Choose Cell Mode (internal)"
+      }
+    ],
+    "menus": {
+      "commandPalette": [
+        {
+          "command": "zizaiProbe.pickCellMode",
+          "when": "false"
+        }
+      ]
+    }
+  }
+}

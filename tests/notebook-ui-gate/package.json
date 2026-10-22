@@ -1,0 +1,25 @@
+{
+  "name": "task-001-01-probe",
+  "displayName": "Zizai TASK-001-01 PROTOTYPE",
+  "description": "Throwaway Notebook UI feasibility probe. Not the Zizai application.",
+  "version": "0.0.1",
+  "publisher": "zizai-lab",
+  "private": true,
+  "engines": { "vscode": "^1.105.0" },
+  "main": "./extension.cjs",
+  "activationEvents": ["onNotebook:jupyter-notebook"],
+  "contributes": {
+    "commands": [
+      { "command": "zizaiProbe.empty", "title": "Zizai Probe: Open Empty Notebook" },
+      { "command": "zizaiProbe.renderer", "title": "Zizai Probe: Open Seeded Output Control" },
+      { "command": "zizaiProbe.text", "title": "Zizai Probe: Open Text Editor Control" },
+      { "command": "zizaiProbe.report", "title": "Zizai Probe: Report Environment and Cells" }
+    ],
+    "notebookRenderer": [{
+      "id": "zizai-task-001-01-renderer",
+      "displayName": "TASK-001-01 Output Control (NOT gate pass)",
+      "entrypoint": "./renderer.mjs",
+      "mimeTypes": ["application/vnd.zizai.task00101-probe+json"]
+    }]
+  }
+}
