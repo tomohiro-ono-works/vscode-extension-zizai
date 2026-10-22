@@ -30,7 +30,7 @@ for (const name of Object.keys(fixtures.cases)) {
 }
 const probeWorkspace = {
   folders: [{ path: workspace }],
-  settings: { 'window.title': 'TASK-002-01 API診断 ${activeEditorShort}', 'files.autoSave': 'off', 'python.defaultInterpreterPath': process.env.TASK00201_PYTHON || 'C:\\Python314\\python.exe' }
+  settings: { 'window.title': 'TASK-002-01 API診断 ${activeEditorShort}', 'files.autoSave': 'off', 'workbench.editorAssociations': { '*.ipynb': 'jupyter-notebook' }, 'python.defaultInterpreterPath': process.env.TASK00201_PYTHON || 'C:\\Python314\\python.exe' }
 };
 await writeFile(path.join(dist, 'probe.code-workspace'), JSON.stringify(probeWorkspace, null, 2) + '\n');
 const profile = path.join(root, 'config/task-002-01-desktop/User');

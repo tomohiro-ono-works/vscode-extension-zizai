@@ -77,6 +77,7 @@
       "args": [
         "--extensionDevelopmentPath=${workspaceFolder}/tests/notebook-host-api/dist",
         "--user-data-dir=${workspaceFolder}/config/task-002-01-desktop",
+        "--disable-extension=google.colab",
         "${workspaceFolder}/tests/notebook-host-api/dist/probe.code-workspace",
         "${workspaceFolder}/results/task-002-01/workspace/D1-structure.ipynb"
       ],
