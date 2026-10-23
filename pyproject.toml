@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "zizai-runtime"
+version = "0.0.0.dev0"
+description = "Python package foundation for ZizAI notebooks"
+readme = "apps/core/README.md"
+requires-python = ">=3.12"
+dependencies = []
+
+[tool.setuptools]
+packages = ["zizai", "zizai.core", "zizai.connectors"]
+include-package-data = false
+
+[tool.setuptools.package-dir]
+zizai = "apps/core/src/zizai"
+"zizai.connectors" = "apps/connectors/src/zizai/connectors"
