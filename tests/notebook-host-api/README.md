@@ -13,6 +13,10 @@
 
 ## エージェントが実行する準備
 
+`recovery.cjs` は既存D2保存ファイルを新しいExtension Hostプロセスで読み直し、D3のsource先行失敗後を `notebook.cell.edit` でセル本文へフォーカスしてUndo/Redoする関連確認。既存の `automated-result.local.json` と対応する架空ファイルが必要。`--extensionTestsPath` をこの入口へ変更し、別user-data-dirを使う。`recovery-result.local.json` に以前のログ・新しいセッション・戻り値・実データを対応づける。
+
+`structure-ids.cjs` はD1削除の不一致について、標準nbformat `cell.id` を初期JSONへ付ける比較条件。正式セル識別方式の提案ではない。2026-10-24の確認では削除後のUndoでセル数2のまま失敗し、ID補完だけでは原因を説明できなかった。初期IDなしの過去2試行も保持し、原因未確定とする。診断ランナーは各操作後に状態を保存してから期待値を検証する。後から追加した保存処理を過去の実行済みコードと混同しない。
+
 Node.jsのみで準備でき、npm依存の追加・インストールは不要。
 
 `automated.cjs` はD2・D3・D6、`structure.cjs` はD1の上方向複製・標準コピー貼付・削除とUndo/Redoを公開API／標準コマンドで観測する実VS Code用テスト入口。実行方法は下記スモークと同じ `--extensionTestsPath` を該当ファイルへ変更する。`structure-delete.cjs` は削除条件だけの関連再確認。手動Notebookと分離したAUTO名の架空ファイル、別user-data-dirを使う。
