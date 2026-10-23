@@ -1,6 +1,6 @@
 # 開発・ビルド手順の設計案
 
-更新日：2026-10-23。対象：[TASK-006-02](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/42)。
+更新日：2026-10-24。対象：[TASK-006-02](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/42)。
 
 本書は、製品の開発環境・ビルド入口を整備するための設計案である。現在使える導入手順、製品設定の作成許可、動作成立の記録ではない。作業範囲・進捗・確認結果は担当Issueを正本とする。
 
@@ -15,7 +15,7 @@
 - Git、Node.js／npm、Pythonビルドツールは開発者側の道具とする。利用者へ別途のNode.js／npm、コンパイラ、専用exeインストーラー、独自サーバーを要求しない。
 - PythonはJupyterの標準セル実行で評価する。拡張によるpip実行、venv／kernelspec作成、独自実行基盤は設けない。
 - 拡張とPythonの版は個別管理し、初回に自動互換性チェックを追加しない。検証した組合せを手順と結果へ記録する。
-- UIはTASK-001の[サイドバー設計PR #50](https://github.com/tomohiro-ono-works/vscode-extension-zizai/pull/50)の配置選択を入力とする。006-01で参照した固定版は `4a03b08482fd44f5afb19fb71ac0fa5bd168a0cb`。製品のUI資産構成・操作詳細の確定や動作確認を代替しない。
+- UIはTASK-001の[サイドバー設計PR #50](https://github.com/tomohiro-ono-works/vscode-extension-zizai/pull/50)を入力とする。006-01が先に参照した版は `4a03b08482fd44f5afb19fb71ac0fa5bd168a0cb`。今回受領した更新版 `7127017538f516f9ab54aaa17dfde38b08ad82c7` では操作・状態・通知も承認済みと記録されている。UI方針の再承認待ちには戻さない。製品entry・資産構成、正式契約、実機での成立は別途確認する。
 
 ## 2. 方針の比較
 
@@ -107,7 +107,7 @@ F5は製品の `apps/extension/` を候補のextensionDevelopmentPathとし、`t
 
 | 必要な入力 | 提供元 | 入力後に具体化できる範囲 |
 | --- | --- | --- |
-| 正式distribution／import名、ソースとpackageの対応、共通処理と個別処理の境界 | [TASK-003-02 #21](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/21) | pyproject.tomlのpackage収集・検証import |
+| `zizai-runtime`／`zizai`と責務別ソース対応は設計入力として受領済み | [TASK-003-02 #21](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/21)、PR #53の固定版 | 下記§7.1の明示収集案。個別モジュール一覧と契約資産は対象部分の確定後に追加 |
 | 採用処理・引数型・最小依存・認証・外部ソフト条件 | [TASK-004-02 #26](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/26) | runtime依存、対応wheel、設定例・検証条件 |
 | UI／Host entry、必要API、GUI資産の読込・ビルド方法 | [TASK-001 #1](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/1)、[TASK-002 #2](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/2) | extension manifest・VSIX収集・F5 |
 | 契約の正本と配布表現、生成／同期・陳腐化検査 | [TASK-005-04 #39](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/39) | 契約資産の両配布物への収録 |
@@ -115,6 +115,64 @@ F5は製品の `apps/extension/` を候補のextensionDevelopmentPathとし、`t
 | 対象版と上記依存の導入・ロード確認 | 006-01／006-02 | ツール版の固定、対応条件と再現手順 |
 
 親Task全体の完了を一律の開始条件にしない。必要な対象部分が確定した段階で、その部分の編集範囲と依頼に沿って進める。今回の依頼は006-02の設計・準備であり、製品設定・導入・ビルドへの着手許可を追加しない。
+
+
+### 7.1 受領したPython構成と収集設定案
+
+[PR #53のPython設計](https://github.com/tomohiro-ono-works/vscode-extension-zizai/blob/d058a287aae1ddb33ed34d0422a286697dd79f70/docs/research/python-import/TASK-003-02.md)と[了承範囲の記録](https://github.com/tomohiro-ono-works/vscode-extension-zizai/blob/d058a287aae1ddb33ed34d0422a286697dd79f70/docs/decisions/2026-10-23-python-foundation.md)を受領した。命名・ソース対応を「入力待ち」から「受領済みの設計入力」へ更新する。PRの統合・製品編集許可や依存版の確定とは区別する。
+
+| 配布先 | 正本となるソースの設計入力 | 収集条件 |
+| --- | --- | --- |
+| distribution `zizai-runtime` | root `pyproject.toml` | 名称をproject.nameへ反映する。公開レジストリへの登録は含まない |
+| `zizai/` | `apps/core/src/zizai/` | 親packageの__init__.pyはcore側だけが所有 |
+| `zizai/core/` | `apps/core/src/zizai/core/` | 個別アクションや全SDKの一括importを置かない |
+| `zizai/connectors/` | `apps/connectors/src/zizai/connectors/` | 003／004が定義する実モジュールを収集。親zizaiを二重所有しない |
+| Python向け契約資産 | 005-04が確定する生成先 | 配布先package・資産一覧・読込方法は未確定。仮のpackage名を追加しない |
+
+setuptoolsの明示package列挙とpackage-dirで、上記の分かれた正本を1つのwheelへ対応付ける案とする。次は**収集設定だけのTOML断片**であり、製品pyproject.tomlではない。project／build-systemの完全なmetadata・依存・版・license・契約資産を省略しているため、このままビルドする手順にはしない。
+
+```toml
+[tool.setuptools]
+packages = ["zizai", "zizai.core", "zizai.connectors"]
+
+[tool.setuptools.package-dir]
+"zizai" = "apps/core/src/zizai"
+"zizai.connectors" = "apps/connectors/src/zizai/connectors"
+```
+
+zizai.coreは親の対応先配下から収集する。採用コネクタが単一の.pyではなくsubpackageを持つ場合は、その実在するpackageを明示リストへ追加する。自動探索でapps/全体を含めない。生成契約packageも正式名と出力が確定してから収集表へ追加する。断片の構文確認は、setuptoolsでのビルド・wheel内容の適合確認を代替しない。
+
+版の管理元は、Pythonをrootのproject.version、拡張をapps/extension/package.jsonのversionとする静的管理を推奨する。実際の初回版は未選定。配布のために手書きソースをimportして版を取得したり、個別コネクタの初期化を走らせたりしない。バージョンAPIを公開するかは003が定め、006が新しい公開APIを追加しない。
+
+003へ渡せる配布側条件は、root配布設定、上記の明示収集、1自作wheel、選択カーネルへの手動導入、配布物からのimport確認である。package入口だけの設計に全アクションの確定を要求しない。実際のpackage入口作成・最小wheelの検証も、具体的な編集範囲・適用ルール・導入／ビルド着手の許可が揃ってから行う。
+
+PR #53の更新版では、003自身の最小単位を3つのpackage入口とし、他領域の完了を一律に待たず設計できること、U01〜U10の独立確認ケースが具体化された。006は配布metadata・3入口の収録・checkout外からの導入条件を対応付け、import時にSDKを読み込まない動作の正本・テストは003へ任せる。最小入口だけの確認に、全アクションやPython向け契約packageの完成を要求しない。全採用処理を同梱する製品wheelの完成とは分けて記録する。
+
+### 7.2 契約資産の収集と配布記録
+
+[PR #51の005-02 §9](https://github.com/tomohiro-ono-works/vscode-extension-zizai/blob/a2b563c7dd543b8aed8584655da08b8ab3e5da7c/docs/research/contracts/TASK-005-02.md#9-005-04へ渡す正本生成同期配布案)を収集側の設計入力として受領した。生成先は候補であり、正式schema・生成器・実行コマンドはまだない。
+
+- 005の生成manifestは、正本ファイルの相対path・SHA-256、生成器版、生成元commit、用途別の出力一覧を対応付ける。
+- 006の収集では、そのmanifestと生成結果を照合してから、Host／UI用をVSIX、必要最小のPython用をwheelへ含める。UI通信・Notebook編集用schemaをPythonへ一律収録しない。
+- 005-04が指定する再生成・陳腐化検査で、欠落、古い入力hash、生成先の余分なファイルを失敗にする。006は正式な生成コマンドを受領して呼び出し、別の生成器を作らない。
+- ビルド・配布記録には、対象ソースcommit、拡張版、Python版、ツール・lock識別、契約入力manifestのhash、成果物ごとの相対ファイル名・SHA-256、確認結果を記録する。絶対パス・credentialは不要。
+- 成果物hashは梱包が終わってから外部の配布記録へ記載する。成果物自身のhashをその成果物内へ埋め込む循環を作らない。契約の入力manifestと完成物の配布記録は役割を分ける。
+
+配布記録の正本は006側、契約入力・生成manifestの正本は005側とする案で、製品の正式なファイル名・schemaは未確定。ZIPへの配置と最終導入確認は006-05へ渡す。実行時にHostからカーネルへ接続する版チェックは追加しない。
+
+### 7.3 受領入力間の差と影響範囲
+
+次の比較はPR #53の `d058a287aae1ddb33ed34d0422a286697dd79f70` とPR #51の `a2b563c7dd543b8aed8584655da08b8ab3e5da7c` に対するもの。相手の文書・判断履歴を変更済みとは扱わない。PR更新時は対象部分だけ再照合する。
+
+| 対象 | 003の了承済み設計入力 | 005の現行案・判断記録 | 006での扱い |
+| --- | --- | --- | --- |
+| distribution／import | zizai-runtime、zizai.core／zizai.connectors | zizai-notebook、zizai_core／zizai_connectorsの候補 | 配布名・収集対応は003の設計入力へ合わせる。契約module表・初期化例との一致確認は未達 |
+| Python向け生成package | 正式名・生成先は005-04の入力待ち | zizai_contracts／build/contracts/python配下が候補 | 名称を独自確定せず、収集対象からの欠落・重複確認を後続へ残す |
+| Pythonの用途 | 通常Pythonセル、専用Pythonコネクタは設けない | 用途待ち・初回7種類／16候補の記載が残る | 003の回答を受領。採用個別処理の数・依存・テスト対象の最終一覧は004／005との整合後に固定 |
+| 新規未設定時のsource | 処理コードを生成せず、未設定用raiseを加えない | ValueErrorを生成し標準Run Allを停止する回答を記録 | 利用者回答の記録が相違。006で一方を選ばず、この動作に依存する契約・生成テスト・統合期待結果を確定しない |
+| サイドバー | 通常Pythonとの区別は関連領域で整合 | PR #50更新版の操作・状態・通知を承認済みとして受領 | UI方針の再承認を待たず、製品entryと正式契約の入力を待つ |
+
+未設定sourceの判断の相違は、distribution名・ソース配置の設計を進める妨げにはしない。一方、実装・契約テストの期待結果は担当領域で判断記録と対応仕様を整合するまで保留する。006でCurrent Specificationや別Taskの判断を上書きしない。
 
 ## 8. 製品整備時の受入確認
 
@@ -135,3 +193,5 @@ F5は製品の `apps/extension/` を候補のextensionDevelopmentPathとし、`t
 - [VS CodeのVSIX作成・導入](https://code.visualstudio.com/api/working-with-extensions/publishing-extension)：vsce packageによるVSIX作成と、Marketplace公開を伴わない導入。
 - [PyPA buildの基本操作](https://build.pypa.io/en/stable/how-to/basic-usage.html)：wheel作成、no-isolation、必要なビルド依存の事前導入。
 - [pipの再現可能な導入](https://pip.pypa.io/en/stable/topics/repeatable-installs/)と[hash検査・wheel限定](https://pip.pypa.io/en/stable/topics/secure-installs/)：厳密版・全依存hash・適合wheelを用いる固定方法。
+
+- [setuptoolsのpackage列挙・package-dir](https://setuptools.pypa.io/en/latest/userguide/package_discovery.html)と[pyproject設定](https://setuptools.pypa.io/en/latest/userguide/pyproject_config.html)：実ディレクトリとimport階層が異なる場合の明示対応。今回のTOML断片の根拠であり、製品のビルド結果ではない。
