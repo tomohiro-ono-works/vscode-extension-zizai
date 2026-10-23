@@ -10,7 +10,7 @@
 
 **Spec:** [005-02の契約設計](../../research/contracts/TASK-005-02.md) §9〜10、[005-03の値・生成設計](../../research/contracts/TASK-005-03.md#contract-draft-20261023) §C・D・I。計画の開始入力はPR #51の `a2b563c7dd543b8aed8584655da08b8ab3e5da7c` と本計画に伴う005資料の整合差分。
 
-**状態・範囲:** 実装前の計画。今回の「OKです。では次にすすんでください。」を前稿の設計了承・後続計画作成の根拠とする。005の資料・Issue以外は今回編集しない。本計画の製品ファイル・依存・生成物はまだ作成していない。
+**状態・範囲:** 利用者の「では、005で進められる範囲で進めてください。」を受け、この計画の2 Task／10手順を実装済み。値schema・private開発ツール・テストだけを追加し、15件のテストと実際の生成／checkを確認した。独立レビューの未使用定義検証・末尾空白pathの2指摘は再現テストで修正。005-04全体は未完了で、他Task・Notebook実行・配布設定・CIは変更していない。実施結果と残作業の正本はIssue #39。
 
 ## Global Constraints
 
@@ -66,7 +66,7 @@
 
 `build/contracts/js/values.schema.json` と `build/contracts/manifest.json` は生成物。正本→assets.mjs→buildの一方向で更新する。作業ディレクトリを変えても入力path・hashはrepo相対の同じ値とし、絶対path・現在時刻・利用者名を生成dataへ入れない。
 
-Ajv候補の根拠：[v8.17.1 package.json](https://github.com/ajv-validator/ajv/blob/v8.17.1/package.json)、[2020-12入口](https://github.com/ajv-validator/ajv/blob/v8.17.1/lib/2020.ts)を読取確認した。配布metadataはMIT宣言。今回、導入・実行・脆弱性や配布条件の精査は行っていない。生成時に第三者ソースを製品へコピーしない。依存固定・lock生成・開発環境適合の確認はTask 1の実行時に行う。
+Ajv候補の根拠：[v8.17.1 package.json](https://github.com/ajv-validator/ajv/blob/v8.17.1/package.json)、[2020-12入口](https://github.com/ajv-validator/ajv/blob/v8.17.1/lib/2020.ts)を読取確認した。配布metadataはMIT宣言。設計時は読取確認のみ。実装ではprivate開発packageへ固定し、lock生成・ignore-scriptsでの再導入・構造検証を実行した。脆弱性や配布条件の精査完了は宣言しない。生成時に第三者ソースを製品へコピーしない。
 
 ## Task 1: 値schemaと構造validator
 
@@ -90,7 +90,7 @@ Ajv候補の根拠：[v8.17.1 package.json](https://github.com/ajv-validator/ajv
 - variable.nameはASCII単一名の構造を検査する。Python予約語の対象版との照合は後続の意味検証で行い、構造検査だけを正式なPython引数の検証完了にしない。
 - Ajv2020は `strict:true, strictNumbers:true, allErrors:true, coerceTypes:false, useDefaults:false, removeAdditional:false`。外部refのネットワーク取得を組み込まない。
 
-- [ ] **Step 1: `values.test.mjs` の失敗テストを書く。**
+- [x] **Step 1: `values.test.mjs` の失敗テストを書く。**
 
   `draft_is_not_semantic_validation` は `{kind:"text",text:"-"}` と `{kind:"json",value:false}` をDraftValueとして許し、`{kind:"text"}`・`{kind:"unset",value:null}` を拒否する。V03-06の「integer欄へFalse」は意味検証の後続ケースであり、DraftValue構造として拒否しない。
 
@@ -98,10 +98,10 @@ Ajv候補の根拠：[v8.17.1 package.json](https://github.com/ajv-validator/ajv
 
   `unset_is_draft_only` はDraftValuesの空object・unsetを許し、BoundValuesのunsetを拒否する。`unknown_wrapper_key` はliteralにmethodキーを足した入力を拒否し、入力object自体が検証で書き換わらないことをdeepEqualで確認する。
 
-- [ ] **Step 2: `node --test tests/contracts/values.test.mjs` を実行し、validator／schema未作成による失敗を確認する。** 意図した失敗理由を記録する。
-- [ ] **Step 3: privateな開発packageとlock、schema、`createValuesValidator` を実装する。** packageの追加は005ツールだけ。初回のlock作成後は `npm --prefix scripts/contracts ci --ignore-scripts` を再現導入の入口にする。
-- [ ] **Step 4: 同じtestコマンドで全件PASSを確認する。** 不正schema・未知refの設定エラーも失敗として確認する。Node／npm・直接／推移依存の実版を記録する。
-- [ ] **Step 5: Task 1のファイルだけをcommitする。** READMEに「構造validatorであり、actionの意味・実機適合は別」を記載する。
+- [x] **Step 2: `node --test tests/contracts/values.test.mjs` を実行し、validator／schema未作成による失敗を確認する。** 意図した失敗理由を記録する。
+- [x] **Step 3: privateな開発packageとlock、schema、`createValuesValidator` を実装する。** packageの追加は005ツールだけ。初回のlock作成後は `npm --prefix scripts/contracts ci --ignore-scripts` を再現導入の入口にする。
+- [x] **Step 4: 同じtestコマンドで全件PASSを確認する。** 不正schema・未知refの設定エラーも失敗として確認する。Node／npm・直接／推移依存の実版を記録する。
+- [x] **Step 5: Task 1のファイルだけをcommitする。** READMEに「構造validatorであり、actionの意味・実機適合は別」を記載する。
 
 ## Task 2: 一方向生成と非変更のcheck
 
@@ -115,7 +115,7 @@ Ajv候補の根拠：[v8.17.1 package.json](https://github.com/ajv-validator/ajv
 - inputsは `{path,sha256}`、outputsは `{path,sha256,consumers:["host","gui"]}` の配列。pathは入力／出力root内の相対path。actionsはこの単位では空配列。未採用actionや架空Pythonシグネチャを製品catalogに登録しない。
 - CLIはrepoRootをスクリプト自身の配置から求め、outputRoot既定値をrepo内のbuild/contractsとする。`generate --source-commit <40桁hex>`／`check --source-commit <40桁hex>` を受け付ける。
 
-- [ ] **Step 1: `assets.test.mjs` の失敗テストを書く。**
+- [x] **Step 1: `assets.test.mjs` の失敗テストを書く。**
 
   `cwd_and_paths_do_not_change_output` は日本語・空白を含む一時Git repoに人工schemaをcommitし、その実際のcommit IDをsourceCommitに使う。異なるcwdから、同一schema・同一sourceCommitで2回生成し、出力バイト列とmanifestを比較する。テスト用repoは製品履歴から独立させる。
 
@@ -125,17 +125,17 @@ Ajv候補の根拠：[v8.17.1 package.json](https://github.com/ajv-validator/ajv
 
   `failed_generation_does_not_publish_manifest` は不正schema・不正sourceCommit・範囲外pathで失敗し、新しい有効manifestを公開しないことを確認する。
 
-- [ ] **Step 2: `node --test tests/contracts/assets.test.mjs` を実行し、生成処理未作成による失敗を確認する。**
-- [ ] **Step 3: assets.mjsとcli.mjsを実装する。** 入力を検証してから空の一時出力へ生成する。JSONはUTF-8・LF・安定キー順とし、意味のある配列順は保持する。manifest自身をoutputsのhash対象へ含めない。
+- [x] **Step 2: `node --test tests/contracts/assets.test.mjs` を実行し、生成処理未作成による失敗を確認する。**
+- [x] **Step 3: assets.mjsとcli.mjsを実装する。** 入力を検証してから空の一時出力へ生成する。JSONはUTF-8・LF・安定キー順とし、意味のある配列順は保持する。manifest自身をoutputsのhash対象へ含めない。
 
   sourceCommitが示す正本のbytesと作業中の入力bytesを照合し、不一致を拒否する。Gitは開発側の確認に使い、利用者の実行依存へしない。未知schema・未解決refはネットワークで補わない。出力先は当該repoRootのbuild/contractsに限定し、repoRoot自体や範囲外path・symlink経由の出力先を拒否する。テストも一時repoRoot内の同じ配置を使う。
 
   generateは成功した一時出力だけで指定出力rootを更新する。失敗時に以前の資産が残っていても最新生成成功とは扱わず、006へ渡すbuildはcheck終了0を必須条件にする。checkは一時生成結果との完全比較だけを行い、既存出力を更新しない。
 
-- [ ] **Step 4: `node --test tests/contracts/values.test.mjs tests/contracts/assets.test.mjs` で全件PASSを確認する。** CLIのusage不正、欠落sourceCommit、改変検出で終了1も確認する。
-- [ ] **Step 5: Task 2のファイルだけをcommitし、READMEを更新する。** 正本をcommitした状態で、生成・checkの実コマンドと実結果を記録する。
+- [x] **Step 4: `node --test tests/contracts/values.test.mjs tests/contracts/assets.test.mjs` で全件PASSを確認する。** CLIのusage不正、欠落sourceCommit、改変検出で終了1も確認する。
+- [x] **Step 5: Task 2のファイルだけをcommitし、READMEを更新する。** 正本をcommitした状態で、生成・checkの実コマンドと実結果を記録する。
 
-実装後に使用するコマンド候補（今回未実行。各ファイル作成とlock確認後の入口）：
+実装後に確認したコマンド（開発側の入口。生成・checkは指定commitに正本が記録されていることが必要）：
 
 ```sh
 npm --prefix scripts/contracts ci --ignore-scripts
@@ -156,4 +156,4 @@ Task 1／2の完了は、値構造と生成物の独立確認が成立した範�
 
 値構造の境界・精度・未知キーはTask 1、生成・入力hash・非変更の検査・失敗時の扱いはTask 2に対応付けた。Review Focusの5件は各Taskの具体テストへ対応する。定義名・関数名・manifest欄は上記のInterfacesを正とし、後続Taskで別名を使わない。
 
-未設定source・Pythonの個別API／型・採用action・Hostの編集整合／実行観測は、この計画の外側に残す。005専用の適用条件・編集範囲をIssueに記録し、この計画のレビューを終えてから第1単位へ進む。全体規約の未収録を製品全体の完了と取り違えず、独立した005の値契約の一律停止理由にもしない。
+未設定source・Pythonの個別API／型・採用action・Hostの編集整合／実行観測は、この計画の外側に残す。005専用の適用条件・編集範囲をIssueに記録し、この計画の第1単位を実装・検証した。全体規約の未収録を製品全体の完了と取り違えず、独立した005の値契約の一律停止理由にもしない。

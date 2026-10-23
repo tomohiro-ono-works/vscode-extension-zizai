@@ -1,0 +1,9 @@
+{
+  "name": "@zizai/contracts-tools",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "devDependencies": {
+    "ajv": "8.17.1"
+  }
+}
