@@ -31,9 +31,12 @@ backendとpipを実行するのはコマンド先頭のPythonで、隔離venvを
 | SDK非読込 | rootとpackage入口のimportにpandas・NumPy・Excel・DuckDB・Google SDKや個別コネクタを要求しない |
 | 状態保持 | import前後でcwd・環境変数・sys.pathが変わらない |
 | sdist経由 | ソース配布物を展開して再ビルドしたwheelでも収録・手動導入・importが成立する |
+| Notebook診断 | 出力なし・標準kernelのNotebookについて、診断JSONが配布物と一致し、ローカルpathを出さない。同名sourceによる隠蔽を検出し、同一セッションと新規プロセスを区別する |
 
 一時領域へソースをコピーし、setuptoolsの実backendを呼び、pipの`--no-index --no-deps`で生成済みwheelだけを導入します。pipのユーザー設定・環境変数を無視し、既存環境へインストールしません。一時領域は終了時に削除します。
 
 003-02のU01〜U05の対象部分を確認します。個別SDK欠落時の処理、共通関数・戻り値、実際のwheel更新とカーネル再起動、正式な契約資産の読込は対象実装が成立してから確認します。現在の最小入口の合格で、これらを合格にしません。
 
 [正本と配布経路](../../../apps/core/README.md)・[設計と確認ケース](../../../docs/research/python-import/TASK-003-02.md)を参照してください。
+
+003-05の[実機手順とNotebook](../../manual/TASK-003-05-python.md)を用意しています。Notebookの診断コードも通常Pythonプロセスと実wheelで確認しますが、ipykernelを起動した結果や、VS Code上のカーネル再起動の合格には数えません。現在は配布5件＋Notebook診断4件の合計9件です。テスト専用のpackage生成・導入処理は`package_test_support.py`へ集約し、製品packageへは収録しません。
