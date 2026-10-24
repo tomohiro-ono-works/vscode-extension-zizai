@@ -13,6 +13,10 @@
 
 ## エージェントが実行する準備
 
+`execution-save-followup.cjs` はD4の実行待ちsource変更＋同一セルへの標準再要求＋保存JSON、D5待機中close後の修正済み保存だけを採取する。以前の各ケース全体は繰り返さない。45秒で標準カーネル出力が得られなければ未実施として終了する。`execution-save-followup-ui.cjs` は同じ2条件について標準UI選択・最初の実行を10分待つ入口で、初回失敗を退避してから使う。結果は `execution-save-followup-result.local.json` とし、従来の `execution-auto-result.local.json` は上書きしない。セル置換でもfixtureの標準cell.idをAPI外側metadataへ渡す。
+
+専用profile `task-002-01-execution-auto` に対して `code.cmd --verbose --new-window --wait --disable-workspace-trust --disable-extension=google.colab --user-data-dir=<profile絶対パス> --extensionDevelopmentPath=<dist絶対パス> --extensionTestsPath=<dist/execution-save-followup-ui.cjs絶対パス> <dist/save-followup.code-workspace絶対パス>` をエージェントが実行する。結果JSONの開始時刻と `kernelSelectionGate` を確認してから、タイトル「TASK-002-01 保存追加確認」のウィンドウ、`USER-kernel-bootstrap-20261024.ipynb`、`import sys, importlib.metadata as m, json` から始まるコード枠を案内する。ユーザー操作は必要な標準カーネル選択と最初の標準実行だけ。その後は自動で実行・変更・再要求・閉鎖・再オープン・保存するため、追加編集は依頼しない。
+
 D6のGUI確認では、コマンドパレット操作・モード選択・更新・保存をユーザーへ依頼しない。エージェントが新規の `UI-D6-auto-*.ipynb` をD6 fixtureから作成し、固有user-data-dirで `TASK00201_UI_BURST=existing-change-20` を環境へ渡して通常の診断HostをCLI起動する。起動時処理はこのファイル名、1セル、診断label=D6-existing、初期burst=0を照合してから既存burstコマンドへ引数を渡す。公開WorkspaceEditで20回更新し、source不変・burst=20・保存trueを確認して `ui.preparation.complete` を記録する。カーネル・実行サーバー・外部コード実行口は追加しない。
 
 エージェントはログで準備完了を確認してから、表示中の `fictional_value = 60` の行をクリックしてカーソルが出るかだけをユーザーへ案内する。この観測は更新・保存後のクリック応答であり、連続更新中の入力遅延を測定したとはしない。時間には同期ログ採取等の負荷を含み、数値の合格基準は決めない。GUIウィンドウを保持する通常起動なので、extensionTestsPathの終了で確認画面が消える方式ではない。

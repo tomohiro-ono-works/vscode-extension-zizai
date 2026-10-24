@@ -83,6 +83,8 @@ Undo/Redoではセル全体選択か本文編集かを記録する。source先�
 
 ## D5：削除・閉じる・再オープン
 
+保存証跡の不足を補う再開では、エージェントが `execution-save-followup-ui.cjs` と「TASK-002-01 保存追加確認」の専用ウィンドウを準備する。`USER-kernel-bootstrap-20261024.ipynb` の `import sys, importlib.metadata as m, json` から始まるコード枠が表示されたことをAPIとログで確認してから案内する。ユーザーは右上でPython 3.14.3を選択し、Notebook上部の標準Run All（すべて実行）を押す。カーネル選択済みでも以前の要求が再実行されるとは限らないため、実行ボタンを明示する。最初の出力後はD4待機中変更・再要求・保存とD5待機中close・再オープン・保存だけを自動化する。セル選択・Undo等を重ねて依頼しない。以前の失敗・未採取は履歴として保持する。
+
 `D5-queued-delete`／`D5-running-delete`／`D5-queued-close`／`D5-running-close` を別々に用意する。
 
 1. 標準Run Allまたはセル▶で対象を待機中／開始後にする。started等の表示、操作前のsource・版を記録する。

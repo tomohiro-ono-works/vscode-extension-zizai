@@ -1198,5 +1198,12 @@
     "D1": "initial no-ID shortcut mismatch preserved; valid-ID standard-command control matches",
     "D6": "20 updates/save and post-update click observed",
     "allCasesAccepted": false
+  },
+  "saveFollowupPreparation": {
+    "evidence": "TASK-002-01-save-followup-preparation-20261025.json",
+    "automaticAttempt": "kernel-output-timeout",
+    "current": "waiting-for-standard-kernel-output",
+    "D4D5BodyExecuted": false,
+    "allCasesAccepted": false
   }
 }

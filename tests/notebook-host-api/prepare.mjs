@@ -12,7 +12,7 @@ const workspace = path.join(root, 'results/task-002-01/workspace');
 await mkdir(dist, { recursive: true });
 await mkdir(workspace, { recursive: true });
 await mkdir(path.join(root, 'logs/task-002-01'), { recursive: true });
-const files = ['package.json', 'extension.cjs', 'model.cjs', 'fixtures.cjs', 'smoke.cjs', 'automated.cjs', 'structure.cjs', 'structure-delete.cjs', 'structure-ids.cjs', 'structure-focus.cjs', 'recovery.cjs', 'execution-auto.cjs', 'running-close.cjs'];
+const files = ['package.json', 'extension.cjs', 'model.cjs', 'fixtures.cjs', 'smoke.cjs', 'automated.cjs', 'structure.cjs', 'structure-delete.cjs', 'structure-ids.cjs', 'structure-focus.cjs', 'recovery.cjs', 'execution-auto.cjs', 'execution-save-followup.cjs', 'execution-save-followup-ui.cjs', 'running-close.cjs'];
 const hashes = {};
 for (const name of files) {
   const source = path.join(here, name);
@@ -38,6 +38,7 @@ const probeWorkspace = {
   settings: { 'window.title': 'TASK-002-01 API診断 ${activeEditorShort}', 'files.autoSave': 'off', 'workbench.editorAssociations': { '*.ipynb': 'jupyter-notebook' }, 'python.defaultInterpreterPath': process.env.TASK00201_PYTHON || 'C:\\Python314\\python.exe' }
 };
 await writeFile(path.join(dist, 'probe.code-workspace'), JSON.stringify(probeWorkspace, null, 2) + '\n');
+await writeFile(path.join(dist, 'save-followup.code-workspace'), JSON.stringify({ ...probeWorkspace, settings: { ...probeWorkspace.settings, 'window.title': 'TASK-002-01 保存追加確認 ${activeEditorShort}' } }, null, 2) + '\n');
 const profile = path.join(root, 'config/task-002-01-desktop/User');
 await mkdir(profile, { recursive: true });
 const settingsFile = path.join(profile, 'settings.json');

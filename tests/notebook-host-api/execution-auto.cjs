@@ -20,7 +20,9 @@ async function waitFor(predicate, timeoutMs, label) {
 }
 async function run(options = {}) {
   const build = JSON.parse(fs.readFileSync(path.join(__dirname, 'build.local.json'), 'utf8'));
-  const file = path.join(build.root, 'results/task-002-01/execution-auto-result.local.json');
+  const resultName = options.resultName ?? 'execution-auto-result.local.json';
+  assert.equal(path.basename(resultName), resultName, 'result name must not escape the diagnostic results folder');
+  const file = path.join(build.root, 'results/task-002-01', resultName);
   const report = { status: 'running', at: new Date().toISOString(), vscode: vscode.version, build,
     scope: 'TASK-002-01 D4/D5 standard command execution; not a custom Run All/kernel', waitSeconds: 20, manualFixtureWaitSeconds: 90,
     options, results: [], commands: [], fixtureSetup: [], unavailable: ['submitted source', 'internal execution ID', 'kernel stop completion from public summary alone'] };
@@ -40,7 +42,7 @@ async function run(options = {}) {
     const beforeReset = state(doc);
     const cells = data.cells.map(cell => {
       const value = new vscode.NotebookCellData(vscode.NotebookCellKind.Code, cell.source.join(''), 'python');
-      value.metadata = { execution_count: null, metadata: cell.metadata };
+      value.metadata = { execution_count: null, metadata: cell.metadata, id: cell.id };
       return value;
     });
     const edit = new vscode.WorkspaceEdit();
@@ -93,11 +95,12 @@ async function run(options = {}) {
       const { doc } = await open('D4-environment', 'kernel-check');
       const cell = doc.cellAt(0), observation = { case: 'environment-selected-standard-kernel', before: state(doc) };
       report.results.push(observation); persist();
-      observation.kernelSelectionGate = { status: 'waiting-for-standard-kernel-output', timeoutMs: 600000, userSelectionInThisTestWindowMayBeRequired: true };
+      const timeoutMs = options.kernelTimeoutMs ?? 600000;
+      observation.kernelSelectionGate = { status: 'waiting-for-standard-kernel-output', timeoutMs, userSelectionInThisTestWindowMayBeRequired: true };
       persist();
-      vscode.window.showInformationMessage('TASK-002-01: この自動試験ウィンドウでPython 3.14.3カーネルを選択してください。環境出力後は自動で続行します。');
+      if (!options.automaticOnly) vscode.window.showInformationMessage('TASK-002-01: この自動試験ウィンドウでPython 3.14.3カーネルを選択してください。環境出力後は自動で続行します。');
       execute(options.environmentCommand ?? 'notebook.cell.execute', doc);
-      await waitFor(() => /"ipykernel"/.test(text(cell)), 600000, 'standard kernel output after user selection in this test window');
+      await waitFor(() => /"ipykernel"/.test(text(cell)), timeoutMs, 'standard kernel output after user selection in this test window');
       observation.kernelSelectionGate.status = 'standard-output-observed';
       observation.after = state(doc); observation.saved = await saved(doc); observation.status = 'observed'; persist();
     }
@@ -114,6 +117,37 @@ async function run(options = {}) {
       observation.returned = await vscode.workspace.applyEdit(edit); observation.afterMutation = state(doc); persist();
       await waitFor(() => text(cell).includes('running-edit finished') && cell.executionSummary?.timing?.endTime !== undefined, 35000, 'D4 original standard execution finished');
       observation.after = state(doc); observation.saved = await saved(doc); observation.status = 'observed-standard-execution'; persist();
+    }
+    if (options.d4Queued) {
+      const { doc } = await open('D4-queued-edit', 'save-followup');
+      const blocker = doc.cellAt(0), cell = doc.cellAt(1);
+      const observation = { case: 'D4-queued-edit-rerequest-save', before: state(doc), savedBefore: await saved(doc) };
+      report.results.push(observation); persist();
+      const runAll = execute('notebook.execute', doc);
+      await waitFor(() => text(blocker).includes('blocker started'), 30000, 'D4 queued blocker started');
+      observation.beforeMutation = state(doc);
+      observation.phase = 'after blocker started, before downstream output; internal queue state unavailable';
+      assert.equal(text(cell), '');
+      const source = "print('queued CHANGED saved followup')\n";
+      const edit = new vscode.WorkspaceEdit();
+      edit.replace(cell.document.uri, new vscode.Range(0, 0, cell.document.lineCount, 0), source);
+      observation.mutationAt = new Date().toISOString();
+      observation.returned = await vscode.workspace.applyEdit(edit);
+      observation.afterMutation = state(doc); persist();
+      const repeat = execute('notebook.cell.execute', doc, 1);
+      observation.repeatedStandardRequest = repeat.record; persist();
+      await waitFor(() => text(cell).includes('queued CHANGED saved followup') && cell.executionSummary?.timing?.endTime !== undefined, 35000, 'D4 downstream finished');
+      observation.after = state(doc);
+      observation.runAllRequest = runAll.record;
+      observation.saved = await saved(doc);
+      observation.status = 'observed-standard-execution'; persist();
+      assert.equal(observation.returned, true);
+      assert.equal(cell.document.getText(), source);
+      assert.equal(observation.saved.returned, true);
+      assert.equal(observation.saved.json.cells[1].source.join(''), source);
+      // Two requests and public event notifications do not identify kernel runs.
+      observation.executionCount = 'not-inferred; submitted source/internal execution ID unavailable';
+      persist();
     }
     for (const name of options.d5 ?? ['D5-queued-delete', 'D5-running-delete', 'D5-queued-close', 'D5-running-close']) {
       const { doc, editor, target } = await open(name, 'standard');
