@@ -26,6 +26,9 @@ const cases = {
 };
 function notebook(name) {
   if (!Object.hasOwn(cases, name)) throw new Error('Unknown diagnostic case');
-  return { cells: structuredClone(cases[name]), metadata: { kernelspec: { display_name: 'Python 3 (ipykernel)', language: 'python', name: 'python3' }, language_info: { name: 'python' }, task00201Diagnostic: { probeOnly: true, case: name }, outsideNotebookOwner: { sentinel: 'preserve-notebook' } }, nbformat: 4, nbformat_minor: 5 };
+  // nbformat 4.5 requires a unique, 1-64 character cell.id. These are fixture
+  // identifiers, not product identity or a formal diagnostic metadata schema.
+  const cells = structuredClone(cases[name]).map((item, index) => ({ ...item, id: `task00201-${name}-${index}` }));
+  return { cells, metadata: { kernelspec: { display_name: 'Python 3 (ipykernel)', language: 'python', name: 'python3' }, language_info: { name: 'python' }, task00201Diagnostic: { probeOnly: true, case: name }, outsideNotebookOwner: { sentinel: 'preserve-notebook' } }, nbformat: 4, nbformat_minor: 5 };
 }
 module.exports = { cases, notebook };

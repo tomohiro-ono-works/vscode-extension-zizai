@@ -12,7 +12,7 @@ const workspace = path.join(root, 'results/task-002-01/workspace');
 await mkdir(dist, { recursive: true });
 await mkdir(workspace, { recursive: true });
 await mkdir(path.join(root, 'logs/task-002-01'), { recursive: true });
-const files = ['package.json', 'extension.cjs', 'model.cjs', 'fixtures.cjs', 'smoke.cjs', 'automated.cjs', 'structure.cjs', 'structure-delete.cjs', 'structure-ids.cjs', 'recovery.cjs', 'execution-auto.cjs', 'running-close.cjs'];
+const files = ['package.json', 'extension.cjs', 'model.cjs', 'fixtures.cjs', 'smoke.cjs', 'automated.cjs', 'structure.cjs', 'structure-delete.cjs', 'structure-ids.cjs', 'structure-focus.cjs', 'recovery.cjs', 'execution-auto.cjs', 'running-close.cjs'];
 const hashes = {};
 for (const name of files) {
   const source = path.join(here, name);

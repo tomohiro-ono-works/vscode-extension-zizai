@@ -1191,5 +1191,12 @@
     "firstRunnerStatus": "failed",
     "currentRunnerStatus": "completed",
     "allCasesAccepted": false
+  },
+  "uiObservations": {
+    "evidence": "TASK-002-01-ui-observations-20261025.json",
+    "vscode": "1.143.1",
+    "D1": "initial no-ID shortcut mismatch preserved; valid-ID standard-command control matches",
+    "D6": "20 updates/save and post-update click observed",
+    "allCasesAccepted": false
   }
 }

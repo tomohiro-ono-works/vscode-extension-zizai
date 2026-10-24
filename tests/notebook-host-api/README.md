@@ -13,6 +13,10 @@
 
 ## エージェントが実行する準備
 
+D6のGUI確認では、コマンドパレット操作・モード選択・更新・保存をユーザーへ依頼しない。エージェントが新規の `UI-D6-auto-*.ipynb` をD6 fixtureから作成し、固有user-data-dirで `TASK00201_UI_BURST=existing-change-20` を環境へ渡して通常の診断HostをCLI起動する。起動時処理はこのファイル名、1セル、診断label=D6-existing、初期burst=0を照合してから既存burstコマンドへ引数を渡す。公開WorkspaceEditで20回更新し、source不変・burst=20・保存trueを確認して `ui.preparation.complete` を記録する。カーネル・実行サーバー・外部コード実行口は追加しない。
+
+エージェントはログで準備完了を確認してから、表示中の `fictional_value = 60` の行をクリックしてカーソルが出るかだけをユーザーへ案内する。この観測は更新・保存後のクリック応答であり、連続更新中の入力遅延を測定したとはしない。時間には同期ログ採取等の負荷を含み、数値の合格基準は決めない。GUIウィンドウを保持する通常起動なので、extensionTestsPathの終了で確認画面が消える方式ではない。
+
 標準カーネルの選択はCLIだけで完結するとは扱わない。`execution-auto.cjs` の最初の環境確認は10分の待機上限を持ち、自動試験ウィンドウ内でのカーネル選択・必要な場合の標準▶実行後に続行する。選択だけで既に終了した実行要求が再実行されるとは案内しない。画面に存在しない「環境セル」等の名称を操作対象にせず、ファイル名と `import sys, importlib.metadata as m, json` から始まるコード枠を示す。
 
 現在の入口は、ユーザーが標準カーネルを選択した架空の `USER-kernel-bootstrap-20261024.ipynb` と同じパスを使う。開始時にコピーを保存し、条件ごとのセル置換は公開 `NotebookEdit.replaceCells` で行う。置換はfixture準備でありD5の削除操作ではない。各条件の前後・object番号・時刻は結果の `fixtureSetup` と `results` で区別する。同じNotebook URI／APIオブジェクトが条件間で再利用され得るため、独立ファイルの結果とは扱わない。実行コマンドへは宣言された引数としてURI・セル範囲を明示し、D5のセル削除は公開 `NotebookEdit.deleteCells` を使う。標準削除ボタンのUI検証には流用しない。
@@ -57,6 +61,10 @@ node tests/notebook-host-api/inspect.mjs
 `undefined` はJSON上で `{"$undefined":true}` として明示する。`false`、省略、空オブジェクトへ変換しない。イベントのoptionalフィールドはキーの列挙結果と値を両方残す。キーが存在して値がundefinedの場合もある。sourceは受信時の現在値であり、送信sourceではない。出力イベントではMIME・バイト数・hashを記録し、出力の本文は標準Notebookと保存JSONに残す。
 
 ## 観測上の限界
+
+2026-10-25 JSTのD1比較は `structure-focus.cjs`。先頭セル・`notebook.focusTop`／`notebook.cell.quitEdit`・各300ms待機を共通にし、初期cell.idなし／ありを比較する。導入済み拡張はCLIの `--disable-extensions` で無効、内蔵ipynbと診断拡張だけの編集条件。IDなしは3→2→3→3、ありは3→2→3→2を観測した。以前のユーザーBセル・Ctrl+Y条件や1.143.0の比較とは分ける。全般的なRedo不具合の原因断定には使わない。
+
+初期fixtureはnbformat_minor=5なのにcell.idを欠いていた。[nbformat 4.5の要件](https://nbformat.readthedocs.io/en/latest/format_description.html#cell-ids)に合わせ、今後の生成Notebookには標準cell.idを付ける。製品の永続識別方式は定めない。過去ファイルと観測は上書きせず、IDなし比較だけ明示的に削除する。D6の今回のUI観測も旧IDなしfixture条件として残し、クリック応答から更新中の遅延や正常形式全般の性能を保証しない。
 
 - Jupyter内部・VS Code内部モジュール、提案API、独自カーネル、独自Run All、実行サーバーは使用しない。標準セル実行・Run Allをユーザーが操作する。
 - 公開APIで得られない実送信source・内部実行ID・カーネル停止完了は「観測不能」と記録する。ユーザーのボタン操作時刻と要約受信時刻も区別する。

@@ -200,9 +200,11 @@ function activate(context) {
     context.subscriptions.push({ dispose: () => clearTimeout(timer) });
     vscode.window.showInformationMessage('TASK-002-01: 15秒のローカル更新待機を開始。これはカーネル実行要求ではありません。');
   }, true);
-  command('task00201.burst', async () => {
-    const mode = await vscode.window.showQuickPick(['existing-same-20', 'existing-change-20', 'new-same-20', 'new-change-20', 'existing-same-100', 'existing-change-100'], { title: 'D6: 数値は測定条件（合格基準ではない）' });
+  command('task00201.burst', async requestedMode => {
+    const modes = ['existing-same-20', 'existing-change-20', 'new-same-20', 'new-change-20', 'existing-same-100', 'existing-change-100'];
+    const mode = requestedMode ?? await vscode.window.showQuickPick(modes, { title: 'D6: 数値は測定条件（合格基準ではない）' });
     if (!mode) return;
+    if (!modes.includes(mode)) throw new Error('不明なD6診断モードです。');
     let { doc, cell } = selected();
     activeStep = 'D6-' + mode;
     if (mode.startsWith('new-')) {
@@ -234,6 +236,31 @@ function activate(context) {
   snapshot('activation');
   output.appendLine(`Log: ${logFile}`);
   vscode.window.showInformationMessage('TASK-002-01: Notebook API診断の準備完了（自動ログ記録中）');
+  // One-shot CLI preparation for D6 UI observation. No kernel or execution
+  // server; only this fresh synthetic notebook can be changed automatically.
+  if (process.env.TASK00201_UI_BURST === 'existing-change-20') {
+    const timer = setTimeout(async () => {
+      try {
+        const deadline = Date.now() + 10000;
+        while (!vscode.window.activeNotebookEditor && Date.now() < deadline) await new Promise(resolve => setTimeout(resolve, 100));
+        const { doc, cell } = selected();
+        if (!path.basename(doc.uri.fsPath).startsWith('UI-D6-auto-') || doc.cellCount !== 1 || cell.metadata.metadata?.[KEY]?.label !== 'D6-existing' || cell.metadata.metadata?.[KEY]?.burst !== 0) {
+          throw new Error('D6自動準備は初期値0の専用架空Notebookに限定しています。');
+        }
+        const source = cell.document.getText();
+        await vscode.commands.executeCommand('task00201.burst', 'existing-change-20');
+        if (cell.metadata.metadata?.[KEY]?.burst !== 20 || cell.document.getText() !== source) throw new Error('D6自動準備の実データが期待値と一致しません。');
+        const saved = await doc.save();
+        if (!saved) throw new Error('D6自動準備後の保存に失敗しました。');
+        log('ui.preparation.complete', { mode: 'existing-change-20', saved, notebook: docState(doc), uiObservation: 'awaiting-user; response after update/save, not latency during burst' });
+        vscode.window.showInformationMessage('TASK-002-01: D6準備完了。20回の更新と保存済みです。コード枠をクリックできるかだけ確認してください。');
+      } catch (error) {
+        log('ui.preparation.error', { error: String(error) });
+        vscode.window.showErrorMessage(`TASK-002-01: D6自動準備失敗: ${error.message}`);
+      }
+    }, 300);
+    context.subscriptions.push({ dispose: () => clearTimeout(timer) });
+  }
   return { logFile, workspace: build.workspace, snapshot: () => snapshot('smoke-read-only') };
 }
 module.exports = { activate };
