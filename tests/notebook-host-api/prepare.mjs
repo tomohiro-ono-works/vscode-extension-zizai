@@ -12,7 +12,7 @@ const workspace = path.join(root, 'results/task-002-01/workspace');
 await mkdir(dist, { recursive: true });
 await mkdir(workspace, { recursive: true });
 await mkdir(path.join(root, 'logs/task-002-01'), { recursive: true });
-const files = ['package.json', 'extension.cjs', 'model.cjs', 'fixtures.cjs', 'smoke.cjs', 'automated.cjs', 'structure.cjs', 'structure-delete.cjs', 'structure-ids.cjs', 'recovery.cjs', 'execution-auto.cjs'];
+const files = ['package.json', 'extension.cjs', 'model.cjs', 'fixtures.cjs', 'smoke.cjs', 'automated.cjs', 'structure.cjs', 'structure-delete.cjs', 'structure-ids.cjs', 'recovery.cjs', 'execution-auto.cjs', 'running-close.cjs'];
 const hashes = {};
 for (const name of files) {
   const source = path.join(here, name);
@@ -28,6 +28,11 @@ for (const name of Object.keys(fixtures.cases)) {
   const file = path.join(workspace, name + '.ipynb');
   try { await access(file); } catch { await writeFile(file, JSON.stringify(fixtures.notebook(name), null, 2) + '\n'); }
 }
+// The public standard-kernel selection gate uses this synthetic URI across cases.
+// Preserve previous selection experiments and outputs on every rebuild.
+try {
+  await writeFile(path.join(workspace, 'USER-kernel-bootstrap-20261024.ipynb'), JSON.stringify(fixtures.notebook('D4-environment'), null, 2) + '\n', { flag: 'wx' });
+} catch (error) { if (error.code !== 'EEXIST') throw error; }
 const probeWorkspace = {
   folders: [{ path: workspace }],
   settings: { 'window.title': 'TASK-002-01 API診断 ${activeEditorShort}', 'files.autoSave': 'off', 'workbench.editorAssociations': { '*.ipynb': 'jupyter-notebook' }, 'python.defaultInterpreterPath': process.env.TASK00201_PYTHON || 'C:\\Python314\\python.exe' }

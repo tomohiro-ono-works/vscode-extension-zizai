@@ -13,11 +13,17 @@
 
 ## エージェントが実行する準備
 
+標準カーネルの選択はCLIだけで完結するとは扱わない。`execution-auto.cjs` の最初の環境確認は10分の待機上限を持ち、自動試験ウィンドウ内でのカーネル選択・必要な場合の標準▶実行後に続行する。選択だけで既に終了した実行要求が再実行されるとは案内しない。画面に存在しない「環境セル」等の名称を操作対象にせず、ファイル名と `import sys, importlib.metadata as m, json` から始まるコード枠を示す。
+
+現在の入口は、ユーザーが標準カーネルを選択した架空の `USER-kernel-bootstrap-20261024.ipynb` と同じパスを使う。開始時にコピーを保存し、条件ごとのセル置換は公開 `NotebookEdit.replaceCells` で行う。置換はfixture準備でありD5の削除操作ではない。各条件の前後・object番号・時刻は結果の `fixtureSetup` と `results` で区別する。同じNotebook URI／APIオブジェクトが条件間で再利用され得るため、独立ファイルの結果とは扱わない。実行コマンドへは宣言された引数としてURI・セル範囲を明示し、D5のセル削除は公開 `NotebookEdit.deleteCells` を使う。標準削除ボタンのUI検証には流用しない。
+
+再オープン時は `openNotebookDocument` の戻り値と `showNotebookDocument` が返したeditorの `notebook` を別々に記録する。2026-10-24の試行では前者が旧参照を返す間に旧documentがclose、新documentがopenした。旧参照への最終saveでrunnerが失敗したため、保存にはeditorが実際に保持するdocumentを使うよう修正した。既に採れたD4・D5削除・待機中closeの証跡は保持する。`running-close.cjs` は残る開始後closeだけを選んで同じrunnerを起動する。
+
 `execution-auto.cjs` はD4の実行中metadata変更／source変更を独立した2実行、D5の待機中／開始後×削除／タブcloseの4条件として、標準 `notebook.cell.execute`／`notebook.execute` コマンドと公開APIで観測する入口。ユーザーからコマンドベース検証の継続依頼を受けて用意した。独自Run All・カーネル・実行サーバーは含まない。自動操作用の架空コピーだけ待機20秒へ変更し、手動用90秒と区別する。
 
 Jupyter／Python拡張を有効にした別user-data-dirを使う（`--disable-extensions` は使わない）。その専用profileの `User/settings.json` で `python.defaultInterpreterPath` を `C:\\Python314\\python.exe`、`notebook.confirmDeleteRunningCell` を `false` に設定する。後者は自動削除時の確認ダイアログを省く診断条件であり、一般ユーザー設定を変更しない。更新・拡張の自動更新を停止する専用設定も使い、実際の値を結果へ記録する。実行中の保存変更は削除／タブclose前にも保存する。起動後のカーネル選択が必要なら自動試験は開始出力の待機上限で失敗として記録し、選択済みとは推測しない。
 
-起動はインストール済み `code.cmd` に `--new-window --wait --disable-workspace-trust --disable-extension=google.colab --user-data-dir <専用profile> --extensionDevelopmentPath <dist絶対パス> --extensionTestsPath <dist/execution-auto.cjs絶対パス> <dist/probe.code-workspace絶対パス>` を渡す。`execution-auto-result.local.json` の生成時刻・status・各条件の実値を確認する。2026-10-24の起動はVS Code自身の更新mutexで拒否され、結果ファイルが生成されていない。CLI終了コードは0だったが、D4/D5実行済みとは扱わない。構文確認・model testと、Jupyterによる実行観測は別の確認である。
+起動はインストール済み `code.cmd` に `--new-window --wait --disable-workspace-trust --disable-extension=google.colab --user-data-dir <専用profile> --extensionDevelopmentPath <dist絶対パス> --extensionTestsPath <dist/execution-auto.cjs絶対パス> <workspace/USER-kernel-bootstrap-20261024.ipynb絶対パス>` を渡す。`prepare` はこの架空ファイルを未作成の場合だけ生成する。CLIのextensionTestsPath実行前は同じ専用profileの通常ウィンドウを閉じる。`execution-auto-result.local.json` の生成時刻・status・各条件の実値を確認する。2026-10-24の初回起動はVS Code自身の更新mutexで拒否され、結果ファイルが生成されなかった。CLI終了コード0を実行済みとは扱わない。その後の実行・失敗・修正の証跡は調査資料から参照できる。
 
 `recovery.cjs` は既存D2保存ファイルを新しいExtension Hostプロセスで読み直し、D3のsource先行失敗後を `notebook.cell.edit` でセル本文へフォーカスしてUndo/Redoする関連確認。既存の `automated-result.local.json` と対応する架空ファイルが必要。`--extensionTestsPath` をこの入口へ変更し、別user-data-dirを使う。`recovery-result.local.json` に以前のログ・新しいセッション・戻り値・実データを対応づける。
 
