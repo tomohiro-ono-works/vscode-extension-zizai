@@ -13,6 +13,12 @@
 
 ## エージェントが実行する準備
 
+`execution-auto.cjs` はD4の実行中metadata変更／source変更を独立した2実行、D5の待機中／開始後×削除／タブcloseの4条件として、標準 `notebook.cell.execute`／`notebook.execute` コマンドと公開APIで観測する入口。ユーザーからコマンドベース検証の継続依頼を受けて用意した。独自Run All・カーネル・実行サーバーは含まない。自動操作用の架空コピーだけ待機20秒へ変更し、手動用90秒と区別する。
+
+Jupyter／Python拡張を有効にした別user-data-dirを使う（`--disable-extensions` は使わない）。その専用profileの `User/settings.json` で `python.defaultInterpreterPath` を `C:\\Python314\\python.exe`、`notebook.confirmDeleteRunningCell` を `false` に設定する。後者は自動削除時の確認ダイアログを省く診断条件であり、一般ユーザー設定を変更しない。更新・拡張の自動更新を停止する専用設定も使い、実際の値を結果へ記録する。実行中の保存変更は削除／タブclose前にも保存する。起動後のカーネル選択が必要なら自動試験は開始出力の待機上限で失敗として記録し、選択済みとは推測しない。
+
+起動はインストール済み `code.cmd` に `--new-window --wait --disable-workspace-trust --disable-extension=google.colab --user-data-dir <専用profile> --extensionDevelopmentPath <dist絶対パス> --extensionTestsPath <dist/execution-auto.cjs絶対パス> <dist/probe.code-workspace絶対パス>` を渡す。`execution-auto-result.local.json` の生成時刻・status・各条件の実値を確認する。2026-10-24の起動はVS Code自身の更新mutexで拒否され、結果ファイルが生成されていない。CLI終了コードは0だったが、D4/D5実行済みとは扱わない。構文確認・model testと、Jupyterによる実行観測は別の確認である。
+
 `recovery.cjs` は既存D2保存ファイルを新しいExtension Hostプロセスで読み直し、D3のsource先行失敗後を `notebook.cell.edit` でセル本文へフォーカスしてUndo/Redoする関連確認。既存の `automated-result.local.json` と対応する架空ファイルが必要。`--extensionTestsPath` をこの入口へ変更し、別user-data-dirを使う。`recovery-result.local.json` に以前のログ・新しいセッション・戻り値・実データを対応づける。
 
 `structure-ids.cjs` はD1削除の不一致について、標準nbformat `cell.id` を初期JSONへ付ける比較条件。正式セル識別方式の提案ではない。2026-10-24の確認では削除後のUndoでセル数2のまま失敗し、ID補完だけでは原因を説明できなかった。初期IDなしの過去2試行も保持し、原因未確定とする。診断ランナーは各操作後に状態を保存してから期待値を検証する。後から追加した保存処理を過去の実行済みコードと混同しない。

@@ -1173,5 +1173,10 @@
     "evidence": "TASK-002-01-windows-followup-20261024.json",
     "scope": "TASK-002-01 D2/D3 followup and D1 diagnostic failure investigation only",
     "allCasesAccepted": false
+  },
+  "commandPreparation": {
+    "evidence": "TASK-002-01-command-preparation-20261024.json",
+    "runtimeExecuted": false,
+    "allCasesAccepted": false
   }
 }
