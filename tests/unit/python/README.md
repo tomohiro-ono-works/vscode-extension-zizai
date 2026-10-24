@@ -5,8 +5,16 @@
 ## 必要な環境と実行
 
 - 確認用Python：3.12以降。標準unittest／venvを使用します。
-- 確認用環境にsetuptools（pyprojectの要件を満たす版）とpip 22.3以降が必要です。
+- コマンド先頭のPythonから、`-I`付きでもsetuptools（pyprojectの要件を満たす版）とpip 22.3以降を読み込める環境が必要です。
 - 外部通信、pytest、SDK、認証情報は不要です。テストはビルド依存を自動導入しません。
+
+実行前に、テストを起動するPythonでビルド依存を確認します。
+
+```sh
+python -I -c "from setuptools import build_meta; import pip; import importlib.metadata as m; print({p: m.version(p) for p in ('setuptools', 'pip')})"
+```
+
+ユーザー領域だけに導入したsetuptoolsは、通常起動で利用できても`-I`では見えません。この場合はテスト専用venvへ必要な版を明示的に用意し、そのvenvのPythonで上記確認と次のテストコマンドを実行します。venvの準備はテスト実行と分け、runnerの隔離オプションを外して成立させないでください。
 
 リポジトリ直下で実行します。
 
