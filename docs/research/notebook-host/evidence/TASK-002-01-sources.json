@@ -1178,5 +1178,11 @@
     "evidence": "TASK-002-01-command-preparation-20261024.json",
     "runtimeExecuted": false,
     "allCasesAccepted": false
+  },
+  "executionBootstrap": {
+    "evidence": "TASK-002-01-kernel-bootstrap-20261024.json",
+    "vscode": "1.143.1",
+    "result": "failed",
+    "D4D5CasesExecuted": false
   }
 }
