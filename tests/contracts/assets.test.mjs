@@ -7,6 +7,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import test from 'node:test';
 import { generateAssets, checkAssets } from '../../scripts/contracts/assets.mjs';
+import { createValuesValidator } from '../../scripts/contracts/validation.mjs';
 
 const sourcePath = 'apps/common/contracts/v1/values.schema.json';
 const toolsRoot = fileURLToPath(new URL('../../scripts/contracts/', import.meta.url));
@@ -175,4 +176,42 @@ test('unused_invalid_schema_definitions_are_never_published', async t => {
     await assert.rejects(checkAssets(options));
     await assert.rejects(readFile(path.join(options.outputRoot, 'manifest.json')), { code: 'ENOENT' });
   }
+});
+
+test('canonical_and_generated_schema_conform_to_value_contract', async t => {
+  const options = await fixture(t);
+  await generateAssets(options);
+  const emitted = JSON.parse(await readFile(path.join(options.outputRoot, 'js/values.schema.json')));
+  const source = JSON.parse(canonical);
+  assert.equal(emitted.$id, 'urn:zizai:contracts:values:v1');
+  assert.equal(emitted.$schema, 'https://json-schema.org/draft/2020-12/schema');
+  assert.deepEqual(Object.keys(emitted.$defs).sort(), Object.keys(source.$defs).sort());
+  const validators = [createValuesValidator(source), createValuesValidator(emitted)];
+  const literal = value => ({ kind: 'literal', value });
+  const cases = [
+    { id: 'strings', name: 'BoundValue', value: literal('  引用"・改行\nC:\\架空 data\\末尾\\  '), ok: true },
+    { id: 'distinct-values', name: 'BoundValues', value: {
+      boolean: literal(false), zero: literal(0), none: literal(null), empty: literal(''), list: literal([]),
+    }, ok: true },
+    { id: 'large-integer', name: 'BoundValue', value: { kind: 'integer', decimal: '9007199254740993' }, ok: true },
+    { id: 'nested-unsafe-integer', name: 'BoundValue', value: literal({ nested: [9007199254740992] }), ok: false },
+    { id: 'noncanonical-integer', name: 'BoundValue', value: { kind: 'integer', decimal: '01' }, ok: false },
+    { id: 'incomplete-text', name: 'DraftValue', value: { kind: 'text', text: '-' }, ok: true },
+    { id: 'draft-bool-is-structural', name: 'DraftValue', value: { kind: 'json', value: false }, ok: true },
+    { id: 'draft-unset', name: 'DraftValues', value: { count: { kind: 'unset' } }, ok: true },
+    { id: 'bound-unset', name: 'BoundValues', value: { count: { kind: 'unset' } }, ok: false },
+    { id: 'omission', name: 'BoundValues', value: {}, ok: true },
+    { id: 'missing-required-wrapper-key', name: 'DraftValue', value: { kind: 'text' }, ok: false },
+    { id: 'unknown-wrapper-key', name: 'BoundValue', value: { ...literal('keep'), method: 'unregistered' }, ok: false },
+    { id: 'variable-name', name: 'BoundValue', value: { kind: 'variable', name: 'df_sales' }, ok: true },
+    { id: 'variable-expression', name: 'BoundValue', value: { kind: 'variable', name: 'df.iloc' }, ok: false },
+  ];
+  for (const item of cases) {
+    const before = structuredClone(item.value);
+    for (const validate of validators) {
+      assert.equal(validate(item.name, item.value).ok, item.ok, item.id);
+      assert.deepEqual(item.value, before, `${item.id}: input changed`);
+    }
+  }
+  assert.deepEqual(await checkAssets(options), { ok: true, differences: [] });
 });

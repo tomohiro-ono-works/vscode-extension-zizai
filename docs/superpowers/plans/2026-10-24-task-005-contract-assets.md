@@ -25,6 +25,10 @@
 
 ## Review Focus
 
+2026-10-25追補：mainの5bbb234／fa21803を現在の作業ブランチへmergeし、[依存分類](../../tasks/task-rules.md#dependency-classification)・[テスト分類と担当](../../development.md#テスト計画実行時のルール)を適用する。Issue #37〜40の現在の依存関係欄を必須の前提条件／相互確認先／区分未確定へ整理し、必要成果・対象工程・充足状況・独立範囲を記録する。初回実装の結果履歴は維持する。
+
+005-05は実装済みの値契約・生成資産を対象に反復する。[tests/contracts/README.md](../../../tests/contracts/README.md#005-05要件対応と検証計画)へ各caseの目的・分類・実操作経路・期待結果と共通の担当・対象版・開始条件・証跡を対応付ける。validator関数は単体、Git／filesystem・CLI・実生成schema消費はAPI・結合でエージェントが実施する。UI自動はPlaywrightとし範囲・開始方法・担当の事前合意後、手動UIはエージェントが環境・証跡採取を準備して完了報告し、ユーザーの開始合図後にユーザーが操作する。ユーザーへターミナル操作・ログ整理を依頼せず、API・自動の成功を手動UI合格にしない。現時点でUIの準備・実行は行っていない。
+
 1. DraftValueの途中不正は保存できるが、wrapper構造不正は拒否する。Task 1の `draft_is_not_semantic_validation` で区別する。
 2. None・False・0・省略、巨大整数を同一視しない。Task 1の `literal_types_and_precision` と `unset_is_draft_only` で固定する。
 3. 任意のcwdや日本語・空白pathで同じ入力が同じ資産になる。Task 2の `cwd_and_paths_do_not_change_output` で固定する。
