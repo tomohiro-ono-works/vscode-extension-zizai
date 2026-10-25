@@ -2,18 +2,34 @@
 
 対象は003の最小package。対応する[Notebook](TASK-003-05-python.ipynb)は通常Pythonセルだけで、VS Codeの標準Jupyter実行を使う。現在のpackageにはクラス・業務関数・SDK依存がまだなく、そのインスタンス生成・呼出し・依存欠落の確認は対象実装が揃ってから追加する。
 
-## 前提と手動導入
+## 分類・担当と開始方法
+
+[開発手順](../../docs/development.md)に従い、K01〜K06はユーザーがVS Code上で操作する**手動UI検証**として扱う。エージェントは対象版・環境・導入・証跡採取・比較・分析・Issue記録を担当し、ユーザーへターミナル操作、設定ファイル編集、ログ整理を依頼しない。
+
+- 各ケースの対象はこのNotebook、今回のwheel、選択済み既存カーネル。対象commit、VS Code／Python／Jupyter拡張・Python／ipykernelの実版は、エージェントが準備時と実行時に記録する。
+- エージェントがCLIで行うwheelのビルド・導入・通常Pythonからのimport確認は準備またはAPI・結合テストであり、下表の手動UI合格へ振り替えない。`tests/unit/python/`の自動確認とも結果を分ける。
+- エージェントはNotebookの出力なしコピー、wheel、既存カーネルの候補、保存先と証跡採取方法を準備し、準備完了を報告する。**ユーザーの開始合図を受けてから**、今回の作業folderを開く専用VS Codeウィンドウを1つ用意する。同じfolderの専用ウィンドウが既にある場合は特定して再利用し、通常作業・他Taskのウィンドウは操作しない。
+- ウィンドウの目印はタイトルの`TASK-003-05-python.ipynb`と今回の作業folder名。アプリ起動はエージェントによる環境準備であり、K01以降のセル選択・実行、カーネル再起動、表示・フォーカス確認はユーザーが行う。
+- 一度にK01など小さな操作単位だけを案内し、ユーザーの簡単な報告後、エージェントが保存結果・診断JSONを確認して次へ進む。K01の絶対pathは共有報告へ貼らず、必要なローカル情報はエージェントが扱う。
+- 終了はユーザーの終了合図後に行う。エージェントが証跡を採取し、未保存変更を保護してNotebook出力を消去する。専用ウィンドウを閉じる場合もユーザーと確認し、待機時間による自動終了は行わない。
+- UI自動テストは今回計画しない。追加する場合はPlaywrightを使う範囲・開始方法・担当を事前合意する。対応できない場合に別方式へ自動で切り替えない。
+
+過去のエージェントによるGUI自動操作の証跡は履歴として保持する。ユーザーの手動UI実施を示す証跡としては扱わず、新ルール適用後の手動UI結果を別に記録する。
+
+## エージェントが行う前提確認と導入
+
+以下のPowerShell例はエージェント用の準備手順であり、ユーザーへ実行を依頼しない。
 
 1. この手順を含むPRのbranch／commitを取得する。対象版は実施結果に記録する。クラウドとデスクトップのファイルが自動同期されるとは扱わない。
 2. VS Code、既存のPython／Jupyter拡張、確認用の既存Pythonカーネルを使う。独自カーネルやkernelspecは作成しない。初回の検証基準候補はWindows x64／通常ABIのPython3.14だが、実際に選択した版を取得して記録する。
-3. Notebookを一時作業folderへコピーして開き、対象カーネルを選ぶ。セル1で実Pythonとcwdをローカル確認する。cwdはsource treeと別の場所にし、`zizai.py`や同名packageがそのfolderにないことを確認する。必要ならその一時folderをVS Codeで開き直す。Notebook保存先だけからcwdを推測しない。
+3. エージェントがNotebookを一時作業folderへコピーする。開始合図後にユーザーが対象カーネルを選び、K01のセル1で実Pythonとcwdを確認する。cwdはsource treeと別の場所にし、エージェントが`zizai.py`や同名packageの不在を照合する。必要なfolderの開き直しも開始後の環境準備としてエージェントが行う。Notebook保存先だけからcwdを推測しない。
 4. setuptoolsがあるビルド用Python環境で、リポジトリ直下から開発wheelを作る。手順中でビルド依存を自動導入しない。PowerShellの例：
 
    ```powershell
    python -c "from setuptools.build_meta import build_wheel; build_wheel('dist')"
    ```
 
-5. セル1で表示した実Pythonへ、生成した `dist/zizai_runtime-0.0.0.dev0-py3-none-any.whl` を手動導入する。PowerShellの次の2つのpathは自分の確認値へ置換する。
+5. K01で対象を確認した後、エージェントがセル1の実Pythonへ生成した `dist/zizai_runtime-0.0.0.dev0-py3-none-any.whl` を明示的に導入する。導入先を確認したらK02の準備完了を案内する。PowerShellの次の2つのpathはエージェントのローカル確認値へ置換する。
 
    ```powershell
    & '<選択カーネルのPython絶対path>' -m pip install --no-index --no-deps '<生成したwheelの絶対path>'
@@ -25,20 +41,23 @@
 
 ## 確認ケース
 
-| ID | 操作 | 期待結果・記録 |
-| --- | --- | --- |
-| K01 | セル1で選択カーネルを確認 | Python実版・cwdをローカル確認。共有記録へ個人の絶対pathを転記しない |
-| K02 | 手動導入後、セル2とセル3を標準実行 | distributionがzizai-runtime／0.0.0.dev0、runtime_dependency_countが0。3 packageのimportに成功し、imports_match_distributionとimport_preserved_process_stateがtrue |
-| K03 | VS Code標準操作でカーネルを再起動。セル1・セル2の後、セル4だけを実行 | K02と同じimport確認が成立し、previous_session_marker_absentもtrue。セル3を先に実行していないことと、標準再起動した事実を記録 |
-| K04 | 同じカーネルでセル4を再実行 | 通常の再importが成立。独自の再初期化・自動pip・環境変更を要求しない |
-| K05 | zizai-runtimeが未導入の別の既存検証カーネルがある場合、通常セルで`import zizai` | 通常のModuleNotFoundError。エラーがJupyter標準表示に出る。確認のために既存環境からアンインストールせず、未導入の検証環境がなければ未実施と記録 |
-| K06 | 製品に実装済みのインスタンス生成・呼出し、個別SDK欠落 | 現時点では対象APIがなく未実施。架空クラスやダミーSDKで製品の合格にしない |
+全ケースに上記の手動UI分類・担当・対象環境を適用する。操作前に準備完了と開始合図を必要とする。ユーザーは指定セルを実行し、表示・フォーカス・ショートカットを確認して「期待表示どおり」「エラー表示あり」などを簡単に報告する。エージェントがセル実行番号・診断JSON・保存状態を採取し、表示の報告と照合する。
+
+| ID | 目的・ユーザーの操作経路 | 期待結果・記録 | ケース固有の開始条件・証跡 |
+| --- | --- | --- | --- |
+| K01 | 実カーネルの特定。セル1を選択して標準実行 | Python実版・cwdをローカル確認。共有記録へ個人の絶対pathを転記しない | 開始合図後。カーネル表示・セル実行番号、エージェントが確認した版とcwdの条件を記録 |
+| K02 | 導入先との一致。セル2とセル3を選択して標準実行 | distributionがzizai-runtime／0.0.0.dev0、runtime_dependency_countが0。3 packageのimportに成功し、imports_match_distributionとimport_preserved_process_stateがtrue | K01とエージェントによる導入確認後。セル3のJSON・実行番号・表示報告を採取 |
+| K03 | 標準再起動経路。VS Codeの再起動操作後、セル1・2→セル4を選択して実行 | K02と同じimport確認が成立し、previous_session_marker_absentもtrue。セル3を先に実行していないことと、ユーザーが標準再起動した事実を記録 | K02確認後。再起動操作の報告、セル4のJSON・実行順と番号を採取 |
+| K04 | 同一カーネルでの再import。セル4を再度選択して標準実行 | 通常の再importが成立。独自の再初期化・自動pip・環境変更を要求しない | K03確認後。セル4の再実行番号・JSON・表示報告を採取 |
+| K05 | 標準例外表示。未導入の別の既存検証カーネルで通常セルの`import zizai`を実行 | 通常のModuleNotFoundErrorがJupyter標準表示に出る。確認のために既存環境からアンインストールしない | 未導入の既存検証カーネルがある場合だけ準備・案内。なければ未実施。例外型・表示報告を採取 |
+| K06 | 実API・SDK欠落時の通常表示。実装済みのインスタンス生成・呼出しを標準実行 | 正式なAPIの戻り値・例外が標準表示に出る。架空クラスやダミーSDKで製品の合格にしない | 現時点では対象APIがなく未実施。対象仕様・実装成立後に具体的手順と期待結果を追加 |
 
 標準「すべて実行」でセル3→セル4を続けて実行すると、同じセッションのためprevious_session_marker_absentはfalseになる。これは再起動していないことを示す診断であり、独自の実行停止ではない。K03は指定したセルの実行順で確認する。
 
 ## 共有する結果
 
 - 対象branch／commit、VS CodeとPython／Jupyter拡張の版、実施日とK01〜K06の合格／不合格／未実施。
+- 実際の操作経路、操作担当、ユーザーの開始合図と表示報告、準備・採取を担当したエージェントを記録。手動UI未実施をAPI・自動操作の成功で埋めない。
 - セル3とセル4の診断JSON。runtimeには実Python・OS・CPU・ipykernelの配布版、distributionには名前・版・Python条件・依存数を含む。filesのhashは読込先のディスクファイルの値。
 - 失敗時は例外型と、秘密値・個人pathを取り除いた説明。環境変数一覧、認証情報、セル1の出力、実データは共有しない。
 

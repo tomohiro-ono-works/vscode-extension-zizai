@@ -27,3 +27,14 @@
 ## 確認の境界
 
 クラウドでは通常Pythonプロセスで診断コードを確認する。ipykernelやIDEの追加導入、既存kernelspecの変更は行わない。VS Code／Windows／候補Python3.14の実機、製品のインスタンス生成・呼出し、個別SDK欠落、実際の更新と再起動は未実施として残す。現在の製品に存在しないAPIやダミーコネクタは作らない。
+
+## 今後の検証方法と実施順
+
+共通ルール`5bbb234`／`fa21803`を適用する。依存関係の区分・必要成果・工程・充足根拠は[#21](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/21)〜[#24](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/24)の現在欄を正本とし、相手Task全体の完了を必要条件へ広げない。Python向け契約資産の要否・生成先・利用経路が未確定なら、その収録実装だけを保留し、最小packageの確認は独立して進める。
+
+1. エージェントが、前提の揃った既存9件を現在のcheckoutで確認する。内訳は単体1件とAPI・結合8件で、[ケース別の操作経路](../../../tests/unit/python/README.md)に従う。build・pip・通常Python subprocessを使い、GUIは操作しない。
+2. エージェントが、出力なしNotebookの作業コピー・wheelの出所・既存Python環境・保存先と診断JSONの採取方法を確認する。通常Pythonからのimport事前確認はAPI・結合であり、手動UIとは分ける。
+3. [手動UI手順](../../../tests/manual/TASK-003-05-python.md)の準備完了を報告し、ユーザーの開始合図を待つ。開始合図後に専用ウィンドウを用意し、K01から小さく案内する。ユーザーがセル操作・再起動・表示確認を行い、エージェントが準備・採取・分析・記録を担当する。
+4. UI自動テストは未計画。必要な場合はPlaywrightの対象範囲・開始方法・担当を事前合意し、対応不能を理由に別の自動操作へ切り替えない。
+
+過去のエージェントGUI自動操作によるK01〜K04の証跡は履歴として残す。新ルールのユーザー手動UI合格へ振り替えず、実際の操作担当・経路と未実施の手動UI確認をIssueに併記する。API・自動テストの成功、アプリ起動成功、通常Pythonのセッション判定だけで手動UIの成功とはしない。

@@ -2,6 +2,26 @@
 
 対象は003-03の最小パッケージと003-04の先行確認です。コネクタの業務処理やJupyterの実機確認ではありません。
 
+## 操作経路による分類と担当
+
+[開発手順](../../../docs/development.md)に従い、起動にunittestやCLIを使うことと検証分類を分けます。下表9件はエージェントが準備・実行・証跡採取・分析・記録を担当し、ユーザーへターミナル操作やログ整理を依頼しません。
+
+| テストメソッド | 分類 | 実際の操作・検証経路 |
+| --- | --- | --- |
+| `test_notebook_is_unexecuted_and_uses_a_standard_kernel` | 単体 | Notebook JSONの未実行状態・metadata・セル構文を直接検査 |
+| `test_wheel_contains_both_source_roots_without_unrelated_assets` | API・結合 | build backendを呼び、生成wheelの収録内容を検査 |
+| `test_hand_installation_enables_imports_without_source_paths` | API・結合 | 別プロセス・使い捨てvenv・pip導入とimportの前後を照合 |
+| `test_package_imports_do_not_require_optional_sdks` | API・結合 | 実wheelを導入し、別Pythonで不要SDKの読込要求を検査 |
+| `test_import_preserves_cwd_environment_and_search_path` | API・結合 | 実wheelを導入し、別Pythonでimport前後の状態を照合 |
+| `test_sdist_rebuild_preserves_split_package_imports` | API・結合 | backendでsdist・wheelを作成し、新規venvへ導入してimport |
+| `test_diagnostic_matches_the_wheel_without_exposing_local_paths` | API・結合 | Notebookの診断コードを通常Pythonで評価し、実wheelとJSONを照合 |
+| `test_restart_check_distinguishes_current_and_fresh_processes` | API・結合 | 通常Pythonの同一／新規プロセスでセッション判定を比較 |
+| `test_diagnostic_detects_packages_shadowed_by_notebook_cwd` | API・結合 | 別cwdの同名packageを通常Pythonで読み込み、診断を照合 |
+
+各ケースの目的・期待結果は下の境界表とテスト内のassertionを正本とします。対象は実行時のcheckout・build backend・Python版を記録し、開始条件は次節の依存確認と対象ソースの存在です。証跡には各メソッドの結果、対象版・環境・コマンド、変更条件と観測限界を残します。
+
+UI自動テスト・手動UI検証はこの9件に含みません。診断コードの通常Python実行や新規プロセスの成功は、VS Codeでのセル操作・カーネル再起動・表示の手動UI合格を示しません。UI自動テストを追加する場合はPlaywrightの範囲・開始方法・担当を事前合意します。
+
 ## 必要な環境と実行
 
 - 確認用Python：3.12以降。標準unittest／venvを使用します。
