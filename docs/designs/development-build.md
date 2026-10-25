@@ -1,6 +1,6 @@
 # 開発・ビルド手順の設計案
 
-更新日：2026-10-24。対象：[TASK-006-02](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/42)。
+更新日：2026-10-25。対象：[TASK-006-02](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/42)。
 
 本書は、製品の開発環境・ビルド入口を整備するための設計案である。現在使える導入手順、製品設定の作成許可、動作成立の記録ではない。作業範囲・進捗・確認結果は担当Issueを正本とする。
 
@@ -195,3 +195,14 @@ PR #53の更新版では、003自身の最小単位を3つのpackage入口とし
 - [pipの再現可能な導入](https://pip.pypa.io/en/stable/topics/repeatable-installs/)と[hash検査・wheel限定](https://pip.pypa.io/en/stable/topics/secure-installs/)：厳密版・全依存hash・適合wheelを用いる固定方法。
 
 - [setuptoolsのpackage列挙・package-dir](https://setuptools.pypa.io/en/latest/userguide/package_discovery.html)と[pyproject設定](https://setuptools.pypa.io/en/latest/userguide/pyproject_config.html)：実ディレクトリとimport階層が異なる場合の明示対応。今回のTOML断片の根拠であり、製品のビルド結果ではない。
+
+
+## 10. 共通ルールの反映と新しい受領入力
+
+依存の現在の区分・工程別の充足根拠は006-01〜05のIssueに記載し、本書の相互参照だけで一律に開始を止めたり、既存の必須条件を外したりしない。[TASK-006の検証計画](task-006-verification.md)で実際の操作経路と担当を区別する。PlaywrightのUI自動ケースは範囲・開始方法・開始担当の事前合意後、手動UIは準備成功の報告とユーザーの開始合図後に行う。起動方法やAPIの成功で手動UIの合格を代替しない。
+
+003のPR #55 `5f7e5d194ae4da53c9e002f7f9501a17d0d82b56` に、rootのpyproject.tomlと最小3packageの実装がある。配布名zizai-runtime、開発版0.0.0.dev0、Requires-Python >=3.12、最小実行依存なし、setuptools.build_metaの明示収集である。本文の「新規作成」「未選定」は当初の設計段階を表す。006で別のpyprojectを先に作らず、003の正本・更新経路と統合する。これは全採用コネクタを含む製品全体の依存・正式対応範囲・出荷版の確定ではない。
+
+003の既存runnerは隔離Pythonの -I からbackend・pipを読めるビルド環境を必要とする。ユーザーsiteにだけbackendがある通常Pythonを、専用ビルド環境と同一視しない。専用venvでのWindows独立9件再確認を受領し、環境前提を006の設計に反映する。006では導入・ビルドを再実行していない。
+
+005のPR #51 `e207d3f59e49905e0e786a5301d55cbb56b0465e` に、values.schema.jsonと生成／check CLIの第1単位がある。正本→build/contracts/js/values.schema.json、manifest.jsonの収集条件とbuild前check終了0を受領した。Python生成資産・正式action等は未提供。本文§7.3の比較は旧固定版の履歴であり、現行案ではzizai-runtime／zizaiと通常Python・専用6コネクタを受領済み。未設定sourceの異なる判断の影響は対象契約での整合事項として残し、この値構造単位に混在させない。

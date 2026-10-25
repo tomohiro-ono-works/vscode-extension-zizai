@@ -75,3 +75,5 @@
 ## 製品の開発・ビルド手順の設計
 
 [開発・ビルド手順の設計案](designs/development-build.md)に、製品設定の対象候補、依存固定、ビルド・F5の入口、配布物の確認条件と各領域から必要な入力を整理しています。設計案にある製品コマンドは未整備で、現時点の実行手順ではありません。確定した手順と実施結果は[TASK-006-02](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/42)から確認します。
+
+[TASK-006の検証計画](designs/task-006-verification.md)では、ケース別の操作経路・担当・環境・開始条件・証跡を定めています。依存の充足は各Issueで管理し、準備完了前のUI実行案内やAPI結果から手動UI合格への振替は行いません。
