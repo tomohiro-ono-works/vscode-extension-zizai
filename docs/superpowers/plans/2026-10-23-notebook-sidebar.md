@@ -10,6 +10,8 @@
 
 **Spec:** [Notebookのサイドバー設定UI](../../features/notebook-sidebar.md)。利用者は2026-10-23に「そうですね。進めてOKです。」と回答し、UI動作の書面を承認した。
 
+**Traceability:** [12項目・未決事項と責務のレビュー](../../designs/notebook-sidebar-requirements-review.md)と[K01の選択・保存・復元の前後比較](../../../tests/integration/sidebar-selection-state-cases.md)を参照する。共通選択は2026-10-25の利用者選択で1つのメニューへ確定。レビューで正式契約を代行せず、G1〜G3を維持する。
+
 **Readiness:** **製品実装へは未移行。** 正式な通信・metadata契約、適用規約、Host・製品runnerの対象部分が未充足。G1〜G3を満たして実装計画を改訂・レビューするまで製品コードを作成しない。条件は必要な工程に限定し、承認済みUIの確認ケース・手順・境界整理は独立して進める。依存関係の充足状況の正本は[TASK-001-04](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/11)。
 
 ## Global Constraints
