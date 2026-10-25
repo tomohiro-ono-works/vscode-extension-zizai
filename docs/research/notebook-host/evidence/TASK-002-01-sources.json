@@ -1216,5 +1216,10 @@
     "historicalResultsPreserved": true,
     "newDesktopExecution": false,
     "allCasesAccepted": false
+  },
+  "feasibilityReconciliation": {
+    "file": "TASK-002-01-feasibility-20261025.json",
+    "method": "Existing evidence extraction and cross-check; manual/API paths remain separate",
+    "allCasesAccepted": false
   }
 }
