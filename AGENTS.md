@@ -1,9 +1,10 @@
 # ZizAI Agent Router
 
-- Rules updated: 2026-10-22
+- Rules updated: 2026-10-24
 
 - Start with [docs/README.md](docs/README.md), then open the assigned GitHub Issue from [the task index](docs/tasks/README.md). Read its parent Issue and required references. Task/Subtask scope, state, decisions, and results are maintained in Issues; existing Task Markdown is an immutable migration record.
 - Before creating or splitting a Task, read [Task/Subtask authoring rules](docs/tasks/task-rules.md) and use the linked templates.
+- When creating, updating, or assessing a Task/Subtask, classify dependencies as mandatory prerequisites, mutual coordination, or unresolved under [dependency rules](docs/tasks/task-rules.md#dependency-classification). Record required deliverables, affected stages, and fulfillment evidence in the assigned Issue; apply conditions to the relevant scope without changing existing authority or constraints.
 - Read the Task's `References` before opening unrelated documentation. Load only the sections needed for the current decision.
 - Current Specifications are under `docs/features/`; repository architecture is defined in `docs/features/architecture.md`.
 - Implementation and verification rules are defined in `docs/features/coding-rules.md`; cleanup and responsibility changes use `docs/features/refactor-policy.md`.
