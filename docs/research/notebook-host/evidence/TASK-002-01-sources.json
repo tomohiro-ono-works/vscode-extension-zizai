@@ -1232,5 +1232,11 @@
     "case": "D3-source-first-failure",
     "status": "合格（部分適用・手動Undo/Redoを観測した条件）",
     "allCasesAccepted": false
+  },
+  "D3MetadataFirstManual": {
+    "file": "TASK-002-01-D3-metadata-first-manual-20261026.json",
+    "case": "D3-metadata-first-failure",
+    "status": "不合格（この手動Redo条件の期待不一致）",
+    "allCasesAccepted": false
   }
 }
