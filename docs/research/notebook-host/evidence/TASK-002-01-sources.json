@@ -1205,5 +1205,16 @@
     "current": "waiting-for-standard-kernel-output",
     "D4D5BodyExecuted": false,
     "allCasesAccepted": false
+  },
+  "verificationRoutes": {
+    "evidence": "TASK-002-01-verification-routes-20261025.json",
+    "rules": [
+      "5bbb234",
+      "fa21803"
+    ],
+    "mergeCommit": "b3cd5b8f8d9e42a5886b54f35be9339a3c0f9f31",
+    "historicalResultsPreserved": true,
+    "newDesktopExecution": false,
+    "allCasesAccepted": false
   }
 }

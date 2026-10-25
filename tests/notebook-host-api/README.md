@@ -13,6 +13,8 @@
 
 ## エージェントが実行する準備
 
+共通ルール取り込み後の分類は [操作計画の検証経路と担当](../manual/TASK-002-01-notebook-host.md#検証経路と担当) を参照する。このフォルダーの公開API・標準コマンド直接呼び出しはAPI・結合テストで、UI自動テストや手動UIの代替ではない。特に `execution-save-followup-ui.cjs` は最初のカーネル選択支援の後をAPIで自動操作する入口であり、手動の編集・ごみ箱・タブ終了の代替として再起動しない。Playwrightの対象・開始方法・担当の合意前は新たなUI自動化を行わない。既存証跡の分析と単体・構文確認は、GUIを起動せず独立して行える。
+
 `execution-save-followup.cjs` はD4の実行待ちsource変更＋同一セルへの標準再要求＋保存JSON、D5待機中close後の修正済み保存だけを採取する。以前の各ケース全体は繰り返さない。45秒で標準カーネル出力が得られなければ未実施として終了する。`execution-save-followup-ui.cjs` は同じ2条件について標準UI選択・最初の実行を10分待つ入口で、初回失敗を退避してから使う。結果は `execution-save-followup-result.local.json` とし、従来の `execution-auto-result.local.json` は上書きしない。セル置換でもfixtureの標準cell.idをAPI外側metadataへ渡す。
 
 専用profile `task-002-01-execution-auto` に対して `code.cmd --verbose --new-window --wait --disable-workspace-trust --disable-extension=google.colab --user-data-dir=<profile絶対パス> --extensionDevelopmentPath=<dist絶対パス> --extensionTestsPath=<dist/execution-save-followup-ui.cjs絶対パス> <dist/save-followup.code-workspace絶対パス>` をエージェントが実行する。結果JSONの開始時刻と `kernelSelectionGate` を確認してから、タイトル「TASK-002-01 保存追加確認」のウィンドウ、`USER-kernel-bootstrap-20261024.ipynb`、`import sys, importlib.metadata as m, json` から始まるコード枠を案内する。ユーザー操作は必要な標準カーネル選択と最初の標準実行だけ。その後は自動で実行・変更・再要求・閉鎖・再オープン・保存するため、追加編集は依頼しない。
