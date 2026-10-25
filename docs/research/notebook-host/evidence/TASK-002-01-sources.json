@@ -1226,5 +1226,11 @@
     "file": "TASK-002-01-D2-manual-20261026.json",
     "status": "合格（今回の診断・手動経路の観測条件）",
     "allCasesAccepted": false
+  },
+  "D3SourceFirstManual": {
+    "file": "TASK-002-01-D3-source-first-manual-20261026.json",
+    "case": "D3-source-first-failure",
+    "status": "合格（部分適用・手動Undo/Redoを観測した条件）",
+    "allCasesAccepted": false
   }
 }
