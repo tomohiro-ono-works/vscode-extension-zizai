@@ -56,17 +56,34 @@
 
 ## 開始条件・依存関係
 
-- 先行 Task／Subtask：＜ID と必要な成果、または「なし」＞
+区分と進行判断は[依存関係の記載ルール](https://github.com/tomohiro-ono-works/vscode-extension-zizai/blob/main/docs/tasks/task-rules.md#dependency-classification)に従う。各区分に該当がなければ「なし」とする。
+
+### 必須の前提条件
+
+| Task／Subtask ID・Issue | 必要な成果・対象部分 | 必要な工程・全体完了の要否 | 充足状況・根拠／再開条件 |
+| --- | --- | --- | --- |
+| ＜ID・Issue URL＞ | ＜具体的な成果＞ | ＜着手／確定／検証／完了。対象部分で足りるか＞ | ＜充足／未充足／未確認と根拠＞ |
+
+### 相互確認先
+
+| Task／Subtask ID・Issue | 確認する仕様・契約・境界 | 独立して進められる範囲 | 照合が必要な時点 |
+| --- | --- | --- | --- |
+| ＜ID・Issue URL＞ | ＜確認事項＞ | ＜確定前でも進められる作業＞ | ＜工程・条件＞ |
+
+### 区分未確定・環境・判断
+
+- 区分未確定：＜相手ID・Issue、理由・確認点・担当・影響範囲、または「なし」＞
 - 必要な環境・認証：＜名称・有無・不足。秘密値は記載しない＞
+- 実機確認：＜対象版・確認項目、CLIで進められる範囲／ユーザーのUI操作が必要な範囲、または「なし」＞
 - 未確定事項：＜着手前に解消する事項と、その担当 Subtask＞
 
 ## Subtasks
 
 担当・状態・完了条件を分ける作業は個別Issueにし、[Subtask本文のひな形](https://github.com/tomohiro-ono-works/vscode-extension-zizai/blob/main/template/subtask.md)を使う。小さなTodoはこのIssue内のチェックリストにする。
 
-| ID | 工程 | 作業名 | Issue | 必要な先行成果 |
-| --- | --- | --- | --- | --- |
-| TASK-NNN-01 | ＜工程＞ | ＜作業名＞ | ＜Issue URL＞ | ＜先行成果、またはなし＞ |
+| ID | 工程 | 作業名 | Issue | 必須の前提条件 | 相互確認先 |
+| --- | --- | --- | --- | --- | --- |
+| TASK-NNN-01 | ＜工程＞ | ＜作業名＞ | ＜Issue URL＞ | ＜必要な成果・工程。詳細は子Issue＞ | ＜相手ID・確認事項、またはなし＞ |
 
 - [ ] ＜このIssue内で管理する小さなTodo＞
 
