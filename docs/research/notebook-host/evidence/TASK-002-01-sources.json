@@ -1221,5 +1221,10 @@
     "file": "TASK-002-01-feasibility-20261025.json",
     "method": "Existing evidence extraction and cross-check; manual/API paths remain separate",
     "allCasesAccepted": false
+  },
+  "D2Manual": {
+    "file": "TASK-002-01-D2-manual-20261026.json",
+    "status": "合格（今回の診断・手動経路の観測条件）",
+    "allCasesAccepted": false
   }
 }
