@@ -109,7 +109,36 @@
     "CI, Playwright scope/start agreement, user manual UI after readiness and start signal",
     "Full ZIP installation and release acceptance"
   ],
-  "test_summary": {
+  "focused_eol_followup": {
+    "date_jst": "2026-10-27",
+    "upstream_fix_commit": "e57fdb870fa77de9bbd71c69be99cb76e66b0f19",
+    "main_input": "6cf02b3116dcb58fd209cb94ce0642d75ead5ea8",
+    "tested_head": "c9fcfcbb7d2fe58214bb3707b266a419e24fda6a",
+    "node": "24.14.1",
+    "platform": "Windows",
+    "classification": "API/integration",
+    "selected_cases": [
+      "git_fixture_preserves_line_endings_under_inherited_settings",
+      "cwd_and_paths_do_not_change_output",
+      "check_is_read_only_and_detects_manifest_changes",
+      "failed_generation_does_not_publish_manifest",
+      "canonical_and_generated_schema_conform_to_value_contract"
+    ],
+    "passed": 5,
+    "failed": 0,
+    "skipped": 0,
+    "exit_code": 0,
+    "log_sha256": "1379c52d2ddc0fcb797eaebd8e9b5b3f550b9c96e787a847414125f76e2cf8fa",
+    "task001_rerun": false,
+    "full_contract_suite_rerun": false,
+    "other_cases": "not rerun; previous failures are not blanket-converted to PASS",
+    "remaining": [
+      "Windows trailing-space path case remains unresolved and was not selected",
+      "Other non-selected contract cases not rerun",
+      "No UI/CI/VSIX/ZIP acceptance"
+    ]
+  },
+  "historical_full_check": {
     "total": 26,
     "passed": 19,
     "failed": 7,
@@ -119,5 +148,11 @@
     "manual_ui": 0,
     "ui_automation": 0,
     "clean_test_gate": false
+  },
+  "current_checkpoint_acceptance": {
+    "scope": "documentation/research checkpoint and selected EOL followup only",
+    "selected_eol_gate": "PASS",
+    "full_Windows_contract_gate": "not established",
+    "original_failure_evidence": "retained"
   }
 }
