@@ -1,0 +1,89 @@
+{
+  "recorded_on_jst": "2026-10-27",
+  "main_input": "d40e24665c97495f4dea8f184e33758d2e550690",
+  "scope": "TASK-006 documentation/research checkpoint; not product task completion",
+  "changed_paths": [
+    "README.md",
+    "docs/decisions/2026-10-22-vscode-distribution-scope.md",
+    "docs/designs/01全体設計.md",
+    "docs/designs/development-build.md",
+    "docs/designs/task-006-verification.md",
+    "docs/development.md",
+    "docs/features/architecture.md",
+    "docs/research/development/TASK-006-01.md",
+    "docs/research/development/evidence/TASK-006-01-environment.json"
+  ],
+  "document_verification": {
+    "relative_references": 86,
+    "missing_references": 0,
+    "planned_cases": 14,
+    "toml_fragment": "PASS",
+    "json": "PASS",
+    "comparison_dependency_wheels": 30,
+    "comparison_roots": 6
+  },
+  "tests": [
+    {
+      "command": "<build-venv-python> -B -m unittest discover -s tests/unit/python -p 'test_*.py' -v",
+      "python": "3.14.3",
+      "setuptools": "81.0.0",
+      "pip": "25.3",
+      "unit": 1,
+      "api_integration": 8,
+      "passed": 9,
+      "failures": 0,
+      "errors": 0,
+      "log_sha256": "22c5908e1dce7fe0e349aa4b368063acf9a25b9ae33a68c9c5bea6b327efe48b"
+    },
+    {
+      "command": "node --test tests/notebook-host-api/model.test.cjs",
+      "node": "24.14.1",
+      "unit": 1,
+      "passed": 1,
+      "failures": 0,
+      "log_sha256": "66eb8264630323a60654f2a8fd30216ca33915162a3a1d78b2e6ebbe9e7e8dd7"
+    }
+  ],
+  "limits": [
+    "No new UI automation or user manual UI performed.",
+    "No product VSIX, all adopted connectors, CI or ZIP release acceptance claimed.",
+    "Historical K01-K04 agent GUI operations remain reference observations only.",
+    "Current coding-rules/refactor-policy and remaining formal contracts are unresolved."
+  ],
+  "main_merge_conflicts": {
+    "paths": [
+      "README.md",
+      "docs/designs/01全体設計.md",
+      "docs/designs/02NotebookUI設計.md",
+      "docs/features/architecture.md"
+    ],
+    "resolution": "Preserve main's approved sidebar, shared menu and draft display together with TASK-006 VS Code-only, VSIX/wheel distribution decisions. No new behavioral choice."
+  },
+  "document_verified_head": "25cd370600d42c62b9bdbe4a590f904af4149bfb",
+  "test_source_head": "f66af63bbe98859d1c9e595c1c2c4baa16eefc93",
+  "test_sources_unchanged_since_execution": true,
+  "unchanged_scope": [
+    "apps/",
+    "pyproject.toml",
+    "tests/",
+    ".vscode/"
+  ],
+  "independent_review": {
+    "base": "8d4098acc7156eac6b5b5e53a52ddf8571a61f9e",
+    "head": "f66af63bbe98859d1c9e595c1c2c4baa16eefc93",
+    "read_only": true,
+    "critical": 0,
+    "important": 0,
+    "minor": 0,
+    "verdict": "Ready to merge for documentation checkpoint",
+    "additional_main_delta": "TASK-004 documentation only; no product/test source delta"
+  },
+  "integration_scope": "PR #52 consolidates TASK-006 changes from PR #49 and PR #52; no task completion or release acceptance",
+  "remaining_work": [
+    "Product VSIX/F5 and all adopted connector runtime/dependencies",
+    "Remaining formal contracts and collection, Python generated assets",
+    "Current coding/refactor rules, license/reuse closure, final support range",
+    "CI, Playwright scope/start agreement, user manual UI after readiness and start signal",
+    "Full ZIP installation and release acceptance"
+  ]
+}
