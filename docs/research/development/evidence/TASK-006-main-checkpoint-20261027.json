@@ -1,0 +1,158 @@
+{
+  "recorded_on_jst": "2026-10-27",
+  "main_input": "492184fc55391d03e8fa3c97d34c9b7067715768",
+  "scope": "TASK-006 documentation/research checkpoint; not product task completion",
+  "changed_paths": [
+    "README.md",
+    "docs/decisions/2026-10-22-vscode-distribution-scope.md",
+    "docs/designs/01全体設計.md",
+    "docs/designs/development-build.md",
+    "docs/designs/task-006-verification.md",
+    "docs/development.md",
+    "docs/features/architecture.md",
+    "docs/research/development/TASK-006-01.md",
+    "docs/research/development/evidence/TASK-006-01-environment.json"
+  ],
+  "document_verification": {
+    "relative_references": 86,
+    "missing_references": 0,
+    "planned_cases": 14,
+    "toml_fragment": "PASS",
+    "json": "PASS",
+    "comparison_dependency_wheels": 30,
+    "comparison_roots": 6
+  },
+  "tests": [
+    {
+      "command": "<build-venv-python> -B -m unittest discover -s tests/unit/python -p 'test_*.py' -v",
+      "python": "3.14.3",
+      "setuptools": "81.0.0",
+      "pip": "25.3",
+      "unit": 1,
+      "api_integration": 8,
+      "passed": 9,
+      "failures": 0,
+      "errors": 0,
+      "log_sha256": "22c5908e1dce7fe0e349aa4b368063acf9a25b9ae33a68c9c5bea6b327efe48b"
+    },
+    {
+      "command": "node --test tests/notebook-host-api/model.test.cjs",
+      "node": "24.14.1",
+      "unit": 1,
+      "passed": 1,
+      "failures": 0,
+      "log_sha256": "66eb8264630323a60654f2a8fd30216ca33915162a3a1d78b2e6ebbe9e7e8dd7"
+    },
+    {
+      "command": "node --test tests/contracts/values.test.mjs tests/contracts/assets.test.mjs",
+      "source_head": "854177a174f978491b6637a7f48eb0a61aa1e7f6",
+      "node": "24.14.1",
+      "unit": 7,
+      "api_integration": 9,
+      "passed": 9,
+      "failed": 7,
+      "skipped": 0,
+      "exit_code": 1,
+      "log_sha256": "77287ad69e2cf4797f2a51b78ae65d04bd1a52c8f28a58f077dc712a5b715e7a",
+      "source_equals_main": true,
+      "observations": [
+        "Contract source must match the specified Git commit",
+        "Git cannot change into the trailing-space repository path"
+      ],
+      "cause": "not investigated",
+      "source_edits_or_retries": false
+    }
+  ],
+  "limits": [
+    "No new UI automation or user manual UI performed.",
+    "No product VSIX, all adopted connectors, CI or ZIP release acceptance claimed.",
+    "Historical K01-K04 agent GUI operations remain reference observations only.",
+    "Current coding-rules/refactor-policy and remaining formal contracts are unresolved.",
+    "TASK-005 Windows contract test failures are recorded; no root-cause investigation, source edits, automatic retry, or clean test acceptance."
+  ],
+  "main_merge_conflicts": {
+    "paths": [
+      "README.md",
+      "docs/designs/01全体設計.md",
+      "docs/designs/02NotebookUI設計.md",
+      "docs/features/architecture.md"
+    ],
+    "resolution": "Preserve main's approved sidebar, shared menu and draft display together with TASK-006 VS Code-only, VSIX/wheel distribution decisions. No new behavioral choice."
+  },
+  "document_verified_head": "854177a174f978491b6637a7f48eb0a61aa1e7f6",
+  "test_source_head": "f66af63bbe98859d1c9e595c1c2c4baa16eefc93",
+  "test_sources_unchanged_since_execution": true,
+  "unchanged_scope": [
+    "apps/core/",
+    "apps/connectors/",
+    "pyproject.toml",
+    "tests/unit/python/",
+    "tests/manual/TASK-003-05-python.ipynb",
+    "tests/notebook-host-api/",
+    ".vscode/"
+  ],
+  "independent_review": {
+    "base": "8d4098acc7156eac6b5b5e53a52ddf8571a61f9e",
+    "head": "f66af63bbe98859d1c9e595c1c2c4baa16eefc93",
+    "read_only": true,
+    "critical": 0,
+    "important": 0,
+    "minor": 0,
+    "verdict": "Ready to merge for documentation checkpoint",
+    "additional_main_delta": "TASK-004 documents and TASK-005 contract implementation were merged from main; TASK-006 diff remains documentation/evidence only. Contract failures are not covered by the initial ready verdict."
+  },
+  "integration_scope": "PR #52 consolidates TASK-006 changes from PR #49 and PR #52; no task completion or release acceptance",
+  "remaining_work": [
+    "Product VSIX/F5 and all adopted connector runtime/dependencies",
+    "Remaining formal contracts and collection, Python generated assets",
+    "Current coding/refactor rules, license/reuse closure, final support range",
+    "CI, Playwright scope/start agreement, user manual UI after readiness and start signal",
+    "Full ZIP installation and release acceptance"
+  ],
+  "focused_eol_followup": {
+    "date_jst": "2026-10-27",
+    "upstream_fix_commit": "e57fdb870fa77de9bbd71c69be99cb76e66b0f19",
+    "main_input": "6cf02b3116dcb58fd209cb94ce0642d75ead5ea8",
+    "tested_head": "c9fcfcbb7d2fe58214bb3707b266a419e24fda6a",
+    "node": "24.14.1",
+    "platform": "Windows",
+    "classification": "API/integration",
+    "selected_cases": [
+      "git_fixture_preserves_line_endings_under_inherited_settings",
+      "cwd_and_paths_do_not_change_output",
+      "check_is_read_only_and_detects_manifest_changes",
+      "failed_generation_does_not_publish_manifest",
+      "canonical_and_generated_schema_conform_to_value_contract"
+    ],
+    "passed": 5,
+    "failed": 0,
+    "skipped": 0,
+    "exit_code": 0,
+    "log_sha256": "1379c52d2ddc0fcb797eaebd8e9b5b3f550b9c96e787a847414125f76e2cf8fa",
+    "task001_rerun": false,
+    "full_contract_suite_rerun": false,
+    "other_cases": "not rerun; previous failures are not blanket-converted to PASS",
+    "remaining": [
+      "Windows trailing-space path case remains unresolved and was not selected",
+      "Other non-selected contract cases not rerun",
+      "No UI/CI/VSIX/ZIP acceptance"
+    ]
+  },
+  "historical_full_check": {
+    "total": 26,
+    "passed": 19,
+    "failed": 7,
+    "unit_passed": 9,
+    "api_integration_passed": 10,
+    "api_integration_failed": 7,
+    "manual_ui": 0,
+    "ui_automation": 0,
+    "clean_test_gate": false
+  },
+  "current_checkpoint_acceptance": {
+    "scope": "documentation/research checkpoint and selected EOL followup only",
+    "selected_eol_gate": "PASS",
+    "full_Windows_contract_gate": "not established",
+    "original_failure_evidence": "retained"
+  }
+}

@@ -5,7 +5,7 @@
 
 このプロジェクトの VS Code 拡張機能について、全体設計にある構成・責務・状態の所有者・境界を整理した資料です。[01 全体設計](../designs/01全体設計.md) を基準とし、Notebook の操作・保存の詳細は [02 Notebook UI 設計](../designs/02NotebookUI設計.md) に従います。
 
-正式対象はVS Codeのみ。Kiroは任意の参考利用で、動作保証・専用対応・必須検証は求めない。[2026-10-22の利用者判断](https://github.com/tomohiro-ono-works/vscode-extension-zizai/blob/40db82f55483f403c311bddea087ef3765e0ba1f/docs/decisions/2026-10-22-vscode-distribution-scope.md)を引き継ぐ。
+正式対象はVS Codeのみ。Kiroは任意の参考利用で、動作保証・専用対応・必須検証は求めない。[2026-10-22の利用者判断](../decisions/2026-10-22-vscode-distribution-scope.md)を引き継ぐ。
 
 **設計上の責務を記載しています。アプリの実装・技術検証は未完了です。** 具体的なmetadataキー・パッケージ構成・正式な通信形式を、この資料で新しく確定しません。詳細フォームのサイドバー配置は[2026-10-22の決定](../decisions/2026-10-22-notebook-sidebar.md)を反映し、対象切替等は[2026-10-23に承認された設計](notebook-sidebar.md)に従います。正式契約・規約・開発入口を受けてから製品実装へ進みます。
 

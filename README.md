@@ -2,9 +2,9 @@
 
 Jupyter Notebook（`.ipynb`）のセル内でコネクタとアクションを選び、フォームの設定から通常の Python コードを生成する拡張機能です。生成されたコードを確認・編集し、Jupyter 標準のセル実行で処理します。
 
-正式対象はVS Codeです。Kiroは任意の参考利用で、動作保証・必須検証・出荷判定の対象には含めません。詳細フォームはサイドバーに表示し、Notebookとの連携は正式対象版のVS Codeで確認します。[対象IDEの判断記録](https://github.com/tomohiro-ono-works/vscode-extension-zizai/blob/40db82f55483f403c311bddea087ef3765e0ba1f/docs/decisions/2026-10-22-vscode-distribution-scope.md)を参照してください。
+正式対象はVS Codeです。Kiroは任意の参考利用で、動作保証・必須検証・出荷判定の対象には含めません。詳細フォームはサイドバーに表示し、Notebookとの連携は正式対象版のVS Codeで確認します。[対象IDEの判断記録](docs/decisions/2026-10-22-vscode-distribution-scope.md)を参照してください。
 
-**現在は調査・設計と試作評価の段階です。** 製品本体の拡張機能・Python ライブラリ・ビルド・配布は未実装です。評価用コードとF5設定はtests/と.vscode/にあり、[セル下部の選択UI](tests/manual/TASK-001-01-statusbar.md) と [NodeForm評価用タブ](tests/manual/TASK-001-02-nodeform.md) の手順を用意しています。製品をインストールできる状態とは区別します。
+**現在は製品拡張の実装・配布前です。** [Pythonの最小パッケージ基盤](apps/core/README.md)とその独立確認は実装済みです。製品の拡張機能・全採用コネクタ・ビルド・配布は未完了です。評価用コードとF5設定はtests/と.vscode/にあり、[セル下部の選択UI](tests/manual/TASK-001-01-statusbar.md) と [NodeForm評価用タブ](tests/manual/TASK-001-02-nodeform.md) の手順を用意しています。製品をインストールできる状態とは区別します。
 
 ## 目的と基本方針
 
