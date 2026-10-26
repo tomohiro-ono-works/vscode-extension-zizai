@@ -1,6 +1,6 @@
 {
   "recorded_on_jst": "2026-10-27",
-  "main_input": "d40e24665c97495f4dea8f184e33758d2e550690",
+  "main_input": "492184fc55391d03e8fa3c97d34c9b7067715768",
   "scope": "TASK-006 documentation/research checkpoint; not product task completion",
   "changed_paths": [
     "README.md",
@@ -42,13 +42,33 @@
       "passed": 1,
       "failures": 0,
       "log_sha256": "66eb8264630323a60654f2a8fd30216ca33915162a3a1d78b2e6ebbe9e7e8dd7"
+    },
+    {
+      "command": "node --test tests/contracts/values.test.mjs tests/contracts/assets.test.mjs",
+      "source_head": "854177a174f978491b6637a7f48eb0a61aa1e7f6",
+      "node": "24.14.1",
+      "unit": 7,
+      "api_integration": 9,
+      "passed": 9,
+      "failed": 7,
+      "skipped": 0,
+      "exit_code": 1,
+      "log_sha256": "77287ad69e2cf4797f2a51b78ae65d04bd1a52c8f28a58f077dc712a5b715e7a",
+      "source_equals_main": true,
+      "observations": [
+        "Contract source must match the specified Git commit",
+        "Git cannot change into the trailing-space repository path"
+      ],
+      "cause": "not investigated",
+      "source_edits_or_retries": false
     }
   ],
   "limits": [
     "No new UI automation or user manual UI performed.",
     "No product VSIX, all adopted connectors, CI or ZIP release acceptance claimed.",
     "Historical K01-K04 agent GUI operations remain reference observations only.",
-    "Current coding-rules/refactor-policy and remaining formal contracts are unresolved."
+    "Current coding-rules/refactor-policy and remaining formal contracts are unresolved.",
+    "TASK-005 Windows contract test failures are recorded; no root-cause investigation, source edits, automatic retry, or clean test acceptance."
   ],
   "main_merge_conflicts": {
     "paths": [
@@ -59,13 +79,16 @@
     ],
     "resolution": "Preserve main's approved sidebar, shared menu and draft display together with TASK-006 VS Code-only, VSIX/wheel distribution decisions. No new behavioral choice."
   },
-  "document_verified_head": "25cd370600d42c62b9bdbe4a590f904af4149bfb",
+  "document_verified_head": "854177a174f978491b6637a7f48eb0a61aa1e7f6",
   "test_source_head": "f66af63bbe98859d1c9e595c1c2c4baa16eefc93",
   "test_sources_unchanged_since_execution": true,
   "unchanged_scope": [
-    "apps/",
+    "apps/core/",
+    "apps/connectors/",
     "pyproject.toml",
-    "tests/",
+    "tests/unit/python/",
+    "tests/manual/TASK-003-05-python.ipynb",
+    "tests/notebook-host-api/",
     ".vscode/"
   ],
   "independent_review": {
@@ -76,7 +99,7 @@
     "important": 0,
     "minor": 0,
     "verdict": "Ready to merge for documentation checkpoint",
-    "additional_main_delta": "TASK-004 documentation only; no product/test source delta"
+    "additional_main_delta": "TASK-004 documents and TASK-005 contract implementation were merged from main; TASK-006 diff remains documentation/evidence only. Contract failures are not covered by the initial ready verdict."
   },
   "integration_scope": "PR #52 consolidates TASK-006 changes from PR #49 and PR #52; no task completion or release acceptance",
   "remaining_work": [
@@ -85,5 +108,16 @@
     "Current coding/refactor rules, license/reuse closure, final support range",
     "CI, Playwright scope/start agreement, user manual UI after readiness and start signal",
     "Full ZIP installation and release acceptance"
-  ]
+  ],
+  "test_summary": {
+    "total": 26,
+    "passed": 19,
+    "failed": 7,
+    "unit_passed": 9,
+    "api_integration_passed": 10,
+    "api_integration_failed": 7,
+    "manual_ui": 0,
+    "ui_automation": 0,
+    "clean_test_gate": false
+  }
 }
