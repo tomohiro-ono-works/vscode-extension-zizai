@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:zizai:contracts:values:v1",
+  "$defs": {
+    "JsonValue": {
+      "anyOf": [
+        { "type": "string" },
+        { "type": "boolean" },
+        { "type": "null" },
+        { "type": "integer", "minimum": -9007199254740991, "maximum": 9007199254740991 },
+        { "type": "number", "not": { "type": "integer" } },
+        { "type": "array", "items": { "$ref": "#/$defs/JsonValue" } },
+        { "type": "object", "additionalProperties": { "$ref": "#/$defs/JsonValue" } }
+      ]
+    },
+    "DraftValue": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": { "kind": { "const": "text" }, "text": { "type": "string" } },
+          "required": ["kind", "text"],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": { "kind": { "const": "json" }, "value": { "$ref": "#/$defs/JsonValue" } },
+          "required": ["kind", "value"],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": { "kind": { "const": "unset" } },
+          "required": ["kind"],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "BoundValue": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": { "kind": { "const": "literal" }, "value": { "$ref": "#/$defs/JsonValue" } },
+          "required": ["kind", "value"],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": { "const": "integer" },
+            "decimal": { "type": "string", "pattern": "^(?:0|-?[1-9][0-9]*)(?![\\s\\S])" }
+          },
+          "required": ["kind", "decimal"],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": { "const": "variable" },
+            "name": { "type": "string", "pattern": "^[A-Za-z_][A-Za-z0-9_]*(?![\\s\\S])" }
+          },
+          "required": ["kind", "name"],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "DraftValues": { "type": "object", "additionalProperties": { "$ref": "#/$defs/DraftValue" } },
+    "BoundValues": { "type": "object", "additionalProperties": { "$ref": "#/$defs/BoundValue" } }
+  }
+}
