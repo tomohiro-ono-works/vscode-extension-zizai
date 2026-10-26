@@ -1,0 +1,25 @@
+{
+  "name": "task-002-01-notebook-host-api-probe",
+  "displayName": "TASK-002-01 Notebook Host API Diagnostics (PROBE)",
+  "publisher": "zizai-lab",
+  "version": "0.0.1",
+  "private": true,
+  "engines": { "vscode": "^1.100.0" },
+  "main": "./extension.cjs",
+  "activationEvents": ["onNotebook:jupyter-notebook"],
+  "contributes": {
+    "commands": [
+      { "command": "task00201.openCase", "title": "TASK-002-01: Open Diagnostic Case" },
+      { "command": "task00201.snapshot", "title": "TASK-002-01: Record Step" },
+      { "command": "task00201.metadata", "title": "TASK-002-01: D2 Update Metadata Only" },
+      { "command": "task00201.mixed", "title": "TASK-002-01: D3 Mixed Edit" },
+      { "command": "task00201.mutate", "title": "TASK-002-01: D4 Change Selected Cell" },
+      { "command": "task00201.arm", "title": "TASK-002-01: D5 Arm Delayed Local Update" },
+      { "command": "task00201.burst", "title": "TASK-002-01: D6 Metadata Burst" }
+    ]
+  },
+  "scripts": {
+    "prepare": "node prepare.mjs",
+    "test": "node --test model.test.cjs"
+  }
+}

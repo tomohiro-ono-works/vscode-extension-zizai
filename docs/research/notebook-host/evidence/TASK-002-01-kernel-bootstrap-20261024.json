@@ -1,0 +1,581 @@
+{
+  "recordedAt": "2026-10-24T13:25:08.927Z",
+  "scope": "TASK-002-01 D4/D5 command runner bootstrap only",
+  "parentCommit": "56330b578708a68ccf002e8c6b689d6ff7f5b66f",
+  "previousRuntimeVersion": "1.143.0",
+  "staticBaselineVersion": "1.142.0",
+  "currentVersion": [
+    "1.143.1",
+    "e646868227c3e3a9e3f24277c8c7220be42c0be7",
+    "x64"
+  ],
+  "environment": {
+    "seq": 1,
+    "at": "2026-10-24T13:21:31.083Z",
+    "elapsedMs": 1.7853,
+    "step": "startup",
+    "kind": "environment",
+    "session": "2026-10-24T13-21-31-080Z-43856",
+    "build": {
+      "root": "$REPO",
+      "workspace": "$REPO\\results\\task-002-01\\workspace",
+      "preparedAt": "2026-10-24T13:21:08.162Z",
+      "base": "56330b578708a68ccf002e8c6b689d6ff7f5b66f",
+      "branch": "codex/task-002-01-desktop",
+      "diff": "",
+      "node": "v24.14.1",
+      "hashes": {
+        "package.json": "04d6f5100c67d133a194e14e847264ad033639a5969112d37670da894a5da7c7",
+        "extension.cjs": "d75bf423d0df234081657d8d019e03ba26636e64023a5a9b54d50df04b40dd9f",
+        "model.cjs": "4057e30f336b85e9d5f2396fd02d8f4ede6f8d34ff08bb91a078504da07473a5",
+        "fixtures.cjs": "b7d7f545274d09f2eb4bc2bc92bbc36c7f0c55ceb5126e18b4512f5c7401cd5d",
+        "smoke.cjs": "bcab7d623d0699a393d6eb8fdfa4110e9736e205eb631547ff07c657cb3138c8",
+        "automated.cjs": "56c0dfeb93832975a062531f321a87ffc16d3d3c5d7b0a1f4f1b3068765b6a4c",
+        "structure.cjs": "385c8e7023c8f3de4112aff902cc624c9d637701ce4d5eeb77b1c3536258eec1",
+        "structure-delete.cjs": "7655ba5fa7fe816b3fbfcedb2e073be3e8045bacfe0c1077cf6bf5bce1abe755",
+        "structure-ids.cjs": "7644c4ee2db15833f59bf8c6d6440f33417d0bf9e7a5ddfdf4e66caeb67e41c8",
+        "recovery.cjs": "265ce3a3b2f3a2ba57008b800ba9ecf2a02a28e7d19e122c7db5cd8f402e51f7",
+        "execution-auto.cjs": "db7c77766c9045ff3a0d7c284e4afa94414a6341b85e99e643f166542d6b54cd"
+      }
+    },
+    "vscode": "1.143.1",
+    "appName": "Visual Studio Code",
+    "platform": "win32",
+    "arch": "x64",
+    "node": "v24.21.0",
+    "electron": "43.7.7",
+    "extensions": [
+      {
+        "id": "ms-toolsai.jupyter",
+        "version": "2025.9.1",
+        "active": false
+      },
+      {
+        "id": "ms-python.python",
+        "version": "2026.10.0",
+        "active": false
+      },
+      {
+        "id": "ms-python.vscode-python-envs",
+        "version": "1.41.2026102301",
+        "active": true
+      },
+      {
+        "id": "vscode.ipynb",
+        "version": "10.0.0",
+        "active": false
+      }
+    ],
+    "notObservable": [
+      "kernel submitted source",
+      "internal execution ID",
+      "kernel cancellation completion from summary alone"
+    ]
+  },
+  "report": {
+    "status": "failed",
+    "at": "2026-10-24T13:21:27.411Z",
+    "vscode": "1.143.1",
+    "build": {
+      "root": "$REPO",
+      "workspace": "$REPO\\results\\task-002-01\\workspace",
+      "preparedAt": "2026-10-24T13:21:08.162Z",
+      "base": "56330b578708a68ccf002e8c6b689d6ff7f5b66f",
+      "branch": "codex/task-002-01-desktop",
+      "diff": "",
+      "node": "v24.14.1",
+      "hashes": {
+        "package.json": "04d6f5100c67d133a194e14e847264ad033639a5969112d37670da894a5da7c7",
+        "extension.cjs": "d75bf423d0df234081657d8d019e03ba26636e64023a5a9b54d50df04b40dd9f",
+        "model.cjs": "4057e30f336b85e9d5f2396fd02d8f4ede6f8d34ff08bb91a078504da07473a5",
+        "fixtures.cjs": "b7d7f545274d09f2eb4bc2bc92bbc36c7f0c55ceb5126e18b4512f5c7401cd5d",
+        "smoke.cjs": "bcab7d623d0699a393d6eb8fdfa4110e9736e205eb631547ff07c657cb3138c8",
+        "automated.cjs": "56c0dfeb93832975a062531f321a87ffc16d3d3c5d7b0a1f4f1b3068765b6a4c",
+        "structure.cjs": "385c8e7023c8f3de4112aff902cc624c9d637701ce4d5eeb77b1c3536258eec1",
+        "structure-delete.cjs": "7655ba5fa7fe816b3fbfcedb2e073be3e8045bacfe0c1077cf6bf5bce1abe755",
+        "structure-ids.cjs": "7644c4ee2db15833f59bf8c6d6440f33417d0bf9e7a5ddfdf4e66caeb67e41c8",
+        "recovery.cjs": "265ce3a3b2f3a2ba57008b800ba9ecf2a02a28e7d19e122c7db5cd8f402e51f7",
+        "execution-auto.cjs": "db7c77766c9045ff3a0d7c284e4afa94414a6341b85e99e643f166542d6b54cd"
+      }
+    },
+    "scope": "TASK-002-01 D4/D5 standard command execution; not a custom Run All/kernel",
+    "waitSeconds": 20,
+    "manualFixtureWaitSeconds": 90,
+    "results": [
+      {
+        "case": "environment-selected-standard-kernel",
+        "before": {
+          "object": 1,
+          "version": 0,
+          "dirty": false,
+          "closed": false,
+          "cells": [
+            {
+              "object": 2,
+              "textObject": 3,
+              "uri": "vscode-notebook-cell:$DIAGNOSTIC_WORKSPACE/AUTO-D4-environment-kernel-check-1792848091117.ipynb#W0sZmlsZQ%3D%3D",
+              "index": 0,
+              "source": "import sys, importlib.metadata as m, json\nprint(json.dumps({'python': sys.version, 'ipykernel': m.version('ipykernel'), 'jupyter_client': m.version('jupyter_client')}, indent=2))\n",
+              "metadata": {
+                "execution_count": null,
+                "metadata": {
+                  "outsideDiagnosticOwner": {
+                    "sentinel": "keep-environment"
+                  },
+                  "task00201Diagnostic": {
+                    "label": "environment",
+                    "draft": 0,
+                    "committed": 0,
+                    "burst": 0,
+                    "probeOnly": true
+                  }
+                }
+              },
+              "summary": {
+                "timing": {
+                  "$undefined": true
+                },
+                "executionOrder": {
+                  "$undefined": true
+                },
+                "success": {
+                  "$undefined": true
+                }
+              },
+              "syntheticTextOutput": ""
+            }
+          ]
+        }
+      }
+    ],
+    "commands": [
+      {
+        "command": "notebook.cell.execute",
+        "requestedAt": "2026-10-24T13:21:40.598Z",
+        "settled": true,
+        "finishedAt": "2026-10-24T13:22:25.745Z",
+        "error": "Canceled: Canceled"
+      }
+    ],
+    "unavailable": [
+      "submitted source",
+      "internal execution ID",
+      "kernel stop completion from public summary alone"
+    ],
+    "rawLog": "$REPO\\logs\\task-002-01\\2026-10-24T13-21-31-080Z-43856\\events.jsonl",
+    "localConfiguration": {
+      "confirmDeleteRunningCell": false,
+      "undoRedoPerCell": true
+    },
+    "standardCommands": [
+      "workbench.action.focusActiveEditorGroup",
+      "notebook.execute",
+      "notebook.cell.execute",
+      "notebook.cell.quitEdit",
+      "notebook.cell.delete"
+    ],
+    "error": "Error: Timeout: standard kernel environment output; a kernel picker may require UI (45000ms)",
+    "stack": "Error: Timeout: standard kernel environment output; a kernel picker may require UI (45000ms)\n    at waitFor (c:\\Users\\tomoh\\ドキュメント\\ChatGPT\\vscode-extension-zizai\\task-002-01-desktop\\tests\\notebook-host-api\\dist\\execution-auto.cjs:19:69)\n    at Object.run (c:\\Users\\tomoh\\ドキュメント\\ChatGPT\\vscode-extension-zizai\\task-002-01-desktop\\tests\\notebook-host-api\\dist\\execution-auto.cjs:70:7)"
+  },
+  "events": [
+    {
+      "seq": 1,
+      "at": "2026-10-24T13:21:31.083Z",
+      "elapsedMs": 1.7853,
+      "step": "startup",
+      "kind": "environment",
+      "session": "2026-10-24T13-21-31-080Z-43856",
+      "build": {
+        "root": "$REPO",
+        "workspace": "$REPO\\results\\task-002-01\\workspace",
+        "preparedAt": "2026-10-24T13:21:08.162Z",
+        "base": "56330b578708a68ccf002e8c6b689d6ff7f5b66f",
+        "branch": "codex/task-002-01-desktop",
+        "diff": "",
+        "node": "v24.14.1",
+        "hashes": {
+          "package.json": "04d6f5100c67d133a194e14e847264ad033639a5969112d37670da894a5da7c7",
+          "extension.cjs": "d75bf423d0df234081657d8d019e03ba26636e64023a5a9b54d50df04b40dd9f",
+          "model.cjs": "4057e30f336b85e9d5f2396fd02d8f4ede6f8d34ff08bb91a078504da07473a5",
+          "fixtures.cjs": "b7d7f545274d09f2eb4bc2bc92bbc36c7f0c55ceb5126e18b4512f5c7401cd5d",
+          "smoke.cjs": "bcab7d623d0699a393d6eb8fdfa4110e9736e205eb631547ff07c657cb3138c8",
+          "automated.cjs": "56c0dfeb93832975a062531f321a87ffc16d3d3c5d7b0a1f4f1b3068765b6a4c",
+          "structure.cjs": "385c8e7023c8f3de4112aff902cc624c9d637701ce4d5eeb77b1c3536258eec1",
+          "structure-delete.cjs": "7655ba5fa7fe816b3fbfcedb2e073be3e8045bacfe0c1077cf6bf5bce1abe755",
+          "structure-ids.cjs": "7644c4ee2db15833f59bf8c6d6440f33417d0bf9e7a5ddfdf4e66caeb67e41c8",
+          "recovery.cjs": "265ce3a3b2f3a2ba57008b800ba9ecf2a02a28e7d19e122c7db5cd8f402e51f7",
+          "execution-auto.cjs": "db7c77766c9045ff3a0d7c284e4afa94414a6341b85e99e643f166542d6b54cd"
+        }
+      },
+      "vscode": "1.143.1",
+      "appName": "Visual Studio Code",
+      "platform": "win32",
+      "arch": "x64",
+      "node": "v24.21.0",
+      "electron": "43.7.7",
+      "extensions": [
+        {
+          "id": "ms-toolsai.jupyter",
+          "version": "2025.9.1",
+          "active": false
+        },
+        {
+          "id": "ms-python.python",
+          "version": "2026.10.0",
+          "active": false
+        },
+        {
+          "id": "ms-python.vscode-python-envs",
+          "version": "1.41.2026102301",
+          "active": true
+        },
+        {
+          "id": "vscode.ipynb",
+          "version": "10.0.0",
+          "active": false
+        }
+      ],
+      "notObservable": [
+        "kernel submitted source",
+        "internal execution ID",
+        "kernel cancellation completion from summary alone"
+      ]
+    },
+    {
+      "seq": 2,
+      "at": "2026-10-24T13:21:31.084Z",
+      "elapsedMs": 2.5516,
+      "step": "startup",
+      "kind": "snapshot",
+      "label": "activation",
+      "notebookEvents": 0,
+      "textEvents": 0,
+      "notebooks": [],
+      "pending": []
+    },
+    {
+      "seq": 3,
+      "at": "2026-10-24T13:21:33.811Z",
+      "elapsedMs": 2729.7292,
+      "step": "startup",
+      "kind": "notebook.open",
+      "notebook": {
+        "object": 1,
+        "uri": "file:$DIAGNOSTIC_WORKSPACE/AUTO-D4-environment-kernel-check-1792848091117.ipynb",
+        "type": "jupyter-notebook",
+        "version": 0,
+        "dirty": false,
+        "closed": false,
+        "metadata": {
+          "cells": [],
+          "metadata": {
+            "kernelspec": {
+              "display_name": "Python 3 (ipykernel)",
+              "language": "python",
+              "name": "python3"
+            },
+            "language_info": {
+              "name": "python"
+            },
+            "task00201Diagnostic": {
+              "probeOnly": true,
+              "case": "D4-environment"
+            },
+            "outsideNotebookOwner": {
+              "sentinel": "preserve-notebook"
+            }
+          },
+          "nbformat": 4,
+          "nbformat_minor": 5,
+          "indentAmount": ""
+        },
+        "cells": [
+          {
+            "object": 2,
+            "notebookObject": 1,
+            "index": 0,
+            "uri": "vscode-notebook-cell:$DIAGNOSTIC_WORKSPACE/AUTO-D4-environment-kernel-check-1792848091117.ipynb#W0sZmlsZQ%3D%3D",
+            "textObject": 3,
+            "textClosed": false,
+            "textVersion": 1,
+            "language": "python",
+            "source": "import sys, importlib.metadata as m, json\nprint(json.dumps({'python': sys.version, 'ipykernel': m.version('ipykernel'), 'jupyter_client': m.version('jupyter_client')}, indent=2))\n",
+            "metadata": {
+              "execution_count": null,
+              "metadata": {
+                "outsideDiagnosticOwner": {
+                  "sentinel": "keep-environment"
+                },
+                "task00201Diagnostic": {
+                  "label": "environment",
+                  "draft": 0,
+                  "committed": 0,
+                  "burst": 0,
+                  "probeOnly": true
+                }
+              }
+            },
+            "executionSummary": {
+              "timing": {
+                "$undefined": true
+              },
+              "executionOrder": {
+                "$undefined": true
+              },
+              "success": {
+                "$undefined": true
+              }
+            },
+            "outputs": []
+          }
+        ],
+        "retainedCells": [
+          {
+            "object": 2,
+            "notebookObject": 1,
+            "index": 0,
+            "uri": "vscode-notebook-cell:$DIAGNOSTIC_WORKSPACE/AUTO-D4-environment-kernel-check-1792848091117.ipynb#W0sZmlsZQ%3D%3D",
+            "textObject": 3,
+            "textClosed": false,
+            "textVersion": 1,
+            "language": "python",
+            "source": "import sys, importlib.metadata as m, json\nprint(json.dumps({'python': sys.version, 'ipykernel': m.version('ipykernel'), 'jupyter_client': m.version('jupyter_client')}, indent=2))\n",
+            "metadata": {
+              "execution_count": null,
+              "metadata": {
+                "outsideDiagnosticOwner": {
+                  "sentinel": "keep-environment"
+                },
+                "task00201Diagnostic": {
+                  "label": "environment",
+                  "draft": 0,
+                  "committed": 0,
+                  "burst": 0,
+                  "probeOnly": true
+                }
+              }
+            },
+            "executionSummary": {
+              "timing": {
+                "$undefined": true
+              },
+              "executionOrder": {
+                "$undefined": true
+              },
+              "success": {
+                "$undefined": true
+              }
+            },
+            "outputs": []
+          }
+        ]
+      }
+    },
+    {
+      "seq": 4,
+      "at": "2026-10-24T13:21:40.624Z",
+      "elapsedMs": 9542.88,
+      "step": "startup",
+      "kind": "notebook.change",
+      "metadata": {
+        "$undefined": true
+      },
+      "contentChanges": [],
+      "cellChanges": [
+        {
+          "cell": {
+            "object": 2,
+            "notebookObject": 1,
+            "index": 0,
+            "uri": "vscode-notebook-cell:$DIAGNOSTIC_WORKSPACE/AUTO-D4-environment-kernel-check-1792848091117.ipynb#W0sZmlsZQ%3D%3D",
+            "textObject": 3,
+            "textClosed": false,
+            "textVersion": 1,
+            "language": "python",
+            "source": "import sys, importlib.metadata as m, json\nprint(json.dumps({'python': sys.version, 'ipykernel': m.version('ipykernel'), 'jupyter_client': m.version('jupyter_client')}, indent=2))\n",
+            "metadata": {
+              "execution_count": null,
+              "metadata": {
+                "outsideDiagnosticOwner": {
+                  "sentinel": "keep-environment"
+                },
+                "task00201Diagnostic": {
+                  "label": "environment",
+                  "draft": 0,
+                  "committed": 0,
+                  "burst": 0,
+                  "probeOnly": true
+                }
+              }
+            },
+            "executionSummary": {
+              "timing": {
+                "$undefined": true
+              },
+              "executionOrder": {
+                "$undefined": true
+              },
+              "success": {
+                "$undefined": true
+              }
+            },
+            "outputs": []
+          },
+          "fields": [
+            "document",
+            "executionSummary",
+            "metadata",
+            "outputs",
+            "cell"
+          ],
+          "document": {
+            "$undefined": true
+          },
+          "metadata": {
+            "$undefined": true
+          },
+          "outputsPresent": false,
+          "executionSummary": {
+            "timing": {
+              "$undefined": true
+            },
+            "executionOrder": {
+              "$undefined": true
+            },
+            "success": {
+              "$undefined": true
+            }
+          }
+        }
+      ],
+      "notebook": {
+        "object": 1,
+        "uri": "file:$DIAGNOSTIC_WORKSPACE/AUTO-D4-environment-kernel-check-1792848091117.ipynb",
+        "type": "jupyter-notebook",
+        "version": 1,
+        "dirty": false,
+        "closed": false,
+        "metadata": {
+          "cells": [],
+          "metadata": {
+            "kernelspec": {
+              "display_name": "Python 3 (ipykernel)",
+              "language": "python",
+              "name": "python3"
+            },
+            "language_info": {
+              "name": "python"
+            },
+            "task00201Diagnostic": {
+              "probeOnly": true,
+              "case": "D4-environment"
+            },
+            "outsideNotebookOwner": {
+              "sentinel": "preserve-notebook"
+            }
+          },
+          "nbformat": 4,
+          "nbformat_minor": 5,
+          "indentAmount": ""
+        },
+        "cells": [
+          {
+            "object": 2,
+            "notebookObject": 1,
+            "index": 0,
+            "uri": "vscode-notebook-cell:$DIAGNOSTIC_WORKSPACE/AUTO-D4-environment-kernel-check-1792848091117.ipynb#W0sZmlsZQ%3D%3D",
+            "textObject": 3,
+            "textClosed": false,
+            "textVersion": 1,
+            "language": "python",
+            "source": "import sys, importlib.metadata as m, json\nprint(json.dumps({'python': sys.version, 'ipykernel': m.version('ipykernel'), 'jupyter_client': m.version('jupyter_client')}, indent=2))\n",
+            "metadata": {
+              "execution_count": null,
+              "metadata": {
+                "outsideDiagnosticOwner": {
+                  "sentinel": "keep-environment"
+                },
+                "task00201Diagnostic": {
+                  "label": "environment",
+                  "draft": 0,
+                  "committed": 0,
+                  "burst": 0,
+                  "probeOnly": true
+                }
+              }
+            },
+            "executionSummary": {
+              "timing": {
+                "$undefined": true
+              },
+              "executionOrder": {
+                "$undefined": true
+              },
+              "success": {
+                "$undefined": true
+              }
+            },
+            "outputs": []
+          }
+        ],
+        "retainedCells": [
+          {
+            "object": 2,
+            "notebookObject": 1,
+            "index": 0,
+            "uri": "vscode-notebook-cell:$DIAGNOSTIC_WORKSPACE/AUTO-D4-environment-kernel-check-1792848091117.ipynb#W0sZmlsZQ%3D%3D",
+            "textObject": 3,
+            "textClosed": false,
+            "textVersion": 1,
+            "language": "python",
+            "source": "import sys, importlib.metadata as m, json\nprint(json.dumps({'python': sys.version, 'ipykernel': m.version('ipykernel'), 'jupyter_client': m.version('jupyter_client')}, indent=2))\n",
+            "metadata": {
+              "execution_count": null,
+              "metadata": {
+                "outsideDiagnosticOwner": {
+                  "sentinel": "keep-environment"
+                },
+                "task00201Diagnostic": {
+                  "label": "environment",
+                  "draft": 0,
+                  "committed": 0,
+                  "burst": 0,
+                  "probeOnly": true
+                }
+              }
+            },
+            "executionSummary": {
+              "timing": {
+                "$undefined": true
+              },
+              "executionOrder": {
+                "$undefined": true
+              },
+              "success": {
+                "$undefined": true
+              }
+            },
+            "outputs": []
+          }
+        ]
+      }
+    }
+  ],
+  "launchLog": "logs/task-002-01/execution-auto-resume-cli.txt",
+  "interpretation": {
+    "startupUpdateBlockResolved": true,
+    "standardCommandRequested": "notebook.cell.execute",
+    "observed": "45秒以内に環境セル出力なし。タイムアウトでrunner failed、終了時にcommand Canceledを記録。",
+    "inference": "カーネル選択が必要な可能性がある。公開APIログだけではpicker表示や原因を確定しない。",
+    "D4D5CasesExecuted": false,
+    "productJudgment": "未判定",
+    "retryReason": "VS Code終了と更新後、起動条件が変化したため再開。以前のmutex待ちを理由なく再試行したものではない。"
+  },
+  "userOperationPrepared": {
+    "notebook": "USER-kernel-bootstrap-20261024.ipynb",
+    "windowTitle": "TASK-002-01 自動診断",
+    "requested": "右上の標準カーネル選択でPython 3.14.3を選択し、環境セルを標準▶で実行・保存。ログ整理や端末操作は依頼しない。"
+  },
+  "allCasesAccepted": false,
+  "next": "ユーザーのカーネル選択・環境セル出力をログで確認後、標準コマンド診断を継続。"
+}

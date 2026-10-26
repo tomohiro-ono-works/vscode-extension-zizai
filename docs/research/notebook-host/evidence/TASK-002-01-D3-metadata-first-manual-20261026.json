@@ -1,0 +1,227 @@
+{
+  "asOf": "2026-10-25T15:46:34.371Z",
+  "localDate": "2026-10-26",
+  "timezone": "Asia/Tokyo",
+  "case": "D3-metadata-first-failure",
+  "scope": "TASK-002-01 metadata-first intentional failure, two same-value updates, user cell-focus Undo twice and Redo once",
+  "status": "不合格（この手動Redo条件の期待不一致）",
+  "productAcceptance": "未判定。製品不具合や一般的なRedo不具合とは断定しない。",
+  "head": "fbaf341959ab22ef14ad21f91a3105a039de3a2b",
+  "branch": "codex/task-002-01-desktop",
+  "vscode": "1.143.1",
+  "diagnosticBuild": {
+    "root": "C:\\Users\\tomoh\\ドキュメント\\ChatGPT\\vscode-extension-zizai\\task-002-01-desktop",
+    "workspace": "C:\\Users\\tomoh\\ドキュメント\\ChatGPT\\vscode-extension-zizai\\task-002-01-desktop\\results\\task-002-01\\workspace",
+    "preparedAt": "2026-10-25T12:06:42.641Z",
+    "base": "2b4ef78474aea6e0c7ab43c54437169c88f7cafa",
+    "branch": "codex/task-002-01-desktop",
+    "diff": "M docs/research/notebook-host/TASK-002-01.md\n M docs/research/notebook-host/evidence/TASK-002-01-sources.json\n M tests/notebook-host-api/execution-auto.cjs\n M tests/notebook-host-api/execution-save-followup-ui.cjs\n M tests/notebook-host-api/extension.cjs\n?? docs/research/notebook-host/evidence/TASK-002-01-feasibility-20261025.json",
+    "node": "v24.14.1",
+    "hashes": {
+      "package.json": "04d6f5100c67d133a194e14e847264ad033639a5969112d37670da894a5da7c7",
+      "extension.cjs": "988b0e70e4e7d2cad1e0227d21c567d49450063f9e5b18fa6bf2bdfe2206a009",
+      "model.cjs": "4057e30f336b85e9d5f2396fd02d8f4ede6f8d34ff08bb91a078504da07473a5",
+      "fixtures.cjs": "fb5ac112b7b30f1328b00deadb11700db663c12a63eb7e4310afc1d6b167357e",
+      "smoke.cjs": "bcab7d623d0699a393d6eb8fdfa4110e9736e205eb631547ff07c657cb3138c8",
+      "automated.cjs": "56c0dfeb93832975a062531f321a87ffc16d3d3c5d7b0a1f4f1b3068765b6a4c",
+      "structure.cjs": "385c8e7023c8f3de4112aff902cc624c9d637701ce4d5eeb77b1c3536258eec1",
+      "structure-delete.cjs": "7655ba5fa7fe816b3fbfcedb2e073be3e8045bacfe0c1077cf6bf5bce1abe755",
+      "structure-ids.cjs": "7644c4ee2db15833f59bf8c6d6440f33417d0bf9e7a5ddfdf4e66caeb67e41c8",
+      "structure-focus.cjs": "b0951cd8f78b9bfa43865d1af143f6a0b506f0c29cc13f60b3fe4719849d3dc5",
+      "recovery.cjs": "265ce3a3b2f3a2ba57008b800ba9ecf2a02a28e7d19e122c7db5cd8f402e51f7",
+      "execution-auto.cjs": "a730c38318517137fb66647416ce1a2940227c696b93a524ebe2d2db0e5fd06b",
+      "execution-save-followup.cjs": "169be18860e26d071e8e528423c135f0a03378cab7848a0009d0766c34bc89ca",
+      "execution-save-followup-ui.cjs": "82fc0dd9bdd9fe23822d19132549a0dd6114749bf9bead2c0d8ca90c8a62bc1a",
+      "running-close.cjs": "2ed3ea3cbf3a2c98d1cebf6af5a9c52d1de752e3cbf7153e196e88f6878d3d67"
+    }
+  },
+  "userReports": [
+    "10のままです",
+    "何もかわらなかったです",
+    "記録した",
+    "redo記録した"
+  ],
+  "routes": {
+    "mixedEdit": "Diagnostic command invoked by user; metadata update via public WorkspaceEdit API",
+    "history": "User instructed code click, Esc, Ctrl+Z once for each of two Undo steps and Ctrl+Y once; snapshots tagged undo/redo",
+    "limit": "Public notebook metadata events do not prove which keybinding handler or internal Undo group was dispatched."
+  },
+  "rawLog": {
+    "file": "logs/task-002-01/2026-10-25T12-26-17-146Z-13484/events.jsonl",
+    "sha256": "a2483216db20a5f4df22cae702c6c3556bf2b16d68ab0dae670de817ecec8788",
+    "throughSeq": 51
+  },
+  "applyAttempts": [
+    {
+      "beforeSeq": 37,
+      "returnSeq": 40,
+      "returned": false,
+      "afterSeq": 41
+    },
+    {
+      "beforeSeq": 42,
+      "returnSeq": 45,
+      "returned": false,
+      "afterSeq": 46
+    }
+  ],
+  "sameValueUpdateTwice": true,
+  "states": {
+    "before": {
+      "object": 13,
+      "version": 0,
+      "dirty": false,
+      "source": "# D3 baseline\nfictional_value = 10\n",
+      "metadata": {
+        "execution_count": null,
+        "metadata": {
+          "outsideDiagnosticOwner": {
+            "sentinel": "keep-D3"
+          },
+          "task00201Diagnostic": {
+            "label": "D3",
+            "draft": 0,
+            "committed": 0,
+            "burst": 0,
+            "probeOnly": true
+          }
+        },
+        "id": "task00201-D3-mixed-0"
+      }
+    },
+    "afterFirstFailure": {
+      "object": 13,
+      "version": 1,
+      "dirty": true,
+      "source": "# D3 baseline\nfictional_value = 10\n",
+      "metadata": {
+        "execution_count": null,
+        "metadata": {
+          "outsideDiagnosticOwner": {
+            "sentinel": "keep-D3"
+          },
+          "task00201Diagnostic": {
+            "label": "D3",
+            "draft": 0,
+            "committed": 0,
+            "burst": 0,
+            "probeOnly": true,
+            "mixed": "metadata-first-failure"
+          }
+        },
+        "id": "task00201-D3-mixed-0"
+      }
+    },
+    "afterSecondFailure": {
+      "object": 13,
+      "version": 2,
+      "dirty": true,
+      "source": "# D3 baseline\nfictional_value = 10\n",
+      "metadata": {
+        "execution_count": null,
+        "metadata": {
+          "outsideDiagnosticOwner": {
+            "sentinel": "keep-D3"
+          },
+          "task00201Diagnostic": {
+            "label": "D3",
+            "draft": 0,
+            "committed": 0,
+            "burst": 0,
+            "probeOnly": true,
+            "mixed": "metadata-first-failure"
+          }
+        },
+        "id": "task00201-D3-mixed-0"
+      }
+    },
+    "afterFirstUndo": {
+      "object": 13,
+      "version": 3,
+      "dirty": true,
+      "source": "# D3 baseline\nfictional_value = 10\n",
+      "metadata": {
+        "execution_count": null,
+        "metadata": {
+          "outsideDiagnosticOwner": {
+            "sentinel": "keep-D3"
+          },
+          "task00201Diagnostic": {
+            "label": "D3",
+            "draft": 0,
+            "committed": 0,
+            "burst": 0,
+            "probeOnly": true,
+            "mixed": "metadata-first-failure"
+          }
+        },
+        "id": "task00201-D3-mixed-0"
+      }
+    },
+    "afterSecondUndo": {
+      "object": 13,
+      "version": 4,
+      "dirty": false,
+      "source": "# D3 baseline\nfictional_value = 10\n",
+      "metadata": {
+        "execution_count": null,
+        "metadata": {
+          "outsideDiagnosticOwner": {
+            "sentinel": "keep-D3"
+          },
+          "task00201Diagnostic": {
+            "label": "D3",
+            "draft": 0,
+            "committed": 0,
+            "burst": 0,
+            "probeOnly": true
+          }
+        },
+        "id": "task00201-D3-mixed-0"
+      }
+    },
+    "afterRedo": {
+      "object": 13,
+      "version": 4,
+      "dirty": false,
+      "source": "# D3 baseline\nfictional_value = 10\n",
+      "metadata": {
+        "execution_count": null,
+        "metadata": {
+          "outsideDiagnosticOwner": {
+            "sentinel": "keep-D3"
+          },
+          "task00201Diagnostic": {
+            "label": "D3",
+            "draft": 0,
+            "committed": 0,
+            "burst": 0,
+            "probeOnly": true
+          }
+        },
+        "id": "task00201-D3-mixed-0"
+      }
+    }
+  },
+  "redoExpectation": "mixed=metadata-first-failure restored after one Redo",
+  "redoActual": "mixed key remains absent, notebook version=4, dirty=false, no intervening notebook.change through redo marker seq51",
+  "observations": {
+    "sourceUnchangedThroughout": true,
+    "foreignMetadataPreserved": true,
+    "secondUndoRestoredBaselineMetadata": true,
+    "redoRestoredMetadata": false
+  },
+  "verification": {
+    "command": "node logs/task-002-01/verify-D3-metadata-redo.cjs",
+    "exitCode": 1,
+    "log": "logs/task-002-01/D3-metadata-redo-check.txt"
+  },
+  "interpretation": "Initial false-return partial metadata update was observed. Two identical diagnostic updates occurred. First Undo retained the first update value, second Undo restored baseline. Reported Redo did not change the recorded state. Cause and key dispatch remain undetermined.",
+  "remainingD3Manual": [
+    "source-first-success",
+    "metadata-first-success"
+  ],
+  "noUnchangedRepeatRequested": true,
+  "newGUIOrKernelLaunched": false,
+  "allCasesAccepted": false
+}

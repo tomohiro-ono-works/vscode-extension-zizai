@@ -1,0 +1,129 @@
+{
+  "asOf": "2026-10-26T10:30:14.779Z",
+  "scope": "TASK-002-01 diagnostic and research integration checkpoint; no new GUI/kernel execution",
+  "sourceHead": "31ce63f3a36786b77c106ae123cf61bfe914e04d",
+  "mainBaseline": "fa2180319c09e4efa12bcd94914b4dcf09f680b8",
+  "integrationScope": [
+    ".vscode TASK-002-01 entries only",
+    "tests/notebook-host-api/",
+    "tests/manual/TASK-002-01-notebook-host.md",
+    "docs/research/notebook-host/"
+  ],
+  "inheritedNodeFormChanges": "Preserved on source branch; excluded from the TASK-002-only integration branch",
+  "sourceChanges": [
+    {
+      "file": "tests/notebook-host-api/execution-auto.cjs",
+      "sha256": "a730c38318517137fb66647416ce1a2940227c696b93a524ebe2d2db0e5fd06b"
+    },
+    {
+      "file": "tests/notebook-host-api/execution-save-followup-ui.cjs",
+      "sha256": "82fc0dd9bdd9fe23822d19132549a0dd6114749bf9bead2c0d8ca90c8a62bc1a"
+    },
+    {
+      "file": "tests/notebook-host-api/extension.cjs",
+      "sha256": "988b0e70e4e7d2cad1e0227d21c567d49450063f9e5b18fa6bf2bdfe2206a009"
+    }
+  ],
+  "runtimeChange": {
+    "kernelSelectionGate": "null means no countdown for the explicit UI entry only",
+    "normalRunnerDefaultMs": 600000,
+    "automaticSaveFollowupMs": 45000,
+    "gateEnvironment": "TASK00201_SAVE_FOLLOWUP=standard-ui",
+    "windowAutoClose": false,
+    "runtimeReverified": false
+  },
+  "completedObservations": {
+    "D2": "manual update/save/close/reopen matched within diagnostic conditions",
+    "D3": {
+      "plannedCasesExecuted": 4,
+      "matched": 3,
+      "mismatch": "metadata-first-failure manual Redo",
+      "mismatchPreserved": true
+    }
+  },
+  "remainingPlannedManualChecks": {
+    "D4": 3,
+    "D5": 4,
+    "D6": 1,
+    "total": 8
+  },
+  "separateDebugging": [
+    "D1 deletion/Redo mismatch: historical fixture/focus/version conditions retained",
+    "D3 metadata-first-failure manual Redo mismatch: cause unconfirmed; no automatic retries"
+  ],
+  "historicalLimits": [
+    "D4 queued-edit saved JSON not yet collected in old run",
+    "D5 queued-close old runner final save failed",
+    "later save-followup result is an old running/waiting snapshot, not proof of a live process or completed cases",
+    "D6 post-update click is not response during updating",
+    "full nbformat schema validation not performed"
+  ],
+  "checks": [
+    {
+      "command": "node tests/notebook-host-api/prepare.mjs",
+      "result": "passed",
+      "scope": "syntax and isolated diagnostic packaging, without GUI/kernel",
+      "sourceCount": 15,
+      "log": "logs/task-002-01/main-checkpoint-20261026/prepare-before-merge.txt"
+    },
+    {
+      "command": "node --test tests/notebook-host-api/model.test.cjs",
+      "result": "passed",
+      "tests": 1,
+      "failed": 0,
+      "log": "logs/task-002-01/main-checkpoint-20261026/model-before-merge.txt"
+    },
+    {
+      "command": "local checkpoint consistency checks",
+      "result": "passed",
+      "evidenceJson": 17,
+      "indexReferences": 16,
+      "fixturesWithUniqueStandardIds": 17,
+      "existingConfigurationsPreserved": 11,
+      "relativeMarkdownLinks": 29,
+      "fullNbformatSchemaValidation": false
+    }
+  ],
+  "newDesktopExecution": false,
+  "newKernelExecution": false,
+  "allCasesAccepted": false,
+  "productImplementation": false,
+  "contractsChanged": false,
+  "currentSpecificationChanged": false,
+  "taskState": "in-progress; parent and work issue remain open; TASK-002-02 not started",
+  "integrationVerification": {
+    "sourceCheckpointCommit": "957aa60cb99b393104ece7f31b98d5b5d01e05ad",
+    "base": "fa2180319c09e4efa12bcd94914b4dcf09f680b8",
+    "selectedFiles": 40,
+    "sourceBlobsPreserved": 39,
+    "inheritedNodeFormFilesIncluded": false,
+    "tests": {
+      "command": "node --test tests/notebook-host-api/model.test.cjs tests/notebook-ui-gate/toolbar-state.test.cjs tests/notebook-ui-gate/statusbar.test.cjs tests/nodeform-reuse/webview-host.test.cjs",
+      "passed": 14,
+      "failed": 0,
+      "log": "logs/task-002-01/main-checkpoint-20261026/all-tests-integration.txt"
+    },
+    "prepare": {
+      "passed": true,
+      "scope": "14 CJS syntax checks and diagnostic packaging",
+      "log": "logs/task-002-01/main-checkpoint-20261026/prepare-integration.txt"
+    },
+    "canonicalGitSourceHashes": [
+      {
+        "file": "tests/notebook-host-api/execution-auto.cjs",
+        "sha256": "a730c38318517137fb66647416ce1a2940227c696b93a524ebe2d2db0e5fd06b"
+      },
+      {
+        "file": "tests/notebook-host-api/execution-save-followup-ui.cjs",
+        "sha256": "82fc0dd9bdd9fe23822d19132549a0dd6114749bf9bead2c0d8ca90c8a62bc1a"
+      },
+      {
+        "file": "tests/notebook-host-api/extension.cjs",
+        "sha256": "988b0e70e4e7d2cad1e0227d21c567d49450063f9e5b18fa6bf2bdfe2206a009"
+      }
+    ],
+    "lineEndings": "Earlier sourceChanges hashes describe original working bytes. Integration checkout may use CRLF; canonical hashes here describe Git blob bytes. Historical build hashes are not rewritten.",
+    "newDesktopExecution": false,
+    "newKernelExecution": false
+  }
+}
