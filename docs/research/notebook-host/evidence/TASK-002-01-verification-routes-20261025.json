@@ -1,0 +1,232 @@
+{
+  "asOf": "2026-10-25T05:21:29.950Z",
+  "localDate": "2026-10-25",
+  "timezone": "Asia/Tokyo",
+  "scope": "TASK-002-01 evidence route audit and unit/static checks; no new desktop execution",
+  "branch": "codex/task-002-01-desktop",
+  "mergeCommit": "b3cd5b8f8d9e42a5886b54f35be9339a3c0f9f31",
+  "integratedRules": [
+    "5bbb234",
+    "fa21803"
+  ],
+  "uncommittedProtection": {
+    "beforeHead": "7f232d93d158416b4fefe6709952b053b29fad46",
+    "stash": "0be2628be4fa820e3457fd3bce424bbc694f76cf",
+    "restoredByteForByte": true,
+    "protectedSHA256": {
+      "tests/notebook-host-api/execution-auto.cjs": "a730c38318517137fb66647416ce1a2940227c696b93a524ebe2d2db0e5fd06b",
+      "tests/notebook-host-api/execution-save-followup-ui.cjs": "82fc0dd9bdd9fe23822d19132549a0dd6114749bf9bead2c0d8ca90c8a62bc1a",
+      "tests/notebook-host-api/extension.cjs": "988b0e70e4e7d2cad1e0227d21c567d49450063f9e5b18fa6bf2bdfe2206a009"
+    },
+    "note": "These three diagnostic changes were restored without committing them in this audit."
+  },
+  "inputEvidence": [
+    {
+      "file": "TASK-002-01-windows-observations-20261023.json",
+      "sha256": "68a3833dc3f3f536e7faaa808a9b844861b9ba312ef937f81f252aa83ae4424e"
+    },
+    {
+      "file": "TASK-002-01-windows-followup-20261024.json",
+      "sha256": "890c6d980de9bf438491635b9edae896177c323cc864179e7f7c060de59322b0"
+    },
+    {
+      "file": "TASK-002-01-execution-observations-20261024.json",
+      "sha256": "e7cc5e99a43b10d82fd6bdf64adacbdd4d443737350efedf2a511c1b578bc908"
+    },
+    {
+      "file": "TASK-002-01-ui-observations-20261025.json",
+      "sha256": "c3e9efd66a870ece9c0d0bba15ec941bed0afe4761d9f25abfae522bcaa9b755"
+    },
+    {
+      "file": "TASK-002-01-save-followup-preparation-20261025.json",
+      "sha256": "a92efe5898c478c0e3a043a9ae6243da0c097527ea667dcbe0a6776c6ae25266"
+    }
+  ],
+  "classifications": [
+    {
+      "case": "D1",
+      "apiIntegration": {
+        "scope": "registered commands with explicit focus and standard cell.id",
+        "counts": [
+          3,
+          2,
+          3,
+          2
+        ],
+        "status": "合格（既存API・結合条件）"
+      },
+      "manualUI": {
+        "scope": "user cell operations; original no-ID deletion/Undo/Ctrl+Y",
+        "originalStatus": "不合格（初期IDなし・ユーザーCtrl+Y経路の期待不一致）",
+        "status": "過去の部分結果・期待不一致を保持",
+        "notReplacedBy": "valid-ID API command control"
+      },
+      "fixtureLimitation": "older no-ID nbformat4.5 fixtures are preserved; standard IDs repaired for future generation"
+    },
+    {
+      "case": "D2",
+      "apiIntegration": {
+        "status": "既存API観測採取済み",
+        "cases": [
+          "D2",
+          "D2-fresh-process-read"
+        ]
+      },
+      "manualUI": {
+        "status": "standard save/tab close/reopen must be tied to actual user operations; API success does not imply UI pass",
+        "next": "reconcile existing reports before requesting any repeat"
+      }
+    },
+    {
+      "case": "D3",
+      "apiIntegration": {
+        "status": "既存の成功・意図的失敗・履歴を採取済み",
+        "mixed": [
+          {
+            "case": "D3-source-first-success",
+            "returned": true,
+            "sourceChanged": true,
+            "metadataChanged": true
+          },
+          {
+            "case": "D3-metadata-first-success",
+            "returned": true,
+            "sourceChanged": true,
+            "metadataChanged": true
+          },
+          {
+            "case": "D3-source-first-failure",
+            "returned": false,
+            "sourceChanged": true,
+            "metadataChanged": false
+          },
+          {
+            "case": "D3-metadata-first-failure",
+            "returned": false,
+            "sourceChanged": false,
+            "metadataChanged": true
+          }
+        ]
+      },
+      "manualUI": {
+        "status": "focus/keyboard routes recorded separately; API undo/redo not substituted for user key input",
+        "next": "reconcile existing reports and focus condition"
+      }
+    },
+    {
+      "case": "D4",
+      "apiIntegration": {
+        "cases": [
+          {
+            "case": "D4-running-metadata-setting",
+            "status": "合格（この観測条件）"
+          },
+          {
+            "case": "D4-running-source-changed",
+            "status": "合格（この観測条件）"
+          }
+        ],
+        "scope": "registered standard execution commands + WorkspaceEdit"
+      },
+      "manualUI": {
+        "status": "past user execution/cancellation/edit observations retained; no new UI execution",
+        "limits": [
+          "queued-edit saved JSON not captured",
+          "submitted source/internal execution ID unavailable",
+          "cancellation request != kernel stop completion"
+        ]
+      }
+    },
+    {
+      "case": "D5",
+      "apiIntegration": {
+        "cases": [
+          {
+            "case": "D5-queued-delete",
+            "status": "合格（公開API削除とローカルguardの観測条件）"
+          },
+          {
+            "case": "D5-running-delete",
+            "status": "合格（公開API削除とローカルguardの観測条件）"
+          },
+          {
+            "case": "D5-queued-close",
+            "status": "主要観測採取済み・runnerの最終保存は失敗"
+          },
+          {
+            "case": "D5-running-close",
+            "status": "合格（公開イベントとローカルguardの観測条件）"
+          }
+        ],
+        "scope": "registered standard execution, NotebookEdit.deleteCells and TabGroups.close; local guard"
+      },
+      "manualUI": {
+        "status": "未実施（4条件の実際のごみ箱／タブ終了・再オープン）",
+        "next": "prepare only missing UI scenarios and wait for user start signal"
+      },
+      "limits": [
+        "queued-close final save failed; retained as failure",
+        "running-close repaired path saved successfully",
+        "local guard rejection != kernel stop completion"
+      ]
+    },
+    {
+      "case": "D6",
+      "apiIntegration": {
+        "status": "既存4条件＋20回更新と保存を採取済み",
+        "conditions": [
+          "D6-existing-same-20",
+          "D6-existing-change-20",
+          "D6-new-same-20",
+          "D6-new-change-20"
+        ]
+      },
+      "manualUI": {
+        "status": "更新・保存後のクリック応答に限り合格",
+        "report": "カーソルが出た、もたつきなし",
+        "duringUpdate": "未実施",
+        "performanceThreshold": "not-defined"
+      },
+      "fixtureLimitation": "older no-ID fixture condition retained"
+    }
+  ],
+  "pendingSupplement": {
+    "originalAttempt": {
+      "status": "failed",
+      "error": "Error: Timeout: standard kernel output after user selection in this test window (45000ms)"
+    },
+    "subsequentUIWait": {
+      "status": "failed",
+      "error": "Error: Timeout: standard kernel output after user selection in this test window (600000ms)",
+      "at": "2026-10-24T16:29:08.862Z"
+    },
+    "classification": "API・結合テストの補助入口。最初の実行をユーザーが押しても、その後のAPI編集・閉鎖は手動UIではない。",
+    "newLaunch": false
+  },
+  "uiAutomation": {
+    "tool": "Playwright",
+    "scopeStartAndOwnerAgreement": "not-yet-agreed",
+    "builtOrRunInThisAudit": false
+  },
+  "freshVerification": {
+    "unit": {
+      "command": "node --test tests/notebook-host-api/model.test.cjs",
+      "passed": 1,
+      "failed": 0,
+      "log": "logs/task-002-01/common-rules-model-test.txt"
+    },
+    "syntaxCJSFiles": 15,
+    "existingEvidenceJSONParsed": 9,
+    "historicalEvidenceAssertions": [
+      "D1 both ID conditions preserve original outcomes",
+      "D3 false can leave source or metadata changes",
+      "D5 running-close guard rejection and save",
+      "D6 20 returns and saved burst value"
+    ],
+    "windowsStarted": false,
+    "kernelStarted": false
+  },
+  "priority": "002-01 independent evidence classification and unit checks completed; dependent Host design/implementation not started",
+  "productAcceptance": "not-determined",
+  "allCasesAccepted": false
+}

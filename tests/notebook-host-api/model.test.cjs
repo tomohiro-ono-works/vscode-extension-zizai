@@ -1,0 +1,32 @@
+'use strict';
+const test = require('node:test');
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const path = require('node:path');
+
+test('diagnostic identity, metadata, serialization and stale-target protection', () => {
+  const file = path.join(__dirname, 'model.cjs');
+  assert.ok(fs.existsSync(file), 'diagnostic model must exist');
+  const { identities, patchMetadata, encode, validTarget, within } = require(file);
+  const ids = identities();
+  const old = { uri: 'same' }, reopened = { uri: 'same' };
+  assert.equal(ids(old), ids(old));
+  assert.notEqual(ids(old), ids(reopened), 'same URI must not merge lifetimes');
+  const original = { execution_count: 4, metadata: { outside: { keep: true }, task00201Diagnostic: { draft: 0 } } };
+  const updated = patchMetadata(original, { draft: 1 });
+  assert.deepEqual(original.metadata.task00201Diagnostic, { draft: 0 });
+  assert.deepEqual(updated.metadata.outside, { keep: true });
+  assert.equal(updated.execution_count, 4);
+  assert.deepEqual(updated.metadata.task00201Diagnostic, { draft: 1 });
+  const values = JSON.parse(encode({ absent: undefined, success: false, yes: true }));
+  assert.deepEqual(values.absent, { $undefined: true });
+  assert.equal(values.success, false);
+  assert.equal(values.yes, true);
+  const cell = {}, doc = { isClosed: false, getCells: () => [cell] };
+  assert.equal(validTarget(doc, cell, [doc]), true);
+  assert.equal(validTarget(doc, cell, [reopened]), false);
+  doc.isClosed = true;
+  assert.equal(validTarget(doc, cell, [doc]), false);
+  assert.equal(within(__dirname, path.join(__dirname, 'work', 'D1.ipynb')), true);
+  assert.equal(within(__dirname, path.join(__dirname, '..', 'real.ipynb')), false);
+});

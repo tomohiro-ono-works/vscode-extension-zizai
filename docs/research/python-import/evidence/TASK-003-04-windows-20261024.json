@@ -1,0 +1,94 @@
+{
+  "schema_version": 1,
+  "task": "TASK-003-04",
+  "issue": 23,
+  "date_jst": "2026-10-24",
+  "commit": "287cad8e2a1ad0e6402244b0685ef304e7f60c87",
+  "environment": {
+    "platform": "win32",
+    "architecture": "AMD64",
+    "python": "3.14.3",
+    "pip": "25.3",
+    "setuptools_visible_in_normal_python": "81.0.0"
+  },
+  "command": "python -m unittest discover -s tests/unit/python -p 'test_*.py' -v",
+  "initial_attempt": {
+    "sandboxed": true,
+    "exit_code": 1,
+    "tests_run": 0,
+    "errors": 4,
+    "reported_exception": "PermissionError: WinError 5 in temporary-directory setup/cleanup"
+  },
+  "unsandboxed_attempt": {
+    "exit_code": 1,
+    "tests_run": 9,
+    "passed": 1,
+    "failures": 2,
+    "errors": 6,
+    "reported_exceptions": [
+      "ModuleNotFoundError: No module named 'setuptools' in the build subprocess invoked with -I",
+      "FileExistsError: WinError 183 in later wheel preparation"
+    ],
+    "test_results": [
+      {
+        "test": "test_diagnostic_detects_packages_shadowed_by_notebook_cwd (test_notebook_handoff.NotebookHandoffTests.test_diagnostic_detects_packages_shadowed_by_notebook_cwd)",
+        "result": "FAIL"
+      },
+      {
+        "test": "test_diagnostic_matches_the_wheel_without_exposing_local_paths (test_notebook_handoff.NotebookHandoffTests.test_diagnostic_matches_the_wheel_without_exposing_local_paths)",
+        "result": "ERROR"
+      },
+      {
+        "test": "test_notebook_is_unexecuted_and_uses_a_standard_kernel (test_notebook_handoff.NotebookHandoffTests.test_notebook_is_unexecuted_and_uses_a_standard_kernel)",
+        "result": "ok"
+      },
+      {
+        "test": "test_restart_check_distinguishes_current_and_fresh_processes (test_notebook_handoff.NotebookHandoffTests.test_restart_check_distinguishes_current_and_fresh_processes)",
+        "result": "ERROR"
+      },
+      {
+        "test": "test_hand_installation_enables_imports_without_source_paths (test_package_distribution.PackageDistributionTests.test_hand_installation_enables_imports_without_source_paths)",
+        "result": "FAIL"
+      },
+      {
+        "test": "test_import_preserves_cwd_environment_and_search_path (test_package_distribution.PackageDistributionTests.test_import_preserves_cwd_environment_and_search_path)",
+        "result": "ERROR"
+      },
+      {
+        "test": "test_package_imports_do_not_require_optional_sdks (test_package_distribution.PackageDistributionTests.test_package_imports_do_not_require_optional_sdks)",
+        "result": "ERROR"
+      },
+      {
+        "test": "test_sdist_rebuild_preserves_split_package_imports (test_package_distribution.PackageDistributionTests.test_sdist_rebuild_preserves_split_package_imports)",
+        "result": "ERROR"
+      },
+      {
+        "test": "test_wheel_contains_both_source_roots_without_unrelated_assets (test_package_distribution.PackageDistributionTests.test_wheel_contains_both_source_roots_without_unrelated_assets)",
+        "result": "ERROR"
+      }
+    ]
+  },
+  "local_log_artifacts": {
+    "unit-python314-windows.log": {
+      "sha256": "45590a58f41fc762abb10b2be390fa32a80e53889c2b1555ebf00d8a5c40818c",
+      "publication": "Raw log retained locally; personal paths excluded from this record"
+    },
+    "unit-python314-windows-unsandboxed.log": {
+      "sha256": "e8daf709dc818664582bdffdf4356a05bfd1c68a9a64692b6b55194d8d622472",
+      "publication": "Raw log retained locally; personal paths excluded from this record"
+    }
+  },
+  "actions_after_unsandboxed_failure": {
+    "source_modified": false,
+    "investigation_started": false,
+    "test_retried": false
+  },
+  "interpretation": "Windows independent suite did not pass. Reported exceptions are observations; no root-cause investigation was performed.",
+  "separate_desktop_result": "TASK-003-05 K01-K04 passed in VS Code on this Python. This independent-suite result does not replace that manual result.",
+  "remaining_conditions": [
+    "Provide a test/build environment meeting the runner prerequisites before a separately authorized rerun.",
+    "K05 remains conditional on an existing uninstalled test kernel; no environment was uninstalled or new kernel registered.",
+    "K06 and common behavior tests require real APIs and dependencies to be specified and implemented."
+  ],
+  "user_testing_required_now": false
+}
