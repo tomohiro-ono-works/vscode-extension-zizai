@@ -207,6 +207,6 @@ PR #53の更新版では、003自身の最小単位を3つのpackage入口とし
 
 003のPR #55 `5f7e5d194ae4da53c9e002f7f9501a17d0d82b56` に、rootのpyproject.tomlと最小3packageの実装がある。配布名zizai-runtime、開発版0.0.0.dev0、Requires-Python >=3.12、最小実行依存なし、setuptools.build_metaの明示収集である。本文の「新規作成」「未選定」は当初の設計段階を表す。006で別のpyprojectを先に作らず、003の正本・更新経路と統合する。これは全採用コネクタを含む製品全体の依存・正式対応範囲・出荷版の確定ではない。
 
-003の既存runnerは隔離Pythonの -I からbackend・pipを読めるビルド環境を必要とする。ユーザーsiteにだけbackendがある通常Pythonを、専用ビルド環境と同一視しない。専用venvでのWindows独立9件再確認を受領し、環境前提を006の設計に反映する。006では導入・ビルドを再実行していない。
+003の既存runnerは隔離Pythonの -I からbackend・pipを読めるビルド環境を必要とする。ユーザーsiteにだけbackendがある通常Pythonを、専用ビルド環境と同一視しない。専用venvでのWindows独立9件再確認を受領し、環境前提を006の設計に反映する。003の結果受領時点では006で未再実行だったが、2026-10-27のmain統合前に既存9件（単体1・API結合8）を再確認した。最小wheelの作成・使い捨て環境への導入を含む結果は[統合前確認の証跡](../research/development/evidence/TASK-006-main-checkpoint-20261027.json)を参照し、全採用処理を含む製品ビルドの合格とは区別する。
 
 005のPR #51 `e207d3f59e49905e0e786a5301d55cbb56b0465e` に、values.schema.jsonと生成／check CLIの第1単位がある。正本→build/contracts/js/values.schema.json、manifest.jsonの収集条件とbuild前check終了0を受領した。Python生成資産・正式action等は未提供。本文§7.3の比較は旧固定版の履歴であり、現行案ではzizai-runtime／zizaiと通常Python・専用6コネクタを受領済み。未設定sourceの異なる判断の影響は対象契約での整合事項として残し、この値構造単位に混在させない。
