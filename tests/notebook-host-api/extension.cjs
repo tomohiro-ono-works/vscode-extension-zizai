@@ -261,6 +261,22 @@ function activate(context) {
     }, 300);
     context.subscriptions.push({ dispose: () => clearTimeout(timer) });
   }
+  // Normal development window: user selection has no countdown and completing
+  // the runner must not close the only window being shown to the user.
+  if (process.env.TASK00201_SAVE_FOLLOWUP === 'standard-ui') {
+    const timer = setTimeout(async () => {
+      try {
+        log('save-followup.start', { entry: 'normal-development-window', userGateTimeoutMs: null, windowAutoClose: false });
+        await require('./execution-save-followup-ui.cjs').run();
+        log('save-followup.complete', { result: 'results/task-002-01/execution-save-followup-result.local.json' });
+        vscode.window.showInformationMessage('TASK-002-01: 保存追加確認の自動採取が終了しました。このウィンドウは自動終了しません。');
+      } catch (error) {
+        log('save-followup.error', { error: String(error), windowAutoClose: false });
+        vscode.window.showErrorMessage(`TASK-002-01: 保存追加確認: ${error.message}`);
+      }
+    }, 300);
+    context.subscriptions.push({ dispose: () => clearTimeout(timer) });
+  }
   return { logFile, workspace: build.workspace, snapshot: () => snapshot('smoke-read-only') };
 }
 module.exports = { activate };

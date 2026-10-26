@@ -16,7 +16,7 @@ function state(doc) {
 }
 async function waitFor(predicate, timeoutMs, label) {
   const start = Date.now();
-  while (!predicate()) { if (Date.now() - start >= timeoutMs) throw new Error(`Timeout: ${label} (${timeoutMs}ms)`); await pause(100); }
+  while (!predicate()) { if (timeoutMs !== null && Date.now() - start >= timeoutMs) throw new Error(`Timeout: ${label} (${timeoutMs}ms)`); await pause(100); }
 }
 async function run(options = {}) {
   const build = JSON.parse(fs.readFileSync(path.join(__dirname, 'build.local.json'), 'utf8'));
@@ -95,7 +95,7 @@ async function run(options = {}) {
       const { doc } = await open('D4-environment', 'kernel-check');
       const cell = doc.cellAt(0), observation = { case: 'environment-selected-standard-kernel', before: state(doc) };
       report.results.push(observation); persist();
-      const timeoutMs = options.kernelTimeoutMs ?? 600000;
+      const timeoutMs = options.kernelTimeoutMs === null ? null : (options.kernelTimeoutMs ?? 600000);
       observation.kernelSelectionGate = { status: 'waiting-for-standard-kernel-output', timeoutMs, userSelectionInThisTestWindowMayBeRequired: true };
       persist();
       if (!options.automaticOnly) vscode.window.showInformationMessage('TASK-002-01: この自動試験ウィンドウでPython 3.14.3カーネルを選択してください。環境出力後は自動で続行します。');
