@@ -1,6 +1,6 @@
 # TASK-006の検証計画
 
-更新日：2026-10-25。対象：[TASK-006](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/6)と006-01〜05。これはケース・担当・開始条件の計画であり、製品テストの実施結果ではない。
+更新日：2026-10-26。対象：[TASK-006](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/6)と006-01〜05。これはケース・担当・開始条件の計画であり、製品テストの実施結果ではない。
 
 依存の区分・成果の充足状況は各担当Issueを正本とし、本書に二重管理しない。[依存区分のルール](../tasks/task-rules.md#dependency-classification)と[検証方法・担当のルール](../development.md)に従う。設計中の入力と製品の成立を区別する。[開発・ビルド設計](development-build.md)の収集・固定・成果物条件も適用する。
 
@@ -69,7 +69,8 @@ CIでは対象checkoutの実在するcommitを明示してsource照合する。�
 ## 4. 受領した証跡と限界
 
 - 003の[PR #55固定版](https://github.com/tomohiro-ono-works/vscode-extension-zizai/pull/55)、commit `5f7e5d194ae4da53c9e002f7f9501a17d0d82b56`：最小package、隔離runner前提、Windows Python3.14.3での独立9件再確認の記録。これは003からの受領結果で、006での再実行ではない。runnerが複数プロセス・wheel・pip・importを使う経路はAPI・結合として扱い、関数単位のケースがある場合だけ分離する。
-- 同PRのK01〜K04は、VS Code1.143.0／既存Python3.14.3でimport・標準再起動・再importの実機合格として記録されている。一方、証跡JSONにはケースごとの操作主体・操作自動化の範囲が明示されていない。新分類への対応は区分未確定として担当003へ確認が必要。元のPASS記録を消さず、006の手動UI・UI自動・APIの新しい合格へ振り替えない。K05／K06と製品業務API等の未確認も維持する。
+- 同PRのK01〜K04は、VS Code1.143.0／既存Python3.14.3でimport・標準再起動・再importの実機観測として記録されている。初回証跡だけでは操作主体が不足していたが、mainへ入った[003の検証分類記録](../research/python-import/evidence/TASK-003-test-policy-20261025.json)で、エージェントによる非PlaywrightのGUI自動操作だったと判明した。区分未確定はこの追加情報で解消し、元のPASSは参考観測として保持する。新ルールの事前合意済みUI自動やユーザー手動UIの合格へ振り替えない。ユーザーによるK01〜K04、条件付きK05、実API等のK06は未実施のまま。
+- Pythonの既存9件は[担当003の分類表](../../tests/unit/python/README.md)に従い、Notebook JSONの単体1件と、wheel・導入・別プロセス・診断のAPI・結合8件として集計する。runnerの起動方法から分類せず、003から受領した過去結果と006のマージ時再確認を分けて記録する。
 - 005の[生成・check手順の固定版](https://github.com/tomohiro-ono-works/vscode-extension-zizai/blob/e207d3f59e49905e0e786a5301d55cbb56b0465e/tests/contracts/README.md)：値schema、Host／GUI向けJSON、manifestと15件の確認記録を受領。Python向け契約資産・フォーム全体・実UIの成立は含まない。
 - 過去の失敗・未実施・環境差は保持する。003のWindows初回失敗と専用ビルドvenvでの再確認を別記録として参照し、失敗履歴を消さない。
 
