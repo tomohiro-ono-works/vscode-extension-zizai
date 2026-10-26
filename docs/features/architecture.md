@@ -1,22 +1,22 @@
 <a id="architecture"></a>
 # アーキテクチャと責務分担
 
-更新日：2026-10-22。
+更新日：2026-10-26。
 
 このプロジェクトの VS Code 拡張機能について、全体設計にある構成・責務・状態の所有者・境界を整理した資料です。[01 全体設計](../designs/01全体設計.md) を基準とし、Notebook の操作・保存の詳細は [02 Notebook UI 設計](../designs/02NotebookUI設計.md) に従います。
 
-**設計上の責務を記載しています。アプリの実装・技術検証は未完了です。** 具体的な API 名、metadata キー、パッケージ構成、UI 配置方式を、この資料で新しく確定しません。
+正式対象はVS Codeのみ。Kiroは任意の参考利用で、動作保証・専用対応・必須検証は求めない。[2026-10-22の利用者判断](../decisions/2026-10-22-vscode-distribution-scope.md)を引き継ぐ。
+
+**設計上の責務を記載しています。アプリの実装・技術検証は未完了です。** 具体的なmetadataキー・パッケージ構成・正式な通信形式を、この資料で新しく確定しません。詳細フォームのサイドバー配置は[2026-10-22の決定](../decisions/2026-10-22-notebook-sidebar.md)を反映し、対象切替等は[2026-10-23に承認された設計](notebook-sidebar.md)に従います。正式契約・規約・開発入口を受けてから製品実装へ進みます。
 
 <a id="runtime-topology"></a>
-正式対象はVS Codeのみ。Kiroは任意の互換利用として扱い、動作保証・専用対応・必須検証を求めない。[2026-10-22の判断記録](../decisions/2026-10-22-vscode-distribution-scope.md)に従う。
-
 ## 実行時の構成
 
 ```text
 VS Code
 └─ Jupyter Notebook (.ipynb)
    ├─ UI：HTML / CSS / JavaScript
-   │  └─ 選択、フォーム入力、下書き・確定イベント
+   │  └─ セル側の選択、サイドバーフォーム、下書き・確定イベント
    ├─ Extension Host：Node.js + VS Code Notebook API
    │  └─ UI 通信、metadata・source 編集、Python コード生成
    └─ Jupyter 標準実行
@@ -47,7 +47,7 @@ VS Code
 | 配置先 | 配置する責務 |
 | --- | --- |
 | `apps/extension/` | Extension Host の処理 |
-| `apps/gui/` | Notebook に表示する UI の HTML / CSS / JavaScript |
+| `apps/gui/` | セル側の選択UIとサイドバーフォームの表示・入力部分 |
 | `apps/core/` | Python ライブラリの処理基盤・共通ロジック |
 | `apps/connectors/` | Python の個別コネクタ・アクション |
 | `apps/common/` | 層をまたぐ契約・schema。形式・配布方式は未決定 |
@@ -94,9 +94,9 @@ Notebook ごとのフォーム設定・拡張機能状態は独立させます�
 
 ## 実装前に確認する事項
 
-最優先は、通常のコードセル内に選択 UI とフォームを常設し、source・標準出力と共存・維持できるかの確認です。Notebook Renderer はセル出力の描画機構であり、その採用だけでセル内 UI が成立するとは扱いません。
+詳細フォームはサイドバーへ配置します。セル側の選択UIと標準のsource・出力を維持し、フォームの対象セル・下書き・非同期応答が混ざらないことを確認します。Notebook Rendererへ出力を挿入してフォームを常設する方式は採用しません。表示先が変わってもmetadata・sourceの所有者はExtension Hostです。
 
-- 正式対象版のVS CodeでのAPI適合性、UIの配置・表示維持、NodeFormなど参考部品の採用可否。
+- 正式対象版のVS CodeでのAPI適合性、サイドバーの表示・対象切替・再表示時の復元、NodeFormの製品利用条件。
 - metadata の正式キー、更新と dirty・Undo・性能、UI／Host 間のメッセージと非同期競合。
 - 初期化セルと処理セルの識別、移動・複製・削除・Undo、元コード退避との対応。
 - 実行成功の検出、「未更新」の状態遷移・再オープン時の復元。

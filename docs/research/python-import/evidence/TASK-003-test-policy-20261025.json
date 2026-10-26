@@ -1,0 +1,227 @@
+{
+  "schema_version": 1,
+  "task": "TASK-003",
+  "date_jst": "2026-10-25",
+  "policy_commits": [
+    "5bbb234645c6716d0458d6e21aed43561a1d3238",
+    "fa2180319c09e4efa12bcd94914b4dcf09f680b8"
+  ],
+  "branch": "codex/task-003-05-kernel-verification",
+  "before_merge_commit": "5f7e5d194ae4da53c9e002f7f9501a17d0d82b56",
+  "merge_commit": "fbd7f897e054a5a714dd72366c399321b0022f71",
+  "protection": {
+    "working_branch_dirty_before_merge": false,
+    "outer_workspace_untracked_content_untouched": true,
+    "existing_manual_session_content_preserved": true,
+    "stash_required": false
+  },
+  "rules_read": [
+    "AGENTS.md",
+    "docs/tasks/task-rules.md",
+    "docs/development.md"
+  ],
+  "working_tree_at_test": {
+    "changes": "the three documentation files only; product/test sources unchanged",
+    "documentation_hashes": {
+      "tests/manual/TASK-003-05-python.md": "4722c59d67ac06d03e05968f46a6414a4af09e1fa3ff8f26a6d3b37844724a58",
+      "tests/unit/python/README.md": "3bbd941d3b58718a0d053d0941651c60494e9d9e2c828952b2364a7e49be3609",
+      "docs/research/python-import/TASK-003-05-plan.md": "a787676dcc0c41e631a3b522d20ab20acde7a63753d4e9d61e79dceb34dff987"
+    }
+  },
+  "tested_source_hashes": {
+    "pyproject.toml": "8f953151f02538279a7a4730e6714b7322328bcfa28a83b9bb4f6e3c0c7996eb",
+    "apps/core/src/zizai/__init__.py": "8198e36711a40303cbbf13b3ade8d5a9b86844981b295d31459b555d433e27bf",
+    "apps/core/src/zizai/core/__init__.py": "5ae4ea87fc38110fdf7078d8f7715bc30b812c266000da61b0b7342ccc941e0f",
+    "apps/connectors/src/zizai/connectors/__init__.py": "a9bfb6caeee966f5c8fb054269386fb2587723e76f3eb8d581b96f56eef7197e",
+    "tests/unit/python/package_test_support.py": "738963abfae3a672a8359b8b7cf0404d41bdc35d909c27f66e926a226bcbad4b",
+    "tests/unit/python/test_package_distribution.py": "0d2b279b14033f1a442d9dd59cd8a534545dc084034769588102ee75297aeef2",
+    "tests/unit/python/test_notebook_handoff.py": "c1f2e0094c9b9c680728e2a12a559b18150165adf64435d6d7b7d48e4d0b0943",
+    "tests/manual/TASK-003-05-python.ipynb": "0f4c520a0fe9e0ded53b45bde1488750b010d61d49617f20c6ec5be5a62737b8"
+  },
+  "agent_verification": {
+    "environment": {
+      "platform": "win32",
+      "python": "3.14.3",
+      "setuptools": "81.0.0",
+      "pip": "25.3"
+    },
+    "command": "<build-venv-python> -m unittest discover -s tests/unit/python -p 'test_*.py' -v",
+    "exit_code": 0,
+    "tests_run": 9,
+    "passed": 9,
+    "failures": 0,
+    "errors": 0,
+    "duration_seconds": 17.93,
+    "classification_counts": {
+      "unit": 1,
+      "api_integration": 8,
+      "ui_automation": 0,
+      "manual_ui": 0
+    },
+    "cases": [
+      {
+        "test": "test_diagnostic_detects_packages_shadowed_by_notebook_cwd (test_notebook_handoff.NotebookHandoffTests.test_diagnostic_detects_packages_shadowed_by_notebook_cwd)",
+        "method": "test_diagnostic_detects_packages_shadowed_by_notebook_cwd",
+        "category": "api_integration",
+        "operator": "agent",
+        "result": "ok"
+      },
+      {
+        "test": "test_diagnostic_matches_the_wheel_without_exposing_local_paths (test_notebook_handoff.NotebookHandoffTests.test_diagnostic_matches_the_wheel_without_exposing_local_paths)",
+        "method": "test_diagnostic_matches_the_wheel_without_exposing_local_paths",
+        "category": "api_integration",
+        "operator": "agent",
+        "result": "ok"
+      },
+      {
+        "test": "test_notebook_is_unexecuted_and_uses_a_standard_kernel (test_notebook_handoff.NotebookHandoffTests.test_notebook_is_unexecuted_and_uses_a_standard_kernel)",
+        "method": "test_notebook_is_unexecuted_and_uses_a_standard_kernel",
+        "category": "unit",
+        "operator": "agent",
+        "result": "ok"
+      },
+      {
+        "test": "test_restart_check_distinguishes_current_and_fresh_processes (test_notebook_handoff.NotebookHandoffTests.test_restart_check_distinguishes_current_and_fresh_processes)",
+        "method": "test_restart_check_distinguishes_current_and_fresh_processes",
+        "category": "api_integration",
+        "operator": "agent",
+        "result": "ok"
+      },
+      {
+        "test": "test_hand_installation_enables_imports_without_source_paths (test_package_distribution.PackageDistributionTests.test_hand_installation_enables_imports_without_source_paths)",
+        "method": "test_hand_installation_enables_imports_without_source_paths",
+        "category": "api_integration",
+        "operator": "agent",
+        "result": "ok"
+      },
+      {
+        "test": "test_import_preserves_cwd_environment_and_search_path (test_package_distribution.PackageDistributionTests.test_import_preserves_cwd_environment_and_search_path)",
+        "method": "test_import_preserves_cwd_environment_and_search_path",
+        "category": "api_integration",
+        "operator": "agent",
+        "result": "ok"
+      },
+      {
+        "test": "test_package_imports_do_not_require_optional_sdks (test_package_distribution.PackageDistributionTests.test_package_imports_do_not_require_optional_sdks)",
+        "method": "test_package_imports_do_not_require_optional_sdks",
+        "category": "api_integration",
+        "operator": "agent",
+        "result": "ok"
+      },
+      {
+        "test": "test_sdist_rebuild_preserves_split_package_imports (test_package_distribution.PackageDistributionTests.test_sdist_rebuild_preserves_split_package_imports)",
+        "method": "test_sdist_rebuild_preserves_split_package_imports",
+        "category": "api_integration",
+        "operator": "agent",
+        "result": "ok"
+      },
+      {
+        "test": "test_wheel_contains_both_source_roots_without_unrelated_assets (test_package_distribution.PackageDistributionTests.test_wheel_contains_both_source_roots_without_unrelated_assets)",
+        "method": "test_wheel_contains_both_source_roots_without_unrelated_assets",
+        "category": "api_integration",
+        "operator": "agent",
+        "result": "ok"
+      }
+    ],
+    "local_log": {
+      "filename": "unit-after-main-rules-20261025.log",
+      "sha256": "b76bec9472cb3b8cbe4069a027f0ba46d06f57ddd3bbbad60e05eb713ffe0989"
+    }
+  },
+  "historical_evidence": {
+    "files_preserved": {
+      "TASK-003-05-desktop-20261024.json": {
+        "git_sha256": "6bb9a20c443a79f0bd496a918f5d5a69be312cc3f7b41af94771fcba83e825e7",
+        "working_copy_sha256": "dcd5df8aa58beeee9984bbe8e429fb563457085d73af832973e05fce226acd38",
+        "content_unchanged": true
+      },
+      "TASK-003-04-windows-20261024.json": {
+        "git_sha256": "51c3dc1e0530048368d8b34343719eb24ea5851c146a80b4b5f8a33f733b4c4f",
+        "working_copy_sha256": "f2ded618d4229b7a6931e321fe6785b65aad15de517f815ce1bcb5be903baf18",
+        "content_unchanged": true
+      },
+      "TASK-003-04-windows-recheck-20261024.json": {
+        "git_sha256": "fed73671e38a4b438753ec559836e1463c5fead0be96086bac530644c3ea7b4a",
+        "working_copy_sha256": "bbc8ff769041cfc37a3d326ac92e7fdf403546b30f116bddd592fb19a71b2f1e",
+        "content_unchanged": true
+      }
+    },
+    "comparison": "git canonical content; CRLF/LF normalized for working-copy preservation check",
+    "desktop_observation": {
+      "artifact": "TASK-003-05-desktop-20261024.json",
+      "cases": [
+        "K01",
+        "K02",
+        "K03",
+        "K04"
+      ],
+      "actual_route": "agent desktop GUI clicks and key input using @oai/sky",
+      "classification": "historical UI automation; non-Playwright method, not pre-agreed under the new policy",
+      "original_observed_result": "PASS retained in original artifact",
+      "current_acceptance": "reference observation only; does not satisfy user-operated manual UI verification"
+    }
+  },
+  "current_manual_ui": {
+    "classification": "manual_ui",
+    "operator": "user",
+    "agent_responsibilities": [
+      "preparation",
+      "evidence capture",
+      "analysis",
+      "recording"
+    ],
+    "K01": "NOT_RUN",
+    "K02": "NOT_RUN",
+    "K03": "NOT_RUN",
+    "K04": "NOT_RUN",
+    "K05": {
+      "result": "NOT_RUN",
+      "condition": "an existing uninstalled verification kernel is available"
+    },
+    "K06": {
+      "result": "NOT_RUN",
+      "condition": "real API and required SDK behavior are specified and implemented"
+    },
+    "preparation": {
+      "notebook_copy_matches_source": true,
+      "notebook_outputs_empty": true,
+      "cwd_outside_source_checkout": true,
+      "same_name_module_absent": true,
+      "python": "3.14.3",
+      "ipykernel": "7.4.0",
+      "distribution": {
+        "name": "zizai-runtime",
+        "version": "0.0.0.dev0"
+      },
+      "installed_files_match_source": true,
+      "installed_source_hashes": {
+        "zizai/__init__.py": "8198e36711a40303cbbf13b3ade8d5a9b86844981b295d31459b555d433e27bf",
+        "zizai/core/__init__.py": "5ae4ea87fc38110fdf7078d8f7715bc30b812c266000da61b0b7342ccc941e0f",
+        "zizai/connectors/__init__.py": "a9bfb6caeee966f5c8fb054269386fb2587723e76f3eb8d581b96f56eef7197e"
+      },
+      "gui_opened_or_operated": false,
+      "manual_ui_result": "NOT_RUN",
+      "start_signal_received_for_new_manual_session": false,
+      "local_saved_notebook_capture_supported": true,
+      "metadata_preflight_cwd": "session folder, separate from checkout egg-info"
+    },
+    "start_gate": "report preparation ready; wait for the user start signal before opening/operating the dedicated test window",
+    "user_terminal_or_log_organization_required": false
+  },
+  "future_ui_automation": {
+    "planned": false,
+    "required_tool": "Playwright",
+    "required_before_implementation": [
+      "scope agreement",
+      "start method agreement",
+      "responsible operator agreement"
+    ],
+    "fallback_requires_user_consultation": true
+  },
+  "limits": [
+    "No new UI actions were executed in this policy reconciliation.",
+    "API or automatic-test success is not a manual UI PASS.",
+    "No APIs, dependencies, or contract assets were invented to fill missing product scope.",
+    "Assigned Issue dependency tables are the current source; this artifact does not replace them."
+  ]
+}

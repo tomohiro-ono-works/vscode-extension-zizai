@@ -1,0 +1,233 @@
+{
+  "asOf": "2026-10-25T15:17:29.751Z",
+  "localDate": "2026-10-26",
+  "timezone": "Asia/Tokyo",
+  "case": "D3-source-first-failure",
+  "scope": "TASK-002-01 diagnostic source-first intentional failure and manual text-focus Undo/Redo only",
+  "status": "合格（部分適用・手動Undo/Redoを観測した条件）",
+  "productAcceptance": "未判定。混在更新の原子性・確定NGの非破壊性の合格ではない。",
+  "head": "ad237a99371a5b77d76e279209b61d671b576cdc",
+  "branch": "codex/task-002-01-desktop",
+  "vscode": "1.143.1",
+  "diagnosticBuild": {
+    "root": "C:\\Users\\tomoh\\ドキュメント\\ChatGPT\\vscode-extension-zizai\\task-002-01-desktop",
+    "workspace": "C:\\Users\\tomoh\\ドキュメント\\ChatGPT\\vscode-extension-zizai\\task-002-01-desktop\\results\\task-002-01\\workspace",
+    "preparedAt": "2026-10-25T12:06:42.641Z",
+    "base": "2b4ef78474aea6e0c7ab43c54437169c88f7cafa",
+    "branch": "codex/task-002-01-desktop",
+    "diff": "M docs/research/notebook-host/TASK-002-01.md\n M docs/research/notebook-host/evidence/TASK-002-01-sources.json\n M tests/notebook-host-api/execution-auto.cjs\n M tests/notebook-host-api/execution-save-followup-ui.cjs\n M tests/notebook-host-api/extension.cjs\n?? docs/research/notebook-host/evidence/TASK-002-01-feasibility-20261025.json",
+    "node": "v24.14.1",
+    "hashes": {
+      "package.json": "04d6f5100c67d133a194e14e847264ad033639a5969112d37670da894a5da7c7",
+      "extension.cjs": "988b0e70e4e7d2cad1e0227d21c567d49450063f9e5b18fa6bf2bdfe2206a009",
+      "model.cjs": "4057e30f336b85e9d5f2396fd02d8f4ede6f8d34ff08bb91a078504da07473a5",
+      "fixtures.cjs": "fb5ac112b7b30f1328b00deadb11700db663c12a63eb7e4310afc1d6b167357e",
+      "smoke.cjs": "bcab7d623d0699a393d6eb8fdfa4110e9736e205eb631547ff07c657cb3138c8",
+      "automated.cjs": "56c0dfeb93832975a062531f321a87ffc16d3d3c5d7b0a1f4f1b3068765b6a4c",
+      "structure.cjs": "385c8e7023c8f3de4112aff902cc624c9d637701ce4d5eeb77b1c3536258eec1",
+      "structure-delete.cjs": "7655ba5fa7fe816b3fbfcedb2e073be3e8045bacfe0c1077cf6bf5bce1abe755",
+      "structure-ids.cjs": "7644c4ee2db15833f59bf8c6d6440f33417d0bf9e7a5ddfdf4e66caeb67e41c8",
+      "structure-focus.cjs": "b0951cd8f78b9bfa43865d1af143f6a0b506f0c29cc13f60b3fe4719849d3dc5",
+      "recovery.cjs": "265ce3a3b2f3a2ba57008b800ba9ecf2a02a28e7d19e122c7db5cd8f402e51f7",
+      "execution-auto.cjs": "a730c38318517137fb66647416ce1a2940227c696b93a524ebe2d2db0e5fd06b",
+      "execution-save-followup.cjs": "169be18860e26d071e8e528423c135f0a03378cab7848a0009d0766c34bc89ca",
+      "execution-save-followup-ui.cjs": "82fc0dd9bdd9fe23822d19132549a0dd6114749bf9bead2c0d8ca90c8a62bc1a",
+      "running-close.cjs": "2ed3ea3cbf3a2c98d1cebf6af5a9c52d1de752e3cbf7153e196e88f6878d3d67"
+    }
+  },
+  "userReports": [
+    "FALSEはでてないですよ。実行しなくていいですよね。",
+    "10に戻った",
+    "20に戻った"
+  ],
+  "route": {
+    "mixedEdit": "User invokes diagnostic command; mutations are public WorkspaceEdit API",
+    "undoRedo": "User instructed click source text then Ctrl+Z once and Ctrl+Y once; reports 10 and 20; public text-change reasons Undo=1 and Redo=2 corroborate results",
+    "notification": "User did not see false notification. API return false is recorded separately.",
+    "kernelExecutionRequested": false
+  },
+  "rawLog": {
+    "file": "logs/task-002-01/2026-10-25T12-26-17-146Z-13484/events.jsonl",
+    "sha256": "089c281f5b3862bae29bcff3a39359128a1fa653999372d5b1c2007afccccbed",
+    "throughSeq": 34
+  },
+  "timeline": [
+    {
+      "seq": 22,
+      "at": "2026-10-25T15:09:57.178Z",
+      "kind": "snapshot",
+      "label": "D3-source-first-failure:before"
+    },
+    {
+      "seq": 23,
+      "at": "2026-10-25T15:09:57.179Z",
+      "kind": "apply.request",
+      "label": "D3-source-first-failure"
+    },
+    {
+      "seq": 24,
+      "at": "2026-10-25T15:09:57.195Z",
+      "kind": "text.change",
+      "reason": {
+        "$undefined": true
+      }
+    },
+    {
+      "seq": 25,
+      "at": "2026-10-25T15:09:57.200Z",
+      "kind": "notebook.change"
+    },
+    {
+      "seq": 26,
+      "at": "2026-10-25T15:09:57.203Z",
+      "kind": "notebook.change"
+    },
+    {
+      "seq": 27,
+      "at": "2026-10-25T15:09:57.204Z",
+      "kind": "apply.return",
+      "label": "D3-source-first-failure",
+      "result": false
+    },
+    {
+      "seq": 28,
+      "at": "2026-10-25T15:09:57.205Z",
+      "kind": "snapshot",
+      "label": "D3-source-first-failure:after"
+    },
+    {
+      "seq": 29,
+      "at": "2026-10-25T15:12:46.130Z",
+      "kind": "text.change",
+      "reason": 1
+    },
+    {
+      "seq": 30,
+      "at": "2026-10-25T15:12:46.133Z",
+      "kind": "notebook.change"
+    },
+    {
+      "seq": 31,
+      "at": "2026-10-25T15:12:46.135Z",
+      "kind": "notebook.change"
+    },
+    {
+      "seq": 32,
+      "at": "2026-10-25T15:16:16.757Z",
+      "kind": "text.change",
+      "reason": 2
+    },
+    {
+      "seq": 33,
+      "at": "2026-10-25T15:16:16.760Z",
+      "kind": "notebook.change"
+    },
+    {
+      "seq": 34,
+      "at": "2026-10-25T15:16:16.762Z",
+      "kind": "notebook.change"
+    }
+  ],
+  "apiReturn": false,
+  "before": {
+    "object": 10,
+    "version": 0,
+    "dirty": false,
+    "source": "# D3 baseline\nfictional_value = 10\n",
+    "metadata": {
+      "execution_count": null,
+      "metadata": {
+        "outsideDiagnosticOwner": {
+          "sentinel": "keep-D3"
+        },
+        "task00201Diagnostic": {
+          "label": "D3",
+          "draft": 0,
+          "committed": 0,
+          "burst": 0,
+          "probeOnly": true
+        }
+      },
+      "id": "task00201-D3-mixed-0"
+    }
+  },
+  "afterFailure": {
+    "object": 10,
+    "version": 2,
+    "dirty": true,
+    "source": "# D3 edited source-first-failure\nfictional_value = 20\n",
+    "metadata": {
+      "execution_count": null,
+      "metadata": {
+        "outsideDiagnosticOwner": {
+          "sentinel": "keep-D3"
+        },
+        "task00201Diagnostic": {
+          "label": "D3",
+          "draft": 0,
+          "committed": 0,
+          "burst": 0,
+          "probeOnly": true
+        }
+      },
+      "id": "task00201-D3-mixed-0"
+    }
+  },
+  "afterUndo": {
+    "object": 10,
+    "version": 4,
+    "dirty": false,
+    "source": "# D3 baseline\nfictional_value = 10\n",
+    "metadata": {
+      "execution_count": null,
+      "metadata": {
+        "outsideDiagnosticOwner": {
+          "sentinel": "keep-D3"
+        },
+        "task00201Diagnostic": {
+          "label": "D3",
+          "draft": 0,
+          "committed": 0,
+          "burst": 0,
+          "probeOnly": true
+        }
+      },
+      "id": "task00201-D3-mixed-0"
+    }
+  },
+  "afterRedo": {
+    "object": 10,
+    "version": 6,
+    "dirty": true,
+    "source": "# D3 edited source-first-failure\nfictional_value = 20\n",
+    "metadata": {
+      "execution_count": null,
+      "metadata": {
+        "outsideDiagnosticOwner": {
+          "sentinel": "keep-D3"
+        },
+        "task00201Diagnostic": {
+          "label": "D3",
+          "draft": 0,
+          "committed": 0,
+          "burst": 0,
+          "probeOnly": true
+        }
+      },
+      "id": "task00201-D3-mixed-0"
+    }
+  },
+  "observations": {
+    "sourceChangedDespiteFalse": true,
+    "metadataUnchangedThroughout": true,
+    "undoRestoresBaselineSource": true,
+    "redoRestoresPartialSource": true,
+    "saved": false
+  },
+  "remainingD3Manual": [
+    "source-first-success",
+    "metadata-first-success",
+    "metadata-first-failure"
+  ],
+  "allCasesAccepted": false
+}

@@ -1,0 +1,110 @@
+{
+  "recordedAt": "2026-10-24T05:53:18.343Z",
+  "timezone": "Asia/Tokyo",
+  "scope": "TASK-002-01 only",
+  "parentCommit": "b253d83c6ecdfcedce0f0eee1f526bc3ae9e8979",
+  "branch": "codex/task-002-01-desktop",
+  "uncommitted": " M docs/research/notebook-host/TASK-002-01.md\n M docs/research/notebook-host/evidence/TASK-002-01-sources.json\n M tests/notebook-host-api/README.md\n M tests/notebook-host-api/prepare.mjs\n?? docs/research/notebook-host/evidence/TASK-002-01-command-preparation-20261024.json\n?? tests/notebook-host-api/execution-auto.cjs\n",
+  "source": "tests/notebook-host-api/execution-auto.cjs",
+  "sourceSHA256": "db7c77766c9045ff3a0d7c284e4afa94414a6341b85e99e643f166542d6b54cd",
+  "preparedBuild": {
+    "root": "$REPO",
+    "workspace": "$REPO\\results\\task-002-01\\workspace",
+    "preparedAt": "2026-10-24T05:52:08.929Z",
+    "base": "b253d83c6ecdfcedce0f0eee1f526bc3ae9e8979",
+    "branch": "codex/task-002-01-desktop",
+    "diff": "M docs/research/notebook-host/TASK-002-01.md\n M tests/notebook-host-api/README.md\n M tests/notebook-host-api/prepare.mjs\n?? tests/notebook-host-api/execution-auto.cjs",
+    "node": "v24.14.1",
+    "hashes": {
+      "package.json": "04d6f5100c67d133a194e14e847264ad033639a5969112d37670da894a5da7c7",
+      "extension.cjs": "d75bf423d0df234081657d8d019e03ba26636e64023a5a9b54d50df04b40dd9f",
+      "model.cjs": "4057e30f336b85e9d5f2396fd02d8f4ede6f8d34ff08bb91a078504da07473a5",
+      "fixtures.cjs": "b7d7f545274d09f2eb4bc2bc92bbc36c7f0c55ceb5126e18b4512f5c7401cd5d",
+      "smoke.cjs": "bcab7d623d0699a393d6eb8fdfa4110e9736e205eb631547ff07c657cb3138c8",
+      "automated.cjs": "56c0dfeb93832975a062531f321a87ffc16d3d3c5d7b0a1f4f1b3068765b6a4c",
+      "structure.cjs": "385c8e7023c8f3de4112aff902cc624c9d637701ce4d5eeb77b1c3536258eec1",
+      "structure-delete.cjs": "7655ba5fa7fe816b3fbfcedb2e073be3e8045bacfe0c1077cf6bf5bce1abe755",
+      "structure-ids.cjs": "7644c4ee2db15833f59bf8c6d6440f33417d0bf9e7a5ddfdf4e66caeb67e41c8",
+      "recovery.cjs": "265ce3a3b2f3a2ba57008b800ba9ecf2a02a28e7d19e122c7db5cd8f402e51f7",
+      "execution-auto.cjs": "db7c77766c9045ff3a0d7c284e4afa94414a6341b85e99e643f166542d6b54cd"
+    }
+  },
+  "plannedCases": [
+    "D4-running-metadata-setting",
+    "D4-running-source-changed",
+    "D5-queued-delete",
+    "D5-running-delete",
+    "D5-queued-close",
+    "D5-running-close"
+  ],
+  "method": {
+    "publicStandardCommands": [
+      "notebook.cell.execute",
+      "notebook.execute",
+      "notebook.cell.delete"
+    ],
+    "customKernel": false,
+    "customRunAll": false,
+    "internalModules": false,
+    "automaticWaitSeconds": 20,
+    "manualWaitSeconds": 90,
+    "dedicatedProfile": "config/task-002-01-execution-auto",
+    "profileSettings": {
+      "extensions.autoUpdate": "off",
+      "extensions.autoCheckUpdates": false,
+      "update.mode": "none",
+      "window.restoreWindows": "none",
+      "workbench.startupEditor": "none",
+      "files.autoSave": "off",
+      "python.defaultInterpreterPath": "C:\\Python314\\python.exe",
+      "workbench.editorAssociations": {
+        "*.ipynb": "jupyter-notebook"
+      },
+      "notebook.confirmDeleteRunningCell": false
+    }
+  },
+  "checks": {
+    "syntaxAndPreparation": {
+      "command": "node tests/notebook-host-api/prepare.mjs",
+      "exitCode": 0,
+      "log": "logs/task-002-01/prepare-execution-auto-final.txt"
+    },
+    "model": {
+      "command": "node --test tests/notebook-host-api/model.test.cjs",
+      "exitCode": 0,
+      "passed": 1,
+      "failed": 0,
+      "actualOutput": "✔ diagnostic identity, metadata, serialization and stale-target protection (35.0292ms)\nℹ tests 1\nℹ suites 0\nℹ pass 1\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 173.9919\n",
+      "log": "logs/task-002-01/model-execution-auto.txt"
+    },
+    "diff": {
+      "command": "git diff --check",
+      "exitCode": 0
+    }
+  },
+  "launch": {
+    "command": "code.cmd --new-window --wait --verbose --skip-welcome --skip-release-notes --disable-workspace-trust --disable-extension=google.colab --user-data-dir $REPO/config/task-002-01-execution-auto --extensionDevelopmentPath $REPO/tests/notebook-host-api/dist --extensionTestsPath $REPO/tests/notebook-host-api/dist/execution-auto.cjs $REPO/tests/notebook-host-api/dist/probe.code-workspace",
+    "exitCode": 0,
+    "log": "logs/task-002-01/execution-auto-cli.txt",
+    "relevantLogLines": [
+      "[main 2026-10-24T05:49:55.115Z] checkInnoSetupMutex: vscode-updating is held, waiting up to 30s for setup to finish...",
+      "[main 2026-10-24T05:50:26.015Z] checkInnoSetupMutex: vscode-updating still held after 30900ms, giving up",
+      "[main 2026-10-24T05:50:26.015Z] Error: Code is currently being updated. Please wait for the update to complete before launching."
+    ],
+    "resultFileCreated": false,
+    "testStarted": false,
+    "status": "未実施（VS Code更新中のため起動拒否）",
+    "launcherZeroMeansTestSuccess": false
+  },
+  "changesNotMade": [
+    "IDE update/installation/termination",
+    "product code",
+    "Current Specification",
+    "formal metadata schema",
+    "TASK-002-02 and later",
+    "Kiro"
+  ],
+  "next": "VS Code更新完了後、同じ標準実行コマンド診断を実行し、必要なカーネル選択だけをユーザーへ案内する。現時点でテスト操作依頼なし。",
+  "overallStatus": "進行中",
+  "allCasesAccepted": false
+}

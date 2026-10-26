@@ -1,0 +1,76 @@
+{
+  "schema_version": 1,
+  "recorded_on_jst": "2026-10-26",
+  "scope": "TASK-003 minimum package checkpoint; not full task acceptance",
+  "integration": {
+    "task_head_before_merge": "a8a4a6accf9d2753a5e0ea178d7708f453d22ead",
+    "main_input": "1a87aef8829bb50b6bdaf43c82e352656c911cc8",
+    "conflicts": [],
+    "resolution": "Automatic merge; no product or test source edits, main changes preserved.",
+    "verified_merge_commit": "befba2d89446431950ae46e3ff4cbc38c07a258c",
+    "tested_tree_sha": "05c18518ede73cd80d1a445746d37076e7c84164",
+    "commit_metadata_recreated_after_tests": "GitHub rejected private-email commit metadata. Recreated unpublished merge with noreply email; git diff --exit-code confirmed identical tree to the tested merge."
+  },
+  "environment": {
+    "os": "Linux",
+    "machine": "x86_64",
+    "build_python": "3.12.14",
+    "setuptools": "84.0.0",
+    "pip": "26.2.1",
+    "wheel": "0.48.0"
+  },
+  "tests": [
+    {
+      "command": "python -m unittest discover -s tests/unit/python -p 'test_*.py' -v",
+      "runtime_python": "3.12.14",
+      "unit": 1,
+      "api_integration": 8,
+      "passed": 9,
+      "failures": 0,
+      "errors": 0,
+      "seconds": 7.3
+    },
+    {
+      "command": "ZIZAI_TEST_PYTHON=/usr/bin/python3.13 python -m unittest discover -s tests/unit/python -p 'test_*.py' -v",
+      "runtime_python": "3.13.5",
+      "unit": 1,
+      "api_integration": 8,
+      "passed": 9,
+      "failures": 0,
+      "errors": 0,
+      "seconds": 12.737
+    }
+  ],
+  "additional_checks": {
+    "relative_markdown_references": 22,
+    "missing_references": 0,
+    "added_json_parses": true,
+    "diff_whitespace_clean": true,
+    "open_pr_inline_review_threads": 0
+  },
+  "tested_files_sha256": {
+    "pyproject.toml": "fedb99e4e585ec9a1b138afde19acb3d658ffc9cb45f0a1e19396529087ac494",
+    "apps/core/README.md": "93cd55a7f424307c59fed30ceba5a61030823e038e490824a5d54afb10f806ab",
+    "apps/core/src/zizai/__init__.py": "774441fe56027324008e05b7423d11a8c532ba3213b9973c78c2e84b71e5db14",
+    "apps/core/src/zizai/core/__init__.py": "eb09089900e423502c37eb21c2e0e7fc0c09a7d96bbfef49ec49d6188a1ae259",
+    "apps/connectors/src/zizai/connectors/__init__.py": "d7d849d088c78b7c1f6e897b4d78d4ec5c43552c33eed34b8941f709378307bc",
+    "tests/unit/python/package_test_support.py": "8bf4dddb0bbfa5129f37d0dca29d9296dbb9625ee747776c74431e2e71cadbc2",
+    "tests/unit/python/test_package_distribution.py": "7f29e8986e186ecf9d4597091b66ea0c006541fa9451873da4f18c4e2d1a6710",
+    "tests/unit/python/test_notebook_handoff.py": "d55e711776c7196daf224fd13172d8e02081e3034e00f97687c19f3c4f827b05",
+    "tests/manual/TASK-003-05-python.ipynb": "76ebbd9ba583345c9db904fa9a4b20060719752a256640298e9ba25777f214e1"
+  },
+  "limits_and_remaining_work": [
+    "No VS Code, ipykernel or Windows run in this cloud checkpoint. Existing Windows results are historical independent evidence.",
+    "User manual UI K01-K04 is not executed and still awaits the desktop preparation/start process. Historical agent GUI operations do not satisfy it.",
+    "K05 needs an already available uninstalled verification kernel; none is established by this checkpoint.",
+    "K06, actual shared functions, official connector APIs, SDK absence/failure and Python contract resources require their respective specifications and implementations.",
+    "Real package updates, final supported Python/dependency versions, license closure and VSIX/ZIP release validation remain outside this checkpoint.",
+    "Current coding-rules.md and refactor-policy.md remain absent; no conformance claim is made.",
+    "Issues #3 and #21-#24 remain open; merging this minimum does not complete TASK-003."
+  ],
+  "review": {
+    "result": "Ready to merge for minimum scope; no Critical/Important findings.",
+    "minor_remaining": "After initial wheel-build failure, later fixture preparation can emit FileExistsError and obscure the original error. Track in #23; no successful-run defect observed.",
+    "scope": "Read-only review of all 19 incoming files and available rules; no mutation or additional test run."
+  }
+}

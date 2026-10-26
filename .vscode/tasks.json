@@ -49,6 +49,15 @@
         "insets"
       ],
       "problemMatcher": []
+    },
+    {
+      "label": "TASK-002-01: prepare Notebook Host API probe",
+      "type": "process",
+      "command": "node",
+      "args": [
+        "tests/notebook-host-api/prepare.mjs"
+      ],
+      "problemMatcher": []
     }
   ]
 }
