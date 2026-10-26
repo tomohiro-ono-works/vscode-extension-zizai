@@ -125,5 +125,13 @@
     "lineEndings": "Earlier sourceChanges hashes describe original working bytes. Integration checkout may use CRLF; canonical hashes here describe Git blob bytes. Historical build hashes are not rewritten.",
     "newDesktopExecution": false,
     "newKernelExecution": false
+  },
+  "integrationReview": {
+    "method": "independent read-only review; historical evidence sampled",
+    "finding": "normal-window command lacked a notebook argument and could miss activation on a fresh profile",
+    "resolution": "append existing generated bootstrap notebook to normal-window command; extension activation condition verified from manifest and generation code",
+    "codeChange": false,
+    "GUIReverified": false,
+    "scope": "checkpoint only; pending manual conditions and historical mismatches remain"
   }
 }
