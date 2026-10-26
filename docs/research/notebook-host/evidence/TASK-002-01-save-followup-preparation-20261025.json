@@ -1,0 +1,1801 @@
+{
+  "asOf": "2026-10-24T16:30:58.961Z",
+  "timezone": "Asia/Tokyo",
+  "scope": "TASK-002-01 D4 queued-edit/re-request save JSON and D5 queued-close save only",
+  "parentCommit": "0ad46a32576141c733c655e94986c4ab5b383199",
+  "branch": "codex/task-002-01-desktop",
+  "uncommitted": " M docs/research/notebook-host/TASK-002-01.md\n M docs/research/notebook-host/evidence/TASK-002-01-sources.json\n M tests/manual/TASK-002-01-notebook-host.md\n M tests/notebook-host-api/README.md\n M tests/notebook-host-api/execution-auto.cjs\n M tests/notebook-host-api/prepare.mjs\n?? docs/research/notebook-host/evidence/TASK-002-01-save-followup-preparation-20261025.json\n?? tests/notebook-host-api/execution-save-followup-ui.cjs\n?? tests/notebook-host-api/execution-save-followup.cjs\n",
+  "sourceHashes": {
+    "tests/notebook-host-api/execution-auto.cjs": "0f96926564b9ae659f272907978aaa447f8cb07863cdb6a23777050ed5e33726",
+    "tests/notebook-host-api/execution-save-followup.cjs": "169be18860e26d071e8e528423c135f0a03378cab7848a0009d0766c34bc89ca",
+    "tests/notebook-host-api/execution-save-followup-ui.cjs": "0fa668b39725f8577436557171726637b52c497e28572756b01da7e41edfb7cc",
+    "tests/notebook-host-api/prepare.mjs": "7abdff8a0deb0dcd8a4a6ed8462eb97f303e18826bdbeee14d302faab1e0db13"
+  },
+  "firstLaunch": {
+    "command": "code.cmd --new-window --extensionTestsPath <runner> <synthetic.ipynb>",
+    "result": "CLI exit 0; diagnostic extension activated but result file not created. Not counted as test execution.",
+    "log": "logs/task-002-01/execution-save-followup-cli.txt",
+    "adjustment": "Use --verbose --wait, explicit = arguments and dedicated workspace; test runner start then observed. Cause of first invocation not established."
+  },
+  "automaticAttempt": {
+    "command": "code.cmd --verbose --new-window --wait --disable-workspace-trust --disable-extension=google.colab --user-data-dir=<execution-auto> --extensionDevelopmentPath=<dist> --extensionTestsPath=<execution-save-followup.cjs> <probe.code-workspace>",
+    "log": "logs/task-002-01/execution-save-followup-fixed-cli.txt",
+    "result": {
+      "status": "failed",
+      "at": "2026-10-24T16:25:57.806Z",
+      "vscode": "1.143.1",
+      "build": {
+        "root": "$REPO",
+        "workspace": "$REPO\\results\\task-002-01\\workspace",
+        "preparedAt": "2026-10-24T16:23:50.581Z",
+        "base": "0ad46a32576141c733c655e94986c4ab5b383199",
+        "branch": "codex/task-002-01-desktop",
+        "diff": "M tests/notebook-host-api/execution-auto.cjs\n M tests/notebook-host-api/prepare.mjs\n?? tests/notebook-host-api/execution-save-followup.cjs",
+        "node": "v24.14.1",
+        "hashes": {
+          "package.json": "04d6f5100c67d133a194e14e847264ad033639a5969112d37670da894a5da7c7",
+          "extension.cjs": "22f8a0c27ea64072ede2b6a07d664dff0481217b836b52c6e6c3f91eb395c7b6",
+          "model.cjs": "4057e30f336b85e9d5f2396fd02d8f4ede6f8d34ff08bb91a078504da07473a5",
+          "fixtures.cjs": "fb5ac112b7b30f1328b00deadb11700db663c12a63eb7e4310afc1d6b167357e",
+          "smoke.cjs": "bcab7d623d0699a393d6eb8fdfa4110e9736e205eb631547ff07c657cb3138c8",
+          "automated.cjs": "56c0dfeb93832975a062531f321a87ffc16d3d3c5d7b0a1f4f1b3068765b6a4c",
+          "structure.cjs": "385c8e7023c8f3de4112aff902cc624c9d637701ce4d5eeb77b1c3536258eec1",
+          "structure-delete.cjs": "7655ba5fa7fe816b3fbfcedb2e073be3e8045bacfe0c1077cf6bf5bce1abe755",
+          "structure-ids.cjs": "7644c4ee2db15833f59bf8c6d6440f33417d0bf9e7a5ddfdf4e66caeb67e41c8",
+          "structure-focus.cjs": "b0951cd8f78b9bfa43865d1af143f6a0b506f0c29cc13f60b3fe4719849d3dc5",
+          "recovery.cjs": "265ce3a3b2f3a2ba57008b800ba9ecf2a02a28e7d19e122c7db5cd8f402e51f7",
+          "execution-auto.cjs": "0f96926564b9ae659f272907978aaa447f8cb07863cdb6a23777050ed5e33726",
+          "execution-save-followup.cjs": "169be18860e26d071e8e528423c135f0a03378cab7848a0009d0766c34bc89ca",
+          "running-close.cjs": "2ed3ea3cbf3a2c98d1cebf6af5a9c52d1de752e3cbf7153e196e88f6878d3d67"
+        }
+      },
+      "scope": "TASK-002-01 D4/D5 standard command execution; not a custom Run All/kernel",
+      "waitSeconds": 20,
+      "manualFixtureWaitSeconds": 90,
+      "options": {
+        "d4": false,
+        "d4Queued": true,
+        "d5": [
+          "D5-queued-close"
+        ],
+        "resultName": "execution-save-followup-result.local.json",
+        "environmentCommand": "notebook.execute",
+        "kernelTimeoutMs": 45000,
+        "automaticOnly": true
+      },
+      "results": [
+        {
+          "case": "environment-selected-standard-kernel",
+          "before": {
+            "object": 1,
+            "version": 1,
+            "dirty": true,
+            "closed": false,
+            "cells": [
+              {
+                "object": 4,
+                "textObject": 5,
+                "uri": "vscode-notebook-cell:$DIAGNOSTIC_WORKSPACE/USER-kernel-bootstrap-20261024.ipynb#W1sZmlsZQ%3D%3D",
+                "index": 0,
+                "source": "import sys, importlib.metadata as m, json\nprint(json.dumps({'python': sys.version, 'ipykernel': m.version('ipykernel'), 'jupyter_client': m.version('jupyter_client')}, indent=2))\n",
+                "metadata": {
+                  "execution_count": null,
+                  "metadata": {
+                    "outsideDiagnosticOwner": {
+                      "sentinel": "keep-environment"
+                    },
+                    "task00201Diagnostic": {
+                      "label": "environment",
+                      "draft": 0,
+                      "committed": 0,
+                      "burst": 0,
+                      "probeOnly": true
+                    }
+                  },
+                  "id": "task00201-D4-environment-0"
+                },
+                "summary": {
+                  "timing": {
+                    "$undefined": true
+                  },
+                  "executionOrder": {
+                    "$undefined": true
+                  },
+                  "success": {
+                    "$undefined": true
+                  }
+                },
+                "syntheticTextOutput": ""
+              }
+            ]
+          },
+          "kernelSelectionGate": {
+            "status": "waiting-for-standard-kernel-output",
+            "timeoutMs": 45000,
+            "userSelectionInThisTestWindowMayBeRequired": true
+          }
+        }
+      ],
+      "commands": [
+        {
+          "command": "notebook.execute",
+          "argument": {
+            "$mid": 1,
+            "fsPath": "$REPO\\results\\task-002-01\\workspace\\USER-kernel-bootstrap-20261024.ipynb",
+            "_sep": 1,
+            "external": "file:$DIAGNOSTIC_WORKSPACE/USER-kernel-bootstrap-20261024.ipynb",
+            "path": "/$REPO/results/task-002-01/workspace/USER-kernel-bootstrap-20261024.ipynb",
+            "scheme": "file"
+          },
+          "requestedAt": "2026-10-24T16:26:01.990Z",
+          "settled": true,
+          "finishedAt": "2026-10-24T16:26:47.100Z",
+          "error": "Canceled: Canceled"
+        }
+      ],
+      "fixtureSetup": [
+        {
+          "case": "D4-environment-kernel-check",
+          "at": "2026-10-24T16:26:01.733Z",
+          "target": "$REPO\\results\\task-002-01\\workspace\\USER-kernel-bootstrap-20261024.ipynb",
+          "beforeReset": {
+            "object": 1,
+            "version": 0,
+            "dirty": false,
+            "closed": false,
+            "cells": [
+              {
+                "object": 2,
+                "textObject": 3,
+                "uri": "vscode-notebook-cell:$DIAGNOSTIC_WORKSPACE/USER-kernel-bootstrap-20261024.ipynb#W0sZmlsZQ%3D%3D",
+                "index": 0,
+                "source": "import time\nprint('D5 running started', flush=True)\ntime.sleep(20)\nprint('D5 running finished', flush=True)\n",
+                "metadata": {
+                  "execution_count": null,
+                  "metadata": {
+                    "outsideDiagnosticOwner": {
+                      "sentinel": "keep-running"
+                    },
+                    "task00201Diagnostic": {
+                      "burst": 0,
+                      "committed": 0,
+                      "draft": 0,
+                      "label": "running",
+                      "probeOnly": true
+                    }
+                  },
+                  "id": "ac1eeb49"
+                },
+                "summary": {
+                  "timing": {
+                    "$undefined": true
+                  },
+                  "executionOrder": {
+                    "$undefined": true
+                  },
+                  "success": {
+                    "$undefined": true
+                  }
+                },
+                "syntheticTextOutput": "D5 running started\n"
+              }
+            ]
+          },
+          "returned": true,
+          "afterReset": {
+            "object": 1,
+            "version": 1,
+            "dirty": true,
+            "closed": false,
+            "cells": [
+              {
+                "object": 4,
+                "textObject": 5,
+                "uri": "vscode-notebook-cell:$DIAGNOSTIC_WORKSPACE/USER-kernel-bootstrap-20261024.ipynb#W1sZmlsZQ%3D%3D",
+                "index": 0,
+                "source": "import sys, importlib.metadata as m, json\nprint(json.dumps({'python': sys.version, 'ipykernel': m.version('ipykernel'), 'jupyter_client': m.version('jupyter_client')}, indent=2))\n",
+                "metadata": {
+                  "execution_count": null,
+                  "metadata": {
+                    "outsideDiagnosticOwner": {
+                      "sentinel": "keep-environment"
+                    },
+                    "task00201Diagnostic": {
+                      "label": "environment",
+                      "draft": 0,
+                      "committed": 0,
+                      "burst": 0,
+                      "probeOnly": true
+                    }
+                  },
+                  "id": "task00201-D4-environment-0"
+                },
+                "summary": {
+                  "timing": {
+                    "$undefined": true
+                  },
+                  "executionOrder": {
+                    "$undefined": true
+                  },
+                  "success": {
+                    "$undefined": true
+                  }
+                },
+                "syntheticTextOutput": ""
+              }
+            ]
+          },
+          "interpretation": "fixture setup, not the tested D5 deletion; same notebook URI and possibly same object across cases"
+        }
+      ],
+      "unavailable": [
+        "submitted source",
+        "internal execution ID",
+        "kernel stop completion from public summary alone"
+      ],
+      "rawLog": "$REPO\\logs\\task-002-01\\2026-10-24T16-25-58-154Z-27448\\events.jsonl",
+      "extensionActivation": [
+        {
+          "id": "ms-python.python",
+          "version": "2026.10.0",
+          "active": true
+        },
+        {
+          "id": "ms-toolsai.jupyter",
+          "version": "2025.9.1",
+          "active": true
+        }
+      ],
+      "selectedNotebookBackup": "$REPO\\results\\task-002-01\\workspace\\AUTO-bootstrap-before-reset-1792859159267.ipynb",
+      "localConfiguration": {
+        "confirmDeleteRunningCell": false,
+        "undoRedoPerCell": true
+      },
+      "standardCommands": [
+        "workbench.action.focusActiveEditorGroup",
+        "notebook.execute",
+        "notebook.cell.execute",
+        "notebook.cell.quitEdit",
+        "notebook.cell.delete"
+      ],
+      "error": "Error: Timeout: standard kernel output after user selection in this test window (45000ms)",
+      "stack": "Error: Timeout: standard kernel output after user selection in this test window (45000ms)\n    at waitFor ($REPO\\tests\\notebook-host-api\\dist\\execution-auto.cjs:19:69)\n    at Object.run ($REPO\\tests\\notebook-host-api\\dist\\execution-auto.cjs:103:7)"
+    },
+    "events": [
+      {
+        "seq": 1,
+        "at": "2026-10-24T16:25:58.157Z",
+        "elapsedMs": 1.5687,
+        "step": "startup",
+        "kind": "environment",
+        "session": "2026-10-24T16-25-58-154Z-27448",
+        "build": {
+          "root": "$REPO",
+          "workspace": "$REPO\\results\\task-002-01\\workspace",
+          "preparedAt": "2026-10-24T16:23:50.581Z",
+          "base": "0ad46a32576141c733c655e94986c4ab5b383199",
+          "branch": "codex/task-002-01-desktop",
+          "diff": "M tests/notebook-host-api/execution-auto.cjs\n M tests/notebook-host-api/prepare.mjs\n?? tests/notebook-host-api/execution-save-followup.cjs",
+          "node": "v24.14.1",
+          "hashes": {
+            "package.json": "04d6f5100c67d133a194e14e847264ad033639a5969112d37670da894a5da7c7",
+            "extension.cjs": "22f8a0c27ea64072ede2b6a07d664dff0481217b836b52c6e6c3f91eb395c7b6",
+            "model.cjs": "4057e30f336b85e9d5f2396fd02d8f4ede6f8d34ff08bb91a078504da07473a5",
+            "fixtures.cjs": "fb5ac112b7b30f1328b00deadb11700db663c12a63eb7e4310afc1d6b167357e",
+            "smoke.cjs": "bcab7d623d0699a393d6eb8fdfa4110e9736e205eb631547ff07c657cb3138c8",
+            "automated.cjs": "56c0dfeb93832975a062531f321a87ffc16d3d3c5d7b0a1f4f1b3068765b6a4c",
+            "structure.cjs": "385c8e7023c8f3de4112aff902cc624c9d637701ce4d5eeb77b1c3536258eec1",
+            "structure-delete.cjs": "7655ba5fa7fe816b3fbfcedb2e073be3e8045bacfe0c1077cf6bf5bce1abe755",
+            "structure-ids.cjs": "7644c4ee2db15833f59bf8c6d6440f33417d0bf9e7a5ddfdf4e66caeb67e41c8",
+            "structure-focus.cjs": "b0951cd8f78b9bfa43865d1af143f6a0b506f0c29cc13f60b3fe4719849d3dc5",
+            "recovery.cjs": "265ce3a3b2f3a2ba57008b800ba9ecf2a02a28e7d19e122c7db5cd8f402e51f7",
+            "execution-auto.cjs": "0f96926564b9ae659f272907978aaa447f8cb07863cdb6a23777050ed5e33726",
+            "execution-save-followup.cjs": "169be18860e26d071e8e528423c135f0a03378cab7848a0009d0766c34bc89ca",
+            "running-close.cjs": "2ed3ea3cbf3a2c98d1cebf6af5a9c52d1de752e3cbf7153e196e88f6878d3d67"
+          }
+        },
+        "vscode": "1.143.1",
+        "appName": "Visual Studio Code",
+        "platform": "win32",
+        "arch": "x64",
+        "node": "v24.21.0",
+        "electron": "43.7.7",
+        "extensions": [
+          {
+            "id": "ms-toolsai.jupyter",
+            "version": "2025.9.1",
+            "active": false
+          },
+          {
+            "id": "ms-python.python",
+            "version": "2026.10.0",
+            "active": false
+          },
+          {
+            "id": "ms-python.vscode-python-envs",
+            "version": "1.41.2026102301",
+            "active": true
+          },
+          {
+            "id": "vscode.ipynb",
+            "version": "10.0.0",
+            "active": false
+          }
+        ],
+        "notObservable": [
+          "kernel submitted source",
+          "internal execution ID",
+          "kernel cancellation completion from summary alone"
+        ]
+      },
+      {
+        "seq": 2,
+        "at": "2026-10-24T16:25:58.158Z",
+        "elapsedMs": 2.2624,
+        "step": "startup",
+        "kind": "snapshot",
+        "label": "activation",
+        "notebookEvents": 0,
+        "textEvents": 0,
+        "notebooks": [],
+        "pending": []
+      },
+      {
+        "seq": 3,
+        "at": "2026-10-24T16:25:59.908Z",
+        "elapsedMs": 1752.2715,
+        "step": "startup",
+        "kind": "notebook.open",
+        "notebook": {
+          "object": 1,
+          "uri": "file:$DIAGNOSTIC_WORKSPACE/USER-kernel-bootstrap-20261024.ipynb",
+          "type": "jupyter-notebook",
+          "version": 0,
+          "dirty": false,
+          "closed": false,
+          "metadata": {
+            "cells": [],
+            "metadata": {
+              "kernelspec": {
+                "display_name": "Python 3",
+                "language": "python",
+                "name": "python3"
+              },
+              "language_info": {
+                "codemirror_mode": {
+                  "name": "ipython",
+                  "version": 3
+                },
+                "file_extension": ".py",
+                "mimetype": "text/x-python",
+                "name": "python",
+                "nbconvert_exporter": "python",
+                "pygments_lexer": "ipython3",
+                "version": "3.14.3"
+              },
+              "outsideNotebookOwner": {
+                "sentinel": "preserve-notebook"
+              },
+              "task00201Diagnostic": {
+                "case": "D4-environment",
+                "probeOnly": true
+              }
+            },
+            "nbformat": 4,
+            "nbformat_minor": 5,
+            "indentAmount": " "
+          },
+          "cells": [
+            {
+              "object": 2,
+              "notebookObject": 1,
+              "index": 0,
+              "uri": "vscode-notebook-cell:$DIAGNOSTIC_WORKSPACE/USER-kernel-bootstrap-20261024.ipynb#W0sZmlsZQ%3D%3D",
+              "textObject": 3,
+              "textClosed": false,
+              "textVersion": 1,
+              "language": "python",
+              "source": "import time\nprint('D5 running started', flush=True)\ntime.sleep(20)\nprint('D5 running finished', flush=True)\n",
+              "metadata": {
+                "execution_count": null,
+                "metadata": {
+                  "outsideDiagnosticOwner": {
+                    "sentinel": "keep-running"
+                  },
+                  "task00201Diagnostic": {
+                    "burst": 0,
+                    "committed": 0,
+                    "draft": 0,
+                    "label": "running",
+                    "probeOnly": true
+                  }
+                },
+                "id": "ac1eeb49"
+              },
+              "executionSummary": {
+                "timing": {
+                  "$undefined": true
+                },
+                "executionOrder": {
+                  "$undefined": true
+                },
+                "success": {
+                  "$undefined": true
+                }
+              },
+              "outputs": [
+                {
+                  "id": 4,
+                  "metadata": {
+                    "outputType": "stream"
+                  },
+                  "items": [
+                    {
+                      "mime": "application/vnd.code.notebook.stdout",
+                      "bytes": 19,
+                      "sha256": "252a3f26d94d4e242e9269b0d948d9be65f92ce622c0bd111ea4835fb34416ba"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "seq": 4,
+        "at": "2026-10-24T16:26:01.722Z",
+        "elapsedMs": 3566.3191,
+        "step": "startup",
+        "kind": "notebook.change",
+        "metadata": {
+          "$undefined": true
+        },
+        "contentChanges": [
+          {
+            "range": {
+              "start": 0,
+              "end": 1
+            },
+            "added": [
+              {
+                "object": 5,
+                "notebookObject": 1,
+                "index": 0,
+                "uri": "vscode-notebook-cell:$DIAGNOSTIC_WORKSPACE/USER-kernel-bootstrap-20261024.ipynb#W1sZmlsZQ%3D%3D",
+                "textObject": 6,
+                "textClosed": false,
+                "textVersion": 1,
+                "language": "python",
+                "source": "import sys, importlib.metadata as m, json\nprint(json.dumps({'python': sys.version, 'ipykernel': m.version('ipykernel'), 'jupyter_client': m.version('jupyter_client')}, indent=2))\n",
+                "metadata": {
+                  "execution_count": null,
+                  "metadata": {
+                    "outsideDiagnosticOwner": {
+                      "sentinel": "keep-environment"
+                    },
+                    "task00201Diagnostic": {
+                      "label": "environment",
+                      "draft": 0,
+                      "committed": 0,
+                      "burst": 0,
+                      "probeOnly": true
+                    }
+                  },
+                  "id": "task00201-D4-environment-0"
+                },
+                "executionSummary": {
+                  "timing": {
+                    "$undefined": true
+                  },
+                  "executionOrder": {
+                    "$undefined": true
+                  },
+                  "success": {
+                    "$undefined": true
+                  }
+                },
+                "outputs": []
+              }
+            ],
+            "removed": [
+              {
+                "object": 2,
+                "notebookObject": 1,
+                "index": -1,
+                "uri": "vscode-notebook-cell:$DIAGNOSTIC_WORKSPACE/USER-kernel-bootstrap-20261024.ipynb#W0sZmlsZQ%3D%3D",
+                "textObject": 3,
+                "textClosed": false,
+                "textVersion": 1,
+                "language": "python",
+                "source": "import time\nprint('D5 running started', flush=True)\ntime.sleep(20)\nprint('D5 running finished', flush=True)\n",
+                "metadata": {
+                  "execution_count": null,
+                  "metadata": {
+                    "outsideDiagnosticOwner": {
+                      "sentinel": "keep-running"
+                    },
+                    "task00201Diagnostic": {
+                      "burst": 0,
+                      "committed": 0,
+                      "draft": 0,
+                      "label": "running",
+                      "probeOnly": true
+                    }
+                  },
+                  "id": "ac1eeb49"
+                },
+                "executionSummary": {
+                  "timing": {
+                    "$undefined": true
+                  },
+                  "executionOrder": {
+                    "$undefined": true
+                  },
+                  "success": {
+                    "$undefined": true
+                  }
+                },
+                "outputs": [
+                  {
+                    "id": 4,
+                    "metadata": {
+                      "outputType": "stream"
+                    },
+                    "items": [
+                      {
+                        "mime": "application/vnd.code.notebook.stdout",
+                        "bytes": 19,
+                        "sha256": "252a3f26d94d4e242e9269b0d948d9be65f92ce622c0bd111ea4835fb34416ba"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "cellChanges": [],
+        "notebook": {
+          "object": 1,
+          "uri": "file:$DIAGNOSTIC_WORKSPACE/USER-kernel-bootstrap-20261024.ipynb",
+          "type": "jupyter-notebook",
+          "version": 1,
+          "dirty": false,
+          "closed": false,
+          "metadata": {
+            "cells": [],
+            "metadata": {
+              "kernelspec": {
+                "display_name": "Python 3",
+                "language": "python",
+                "name": "python3"
+              },
+              "language_info": {
+                "codemirror_mode": {
+                  "name": "ipython",
+                  "version": 3
+                },
+                "file_extension": ".py",
+                "mimetype": "text/x-python",
+                "name": "python",
+                "nbconvert_exporter": "python",
+                "pygments_lexer": "ipython3",
+                "version": "3.14.3"
+              },
+              "outsideNotebookOwner": {
+                "sentinel": "preserve-notebook"
+              },
+              "task00201Diagnostic": {
+                "case": "D4-environment",
+                "probeOnly": true
+              }
+            },
+            "nbformat": 4,
+            "nbformat_minor": 5,
+            "indentAmount": " "
+          },
+          "cells": [
+            {
+              "object": 5,
+              "notebookObject": 1,
+              "index": 0,
+              "uri": "vscode-notebook-cell:$DIAGNOSTIC_WORKSPACE/USER-kernel-bootstrap-20261024.ipynb#W1sZmlsZQ%3D%3D",
+              "textObject": 6,
+              "textClosed": false,
+              "textVersion": 1,
+              "language": "python",
+              "source": "import sys, importlib.metadata as m, json\nprint(json.dumps({'python': sys.version, 'ipykernel': m.version('ipykernel'), 'jupyter_client': m.version('jupyter_client')}, indent=2))\n",
+              "metadata": {
+                "execution_count": null,
+                "metadata": {
+                  "outsideDiagnosticOwner": {
+                    "sentinel": "keep-environment"
+                  },
+                  "task00201Diagnostic": {
+                    "label": "environment",
+                    "draft": 0,
+                    "committed": 0,
+                    "burst": 0,
+                    "probeOnly": true
+                  }
+                },
+                "id": "task00201-D4-environment-0"
+              },
+              "executionSummary": {
+                "timing": {
+                  "$undefined": true
+                },
+                "executionOrder": {
+                  "$undefined": true
+                },
+                "success": {
+                  "$undefined": true
+                }
+              },
+              "outputs": []
+            }
+          ]
+        }
+      },
+      {
+        "seq": 5,
+        "at": "2026-10-24T16:26:01.726Z",
+        "elapsedMs": 3570.5184,
+        "step": "startup",
+        "kind": "text.close",
+        "object": 3,
+        "uri": "vscode-notebook-cell:$DIAGNOSTIC_WORKSPACE/USER-kernel-bootstrap-20261024.ipynb#W0sZmlsZQ%3D%3D",
+        "closed": true
+      },
+      {
+        "seq": 6,
+        "at": "2026-10-24T16:26:02.052Z",
+        "elapsedMs": 3896.6922,
+        "step": "startup",
+        "kind": "notebook.change",
+        "metadata": {
+          "$undefined": true
+        },
+        "contentChanges": [],
+        "cellChanges": [
+          {
+            "cell": {
+              "object": 5,
+              "notebookObject": 1,
+              "index": 0,
+              "uri": "vscode-notebook-cell:$DIAGNOSTIC_WORKSPACE/USER-kernel-bootstrap-20261024.ipynb#W1sZmlsZQ%3D%3D",
+              "textObject": 6,
+              "textClosed": false,
+              "textVersion": 1,
+              "language": "python",
+              "source": "import sys, importlib.metadata as m, json\nprint(json.dumps({'python': sys.version, 'ipykernel': m.version('ipykernel'), 'jupyter_client': m.version('jupyter_client')}, indent=2))\n",
+              "metadata": {
+                "execution_count": null,
+                "metadata": {
+                  "outsideDiagnosticOwner": {
+                    "sentinel": "keep-environment"
+                  },
+                  "task00201Diagnostic": {
+                    "label": "environment",
+                    "draft": 0,
+                    "committed": 0,
+                    "burst": 0,
+                    "probeOnly": true
+                  }
+                },
+                "id": "task00201-D4-environment-0"
+              },
+              "executionSummary": {
+                "timing": {
+                  "$undefined": true
+                },
+                "executionOrder": {
+                  "$undefined": true
+                },
+                "success": {
+                  "$undefined": true
+                }
+              },
+              "outputs": []
+            },
+            "fields": [
+              "document",
+              "executionSummary",
+              "metadata",
+              "outputs",
+              "cell"
+            ],
+            "document": {
+              "$undefined": true
+            },
+            "metadata": {
+              "$undefined": true
+            },
+            "outputsPresent": false,
+            "executionSummary": {
+              "timing": {
+                "$undefined": true
+              },
+              "executionOrder": {
+                "$undefined": true
+              },
+              "success": {
+                "$undefined": true
+              }
+            }
+          }
+        ],
+        "notebook": {
+          "object": 1,
+          "uri": "file:$DIAGNOSTIC_WORKSPACE/USER-kernel-bootstrap-20261024.ipynb",
+          "type": "jupyter-notebook",
+          "version": 2,
+          "dirty": true,
+          "closed": false,
+          "metadata": {
+            "cells": [],
+            "metadata": {
+              "kernelspec": {
+                "display_name": "Python 3",
+                "language": "python",
+                "name": "python3"
+              },
+              "language_info": {
+                "codemirror_mode": {
+                  "name": "ipython",
+                  "version": 3
+                },
+                "file_extension": ".py",
+                "mimetype": "text/x-python",
+                "name": "python",
+                "nbconvert_exporter": "python",
+                "pygments_lexer": "ipython3",
+                "version": "3.14.3"
+              },
+              "outsideNotebookOwner": {
+                "sentinel": "preserve-notebook"
+              },
+              "task00201Diagnostic": {
+                "case": "D4-environment",
+                "probeOnly": true
+              }
+            },
+            "nbformat": 4,
+            "nbformat_minor": 5,
+            "indentAmount": " "
+          },
+          "cells": [
+            {
+              "object": 5,
+              "notebookObject": 1,
+              "index": 0,
+              "uri": "vscode-notebook-cell:$DIAGNOSTIC_WORKSPACE/USER-kernel-bootstrap-20261024.ipynb#W1sZmlsZQ%3D%3D",
+              "textObject": 6,
+              "textClosed": false,
+              "textVersion": 1,
+              "language": "python",
+              "source": "import sys, importlib.metadata as m, json\nprint(json.dumps({'python': sys.version, 'ipykernel': m.version('ipykernel'), 'jupyter_client': m.version('jupyter_client')}, indent=2))\n",
+              "metadata": {
+                "execution_count": null,
+                "metadata": {
+                  "outsideDiagnosticOwner": {
+                    "sentinel": "keep-environment"
+                  },
+                  "task00201Diagnostic": {
+                    "label": "environment",
+                    "draft": 0,
+                    "committed": 0,
+                    "burst": 0,
+                    "probeOnly": true
+                  }
+                },
+                "id": "task00201-D4-environment-0"
+              },
+              "executionSummary": {
+                "timing": {
+                  "$undefined": true
+                },
+                "executionOrder": {
+                  "$undefined": true
+                },
+                "success": {
+                  "$undefined": true
+                }
+              },
+              "outputs": []
+            }
+          ]
+        }
+      }
+    ],
+    "judgment": "失敗：標準カーネル環境出力が45000ms以内に得られずTimeout。終了時標準commandはCanceled。D4/D5本体は未実施。picker表示や原因は公開ログから断定しない。"
+  },
+  "currentGate": {
+    "command": "code.cmd --verbose --new-window --wait --disable-workspace-trust --disable-extension=google.colab --user-data-dir=<execution-auto> --extensionDevelopmentPath=<dist> --extensionTestsPath=<execution-save-followup-ui.cjs> <save-followup.code-workspace>",
+    "log": "logs/task-002-01/execution-save-followup-ui-cli.txt",
+    "result": {
+      "status": "running",
+      "at": "2026-10-24T16:29:08.862Z",
+      "vscode": "1.143.1",
+      "build": {
+        "root": "$REPO",
+        "workspace": "$REPO\\results\\task-002-01\\workspace",
+        "preparedAt": "2026-10-24T16:28:31.898Z",
+        "base": "0ad46a32576141c733c655e94986c4ab5b383199",
+        "branch": "codex/task-002-01-desktop",
+        "diff": "M tests/manual/TASK-002-01-notebook-host.md\n M tests/notebook-host-api/README.md\n M tests/notebook-host-api/execution-auto.cjs\n M tests/notebook-host-api/prepare.mjs\n?? tests/notebook-host-api/execution-save-followup-ui.cjs\n?? tests/notebook-host-api/execution-save-followup.cjs",
+        "node": "v24.14.1",
+        "hashes": {
+          "package.json": "04d6f5100c67d133a194e14e847264ad033639a5969112d37670da894a5da7c7",
+          "extension.cjs": "22f8a0c27ea64072ede2b6a07d664dff0481217b836b52c6e6c3f91eb395c7b6",
+          "model.cjs": "4057e30f336b85e9d5f2396fd02d8f4ede6f8d34ff08bb91a078504da07473a5",
+          "fixtures.cjs": "fb5ac112b7b30f1328b00deadb11700db663c12a63eb7e4310afc1d6b167357e",
+          "smoke.cjs": "bcab7d623d0699a393d6eb8fdfa4110e9736e205eb631547ff07c657cb3138c8",
+          "automated.cjs": "56c0dfeb93832975a062531f321a87ffc16d3d3c5d7b0a1f4f1b3068765b6a4c",
+          "structure.cjs": "385c8e7023c8f3de4112aff902cc624c9d637701ce4d5eeb77b1c3536258eec1",
+          "structure-delete.cjs": "7655ba5fa7fe816b3fbfcedb2e073be3e8045bacfe0c1077cf6bf5bce1abe755",
+          "structure-ids.cjs": "7644c4ee2db15833f59bf8c6d6440f33417d0bf9e7a5ddfdf4e66caeb67e41c8",
+          "structure-focus.cjs": "b0951cd8f78b9bfa43865d1af143f6a0b506f0c29cc13f60b3fe4719849d3dc5",
+          "recovery.cjs": "265ce3a3b2f3a2ba57008b800ba9ecf2a02a28e7d19e122c7db5cd8f402e51f7",
+          "execution-auto.cjs": "0f96926564b9ae659f272907978aaa447f8cb07863cdb6a23777050ed5e33726",
+          "execution-save-followup.cjs": "169be18860e26d071e8e528423c135f0a03378cab7848a0009d0766c34bc89ca",
+          "execution-save-followup-ui.cjs": "0fa668b39725f8577436557171726637b52c497e28572756b01da7e41edfb7cc",
+          "running-close.cjs": "2ed3ea3cbf3a2c98d1cebf6af5a9c52d1de752e3cbf7153e196e88f6878d3d67"
+        }
+      },
+      "scope": "TASK-002-01 D4/D5 standard command execution; not a custom Run All/kernel",
+      "waitSeconds": 20,
+      "manualFixtureWaitSeconds": 90,
+      "options": {
+        "d4": false,
+        "d4Queued": true,
+        "d5": [
+          "D5-queued-close"
+        ],
+        "resultName": "execution-save-followup-result.local.json",
+        "environmentCommand": "notebook.execute",
+        "kernelTimeoutMs": 600000
+      },
+      "results": [
+        {
+          "case": "environment-selected-standard-kernel",
+          "before": {
+            "object": 1,
+            "version": 1,
+            "dirty": true,
+            "closed": false,
+            "cells": [
+              {
+                "object": 4,
+                "textObject": 5,
+                "uri": "vscode-notebook-cell:$DIAGNOSTIC_WORKSPACE/USER-kernel-bootstrap-20261024.ipynb#W1sZmlsZQ%3D%3D",
+                "index": 0,
+                "source": "import sys, importlib.metadata as m, json\nprint(json.dumps({'python': sys.version, 'ipykernel': m.version('ipykernel'), 'jupyter_client': m.version('jupyter_client')}, indent=2))\n",
+                "metadata": {
+                  "execution_count": null,
+                  "metadata": {
+                    "outsideDiagnosticOwner": {
+                      "sentinel": "keep-environment"
+                    },
+                    "task00201Diagnostic": {
+                      "label": "environment",
+                      "draft": 0,
+                      "committed": 0,
+                      "burst": 0,
+                      "probeOnly": true
+                    }
+                  },
+                  "id": "task00201-D4-environment-0"
+                },
+                "summary": {
+                  "timing": {
+                    "$undefined": true
+                  },
+                  "executionOrder": {
+                    "$undefined": true
+                  },
+                  "success": {
+                    "$undefined": true
+                  }
+                },
+                "syntheticTextOutput": ""
+              }
+            ]
+          },
+          "kernelSelectionGate": {
+            "status": "waiting-for-standard-kernel-output",
+            "timeoutMs": 600000,
+            "userSelectionInThisTestWindowMayBeRequired": true
+          }
+        }
+      ],
+      "commands": [
+        {
+          "command": "notebook.execute",
+          "argument": {
+            "$mid": 1,
+            "fsPath": "$REPO\\results\\task-002-01\\workspace\\USER-kernel-bootstrap-20261024.ipynb",
+            "_sep": 1,
+            "external": "file:$DIAGNOSTIC_WORKSPACE/USER-kernel-bootstrap-20261024.ipynb",
+            "path": "/$REPO/results/task-002-01/workspace/USER-kernel-bootstrap-20261024.ipynb",
+            "scheme": "file"
+          },
+          "requestedAt": "2026-10-24T16:29:15.406Z",
+          "settled": true,
+          "finishedAt": "2026-10-24T16:29:29.903Z",
+          "value": {
+            "$undefined": true
+          }
+        }
+      ],
+      "fixtureSetup": [
+        {
+          "case": "D4-environment-kernel-check",
+          "at": "2026-10-24T16:29:14.938Z",
+          "target": "$REPO\\results\\task-002-01\\workspace\\USER-kernel-bootstrap-20261024.ipynb",
+          "beforeReset": {
+            "object": 1,
+            "version": 0,
+            "dirty": false,
+            "closed": false,
+            "cells": [
+              {
+                "object": 2,
+                "textObject": 3,
+                "uri": "vscode-notebook-cell:$DIAGNOSTIC_WORKSPACE/USER-kernel-bootstrap-20261024.ipynb#W0sZmlsZQ%3D%3D",
+                "index": 0,
+                "source": "import time\nprint('D5 running started', flush=True)\ntime.sleep(20)\nprint('D5 running finished', flush=True)\n",
+                "metadata": {
+                  "execution_count": null,
+                  "metadata": {
+                    "outsideDiagnosticOwner": {
+                      "sentinel": "keep-running"
+                    },
+                    "task00201Diagnostic": {
+                      "burst": 0,
+                      "committed": 0,
+                      "draft": 0,
+                      "label": "running",
+                      "probeOnly": true
+                    }
+                  },
+                  "id": "ac1eeb49"
+                },
+                "summary": {
+                  "timing": {
+                    "$undefined": true
+                  },
+                  "executionOrder": {
+                    "$undefined": true
+                  },
+                  "success": {
+                    "$undefined": true
+                  }
+                },
+                "syntheticTextOutput": "D5 running started\n"
+              }
+            ]
+          },
+          "returned": true,
+          "afterReset": {
+            "object": 1,
+            "version": 1,
+            "dirty": true,
+            "closed": false,
+            "cells": [
+              {
+                "object": 4,
+                "textObject": 5,
+                "uri": "vscode-notebook-cell:$DIAGNOSTIC_WORKSPACE/USER-kernel-bootstrap-20261024.ipynb#W1sZmlsZQ%3D%3D",
+                "index": 0,
+                "source": "import sys, importlib.metadata as m, json\nprint(json.dumps({'python': sys.version, 'ipykernel': m.version('ipykernel'), 'jupyter_client': m.version('jupyter_client')}, indent=2))\n",
+                "metadata": {
+                  "execution_count": null,
+                  "metadata": {
+                    "outsideDiagnosticOwner": {
+                      "sentinel": "keep-environment"
+                    },
+                    "task00201Diagnostic": {
+                      "label": "environment",
+                      "draft": 0,
+                      "committed": 0,
+                      "burst": 0,
+                      "probeOnly": true
+                    }
+                  },
+                  "id": "task00201-D4-environment-0"
+                },
+                "summary": {
+                  "timing": {
+                    "$undefined": true
+                  },
+                  "executionOrder": {
+                    "$undefined": true
+                  },
+                  "success": {
+                    "$undefined": true
+                  }
+                },
+                "syntheticTextOutput": ""
+              }
+            ]
+          },
+          "interpretation": "fixture setup, not the tested D5 deletion; same notebook URI and possibly same object across cases"
+        }
+      ],
+      "unavailable": [
+        "submitted source",
+        "internal execution ID",
+        "kernel stop completion from public summary alone"
+      ],
+      "rawLog": "$REPO\\logs\\task-002-01\\2026-10-24T16-29-09-518Z-7944\\events.jsonl",
+      "extensionActivation": [
+        {
+          "id": "ms-python.python",
+          "version": "2026.10.0",
+          "active": true
+        },
+        {
+          "id": "ms-toolsai.jupyter",
+          "version": "2025.9.1",
+          "active": true
+        }
+      ],
+      "selectedNotebookBackup": "$REPO\\results\\task-002-01\\workspace\\AUTO-bootstrap-before-reset-1792859351317.ipynb",
+      "localConfiguration": {
+        "confirmDeleteRunningCell": false,
+        "undoRedoPerCell": true
+      },
+      "standardCommands": [
+        "workbench.action.focusActiveEditorGroup",
+        "notebook.execute",
+        "notebook.cell.execute",
+        "notebook.cell.quitEdit",
+        "notebook.cell.delete"
+      ]
+    },
+    "events": [
+      {
+        "seq": 1,
+        "at": "2026-10-24T16:29:09.523Z",
+        "elapsedMs": 3.4281,
+        "step": "startup",
+        "kind": "environment",
+        "session": "2026-10-24T16-29-09-518Z-7944",
+        "build": {
+          "root": "$REPO",
+          "workspace": "$REPO\\results\\task-002-01\\workspace",
+          "preparedAt": "2026-10-24T16:28:31.898Z",
+          "base": "0ad46a32576141c733c655e94986c4ab5b383199",
+          "branch": "codex/task-002-01-desktop",
+          "diff": "M tests/manual/TASK-002-01-notebook-host.md\n M tests/notebook-host-api/README.md\n M tests/notebook-host-api/execution-auto.cjs\n M tests/notebook-host-api/prepare.mjs\n?? tests/notebook-host-api/execution-save-followup-ui.cjs\n?? tests/notebook-host-api/execution-save-followup.cjs",
+          "node": "v24.14.1",
+          "hashes": {
+            "package.json": "04d6f5100c67d133a194e14e847264ad033639a5969112d37670da894a5da7c7",
+            "extension.cjs": "22f8a0c27ea64072ede2b6a07d664dff0481217b836b52c6e6c3f91eb395c7b6",
+            "model.cjs": "4057e30f336b85e9d5f2396fd02d8f4ede6f8d34ff08bb91a078504da07473a5",
+            "fixtures.cjs": "fb5ac112b7b30f1328b00deadb11700db663c12a63eb7e4310afc1d6b167357e",
+            "smoke.cjs": "bcab7d623d0699a393d6eb8fdfa4110e9736e205eb631547ff07c657cb3138c8",
+            "automated.cjs": "56c0dfeb93832975a062531f321a87ffc16d3d3c5d7b0a1f4f1b3068765b6a4c",
+            "structure.cjs": "385c8e7023c8f3de4112aff902cc624c9d637701ce4d5eeb77b1c3536258eec1",
+            "structure-delete.cjs": "7655ba5fa7fe816b3fbfcedb2e073be3e8045bacfe0c1077cf6bf5bce1abe755",
+            "structure-ids.cjs": "7644c4ee2db15833f59bf8c6d6440f33417d0bf9e7a5ddfdf4e66caeb67e41c8",
+            "structure-focus.cjs": "b0951cd8f78b9bfa43865d1af143f6a0b506f0c29cc13f60b3fe4719849d3dc5",
+            "recovery.cjs": "265ce3a3b2f3a2ba57008b800ba9ecf2a02a28e7d19e122c7db5cd8f402e51f7",
+            "execution-auto.cjs": "0f96926564b9ae659f272907978aaa447f8cb07863cdb6a23777050ed5e33726",
+            "execution-save-followup.cjs": "169be18860e26d071e8e528423c135f0a03378cab7848a0009d0766c34bc89ca",
+            "execution-save-followup-ui.cjs": "0fa668b39725f8577436557171726637b52c497e28572756b01da7e41edfb7cc",
+            "running-close.cjs": "2ed3ea3cbf3a2c98d1cebf6af5a9c52d1de752e3cbf7153e196e88f6878d3d67"
+          }
+        },
+        "vscode": "1.143.1",
+        "appName": "Visual Studio Code",
+        "platform": "win32",
+        "arch": "x64",
+        "node": "v24.21.0",
+        "electron": "43.7.7",
+        "extensions": [
+          {
+            "id": "ms-toolsai.jupyter",
+            "version": "2025.9.1",
+            "active": false
+          },
+          {
+            "id": "ms-python.python",
+            "version": "2026.10.0",
+            "active": false
+          },
+          {
+            "id": "ms-python.vscode-python-envs",
+            "version": "1.41.2026102301",
+            "active": true
+          },
+          {
+            "id": "vscode.ipynb",
+            "version": "10.0.0",
+            "active": false
+          }
+        ],
+        "notObservable": [
+          "kernel submitted source",
+          "internal execution ID",
+          "kernel cancellation completion from summary alone"
+        ]
+      },
+      {
+        "seq": 2,
+        "at": "2026-10-24T16:29:09.524Z",
+        "elapsedMs": 4.8409,
+        "step": "startup",
+        "kind": "snapshot",
+        "label": "activation",
+        "notebookEvents": 0,
+        "textEvents": 0,
+        "notebooks": [],
+        "pending": []
+      },
+      {
+        "seq": 3,
+        "at": "2026-10-24T16:29:12.182Z",
+        "elapsedMs": 2662.5757,
+        "step": "startup",
+        "kind": "notebook.open",
+        "notebook": {
+          "object": 1,
+          "uri": "file:$DIAGNOSTIC_WORKSPACE/USER-kernel-bootstrap-20261024.ipynb",
+          "type": "jupyter-notebook",
+          "version": 0,
+          "dirty": false,
+          "closed": false,
+          "metadata": {
+            "cells": [],
+            "metadata": {
+              "kernelspec": {
+                "display_name": "Python 3",
+                "language": "python",
+                "name": "python3"
+              },
+              "language_info": {
+                "codemirror_mode": {
+                  "name": "ipython",
+                  "version": 3
+                },
+                "file_extension": ".py",
+                "mimetype": "text/x-python",
+                "name": "python",
+                "nbconvert_exporter": "python",
+                "pygments_lexer": "ipython3",
+                "version": "3.14.3"
+              },
+              "outsideNotebookOwner": {
+                "sentinel": "preserve-notebook"
+              },
+              "task00201Diagnostic": {
+                "case": "D4-environment",
+                "probeOnly": true
+              }
+            },
+            "nbformat": 4,
+            "nbformat_minor": 5,
+            "indentAmount": " "
+          },
+          "cells": [
+            {
+              "object": 2,
+              "notebookObject": 1,
+              "index": 0,
+              "uri": "vscode-notebook-cell:$DIAGNOSTIC_WORKSPACE/USER-kernel-bootstrap-20261024.ipynb#W0sZmlsZQ%3D%3D",
+              "textObject": 3,
+              "textClosed": false,
+              "textVersion": 1,
+              "language": "python",
+              "source": "import time\nprint('D5 running started', flush=True)\ntime.sleep(20)\nprint('D5 running finished', flush=True)\n",
+              "metadata": {
+                "execution_count": null,
+                "metadata": {
+                  "outsideDiagnosticOwner": {
+                    "sentinel": "keep-running"
+                  },
+                  "task00201Diagnostic": {
+                    "burst": 0,
+                    "committed": 0,
+                    "draft": 0,
+                    "label": "running",
+                    "probeOnly": true
+                  }
+                },
+                "id": "ac1eeb49"
+              },
+              "executionSummary": {
+                "timing": {
+                  "$undefined": true
+                },
+                "executionOrder": {
+                  "$undefined": true
+                },
+                "success": {
+                  "$undefined": true
+                }
+              },
+              "outputs": [
+                {
+                  "id": 4,
+                  "metadata": {
+                    "outputType": "stream"
+                  },
+                  "items": [
+                    {
+                      "mime": "application/vnd.code.notebook.stdout",
+                      "bytes": 19,
+                      "sha256": "252a3f26d94d4e242e9269b0d948d9be65f92ce622c0bd111ea4835fb34416ba"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "seq": 4,
+        "at": "2026-10-24T16:29:14.918Z",
+        "elapsedMs": 5398.5215,
+        "step": "startup",
+        "kind": "notebook.change",
+        "metadata": {
+          "$undefined": true
+        },
+        "contentChanges": [
+          {
+            "range": {
+              "start": 0,
+              "end": 1
+            },
+            "added": [
+              {
+                "object": 5,
+                "notebookObject": 1,
+                "index": 0,
+                "uri": "vscode-notebook-cell:$DIAGNOSTIC_WORKSPACE/USER-kernel-bootstrap-20261024.ipynb#W1sZmlsZQ%3D%3D",
+                "textObject": 6,
+                "textClosed": false,
+                "textVersion": 1,
+                "language": "python",
+                "source": "import sys, importlib.metadata as m, json\nprint(json.dumps({'python': sys.version, 'ipykernel': m.version('ipykernel'), 'jupyter_client': m.version('jupyter_client')}, indent=2))\n",
+                "metadata": {
+                  "execution_count": null,
+                  "metadata": {
+                    "outsideDiagnosticOwner": {
+                      "sentinel": "keep-environment"
+                    },
+                    "task00201Diagnostic": {
+                      "label": "environment",
+                      "draft": 0,
+                      "committed": 0,
+                      "burst": 0,
+                      "probeOnly": true
+                    }
+                  },
+                  "id": "task00201-D4-environment-0"
+                },
+                "executionSummary": {
+                  "timing": {
+                    "$undefined": true
+                  },
+                  "executionOrder": {
+                    "$undefined": true
+                  },
+                  "success": {
+                    "$undefined": true
+                  }
+                },
+                "outputs": []
+              }
+            ],
+            "removed": [
+              {
+                "object": 2,
+                "notebookObject": 1,
+                "index": -1,
+                "uri": "vscode-notebook-cell:$DIAGNOSTIC_WORKSPACE/USER-kernel-bootstrap-20261024.ipynb#W0sZmlsZQ%3D%3D",
+                "textObject": 3,
+                "textClosed": false,
+                "textVersion": 1,
+                "language": "python",
+                "source": "import time\nprint('D5 running started', flush=True)\ntime.sleep(20)\nprint('D5 running finished', flush=True)\n",
+                "metadata": {
+                  "execution_count": null,
+                  "metadata": {
+                    "outsideDiagnosticOwner": {
+                      "sentinel": "keep-running"
+                    },
+                    "task00201Diagnostic": {
+                      "burst": 0,
+                      "committed": 0,
+                      "draft": 0,
+                      "label": "running",
+                      "probeOnly": true
+                    }
+                  },
+                  "id": "ac1eeb49"
+                },
+                "executionSummary": {
+                  "timing": {
+                    "$undefined": true
+                  },
+                  "executionOrder": {
+                    "$undefined": true
+                  },
+                  "success": {
+                    "$undefined": true
+                  }
+                },
+                "outputs": [
+                  {
+                    "id": 4,
+                    "metadata": {
+                      "outputType": "stream"
+                    },
+                    "items": [
+                      {
+                        "mime": "application/vnd.code.notebook.stdout",
+                        "bytes": 19,
+                        "sha256": "252a3f26d94d4e242e9269b0d948d9be65f92ce622c0bd111ea4835fb34416ba"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "cellChanges": [],
+        "notebook": {
+          "object": 1,
+          "uri": "file:$DIAGNOSTIC_WORKSPACE/USER-kernel-bootstrap-20261024.ipynb",
+          "type": "jupyter-notebook",
+          "version": 1,
+          "dirty": false,
+          "closed": false,
+          "metadata": {
+            "cells": [],
+            "metadata": {
+              "kernelspec": {
+                "display_name": "Python 3",
+                "language": "python",
+                "name": "python3"
+              },
+              "language_info": {
+                "codemirror_mode": {
+                  "name": "ipython",
+                  "version": 3
+                },
+                "file_extension": ".py",
+                "mimetype": "text/x-python",
+                "name": "python",
+                "nbconvert_exporter": "python",
+                "pygments_lexer": "ipython3",
+                "version": "3.14.3"
+              },
+              "outsideNotebookOwner": {
+                "sentinel": "preserve-notebook"
+              },
+              "task00201Diagnostic": {
+                "case": "D4-environment",
+                "probeOnly": true
+              }
+            },
+            "nbformat": 4,
+            "nbformat_minor": 5,
+            "indentAmount": " "
+          },
+          "cells": [
+            {
+              "object": 5,
+              "notebookObject": 1,
+              "index": 0,
+              "uri": "vscode-notebook-cell:$DIAGNOSTIC_WORKSPACE/USER-kernel-bootstrap-20261024.ipynb#W1sZmlsZQ%3D%3D",
+              "textObject": 6,
+              "textClosed": false,
+              "textVersion": 1,
+              "language": "python",
+              "source": "import sys, importlib.metadata as m, json\nprint(json.dumps({'python': sys.version, 'ipykernel': m.version('ipykernel'), 'jupyter_client': m.version('jupyter_client')}, indent=2))\n",
+              "metadata": {
+                "execution_count": null,
+                "metadata": {
+                  "outsideDiagnosticOwner": {
+                    "sentinel": "keep-environment"
+                  },
+                  "task00201Diagnostic": {
+                    "label": "environment",
+                    "draft": 0,
+                    "committed": 0,
+                    "burst": 0,
+                    "probeOnly": true
+                  }
+                },
+                "id": "task00201-D4-environment-0"
+              },
+              "executionSummary": {
+                "timing": {
+                  "$undefined": true
+                },
+                "executionOrder": {
+                  "$undefined": true
+                },
+                "success": {
+                  "$undefined": true
+                }
+              },
+              "outputs": []
+            }
+          ]
+        }
+      },
+      {
+        "seq": 5,
+        "at": "2026-10-24T16:29:14.931Z",
+        "elapsedMs": 5411.6498,
+        "step": "startup",
+        "kind": "text.close",
+        "object": 3,
+        "uri": "vscode-notebook-cell:$DIAGNOSTIC_WORKSPACE/USER-kernel-bootstrap-20261024.ipynb#W0sZmlsZQ%3D%3D",
+        "closed": true
+      },
+      {
+        "seq": 6,
+        "at": "2026-10-24T16:29:15.642Z",
+        "elapsedMs": 6122.4825,
+        "step": "startup",
+        "kind": "notebook.change",
+        "metadata": {
+          "$undefined": true
+        },
+        "contentChanges": [],
+        "cellChanges": [
+          {
+            "cell": {
+              "object": 5,
+              "notebookObject": 1,
+              "index": 0,
+              "uri": "vscode-notebook-cell:$DIAGNOSTIC_WORKSPACE/USER-kernel-bootstrap-20261024.ipynb#W1sZmlsZQ%3D%3D",
+              "textObject": 6,
+              "textClosed": false,
+              "textVersion": 1,
+              "language": "python",
+              "source": "import sys, importlib.metadata as m, json\nprint(json.dumps({'python': sys.version, 'ipykernel': m.version('ipykernel'), 'jupyter_client': m.version('jupyter_client')}, indent=2))\n",
+              "metadata": {
+                "execution_count": null,
+                "metadata": {
+                  "outsideDiagnosticOwner": {
+                    "sentinel": "keep-environment"
+                  },
+                  "task00201Diagnostic": {
+                    "label": "environment",
+                    "draft": 0,
+                    "committed": 0,
+                    "burst": 0,
+                    "probeOnly": true
+                  }
+                },
+                "id": "task00201-D4-environment-0"
+              },
+              "executionSummary": {
+                "timing": {
+                  "$undefined": true
+                },
+                "executionOrder": {
+                  "$undefined": true
+                },
+                "success": {
+                  "$undefined": true
+                }
+              },
+              "outputs": []
+            },
+            "fields": [
+              "document",
+              "executionSummary",
+              "metadata",
+              "outputs",
+              "cell"
+            ],
+            "document": {
+              "$undefined": true
+            },
+            "metadata": {
+              "$undefined": true
+            },
+            "outputsPresent": false,
+            "executionSummary": {
+              "timing": {
+                "$undefined": true
+              },
+              "executionOrder": {
+                "$undefined": true
+              },
+              "success": {
+                "$undefined": true
+              }
+            }
+          }
+        ],
+        "notebook": {
+          "object": 1,
+          "uri": "file:$DIAGNOSTIC_WORKSPACE/USER-kernel-bootstrap-20261024.ipynb",
+          "type": "jupyter-notebook",
+          "version": 2,
+          "dirty": true,
+          "closed": false,
+          "metadata": {
+            "cells": [],
+            "metadata": {
+              "kernelspec": {
+                "display_name": "Python 3",
+                "language": "python",
+                "name": "python3"
+              },
+              "language_info": {
+                "codemirror_mode": {
+                  "name": "ipython",
+                  "version": 3
+                },
+                "file_extension": ".py",
+                "mimetype": "text/x-python",
+                "name": "python",
+                "nbconvert_exporter": "python",
+                "pygments_lexer": "ipython3",
+                "version": "3.14.3"
+              },
+              "outsideNotebookOwner": {
+                "sentinel": "preserve-notebook"
+              },
+              "task00201Diagnostic": {
+                "case": "D4-environment",
+                "probeOnly": true
+              }
+            },
+            "nbformat": 4,
+            "nbformat_minor": 5,
+            "indentAmount": " "
+          },
+          "cells": [
+            {
+              "object": 5,
+              "notebookObject": 1,
+              "index": 0,
+              "uri": "vscode-notebook-cell:$DIAGNOSTIC_WORKSPACE/USER-kernel-bootstrap-20261024.ipynb#W1sZmlsZQ%3D%3D",
+              "textObject": 6,
+              "textClosed": false,
+              "textVersion": 1,
+              "language": "python",
+              "source": "import sys, importlib.metadata as m, json\nprint(json.dumps({'python': sys.version, 'ipykernel': m.version('ipykernel'), 'jupyter_client': m.version('jupyter_client')}, indent=2))\n",
+              "metadata": {
+                "execution_count": null,
+                "metadata": {
+                  "outsideDiagnosticOwner": {
+                    "sentinel": "keep-environment"
+                  },
+                  "task00201Diagnostic": {
+                    "label": "environment",
+                    "draft": 0,
+                    "committed": 0,
+                    "burst": 0,
+                    "probeOnly": true
+                  }
+                },
+                "id": "task00201-D4-environment-0"
+              },
+              "executionSummary": {
+                "timing": {
+                  "$undefined": true
+                },
+                "executionOrder": {
+                  "$undefined": true
+                },
+                "success": {
+                  "$undefined": true
+                }
+              },
+              "outputs": []
+            }
+          ]
+        }
+      },
+      {
+        "seq": 7,
+        "at": "2026-10-24T16:29:29.899Z",
+        "elapsedMs": 20379.4794,
+        "step": "startup",
+        "kind": "notebook.change",
+        "metadata": {
+          "$undefined": true
+        },
+        "contentChanges": [],
+        "cellChanges": [
+          {
+            "cell": {
+              "object": 5,
+              "notebookObject": 1,
+              "index": 0,
+              "uri": "vscode-notebook-cell:$DIAGNOSTIC_WORKSPACE/USER-kernel-bootstrap-20261024.ipynb#W1sZmlsZQ%3D%3D",
+              "textObject": 6,
+              "textClosed": false,
+              "textVersion": 1,
+              "language": "python",
+              "source": "import sys, importlib.metadata as m, json\nprint(json.dumps({'python': sys.version, 'ipykernel': m.version('ipykernel'), 'jupyter_client': m.version('jupyter_client')}, indent=2))\n",
+              "metadata": {
+                "execution_count": null,
+                "metadata": {
+                  "outsideDiagnosticOwner": {
+                    "sentinel": "keep-environment"
+                  },
+                  "task00201Diagnostic": {
+                    "label": "environment",
+                    "draft": 0,
+                    "committed": 0,
+                    "burst": 0,
+                    "probeOnly": true
+                  }
+                },
+                "id": "task00201-D4-environment-0"
+              },
+              "executionSummary": {
+                "timing": {
+                  "$undefined": true
+                },
+                "executionOrder": {
+                  "$undefined": true
+                },
+                "success": {
+                  "$undefined": true
+                }
+              },
+              "outputs": []
+            },
+            "fields": [
+              "document",
+              "executionSummary",
+              "metadata",
+              "outputs",
+              "cell"
+            ],
+            "document": {
+              "$undefined": true
+            },
+            "metadata": {
+              "$undefined": true
+            },
+            "outputsPresent": false,
+            "executionSummary": {
+              "timing": {
+                "$undefined": true
+              },
+              "executionOrder": {
+                "$undefined": true
+              },
+              "success": {
+                "$undefined": true
+              }
+            }
+          }
+        ],
+        "notebook": {
+          "object": 1,
+          "uri": "file:$DIAGNOSTIC_WORKSPACE/USER-kernel-bootstrap-20261024.ipynb",
+          "type": "jupyter-notebook",
+          "version": 3,
+          "dirty": true,
+          "closed": false,
+          "metadata": {
+            "cells": [],
+            "metadata": {
+              "kernelspec": {
+                "display_name": "Python 3",
+                "language": "python",
+                "name": "python3"
+              },
+              "language_info": {
+                "codemirror_mode": {
+                  "name": "ipython",
+                  "version": 3
+                },
+                "file_extension": ".py",
+                "mimetype": "text/x-python",
+                "name": "python",
+                "nbconvert_exporter": "python",
+                "pygments_lexer": "ipython3",
+                "version": "3.14.3"
+              },
+              "outsideNotebookOwner": {
+                "sentinel": "preserve-notebook"
+              },
+              "task00201Diagnostic": {
+                "case": "D4-environment",
+                "probeOnly": true
+              }
+            },
+            "nbformat": 4,
+            "nbformat_minor": 5,
+            "indentAmount": " "
+          },
+          "cells": [
+            {
+              "object": 5,
+              "notebookObject": 1,
+              "index": 0,
+              "uri": "vscode-notebook-cell:$DIAGNOSTIC_WORKSPACE/USER-kernel-bootstrap-20261024.ipynb#W1sZmlsZQ%3D%3D",
+              "textObject": 6,
+              "textClosed": false,
+              "textVersion": 1,
+              "language": "python",
+              "source": "import sys, importlib.metadata as m, json\nprint(json.dumps({'python': sys.version, 'ipykernel': m.version('ipykernel'), 'jupyter_client': m.version('jupyter_client')}, indent=2))\n",
+              "metadata": {
+                "execution_count": null,
+                "metadata": {
+                  "outsideDiagnosticOwner": {
+                    "sentinel": "keep-environment"
+                  },
+                  "task00201Diagnostic": {
+                    "label": "environment",
+                    "draft": 0,
+                    "committed": 0,
+                    "burst": 0,
+                    "probeOnly": true
+                  }
+                },
+                "id": "task00201-D4-environment-0"
+              },
+              "executionSummary": {
+                "timing": {
+                  "$undefined": true
+                },
+                "executionOrder": {
+                  "$undefined": true
+                },
+                "success": {
+                  "$undefined": true
+                }
+              },
+              "outputs": []
+            }
+          ]
+        }
+      }
+    ],
+    "windowTitlePrefix": "TASK-002-01 保存追加確認",
+    "notebook": "USER-kernel-bootstrap-20261024.ipynb",
+    "codePrefix": "import sys, importlib.metadata as m, json",
+    "userAction": "必要なら右上からPython3.14.3を選択し、Notebook上部Run Allを1回。最初の環境出力の後は2条件を自動で採取する。",
+    "state": "準備済み・標準UI選択と初回実行の確認待ち。再開待機上限600000ms。"
+  },
+  "diagnosticChanges": [
+    "結果ファイルを別名にし以前のexecution-auto結果を保持",
+    "D4待機中source変更・同一セル標準再要求・保存JSONの採取を追加",
+    "D5待機中closeだけを修正済みeditor.notebook保存経路で選択",
+    "公開APIでfixtureセルを置換する場合にも標準cell.idを渡す",
+    "標準カーネルの内部IDや送信sourceは取得・推測しない"
+  ],
+  "verification": {
+    "prepare": {
+      "status": "passed",
+      "log": "logs/task-002-01/save-followup-ui-prepare.txt"
+    },
+    "modelTest": {
+      "passed": 1,
+      "failed": 0,
+      "log": "logs/task-002-01/save-followup-model-test.txt"
+    },
+    "runnerStart": "new result timestamp, current options and environment-only waiting gate verified",
+    "kernelExecuted": false,
+    "D4D5BodyExecuted": false
+  },
+  "rawSHA256": {
+    "$REPO\\logs\\task-002-01\\2026-10-24T16-25-58-154Z-27448\\events.jsonl": "ab2495ea27c321522e14b1fe0738378367a6ef6e2d7e29d4891ba66051517ad8",
+    "$REPO\\logs\\task-002-01\\2026-10-24T16-29-09-518Z-7944\\events.jsonl": "7099119a85d1404a3d2d7d2dc467af47ed40037cd6d6e34ce70fa81ce7ce26d8"
+  },
+  "productJudgment": "未判定。製品・仕様・正式契約・TASK-002-02以降・Kiroは対象外。",
+  "issueState": "open",
+  "allCasesAccepted": false
+}

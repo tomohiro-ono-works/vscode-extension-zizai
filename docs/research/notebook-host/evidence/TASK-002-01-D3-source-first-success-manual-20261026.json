@@ -1,0 +1,232 @@
+{
+  "asOf": "2026-10-25T16:46:45.252Z",
+  "localDate": "2026-10-26",
+  "case": "D3-source-first-success",
+  "status": "合格（この診断更新・手動Undo/Redo条件）",
+  "productAcceptance": "未判定",
+  "head": "ac05d202c66de84659e1ebef00742d262b643e27",
+  "vscode": "1.143.1",
+  "diagnosticBuildReference": "TASK-002-01-D3-metadata-first-manual-20261026.json:diagnosticBuild (same extension-host session)",
+  "userReports": [
+    "20になった",
+    "10に戻った、記録した",
+    "20に戻った、記録した"
+  ],
+  "route": {
+    "update": "User invokes diagnostic command; source and metadata mutations use public WorkspaceEdit API",
+    "history": "User instructed source click, Esc, then Ctrl+Z/Ctrl+Y once, plus undo/redo markers",
+    "kernelExecution": false
+  },
+  "rawLog": {
+    "file": "logs/task-002-01/2026-10-25T12-26-17-146Z-13484/events.jsonl",
+    "sha256": "631938d548a66eb8341a008c44818b658249dfcb1a8eff91064b980f48d3d986",
+    "throughSeq": 71,
+    "hashScope": "whole file at capture time; live log may subsequently be appended"
+  },
+  "apiReturn": true,
+  "before": {
+    "object": 16,
+    "version": 0,
+    "dirty": false,
+    "source": "# D3 baseline\nfictional_value = 10\n",
+    "metadata": {
+      "execution_count": null,
+      "metadata": {
+        "outsideDiagnosticOwner": {
+          "sentinel": "keep-D3"
+        },
+        "task00201Diagnostic": {
+          "label": "D3",
+          "draft": 0,
+          "committed": 0,
+          "burst": 0,
+          "probeOnly": true
+        }
+      },
+      "id": "task00201-D3-mixed-0"
+    }
+  },
+  "afterApply": {
+    "object": 16,
+    "version": 3,
+    "dirty": true,
+    "source": "# D3 edited source-first-success\nfictional_value = 20\n",
+    "metadata": {
+      "execution_count": null,
+      "metadata": {
+        "outsideDiagnosticOwner": {
+          "sentinel": "keep-D3"
+        },
+        "task00201Diagnostic": {
+          "label": "D3",
+          "draft": 0,
+          "committed": 0,
+          "burst": 0,
+          "probeOnly": true,
+          "mixed": "source-first-success"
+        }
+      },
+      "id": "task00201-D3-mixed-0"
+    }
+  },
+  "afterUndo": {
+    "object": 16,
+    "version": 6,
+    "dirty": false,
+    "source": "# D3 baseline\nfictional_value = 10\n",
+    "metadata": {
+      "execution_count": null,
+      "metadata": {
+        "outsideDiagnosticOwner": {
+          "sentinel": "keep-D3"
+        },
+        "task00201Diagnostic": {
+          "label": "D3",
+          "draft": 0,
+          "committed": 0,
+          "burst": 0,
+          "probeOnly": true
+        }
+      },
+      "id": "task00201-D3-mixed-0"
+    }
+  },
+  "afterRedo": {
+    "object": 16,
+    "version": 9,
+    "dirty": true,
+    "source": "# D3 edited source-first-success\nfictional_value = 20\n",
+    "metadata": {
+      "execution_count": null,
+      "metadata": {
+        "outsideDiagnosticOwner": {
+          "sentinel": "keep-D3"
+        },
+        "task00201Diagnostic": {
+          "label": "D3",
+          "draft": 0,
+          "committed": 0,
+          "burst": 0,
+          "probeOnly": true,
+          "mixed": "source-first-success"
+        }
+      },
+      "id": "task00201-D3-mixed-0"
+    }
+  },
+  "timeline": [
+    {
+      "seq": 54,
+      "at": "2026-10-25T16:37:01.051Z",
+      "kind": "snapshot",
+      "label": "D3-source-first-success:before"
+    },
+    {
+      "seq": 55,
+      "at": "2026-10-25T16:37:01.052Z",
+      "kind": "apply.request",
+      "label": "D3-source-first-success"
+    },
+    {
+      "seq": 56,
+      "at": "2026-10-25T16:37:01.067Z",
+      "kind": "text.change",
+      "reason": {
+        "$undefined": true
+      }
+    },
+    {
+      "seq": 57,
+      "at": "2026-10-25T16:37:01.069Z",
+      "kind": "notebook.change"
+    },
+    {
+      "seq": 58,
+      "at": "2026-10-25T16:37:01.072Z",
+      "kind": "notebook.change"
+    },
+    {
+      "seq": 59,
+      "at": "2026-10-25T16:37:01.077Z",
+      "kind": "notebook.change"
+    },
+    {
+      "seq": 60,
+      "at": "2026-10-25T16:37:01.079Z",
+      "kind": "apply.return",
+      "label": "D3-source-first-success",
+      "result": true
+    },
+    {
+      "seq": 61,
+      "at": "2026-10-25T16:37:01.079Z",
+      "kind": "snapshot",
+      "label": "D3-source-first-success:after"
+    },
+    {
+      "seq": 62,
+      "at": "2026-10-25T16:43:33.624Z",
+      "kind": "notebook.change"
+    },
+    {
+      "seq": 63,
+      "at": "2026-10-25T16:43:33.630Z",
+      "kind": "text.change",
+      "reason": 1
+    },
+    {
+      "seq": 64,
+      "at": "2026-10-25T16:43:33.632Z",
+      "kind": "notebook.change"
+    },
+    {
+      "seq": 65,
+      "at": "2026-10-25T16:43:33.634Z",
+      "kind": "notebook.change"
+    },
+    {
+      "seq": 66,
+      "at": "2026-10-25T16:43:54.763Z",
+      "kind": "snapshot",
+      "label": "undo"
+    },
+    {
+      "seq": 67,
+      "at": "2026-10-25T16:45:37.838Z",
+      "kind": "text.change",
+      "reason": 2
+    },
+    {
+      "seq": 68,
+      "at": "2026-10-25T16:45:37.840Z",
+      "kind": "notebook.change"
+    },
+    {
+      "seq": 69,
+      "at": "2026-10-25T16:45:37.843Z",
+      "kind": "notebook.change"
+    },
+    {
+      "seq": 70,
+      "at": "2026-10-25T16:45:37.844Z",
+      "kind": "notebook.change"
+    },
+    {
+      "seq": 71,
+      "at": "2026-10-25T16:45:51.336Z",
+      "kind": "snapshot",
+      "label": "redo"
+    }
+  ],
+  "observations": {
+    "bothDataChanged": true,
+    "undoRestoredBoth": true,
+    "redoRestoredBoth": true,
+    "foreignMetadataPreserved": true
+  },
+  "remainingD3Manual": [
+    "metadata-first-success"
+  ],
+  "priorMetadataFirstRedoMismatchRetained": true,
+  "allCasesAccepted": false
+}

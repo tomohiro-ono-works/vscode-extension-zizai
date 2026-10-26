@@ -1,0 +1,312 @@
+{
+  "asOf": "2026-10-25T15:06:19.914Z",
+  "localDate": "2026-10-26",
+  "timezone": "Asia/Tokyo",
+  "scope": "TASK-002-01 D2 metadata-only update, user standard save, tab close and same-path reopen",
+  "case": "D2",
+  "status": "合格（今回の診断・手動経路の観測条件）",
+  "productAcceptance": "未判定",
+  "head": "061bebab373863410e870455f75e1e8670b70cce",
+  "branch": "codex/task-002-01-desktop",
+  "environment": {
+    "vscode": "1.143.1",
+    "platform": "win32",
+    "node": "v24.21.0",
+    "extensions": [
+      {
+        "id": "ms-toolsai.jupyter",
+        "version": "2025.9.1",
+        "active": true
+      },
+      {
+        "id": "ms-python.python",
+        "version": "2026.10.0",
+        "active": false
+      },
+      {
+        "id": "ms-python.vscode-python-envs",
+        "version": "1.41.2026102301",
+        "active": false
+      },
+      {
+        "id": "vscode.ipynb",
+        "version": "10.0.0",
+        "active": true
+      }
+    ],
+    "build": {
+      "root": "C:\\Users\\tomoh\\ドキュメント\\ChatGPT\\vscode-extension-zizai\\task-002-01-desktop",
+      "workspace": "C:\\Users\\tomoh\\ドキュメント\\ChatGPT\\vscode-extension-zizai\\task-002-01-desktop\\results\\task-002-01\\workspace",
+      "preparedAt": "2026-10-25T12:06:42.641Z",
+      "base": "2b4ef78474aea6e0c7ab43c54437169c88f7cafa",
+      "branch": "codex/task-002-01-desktop",
+      "diff": "M docs/research/notebook-host/TASK-002-01.md\n M docs/research/notebook-host/evidence/TASK-002-01-sources.json\n M tests/notebook-host-api/execution-auto.cjs\n M tests/notebook-host-api/execution-save-followup-ui.cjs\n M tests/notebook-host-api/extension.cjs\n?? docs/research/notebook-host/evidence/TASK-002-01-feasibility-20261025.json",
+      "node": "v24.14.1",
+      "hashes": {
+        "package.json": "04d6f5100c67d133a194e14e847264ad033639a5969112d37670da894a5da7c7",
+        "extension.cjs": "988b0e70e4e7d2cad1e0227d21c567d49450063f9e5b18fa6bf2bdfe2206a009",
+        "model.cjs": "4057e30f336b85e9d5f2396fd02d8f4ede6f8d34ff08bb91a078504da07473a5",
+        "fixtures.cjs": "fb5ac112b7b30f1328b00deadb11700db663c12a63eb7e4310afc1d6b167357e",
+        "smoke.cjs": "bcab7d623d0699a393d6eb8fdfa4110e9736e205eb631547ff07c657cb3138c8",
+        "automated.cjs": "56c0dfeb93832975a062531f321a87ffc16d3d3c5d7b0a1f4f1b3068765b6a4c",
+        "structure.cjs": "385c8e7023c8f3de4112aff902cc624c9d637701ce4d5eeb77b1c3536258eec1",
+        "structure-delete.cjs": "7655ba5fa7fe816b3fbfcedb2e073be3e8045bacfe0c1077cf6bf5bce1abe755",
+        "structure-ids.cjs": "7644c4ee2db15833f59bf8c6d6440f33417d0bf9e7a5ddfdf4e66caeb67e41c8",
+        "structure-focus.cjs": "b0951cd8f78b9bfa43865d1af143f6a0b506f0c29cc13f60b3fe4719849d3dc5",
+        "recovery.cjs": "265ce3a3b2f3a2ba57008b800ba9ecf2a02a28e7d19e122c7db5cd8f402e51f7",
+        "execution-auto.cjs": "a730c38318517137fb66647416ce1a2940227c696b93a524ebe2d2db0e5fd06b",
+        "execution-save-followup.cjs": "169be18860e26d071e8e528423c135f0a03378cab7848a0009d0766c34bc89ca",
+        "execution-save-followup-ui.cjs": "82fc0dd9bdd9fe23822d19132549a0dd6114749bf9bead2c0d8ca90c8a62bc1a",
+        "running-close.cjs": "2ed3ea3cbf3a2c98d1cebf6af5a9c52d1de752e3cbf7153e196e88f6878d3d67"
+      }
+    }
+  },
+  "userReports": [
+    "コード変化なし、保存した",
+    "やったけど、何がかわったかわからなかった"
+  ],
+  "route": {
+    "update": "User invokes diagnostic command; actual metadata mutation is public WorkspaceEdit API",
+    "saveAndReopen": "User instructed Ctrl+S, close notebook tab, Ctrl+Shift+T and reopened marker; user reports performed; public events recorded",
+    "kernelExecution": false
+  },
+  "rawLog": {
+    "file": "logs/task-002-01/2026-10-25T12-26-17-146Z-13484/events.jsonl",
+    "sha256": "ce75bfc468570fa1c61af829941b363a84684ff202cc48cc2e034cfd9def70ad",
+    "throughSeq": 19
+  },
+  "observations": {
+    "sourceUnchanged": true,
+    "apiInnerMetadataEqualsSavedCellMetadata": true,
+    "foreignCellMetadataPreserved": true,
+    "foreignNotebookMetadataPreserved": true,
+    "standardCellIdPreserved": true,
+    "draftBefore": 0,
+    "draftAfter": 1,
+    "dirtyBefore": false,
+    "dirtyInChangeEvent": false,
+    "dirtyAfterApply": true,
+    "dirtyAfterSave": false,
+    "dirtyAfterReopen": false,
+    "notebookObjectBefore": 1,
+    "notebookObjectAfterReopen": 7,
+    "notebookVersionBefore": 0,
+    "notebookVersionAfterUpdate": 1,
+    "notebookVersionAfterReopen": 0
+  },
+  "lifecycle": [
+    {
+      "seq": 9,
+      "at": "2026-10-25T15:03:09.534Z",
+      "kind": "notebook.tabClosed"
+    },
+    {
+      "seq": 11,
+      "at": "2026-10-25T15:03:09.617Z",
+      "kind": "notebook.close",
+      "object": 1,
+      "closed": true
+    },
+    {
+      "seq": 13,
+      "at": "2026-10-25T15:03:25.857Z",
+      "kind": "notebook.open",
+      "object": 4,
+      "closed": false
+    },
+    {
+      "seq": 14,
+      "at": "2026-10-25T15:03:46.024Z",
+      "kind": "notebook.tabClosed"
+    },
+    {
+      "seq": 16,
+      "at": "2026-10-25T15:03:46.052Z",
+      "kind": "notebook.close",
+      "object": 4,
+      "closed": true
+    },
+    {
+      "seq": 18,
+      "at": "2026-10-25T15:03:52.177Z",
+      "kind": "notebook.open",
+      "object": 7,
+      "closed": false
+    },
+    {
+      "seq": 19,
+      "at": "2026-10-25T15:04:17.328Z",
+      "kind": "snapshot",
+      "label": "reopened"
+    }
+  ],
+  "saved": {
+    "file": "logs/task-002-01/2026-10-25T12-26-17-146Z-13484/8-saved-D2-manual-ready-20261025.ipynb",
+    "sha256": "052038791830a4a32cb9091968a731796d9a716022a2ae21519f8d09ef85a898",
+    "json": {
+      "cells": [
+        {
+          "cell_type": "code",
+          "execution_count": null,
+          "id": "task00201-D2-save-0",
+          "metadata": {
+            "outsideDiagnosticOwner": {
+              "sentinel": "keep-D2"
+            },
+            "task00201Diagnostic": {
+              "burst": 0,
+              "committed": 0,
+              "draft": 1,
+              "label": "D2",
+              "probeOnly": true
+            }
+          },
+          "outputs": [],
+          "source": [
+            "# D2: metadata-only must preserve this source\n",
+            "fictional_value = 42\n"
+          ]
+        }
+      ],
+      "metadata": {
+        "kernelspec": {
+          "display_name": "Python 3 (ipykernel)",
+          "language": "python",
+          "name": "python3"
+        },
+        "language_info": {
+          "name": "python"
+        },
+        "outsideNotebookOwner": {
+          "sentinel": "preserve-notebook"
+        },
+        "task00201Diagnostic": {
+          "case": "D2-save",
+          "probeOnly": true
+        }
+      },
+      "nbformat": 4,
+      "nbformat_minor": 5
+    }
+  },
+  "reopened": {
+    "object": 7,
+    "uri": "file:///c%3A/Users/tomoh/%E3%83%89%E3%82%AD%E3%83%A5%E3%83%A1%E3%83%B3%E3%83%88/ChatGPT/vscode-extension-zizai/task-002-01-desktop/results/task-002-01/workspace/D2-manual-ready-20261025.ipynb",
+    "type": "jupyter-notebook",
+    "version": 0,
+    "dirty": false,
+    "closed": false,
+    "metadata": {
+      "cells": [],
+      "metadata": {
+        "kernelspec": {
+          "display_name": "Python 3 (ipykernel)",
+          "language": "python",
+          "name": "python3"
+        },
+        "language_info": {
+          "name": "python"
+        },
+        "outsideNotebookOwner": {
+          "sentinel": "preserve-notebook"
+        },
+        "task00201Diagnostic": {
+          "case": "D2-save",
+          "probeOnly": true
+        }
+      },
+      "nbformat": 4,
+      "nbformat_minor": 5,
+      "indentAmount": "  "
+    },
+    "cells": [
+      {
+        "object": 8,
+        "notebookObject": 7,
+        "index": 0,
+        "uri": "vscode-notebook-cell:/c%3A/Users/tomoh/%E3%83%89%E3%82%AD%E3%83%A5%E3%83%A1%E3%83%B3%E3%83%88/ChatGPT/vscode-extension-zizai/task-002-01-desktop/results/task-002-01/workspace/D2-manual-ready-20261025.ipynb#W0sZmlsZQ%3D%3D",
+        "textObject": 9,
+        "textClosed": false,
+        "textVersion": 1,
+        "language": "python",
+        "source": "# D2: metadata-only must preserve this source\nfictional_value = 42\n",
+        "metadata": {
+          "execution_count": null,
+          "metadata": {
+            "outsideDiagnosticOwner": {
+              "sentinel": "keep-D2"
+            },
+            "task00201Diagnostic": {
+              "burst": 0,
+              "committed": 0,
+              "draft": 1,
+              "label": "D2",
+              "probeOnly": true
+            }
+          },
+          "id": "task00201-D2-save-0"
+        },
+        "executionSummary": {
+          "timing": {
+            "$undefined": true
+          },
+          "executionOrder": {
+            "$undefined": true
+          },
+          "success": {
+            "$undefined": true
+          }
+        },
+        "outputs": []
+      }
+    ],
+    "retainedCells": [
+      {
+        "object": 8,
+        "notebookObject": 7,
+        "index": 0,
+        "uri": "vscode-notebook-cell:/c%3A/Users/tomoh/%E3%83%89%E3%82%AD%E3%83%A5%E3%83%A1%E3%83%B3%E3%83%88/ChatGPT/vscode-extension-zizai/task-002-01-desktop/results/task-002-01/workspace/D2-manual-ready-20261025.ipynb#W0sZmlsZQ%3D%3D",
+        "textObject": 9,
+        "textClosed": false,
+        "textVersion": 1,
+        "language": "python",
+        "source": "# D2: metadata-only must preserve this source\nfictional_value = 42\n",
+        "metadata": {
+          "execution_count": null,
+          "metadata": {
+            "outsideDiagnosticOwner": {
+              "sentinel": "keep-D2"
+            },
+            "task00201Diagnostic": {
+              "burst": 0,
+              "committed": 0,
+              "draft": 1,
+              "label": "D2",
+              "probeOnly": true
+            }
+          },
+          "id": "task00201-D2-save-0"
+        },
+        "executionSummary": {
+          "timing": {
+            "$undefined": true
+          },
+          "executionOrder": {
+            "$undefined": true
+          },
+          "success": {
+            "$undefined": true
+          }
+        },
+        "outputs": []
+      }
+    ]
+  },
+  "limits": [
+    "Two close/open cycles were observed; record both rather than assume one.",
+    "Notebook version reset on new object; no continuous cross-open version assumed.",
+    "dirty=false at change notification and true after apply are distinct observation times.",
+    "This verifies the diagnostic conditions only, not product Host behavior."
+  ],
+  "allCasesAccepted": false
+}
