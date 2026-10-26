@@ -259,5 +259,1001 @@
     "D5": "not run",
     "D6": "not run"
   },
-  "conclusion": "Static research finished for this phase; TASK-002-01 remains in progress pending desktop evidence. No formal API or metadata schema adopted."
+  "conclusion": "Static research finished for this phase; TASK-002-01 remains in progress pending desktop evidence. No formal API or metadata schema adopted.",
+  "continuations": [
+    {
+      "checkedAt": "2026-10-22T04:29:01.327724+00:00",
+      "sourceProjectCommit": "f8e0492c5e98274d55fc2ccf3de02ccb754a279e",
+      "branch": "research/task-005-01-boundaries",
+      "method": "Pinned-source SHA-256 comparison, static marker checks, and manual control-flow inspection. No source compilation or behavior test.",
+      "previousSourcesHashVerified": 28,
+      "newSources": [
+        {
+          "reference": "S17",
+          "repository": "microsoft/vscode",
+          "commit": "d956e8a6ac5d904486557eea07e1d6bd62a4d36f",
+          "path": "src/vs/workbench/api/browser/mainThreadBulkEdits.ts",
+          "url": "https://github.com/microsoft/vscode/blob/d956e8a6ac5d904486557eea07e1d6bd62a4d36f/src/vs/workbench/api/browser/mainThreadBulkEdits.ts",
+          "sha256": "bf31b425405065f1c7d14203c157aa0f5aaee9a37dd03ddc8997cdcd2f5c7e05",
+          "gitBlobSha1": "a82377228dc6f315b4ef24538ec3bc7014301940",
+          "bytes": 4381
+        },
+        {
+          "reference": "S18",
+          "repository": "microsoft/vscode",
+          "commit": "d956e8a6ac5d904486557eea07e1d6bd62a4d36f",
+          "path": "src/vs/workbench/contrib/bulkEdit/browser/bulkTextEdits.ts",
+          "url": "https://github.com/microsoft/vscode/blob/d956e8a6ac5d904486557eea07e1d6bd62a4d36f/src/vs/workbench/contrib/bulkEdit/browser/bulkTextEdits.ts",
+          "sha256": "0e0135fdfbc0c6fa4783731ee153db14f2b6823aedd39a962c3c7ced7479d2d6",
+          "gitBlobSha1": "7813739c162824a6d6568982e82a621497f2f8a1",
+          "bytes": 12134
+        }
+      ],
+      "checks": [
+        {
+          "id": "C01",
+          "path": "src/vs/workbench/api/common/extHostBulkEdits.ts",
+          "sha256": "9be46865d7bc69bc270189f22b3732c5a8ce1156032ec0705af40e29f78384d9",
+          "matches": [
+            {
+              "marker": "getNotebookDocumentVersion: () => undefined",
+              "lines": [
+                27
+              ]
+            },
+            {
+              "marker": "WorkspaceEdit.from(edit, this._versionInformationProvider)",
+              "lines": [
+                32
+              ]
+            }
+          ],
+          "result": "matched",
+          "kind": "static-source-text; manually inspected surrounding control flow"
+        },
+        {
+          "id": "C02",
+          "path": "src/vs/workbench/api/common/extHostTypes/workspaceEdit.ts",
+          "sha256": "325fc4e16df3c524a33049ee55657ff4f124ca6fee74e3c0daec5a3eb993e8be",
+          "matches": [
+            {
+              "marker": "// append edit to the end",
+              "lines": [
+                158
+              ]
+            },
+            {
+              "marker": "editType: CellEditType.Metadata, index, metadata: cellMetadata",
+              "lines": [
+                114
+              ]
+            }
+          ],
+          "result": "matched",
+          "kind": "static-source-text; manually inspected surrounding control flow"
+        },
+        {
+          "id": "C03",
+          "path": "src/vs/workbench/contrib/bulkEdit/browser/bulkEditService.ts",
+          "sha256": "0b48ad5c421c459c9c19bf92b8b5b5b600f16066d7f02bcd1d4c4f1a72106e4e",
+          "matches": [
+            {
+              "marker": "Object.getPrototypeOf(this._edits[i - 1])",
+              "lines": [
+                107
+              ]
+            },
+            {
+              "marker": "await this._performTextEdits",
+              "lines": [
+                130
+              ]
+            },
+            {
+              "marker": "await this._performCellEdits",
+              "lines": [
+                132
+              ]
+            },
+            {
+              "marker": "this._logService.error(err);",
+              "lines": [
+                273
+              ]
+            },
+            {
+              "marker": "throw err;",
+              "lines": [
+                274
+              ]
+            }
+          ],
+          "result": "matched",
+          "kind": "static-source-text; manually inspected surrounding control flow"
+        },
+        {
+          "id": "C04",
+          "path": "src/vs/workbench/api/browser/mainThreadBulkEdits.ts",
+          "sha256": "bf31b425405065f1c7d14203c157aa0f5aaee9a37dd03ddc8997cdcd2f5c7e05",
+          "matches": [
+            {
+              "marker": "this._bulkEditService.apply(edits",
+              "lines": [
+                33
+              ]
+            },
+            {
+              "marker": "IGNORING workspace edit",
+              "lines": [
+                34
+              ]
+            },
+            {
+              "marker": "return false;",
+              "lines": [
+                35
+              ]
+            }
+          ],
+          "result": "matched",
+          "kind": "static-source-text; manually inspected surrounding control flow"
+        },
+        {
+          "id": "C05",
+          "path": "src/vs/workbench/contrib/bulkEdit/browser/bulkTextEdits.ts",
+          "sha256": "0e0135fdfbc0c6fa4783731ee153db14f2b6823aedd39a962c3c7ced7479d2d6",
+          "matches": [
+            {
+              "marker": "this._validateBeforePrepare();",
+              "lines": [
+                296
+              ]
+            },
+            {
+              "marker": "const validation = this._validateTasks(tasks);",
+              "lines": [
+                305
+              ]
+            },
+            {
+              "marker": "task.apply(reason);",
+              "lines": [
+                315
+              ]
+            }
+          ],
+          "result": "matched",
+          "kind": "static-source-text; manually inspected surrounding control flow"
+        },
+        {
+          "id": "C06",
+          "path": "src/vs/workbench/contrib/notebook/common/model/notebookTextModel.ts",
+          "sha256": "c75173576ec28d556be502835ba16d37ca8500a450ebd9c8d03ace98354739cf",
+          "matches": [
+            {
+              "marker": "private _isCellMetadataChanged",
+              "lines": [
+                1064
+              ]
+            },
+            {
+              "marker": "a[key as keyof NotebookCellMetadata] !== b[key as keyof NotebookCellMetadata]",
+              "lines": [
+                1068
+              ]
+            },
+            {
+              "marker": "const triggerDirtyChange = this._isCellMetadataChanged",
+              "lines": [
+                1120
+              ]
+            },
+            {
+              "marker": "new CellMetadataEdit",
+              "lines": [
+                1125
+              ]
+            }
+          ],
+          "result": "matched",
+          "kind": "static-source-text; manually inspected surrounding control flow"
+        },
+        {
+          "id": "C07",
+          "path": "extensions/ipynb/src/ipynbMain.ts",
+          "sha256": "c216f5ee019937bf827190b55cf1ab475a1137ee75c42185fd3114cd0fa3674e",
+          "matches": [
+            {
+              "marker": "transientCellMetadata: {",
+              "lines": [
+                43,
+                57
+              ]
+            },
+            {
+              "marker": "metadata: false,",
+              "lines": [
+                46,
+                60
+              ]
+            }
+          ],
+          "result": "matched",
+          "kind": "static-source-text; manually inspected surrounding control flow"
+        },
+        {
+          "id": "C08",
+          "path": "src/vs/workbench/contrib/notebook/common/model/notebookTextModel.ts",
+          "sha256": "c75173576ec28d556be502835ba16d37ca8500a450ebd9c8d03ace98354739cf",
+          "matches": [
+            {
+              "marker": "private _increaseVersionId(transient: boolean)",
+              "lines": [
+                931
+              ]
+            },
+            {
+              "marker": "this._versionId = this._versionId + 1;",
+              "lines": [
+                932
+              ]
+            },
+            {
+              "marker": "internalMetadata: cell.internalMetadata, transient: true",
+              "lines": [
+                1159
+              ]
+            },
+            {
+              "marker": "this._increaseVersionId(this._operationManager.isUndoStackEmpty()",
+              "lines": [
+                660
+              ]
+            }
+          ],
+          "result": "matched",
+          "kind": "static-source-text; manually inspected surrounding control flow"
+        },
+        {
+          "id": "C09",
+          "path": "src/vs/workbench/api/common/extHostNotebookDocument.ts",
+          "sha256": "cd8516ada88c2770aafeb25e1850319222af85147037653e809866dc5087a703",
+          "matches": [
+            {
+              "marker": "// -- compact cellChanges",
+              "lines": [
+                287
+              ]
+            },
+            {
+              "marker": "const existing = map.get(relaxedCellChange.cell);",
+              "lines": [
+                292
+              ]
+            },
+            {
+              "marker": "...result.cellChanges[existing]",
+              "lines": [
+                304
+              ]
+            },
+            {
+              "marker": "...relaxedCellChange",
+              "lines": [
+                299,
+                305
+              ]
+            },
+            {
+              "marker": "document: this._cells[rawEvent.index].apiCell.document",
+              "lines": [
+                270,
+                273
+              ]
+            }
+          ],
+          "result": "matched",
+          "kind": "static-source-text; manually inspected surrounding control flow"
+        },
+        {
+          "id": "C10",
+          "path": "extensions/ipynb/src/serializers.ts",
+          "sha256": "dca3f56482466956bb62a25d6181cb117d814a573b590e5e717eecf58e8c7e4a",
+          "matches": [
+            {
+              "marker": "Also do not read the value of executionSummary here",
+              "lines": [
+                102
+              ]
+            },
+            {
+              "marker": "execution_count: cellMetadata.execution_count ?? null,",
+              "lines": [
+                105
+              ]
+            },
+            {
+              "marker": "metadata: cellMetadata.metadata",
+              "lines": [
+                108
+              ]
+            }
+          ],
+          "result": "matched",
+          "kind": "static-source-text; manually inspected surrounding control flow"
+        },
+        {
+          "id": "C11",
+          "path": "extensions/ipynb/src/deserializers.ts",
+          "sha256": "2f2a809e88e3d09d12a9abffc94c397edeed30eace7ad20d8f16a385830d716e",
+          "matches": [
+            {
+              "marker": "const hasExecutionCount",
+              "lines": [
+                317
+              ]
+            },
+            {
+              "marker": "? { executionOrder: cell.execution_count as number }",
+              "lines": [
+                322
+              ]
+            }
+          ],
+          "result": "matched",
+          "kind": "static-source-text; manually inspected surrounding control flow"
+        },
+        {
+          "id": "C12",
+          "path": "src/vs/workbench/contrib/notebook/common/model/notebookTextModel.ts",
+          "sha256": "c75173576ec28d556be502835ba16d37ca8500a450ebd9c8d03ace98354739cf",
+          "matches": [
+            {
+              "marker": "private isOnlyEditingMetadataOnNewCells",
+              "lines": [
+                615
+              ]
+            },
+            {
+              "marker": "if (computeUndoRedo && this.isOnlyEditingMetadataOnNewCells(rawEdits))",
+              "lines": [
+                641
+              ]
+            },
+            {
+              "marker": "this._operationManager.appendPreviousOperation()",
+              "lines": [
+                642
+              ]
+            },
+            {
+              "marker": "previous.tag === 'notebookUndoRedoElement'",
+              "lines": [
+                156
+              ]
+            }
+          ],
+          "result": "matched",
+          "kind": "static-source-text; manually inspected surrounding control flow"
+        },
+        {
+          "id": "C13",
+          "path": "src/vs/workbench/contrib/bulkEdit/browser/bulkEditService.ts",
+          "sha256": "0b48ad5c421c459c9c19bf92b8b5b5b600f16066d7f02bcd1d4c4f1a72106e4e",
+          "matches": [
+            {
+              "marker": "this._performTextEdits(<ResourceTextEdit[]>group, this._undoRedoGroup",
+              "lines": [
+                130
+              ]
+            },
+            {
+              "marker": "this._performCellEdits(<ResourceNotebookCellEdit[]>group, this._undoRedoGroup",
+              "lines": [
+                132
+              ]
+            }
+          ],
+          "result": "matched",
+          "kind": "static-source-text; manually inspected surrounding control flow"
+        }
+      ],
+      "observations": [
+        {
+          "id": "B01",
+          "statement": "Mixed text/notebook edits are applied as sequential type groups; later failure is converted to false without a rollback of earlier groups in the inspected call path. Text version checks are local to the text group.",
+          "references": [
+            "S7",
+            "S8",
+            "S9",
+            "S17",
+            "S18"
+          ],
+          "checks": [
+            "C01",
+            "C02",
+            "C03",
+            "C04",
+            "C05"
+          ],
+          "desktopCases": [
+            "D3"
+          ],
+          "scope": "Control-flow finding; actual partial application and Undo not reproduced in an IDE."
+        },
+        {
+          "id": "B02",
+          "statement": "Non-transient cell metadata values are compared with !==; a new nested metadata object can create an Undo/dirty-classified change even when JSON values match.",
+          "references": [
+            "S10",
+            "S12"
+          ],
+          "checks": [
+            "C06",
+            "C07"
+          ],
+          "desktopCases": [
+            "D2",
+            "D6"
+          ],
+          "scope": "Conditional source path; actual dirty state, counts and responsiveness not measured."
+        },
+        {
+          "id": "B03",
+          "statement": "Notebook version increments include transient internal-execution-metadata changes; version is not a dedicated configuration generation or persisted-change signal.",
+          "references": [
+            "S10",
+            "S13",
+            "S14"
+          ],
+          "checks": [
+            "C08"
+          ],
+          "desktopCases": [
+            "D4",
+            "D6"
+          ],
+          "scope": "Source trace only; no execution events observed."
+        },
+        {
+          "id": "B04",
+          "statement": "Cell changes within one notification are compacted by runtime cell object and later same-name fields replace earlier ones; TextDocument fields are current object references, not sent-source snapshots.",
+          "references": [
+            "S2"
+          ],
+          "checks": [
+            "C09"
+          ],
+          "desktopCases": [
+            "D1",
+            "D4",
+            "D5"
+          ],
+          "scope": "Public notification representation; timing and cross-event ordering unverified."
+        },
+        {
+          "id": "B05",
+          "statement": "The ipynb serializer saves execution_count from API metadata and explicitly avoids reading executionSummary for it; deserialization reconstructs executionOrder only from a positive count.",
+          "references": [
+            "S11",
+            "S12"
+          ],
+          "checks": [
+            "C10",
+            "C11"
+          ],
+          "desktopCases": [
+            "D2",
+            "D4"
+          ],
+          "scope": "Pinned built-in serializer; installed extension behavior and save/reopen not exercised."
+        },
+        {
+          "id": "B06",
+          "statement": "Metadata-only edits on newly added cells have a branch that appends to the previous notebook Undo operation; common mixed-edit UndoRedoGroup does not imply an atomic rollback.",
+          "references": [
+            "S9",
+            "S10"
+          ],
+          "checks": [
+            "C12",
+            "C13"
+          ],
+          "desktopCases": [
+            "D3",
+            "D6"
+          ],
+          "scope": "Undo implementation branches inspected; no keyboard Undo/Redo verification."
+        }
+      ],
+      "ideStarted": false,
+      "kernelStarted": false,
+      "behaviorTestsRun": false,
+      "diagnosticExtensionCreated": false,
+      "launchConfigurationChanged": false,
+      "desktopCases": [
+        {
+          "id": "D1",
+          "status": "not-run"
+        },
+        {
+          "id": "D2",
+          "status": "not-run"
+        },
+        {
+          "id": "D3",
+          "status": "not-run"
+        },
+        {
+          "id": "D4",
+          "status": "not-run"
+        },
+        {
+          "id": "D5",
+          "status": "not-run"
+        },
+        {
+          "id": "D6",
+          "status": "not-run"
+        }
+      ],
+      "conclusion": "Static findings refined. TASK-002-01 remains in progress; desktop applicability, event order, partial application, persistence and performance remain unverified. No product contracts or implementation changed."
+    },
+    {
+      "checkedAt": "2026-10-22T13:43:25Z",
+      "sourceProjectCommit": "e4d0f92a47144e636631536e1344f8f21d9ad597",
+      "branch": "research/task-005-01-boundaries",
+      "method": "Pinned UTF-8 source inspection, SHA-256 and Git-blob SHA-1 calculation, exact source-marker checks and manual control-flow inspection. No compilation or behavior tests.",
+      "scope": "Continue TASK-002-01 static research under existing constraints; no desktop cases, product implementation, diagnostic extension, launch configuration, contracts or Current Specification changes.",
+      "previousSourcesHashVerified": 2,
+      "previousSources": [
+        {
+          "path": "src/kernels/execution/cellExecution.ts",
+          "sha256": "26ef89736748d1ab634a74da1e9a4be8da1974f1956cfe6d456103b352918100",
+          "gitBlobSha1": "b4d9608943df2aefec2bd75bd2cb65cffa9fbf3f",
+          "bytes": 22712
+        },
+        {
+          "path": "src/vs/workbench/api/common/extHostNotebookKernels.ts",
+          "sha256": "6adabe774ecb5f4812d8b0db1d37a1e30c33e03742d6739565e673e4d90d4ac3",
+          "gitBlobSha1": "26ba550555f255812c6d94f190569b89992b337d",
+          "bytes": 32088
+        }
+      ],
+      "newSources": [
+        {
+          "reference": "S19",
+          "repository": "microsoft/vscode-jupyter",
+          "commit": "fc61dfe2fd70a3d62d3ce0fef580757e7d64b81c",
+          "path": "src/kernels/execution/cellExecutionQueue.ts",
+          "url": "https://github.com/microsoft/vscode-jupyter/blob/fc61dfe2fd70a3d62d3ce0fef580757e7d64b81c/src/kernels/execution/cellExecutionQueue.ts",
+          "sha256": "40fb88ea2c1e34bfd1b97907aa69913bc23683ee15fb6e41b816d83ec70ae0d8",
+          "gitBlobSha1": "baf0f2097e4fc33d11729175befb15a1ee9499ff",
+          "bytes": 14695
+        },
+        {
+          "reference": "S20",
+          "repository": "microsoft/vscode-jupyter",
+          "commit": "fc61dfe2fd70a3d62d3ce0fef580757e7d64b81c",
+          "path": "src/kernels/execution/cellExecutionCreator.ts",
+          "url": "https://github.com/microsoft/vscode-jupyter/blob/fc61dfe2fd70a3d62d3ce0fef580757e7d64b81c/src/kernels/execution/cellExecutionCreator.ts",
+          "sha256": "ca59c03d50b5283b959c87abd9dc6649dd28484397d3711d50b8e5cad42c4c1e",
+          "gitBlobSha1": "1a1d5b18c9287f78030374d94eb0d3a7f186b17f",
+          "bytes": 6414
+        }
+      ],
+      "checks": [
+        {
+          "id": "Q01",
+          "path": "src/kernels/execution/cellExecutionQueue.ts",
+          "matches": [
+            {
+              "marker": "this.queueOfCellsToExecute.find((item) => item.cell === cell)",
+              "lines": [
+                87,
+                115
+              ]
+            },
+            {
+              "marker": "return existingCellExecution;",
+              "lines": [
+                90
+              ]
+            },
+            {
+              "marker": "const kernelConnection = await this.session;",
+              "lines": [
+                191
+              ]
+            },
+            {
+              "marker": "const itemToExecute = this.queueOfItemsToExecute[0];",
+              "lines": [
+                206
+              ]
+            },
+            {
+              "marker": ".start(kernelConnection)",
+              "lines": [
+                220
+              ]
+            }
+          ],
+          "result": "matched",
+          "kind": "static-source-text; surrounding control flow manually inspected",
+          "sha256": "40fb88ea2c1e34bfd1b97907aa69913bc23683ee15fb6e41b816d83ec70ae0d8"
+        },
+        {
+          "id": "Q02",
+          "path": "src/kernels/execution/cellExecution.ts",
+          "matches": [
+            {
+              "marker": "this.execute(this.codeOverride || this.cell.document.getText().replace(/\\r\\n/g, '\\n'), session)",
+              "lines": [
+                189
+              ]
+            },
+            {
+              "marker": "this.request = kernelConnection.requestExecute(",
+              "lines": [
+                422
+              ]
+            },
+            {
+              "marker": "                    code,",
+              "lines": [
+                424
+              ]
+            }
+          ],
+          "result": "matched",
+          "kind": "static-source-text; surrounding control flow manually inspected",
+          "sha256": "26ef89736748d1ab634a74da1e9a4be8da1974f1956cfe6d456103b352918100"
+        },
+        {
+          "id": "Q03",
+          "path": "src/kernels/execution/cellExecution.ts",
+          "matches": [
+            {
+              "marker": "private get isEmptyCodeCell(): boolean {",
+              "lines": [
+                334
+              ]
+            },
+            {
+              "marker": "return this.cell.document.getText().trim().length === 0;",
+              "lines": [
+                335
+              ]
+            },
+            {
+              "marker": "if (this.isEmptyCodeCell) {",
+              "lines": [
+                349
+              ]
+            },
+            {
+              "marker": "this.execution.executionOrder = undefined;",
+              "lines": [
+                352
+              ]
+            },
+            {
+              "marker": "this.execution?.end(undefined);",
+              "lines": [
+                165,
+                205,
+                354,
+                367
+              ]
+            },
+            {
+              "marker": "this.execution?.end(success === 'success', this.endTime);",
+              "lines": [
+                357
+              ]
+            }
+          ],
+          "result": "matched",
+          "kind": "static-source-text; surrounding control flow manually inspected",
+          "sha256": "26ef89736748d1ab634a74da1e9a4be8da1974f1956cfe6d456103b352918100"
+        },
+        {
+          "id": "Q04",
+          "path": "src/kernels/execution/cellExecution.ts",
+          "matches": [
+            {
+              "marker": "this.cancelRequested = true;",
+              "lines": [
+                255
+              ]
+            },
+            {
+              "marker": "if (this.started && !forced && this.execution?.started) {",
+              "lines": [
+                256
+              ]
+            },
+            {
+              "marker": "await this.result.catch(noop);",
+              "lines": [
+                261
+              ]
+            },
+            {
+              "marker": "this.cancelHandled = true;",
+              "lines": [
+                268
+              ]
+            },
+            {
+              "marker": "this.completedDueToCancellation();",
+              "lines": [
+                118,
+                270
+              ]
+            }
+          ],
+          "result": "matched",
+          "kind": "static-source-text; surrounding control flow manually inspected",
+          "sha256": "26ef89736748d1ab634a74da1e9a4be8da1974f1956cfe6d456103b352918100"
+        },
+        {
+          "id": "Q05",
+          "path": "src/kernels/execution/cellExecution.ts",
+          "matches": [
+            {
+              "marker": "workspace.onDidCloseTextDocument(",
+              "lines": [
+                102
+              ]
+            },
+            {
+              "marker": "if (e === this.cell.document) {",
+              "lines": [
+                106
+              ]
+            },
+            {
+              "marker": "this.request?.dispose(); // NOSONAR",
+              "lines": [
+                113
+              ]
+            },
+            {
+              "marker": "if (this.started && !this._completed) {",
+              "lines": [
+                117
+              ]
+            },
+            {
+              "marker": "return !this.cell.document.isClosed;",
+              "lines": [
+                390
+              ]
+            }
+          ],
+          "result": "matched",
+          "kind": "static-source-text; surrounding control flow manually inspected",
+          "sha256": "26ef89736748d1ab634a74da1e9a4be8da1974f1956cfe6d456103b352918100"
+        },
+        {
+          "id": "Q06",
+          "path": "src/kernels/execution/cellExecutionCreator.ts",
+          "matches": [
+            {
+              "marker": "this._impl.end(success, endTime, this.errorInfo);",
+              "lines": [
+                80
+              ]
+            },
+            {
+              "marker": "CellExecutionCreator._map.delete(cell);",
+              "lines": [
+                157
+              ]
+            },
+            {
+              "marker": "CellExecutionCreator._map.set(cell, result);",
+              "lines": [
+                161
+              ]
+            }
+          ],
+          "result": "matched",
+          "kind": "static-source-text; surrounding control flow manually inspected",
+          "sha256": "ca59c03d50b5283b959c87abd9dc6649dd28484397d3711d50b8e5cad42c4c1e"
+        }
+      ],
+      "observations": [
+        {
+          "id": "B07",
+          "statement": "The inspected queue reuses an existing execution for the same cell object. After session/earlier-item waits, start reads a truthy override or current cell source before requestExecute; enqueue-time source and each repeated request are not separate executed generations.",
+          "references": [
+            "S16",
+            "S19"
+          ],
+          "checks": [
+            "Q01",
+            "Q02"
+          ],
+          "desktopCases": [
+            "D4"
+          ],
+          "scope": "Conditional inspected queue path; all standard command callers and runtime ordering were not verified."
+        },
+        {
+          "id": "B08",
+          "statement": "endCellTask checks current document emptiness instead of submitted code. The empty branch clears executionOrder and forwards undefined before success/failure handling; the execution wrapper forwards that success value to the standard execution.",
+          "references": [
+            "S16",
+            "S20"
+          ],
+          "checks": [
+            "Q03",
+            "Q06"
+          ],
+          "desktopCases": [
+            "D4"
+          ],
+          "scope": "Nonempty submission followed by an empty current document reaches this branch conditionally; no IDE reproduction or kernel result observation."
+        },
+        {
+          "id": "B09",
+          "statement": "Non-forced cancellation may await a running execution result instead of ending it immediately. The close callback checks document object identity and disposes the request, conditionally reporting local cancellation. These paths do not by themselves establish kernel interruption completion.",
+          "references": [
+            "S16"
+          ],
+          "checks": [
+            "Q04",
+            "Q05"
+          ],
+          "desktopCases": [
+            "D4",
+            "D5"
+          ],
+          "scope": "Local callback/control-flow finding only; actual close/cancellation event ordering and kernel-stop behavior unverified."
+        }
+      ],
+      "verification": {
+        "staticCheckCount": 6,
+        "markerCount": 27,
+        "matchedSourceLocations": 32,
+        "existingEvidencePreserved": true
+      },
+      "ideStarted": false,
+      "kernelStarted": false,
+      "behaviorTestsRun": false,
+      "diagnosticExtensionCreated": false,
+      "launchConfigurationChanged": false,
+      "desktopCases": [
+        {
+          "id": "D1",
+          "status": "not-run"
+        },
+        {
+          "id": "D2",
+          "status": "not-run"
+        },
+        {
+          "id": "D3",
+          "status": "not-run"
+        },
+        {
+          "id": "D4",
+          "status": "not-run"
+        },
+        {
+          "id": "D5",
+          "status": "not-run"
+        },
+        {
+          "id": "D6",
+          "status": "not-run"
+        }
+      ],
+      "conclusion": "B07-B09 refine pending D4/D5 observations. TASK-002-01 and parent TASK-002 remain in progress; no formal design adopted or subsequent Subtask started."
+    }
+  ],
+  "desktopPreparation": {
+    "recordedAt": "2026-10-22T15:49:47.621Z",
+    "evidence": "TASK-002-01-windows-preparation-20261023.json",
+    "base": "85358a0147fb49221c807f3acc6b78fc8f555c95",
+    "diagnosticBranch": "codex/task-002-01-desktop",
+    "harnessSmokePassed": true,
+    "actualUserCasesAccepted": false,
+    "historicalStaticFlagsUnchanged": true
+  },
+  "desktopObservations": {
+    "evidence": "TASK-002-01-windows-observations-20261023.json",
+    "scope": "D1/D2/D3/D4/D6 partial runtime observations; D5 not yet performed",
+    "allCasesAccepted": false
+  },
+  "desktopFollowup": {
+    "evidence": "TASK-002-01-windows-followup-20261024.json",
+    "scope": "TASK-002-01 D2/D3 followup and D1 diagnostic failure investigation only",
+    "allCasesAccepted": false
+  },
+  "commandPreparation": {
+    "evidence": "TASK-002-01-command-preparation-20261024.json",
+    "runtimeExecuted": false,
+    "allCasesAccepted": false
+  },
+  "executionBootstrap": {
+    "evidence": "TASK-002-01-kernel-bootstrap-20261024.json",
+    "vscode": "1.143.1",
+    "result": "failed",
+    "D4D5CasesExecuted": false
+  },
+  "executionObservations": {
+    "evidence": "TASK-002-01-execution-observations-20261024.json",
+    "vscode": "1.143.1",
+    "firstRunnerStatus": "failed",
+    "currentRunnerStatus": "completed",
+    "allCasesAccepted": false
+  },
+  "uiObservations": {
+    "evidence": "TASK-002-01-ui-observations-20261025.json",
+    "vscode": "1.143.1",
+    "D1": "initial no-ID shortcut mismatch preserved; valid-ID standard-command control matches",
+    "D6": "20 updates/save and post-update click observed",
+    "allCasesAccepted": false
+  },
+  "saveFollowupPreparation": {
+    "evidence": "TASK-002-01-save-followup-preparation-20261025.json",
+    "automaticAttempt": "kernel-output-timeout",
+    "current": "waiting-for-standard-kernel-output",
+    "D4D5BodyExecuted": false,
+    "allCasesAccepted": false
+  },
+  "verificationRoutes": {
+    "evidence": "TASK-002-01-verification-routes-20261025.json",
+    "rules": [
+      "5bbb234",
+      "fa21803"
+    ],
+    "mergeCommit": "b3cd5b8f8d9e42a5886b54f35be9339a3c0f9f31",
+    "historicalResultsPreserved": true,
+    "newDesktopExecution": false,
+    "allCasesAccepted": false
+  },
+  "feasibilityReconciliation": {
+    "file": "TASK-002-01-feasibility-20261025.json",
+    "method": "Existing evidence extraction and cross-check; manual/API paths remain separate",
+    "allCasesAccepted": false
+  },
+  "D2Manual": {
+    "file": "TASK-002-01-D2-manual-20261026.json",
+    "status": "合格（今回の診断・手動経路の観測条件）",
+    "allCasesAccepted": false
+  },
+  "D3SourceFirstManual": {
+    "file": "TASK-002-01-D3-source-first-manual-20261026.json",
+    "case": "D3-source-first-failure",
+    "status": "合格（部分適用・手動Undo/Redoを観測した条件）",
+    "allCasesAccepted": false
+  },
+  "D3MetadataFirstManual": {
+    "file": "TASK-002-01-D3-metadata-first-manual-20261026.json",
+    "case": "D3-metadata-first-failure",
+    "status": "不合格（この手動Redo条件の期待不一致）",
+    "allCasesAccepted": false
+  },
+  "D3SourceFirstSuccessManual": {
+    "file": "TASK-002-01-D3-source-first-success-manual-20261026.json",
+    "status": "合格（この診断更新・手動Undo/Redo条件）",
+    "allCasesAccepted": false
+  },
+  "D3MetadataFirstSuccessManual": {
+    "file": "TASK-002-01-D3-metadata-first-success-manual-20261026.json",
+    "status": "合格（この診断更新・手動Undo/Redo条件）",
+    "allCasesAccepted": false
+  },
+  "integrationCheckpoint": {
+    "file": "TASK-002-01-main-checkpoint-20261026.json",
+    "allCasesAccepted": false,
+    "remainingPlannedManualChecks": 8,
+    "D3ExpectedMismatchPreserved": true,
+    "newDesktopExecution": false
+  }
 }
