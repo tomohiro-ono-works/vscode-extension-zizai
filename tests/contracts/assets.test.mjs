@@ -12,7 +12,10 @@ import { createValuesValidator } from '../../scripts/contracts/validation.mjs';
 const sourcePath = 'apps/common/contracts/v1/values.schema.json';
 const toolsRoot = fileURLToPath(new URL('../../scripts/contracts/', import.meta.url));
 const canonical = await readFile(new URL(`../../${sourcePath}`, import.meta.url));
-const git = (root, ...args) => execFileSync('git', ['-C', root, ...args], { encoding: 'utf8' }).trim();
+// Preserve fixture bytes on add/checkout without changing any persistent Git config.
+const git = (root, ...args) => execFileSync('git', [
+  '-c', 'core.autocrlf=false', '-c', 'core.eol=lf', '-C', root, ...args,
+], { encoding: 'utf8' }).trim();
 
 async function commit(root) {
   git(root, 'add', sourcePath);
@@ -52,6 +55,71 @@ async function installCli(root) {
 }
 
 const runCli = (cli, cwd, args) => spawnSync(process.execPath, [cli, ...args], { cwd, encoding: 'utf8' });
+
+test('git_fixture_preserves_line_endings_under_inherited_settings', async t => {
+  const childFlag = 'ZIZAI_CONTRACT_EOL_CHILD';
+  if (!process.env[childFlag]) {
+    const temporary = await mkdtemp(path.join(os.tmpdir(), '005-eol-'));
+    t.after(() => rm(temporary, { recursive: true, force: true }));
+    for (const [autocrlf, eol] of [['true', 'crlf'], ['input', 'lf'], ['false', 'lf']]) {
+      const config = path.join(temporary, 'gitconfig');
+      const bytes = Buffer.from(`[core]\n\tautocrlf = ${autocrlf}\n\teol = ${eol}\n`);
+      await writeFile(config, bytes);
+      const env = { ...process.env, GIT_CONFIG_GLOBAL: config, GIT_CONFIG_NOSYSTEM: '1',
+        GIT_CONFIG_COUNT: '0', [childFlag]: '1' };
+      delete env.NODE_TEST_CONTEXT;
+      const result = spawnSync(process.execPath, ['--test',
+        '--test-name-pattern=^git_fixture_preserves_line_endings_under_inherited_settings$',
+        fileURLToPath(import.meta.url)], { env, encoding: 'utf8' });
+      assert.equal(result.status, 0, `${autocrlf}/${eol}: ${result.stdout}\n${result.stderr}`);
+      assert.deepEqual(await readFile(config), bytes, 'isolated Git config changed');
+    }
+    return;
+  }
+
+  const lf = canonical.toString('utf8').replace(/\r\n/g, '\n');
+  let emitted;
+  for (const text of [lf, lf.replace(/\n/g, '\r\n')]) {
+    const bytes = Buffer.from(text);
+    const options = await fixture(t, bytes);
+    const input = path.join(options.repoRoot, sourcePath);
+    const blob = execFileSync('git', ['-C', options.repoRoot, 'show', `${options.sourceCommit}:${sourcePath}`]);
+    assert.deepEqual(blob, bytes, 'fixture commit changed source bytes');
+    await rm(input);
+    git(options.repoRoot, 'checkout', '--', sourcePath);
+    assert.deepEqual(await readFile(input), bytes, 'fixture checkout changed source bytes');
+    const cli = await installCli(options.repoRoot);
+    for (const name of ['cli.mjs', 'assets.mjs', 'validation.mjs']) {
+      assert.deepEqual(await readFile(path.join(options.repoRoot, 'scripts/contracts', name)),
+        await readFile(path.join(toolsRoot, name)), 'CLI copy changed source bytes');
+    }
+    assert.equal(runCli(cli, os.tmpdir(), ['generate', '--source-commit', options.sourceCommit]).status, 0);
+    const manifest = JSON.parse(await readFile(path.join(options.outputRoot, 'manifest.json')));
+    assert.deepEqual(manifest.inputs, [{ path: sourcePath, sha256: createHash('sha256').update(bytes).digest('hex') }]);
+    const output = path.join(options.outputRoot, 'js/values.schema.json');
+    const generated = await readFile(output);
+    assert.equal(generated.includes(13), false, 'generated schema must use LF');
+    if (emitted) assert.deepEqual(generated, emitted, 'input EOL changed generated schema');
+    emitted = generated;
+    assert.equal(manifest.outputs[0].sha256, createHash('sha256').update(generated).digest('hex'));
+    assert.deepEqual(await checkAssets(options), { ok: true, differences: [] });
+
+    const before = await snapshot(options.outputRoot);
+    const changed = Buffer.from(text.includes('\r\n') ? lf : lf.replace(/\n/g, '\r\n'));
+    await writeFile(input, changed);
+    await assert.rejects(generateAssets(options), /Contract source must match the specified Git commit/);
+    await assert.rejects(checkAssets(options), /Contract source must match the specified Git commit/);
+    assert.deepEqual(await readFile(input), changed, 'source mismatch was silently repaired');
+    assert.deepEqual(await snapshot(options.outputRoot), before);
+    await writeFile(input, bytes);
+    await writeFile(output, generated.toString('utf8').replace(/\n/g, '\r\n'));
+    const altered = await snapshot(options.outputRoot);
+    assert.deepEqual(await checkAssets(options), {
+      ok: false, differences: [{ path: 'js/values.schema.json', reason: 'changed' }],
+    });
+    assert.deepEqual(await snapshot(options.outputRoot), altered, 'check repaired output EOL');
+  }
+});
 
 test('cwd_and_paths_do_not_change_output', async t => {
   const options = await fixture(t);

@@ -40,6 +40,20 @@ CLIは自身の配置からrepoを求めるため、別cwdから絶対pathで呼
 
 この単位はHost／GUIへのJSON資産の入口まで。messages・metadata・フォーム定義・action、意味検証、Python資産、VSIX／wheelへの収集、CI接続、実機適合は別途。配布担当へは正本ID／commit・manifest・2出力と、build前check必須の条件を渡す。
 
+### 検証用Gitと改行差
+
+`assets.test.mjs` の一時repoを操作するGitは、各コマンドに `-c core.autocrlf=false -c core.eol=lf` を指定する。add／commit／checkoutでfixtureの元bytesを保持し、利用者のグローバル設定や永続設定を書き換えない。CLIの検証用コピーもバイトコピーのまま扱う。生成器のGit読取・原本とのバイト一致・hash検証は変更せず、実作業コピーの改行だけが指定commitと異なる場合も引き続き拒否する。
+
+回帰ケースは子プロセスだけへ専用の一時 `GIT_CONFIG_GLOBAL` を渡し、autocrlf／eolがtrue／crlf、input／lf、false／lfの3条件でLF／CRLFの原本各2条件を照合する。commit blob・checkout・CLIコピーのbytes、入力hash、同じLF生成schemaと出力hashを確認する。原本の改行だけを後から変えた場合の拒否と旧資産保持、生成schemaの改行改変検出とcheck非変更も確認する。改行変換は人工fixtureの構築に限り、指定commitや実原本の照合を正規化して通さない。
+
+改行関連と必要な回帰だけを実行する入口（エージェント担当、API・結合）：
+
+```sh
+node --test --test-name-pattern='^(git_fixture_preserves_line_endings_under_inherited_settings|cwd_and_paths_do_not_change_output|check_is_read_only_and_detects_manifest_changes|failed_generation_does_not_publish_manifest|canonical_and_generated_schema_conform_to_value_contract)$' tests/contracts/assets.test.mjs
+```
+
+この選択実行は全件の再確認ではない。末尾空白pathなど別原因のケースは含めず、その環境での未解決・未確認を改行対策の合格で置き換えない。Windows実機、UI、配布・CIの適合も別途残る。
+
 ## 005-05：要件対応と検証計画
 
 基準は [開発手順](../../docs/development.md#テスト計画実行時のルール) と [依存関係の区分](../../docs/tasks/task-rules.md#dependency-classification)。進捗・対象commit・実施環境・合否・未確認は [005-05 #40](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/40) が正本。この文書は繰り返し使う定義・操作経路・期待結果を置く。
@@ -65,6 +79,7 @@ CLIは自身の配置からrepoを求めるため、別cwdから絶対pathで呼
 | `variable_names_have_only_structural_validation` | 単体・validator関数 | §C／C03-02の構文部分：ASCII単一名は受理、式は拒否。予約語・存在・実型はこのテストでは判定しない |
 | `bad_schema_and_unknown_reference_are_setup_errors` | 単体・validator生成／関数 | §I-1：不正schema・未解決ref・未知の定義名を設定エラーにする |
 | `unused_definitions_must_also_be_valid` | 単体・validator生成 | §I-1：未使用・入れ子の定義も未知keyword・refを検査する |
+| `git_fixture_preserves_line_endings_under_inherited_settings` | API・結合・専用Git設定の子プロセス→一時repo／checkout／CLI／生成・check | §Iの原本保持・再現性：Git改行設定3条件×原本LF／CRLF、blob・コピー・hash・生成LF一致、改行だけの原本不一致拒否・出力改変検出・非変更 |
 | `cwd_and_paths_do_not_change_output` | API・結合・CLI→Git／生成→出力比較 | §I／C03-07の値資産部分：cwd・日本語／空白で出力不変、manifestのcommit・hash・用途を照合 |
 | `stale_extra_and_missing_output` | API・結合・生成／check API→filesystem | §I-3：schema変更・不足・余分をchanged／missing／extraとして区別 |
 | `check_is_read_only_and_detects_manifest_changes` | API・結合・check API／CLI→出力比較 | §I-3：manifestの改変も失敗、CLI終了1、検査前後の既存bytes不変 |
