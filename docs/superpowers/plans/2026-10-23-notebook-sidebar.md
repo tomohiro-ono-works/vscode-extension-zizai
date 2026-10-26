@@ -41,7 +41,7 @@
 - `apps/gui/`・`apps/extension/`・`apps/common/` は基準版では各 `.gitkeep` のみ。既存製品コード・正式契約・root package.json・製品runnerは存在しない。
 - UIの正本責務はTASK-001、WebviewView登録・Notebook操作はTASK-002、通信とmetadataはTASK-005、manifest／起動／配布はTASK-006。下記のファイル案を名前だけで編集許可済みとしない。
 - `tests/nodeform-reuse/` は評価用正本、`dist/` は生成物。NodeFormは上流固定版・patch・テーマCSSを分離している。製品へコピーする際は正式な取得・同期・license配置を先に定める。
-- PR #49と#50はREADME・全体設計・UI設計・architectureに重なる。統合時は「VS Codeのみ正式対象」と「サイドバー配置」の両方を保つ。今回どちらもmergeしない。
+- PR #49と#50はREADME・全体設計・UI設計・architectureに重なる。統合時は「VS Codeのみ正式対象」と「サイドバー配置」の両方を保つ。PRの統合可否は利用者の明示的な指示に従い、設計資料の統合と製品実装・動作確認の完了を区別する。
 - 他Taskが使用する `task-002-01-desktop/` の診断クローン、既存試作ブランチ、元の未追跡資料を編集しない。
 
 ## 必須の前提条件
