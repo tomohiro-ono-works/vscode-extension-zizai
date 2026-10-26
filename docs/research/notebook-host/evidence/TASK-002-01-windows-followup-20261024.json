@@ -1,0 +1,2578 @@
+{
+  "asOf": "2026-10-23T15:48:05.261Z",
+  "localDate": "2026-10-24",
+  "timezone": "Asia/Tokyo",
+  "scope": "TASK-002-01 D2/D3 followup and D1 diagnostic failure investigation only",
+  "base": "85358a0147fb49221c807f3acc6b78fc8f555c95",
+  "parentCommit": "b6f94f06d253ca557a0ca9e8f51f11dd5c4613b6",
+  "branch": "codex/task-002-01-desktop",
+  "uncommitted": " M docs/research/notebook-host/TASK-002-01.md\n M tests/manual/TASK-002-01-notebook-host.md\n M tests/notebook-host-api/README.md\n M tests/notebook-host-api/prepare.mjs\n M tests/notebook-host-api/structure.cjs\n?? tests/notebook-host-api/recovery.cjs\n?? tests/notebook-host-api/structure-ids.cjs\n",
+  "currentSourceHashes": {
+    "tests/notebook-host-api/recovery.cjs": "265ce3a3b2f3a2ba57008b800ba9ecf2a02a28e7d19e122c7db5cd8f402e51f7",
+    "tests/notebook-host-api/structure.cjs": "385c8e7023c8f3de4112aff902cc624c9d637701ce4d5eeb77b1c3536258eec1",
+    "tests/notebook-host-api/structure-ids.cjs": "7644c4ee2db15833f59bf8c6d6440f33417d0bf9e7a5ddfdf4e66caeb67e41c8",
+    "tests/notebook-host-api/prepare.mjs": "66732db07e9e02597c910f2c01d925ed2002fcd344528816886d6da3bf3138be"
+  },
+  "executedBuildHashesAreInReports": true,
+  "recovery": {
+    "status": "completed",
+    "at": "2026-10-23T15:44:02.835Z",
+    "vscode": "1.143.0",
+    "pid": 36972,
+    "build": {
+      "root": "$REPO",
+      "workspace": "$REPO\\results\\task-002-01\\workspace",
+      "preparedAt": "2026-10-23T15:43:30.567Z",
+      "base": "b6f94f06d253ca557a0ca9e8f51f11dd5c4613b6",
+      "branch": "codex/task-002-01-desktop",
+      "diff": "M tests/notebook-host-api/prepare.mjs\n?? tests/notebook-host-api/recovery.cjs",
+      "node": "v24.14.1",
+      "hashes": {
+        "package.json": "04d6f5100c67d133a194e14e847264ad033639a5969112d37670da894a5da7c7",
+        "extension.cjs": "d75bf423d0df234081657d8d019e03ba26636e64023a5a9b54d50df04b40dd9f",
+        "model.cjs": "4057e30f336b85e9d5f2396fd02d8f4ede6f8d34ff08bb91a078504da07473a5",
+        "fixtures.cjs": "b7d7f545274d09f2eb4bc2bc92bbc36c7f0c55ceb5126e18b4512f5c7401cd5d",
+        "smoke.cjs": "bcab7d623d0699a393d6eb8fdfa4110e9736e205eb631547ff07c657cb3138c8",
+        "automated.cjs": "56c0dfeb93832975a062531f321a87ffc16d3d3c5d7b0a1f4f1b3068765b6a4c",
+        "structure.cjs": "a33bc713dac9f42f532256ffae8131fcf444bb6ca3b2b50deda3543b55cc8228",
+        "structure-delete.cjs": "7655ba5fa7fe816b3fbfcedb2e073be3e8045bacfe0c1077cf6bf5bce1abe755",
+        "recovery.cjs": "265ce3a3b2f3a2ba57008b800ba9ecf2a02a28e7d19e122c7db5cd8f402e51f7"
+      }
+    },
+    "results": [
+      {
+        "case": "D2-fresh-process-read",
+        "status": "passed-API",
+        "file": "$REPO\\results\\task-002-01\\workspace\\AUTO-D2-save-1792688110161.ipynb",
+        "previousRawLog": "$REPO\\logs\\task-002-01\\2026-10-22T16-55-10-130Z-34872\\events.jsonl",
+        "alreadyOpen": false,
+        "reopened": {
+          "version": 0,
+          "dirty": false,
+          "closed": false,
+          "cells": [
+            {
+              "index": 0,
+              "uri": "vscode-notebook-cell:$DIAGNOSTIC_WORKSPACE/AUTO-D2-save-1792688110161.ipynb#W0sZmlsZQ%3D%3D",
+              "source": "# D2: metadata-only must preserve this source\nfictional_value = 42\n",
+              "metadata": {
+                "execution_count": null,
+                "metadata": {
+                  "outsideDiagnosticOwner": {
+                    "sentinel": "keep-D2"
+                  },
+                  "task00201Diagnostic": {
+                    "burst": 0,
+                    "committed": 0,
+                    "draft": 7,
+                    "label": "D2",
+                    "probeOnly": true
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "saved": {
+          "cells": [
+            {
+              "cell_type": "code",
+              "execution_count": null,
+              "metadata": {
+                "outsideDiagnosticOwner": {
+                  "sentinel": "keep-D2"
+                },
+                "task00201Diagnostic": {
+                  "burst": 0,
+                  "committed": 0,
+                  "draft": 7,
+                  "label": "D2",
+                  "probeOnly": true
+                }
+              },
+              "outputs": [],
+              "source": [
+                "# D2: metadata-only must preserve this source\n",
+                "fictional_value = 42\n"
+              ]
+            }
+          ],
+          "metadata": {
+            "kernelspec": {
+              "display_name": "Python 3 (ipykernel)",
+              "language": "python",
+              "name": "python3"
+            },
+            "language_info": {
+              "name": "python"
+            },
+            "outsideNotebookOwner": {
+              "sentinel": "preserve-notebook"
+            },
+            "task00201Diagnostic": {
+              "case": "D2-save",
+              "probeOnly": true
+            }
+          },
+          "nbformat": 4,
+          "nbformat_minor": 5
+        }
+      },
+      {
+        "case": "D3-source-first-failure-text-focus",
+        "status": "observed-API",
+        "before": {
+          "version": 0,
+          "dirty": false,
+          "closed": false,
+          "cells": [
+            {
+              "index": 0,
+              "uri": "vscode-notebook-cell:$DIAGNOSTIC_WORKSPACE/AUTO-D3-source-failure-focused-1792770243146.ipynb#W0sZmlsZQ%3D%3D",
+              "source": "# D3 baseline\nfictional_value = 10\n",
+              "metadata": {
+                "execution_count": null,
+                "metadata": {
+                  "outsideDiagnosticOwner": {
+                    "sentinel": "keep-D3"
+                  },
+                  "task00201Diagnostic": {
+                    "label": "D3",
+                    "draft": 0,
+                    "committed": 0,
+                    "burst": 0,
+                    "probeOnly": true
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "returned": false,
+        "error": {
+          "$undefined": true
+        },
+        "after": {
+          "version": 2,
+          "dirty": true,
+          "closed": false,
+          "cells": [
+            {
+              "index": 0,
+              "uri": "vscode-notebook-cell:$DIAGNOSTIC_WORKSPACE/AUTO-D3-source-failure-focused-1792770243146.ipynb#W0sZmlsZQ%3D%3D",
+              "source": "# AUTO D3 source-first failure with explicit text focus\nfictional_value = 20\n",
+              "metadata": {
+                "execution_count": null,
+                "metadata": {
+                  "outsideDiagnosticOwner": {
+                    "sentinel": "keep-D3"
+                  },
+                  "task00201Diagnostic": {
+                    "label": "D3",
+                    "draft": 0,
+                    "committed": 0,
+                    "burst": 0,
+                    "probeOnly": true
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "cellTextEditorActive": true,
+        "undo": {
+          "version": 4,
+          "dirty": false,
+          "closed": false,
+          "cells": [
+            {
+              "index": 0,
+              "uri": "vscode-notebook-cell:$DIAGNOSTIC_WORKSPACE/AUTO-D3-source-failure-focused-1792770243146.ipynb#W0sZmlsZQ%3D%3D",
+              "source": "# D3 baseline\nfictional_value = 10\n",
+              "metadata": {
+                "execution_count": null,
+                "metadata": {
+                  "outsideDiagnosticOwner": {
+                    "sentinel": "keep-D3"
+                  },
+                  "task00201Diagnostic": {
+                    "label": "D3",
+                    "draft": 0,
+                    "committed": 0,
+                    "burst": 0,
+                    "probeOnly": true
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "redo": {
+          "version": 6,
+          "dirty": true,
+          "closed": false,
+          "cells": [
+            {
+              "index": 0,
+              "uri": "vscode-notebook-cell:$DIAGNOSTIC_WORKSPACE/AUTO-D3-source-failure-focused-1792770243146.ipynb#W0sZmlsZQ%3D%3D",
+              "source": "# AUTO D3 source-first failure with explicit text focus\nfictional_value = 20\n",
+              "metadata": {
+                "execution_count": null,
+                "metadata": {
+                  "outsideDiagnosticOwner": {
+                    "sentinel": "keep-D3"
+                  },
+                  "task00201Diagnostic": {
+                    "label": "D3",
+                    "draft": 0,
+                    "committed": 0,
+                    "burst": 0,
+                    "probeOnly": true
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "undoRestoredSource": true,
+        "redoRestoredPartialSource": true,
+        "metadataUnchangedThroughHistory": true
+      }
+    ],
+    "rawLog": "$REPO\\logs\\task-002-01\\2026-10-23T15-44-02-972Z-36972\\events.jsonl",
+    "finishedAt": "2026-10-23T15:44:04.025Z"
+  },
+  "recoveryEvents": [
+    {
+      "seq": 1,
+      "at": "2026-10-23T15:44:02.976Z",
+      "elapsedMs": 1.6417,
+      "step": "startup",
+      "kind": "environment",
+      "session": "2026-10-23T15-44-02-972Z-36972",
+      "build": {
+        "root": "$REPO",
+        "workspace": "$REPO\\results\\task-002-01\\workspace",
+        "preparedAt": "2026-10-23T15:43:30.567Z",
+        "base": "b6f94f06d253ca557a0ca9e8f51f11dd5c4613b6",
+        "branch": "codex/task-002-01-desktop",
+        "diff": "M tests/notebook-host-api/prepare.mjs\n?? tests/notebook-host-api/recovery.cjs",
+        "node": "v24.14.1",
+        "hashes": {
+          "package.json": "04d6f5100c67d133a194e14e847264ad033639a5969112d37670da894a5da7c7",
+          "extension.cjs": "d75bf423d0df234081657d8d019e03ba26636e64023a5a9b54d50df04b40dd9f",
+          "model.cjs": "4057e30f336b85e9d5f2396fd02d8f4ede6f8d34ff08bb91a078504da07473a5",
+          "fixtures.cjs": "b7d7f545274d09f2eb4bc2bc92bbc36c7f0c55ceb5126e18b4512f5c7401cd5d",
+          "smoke.cjs": "bcab7d623d0699a393d6eb8fdfa4110e9736e205eb631547ff07c657cb3138c8",
+          "automated.cjs": "56c0dfeb93832975a062531f321a87ffc16d3d3c5d7b0a1f4f1b3068765b6a4c",
+          "structure.cjs": "a33bc713dac9f42f532256ffae8131fcf444bb6ca3b2b50deda3543b55cc8228",
+          "structure-delete.cjs": "7655ba5fa7fe816b3fbfcedb2e073be3e8045bacfe0c1077cf6bf5bce1abe755",
+          "recovery.cjs": "265ce3a3b2f3a2ba57008b800ba9ecf2a02a28e7d19e122c7db5cd8f402e51f7"
+        }
+      },
+      "vscode": "1.143.0",
+      "appName": "Visual Studio Code",
+      "platform": "win32",
+      "arch": "x64",
+      "node": "v24.21.0",
+      "electron": "43.7.7",
+      "extensions": [
+        {
+          "id": "ms-toolsai.jupyter",
+          "version": {
+            "$undefined": true
+          },
+          "active": {
+            "$undefined": true
+          }
+        },
+        {
+          "id": "ms-python.python",
+          "version": {
+            "$undefined": true
+          },
+          "active": {
+            "$undefined": true
+          }
+        },
+        {
+          "id": "ms-python.vscode-python-envs",
+          "version": {
+            "$undefined": true
+          },
+          "active": {
+            "$undefined": true
+          }
+        },
+        {
+          "id": "vscode.ipynb",
+          "version": "10.0.0",
+          "active": false
+        }
+      ],
+      "notObservable": [
+        "kernel submitted source",
+        "internal execution ID",
+        "kernel cancellation completion from summary alone"
+      ]
+    },
+    {
+      "seq": 2,
+      "at": "2026-10-23T15:44:02.978Z",
+      "elapsedMs": 3.732,
+      "step": "startup",
+      "kind": "snapshot",
+      "label": "activation",
+      "notebookEvents": 0,
+      "textEvents": 0,
+      "notebooks": [],
+      "pending": []
+    },
+    {
+      "seq": 3,
+      "at": "2026-10-23T15:44:03.140Z",
+      "elapsedMs": 165.9029,
+      "step": "startup",
+      "kind": "notebook.open",
+      "notebook": {
+        "object": 1,
+        "uri": "file:$DIAGNOSTIC_WORKSPACE/AUTO-D2-save-1792688110161.ipynb",
+        "type": "jupyter-notebook",
+        "version": 0,
+        "dirty": false,
+        "closed": false,
+        "metadata": {
+          "cells": [],
+          "metadata": {
+            "kernelspec": {
+              "display_name": "Python 3 (ipykernel)",
+              "language": "python",
+              "name": "python3"
+            },
+            "language_info": {
+              "name": "python"
+            },
+            "outsideNotebookOwner": {
+              "sentinel": "preserve-notebook"
+            },
+            "task00201Diagnostic": {
+              "case": "D2-save",
+              "probeOnly": true
+            }
+          },
+          "nbformat": 4,
+          "nbformat_minor": 5,
+          "indentAmount": " "
+        },
+        "cells": [
+          {
+            "object": 2,
+            "notebookObject": 1,
+            "index": 0,
+            "uri": "vscode-notebook-cell:$DIAGNOSTIC_WORKSPACE/AUTO-D2-save-1792688110161.ipynb#W0sZmlsZQ%3D%3D",
+            "textObject": 3,
+            "textClosed": false,
+            "textVersion": 1,
+            "language": "python",
+            "source": "# D2: metadata-only must preserve this source\nfictional_value = 42\n",
+            "metadata": {
+              "execution_count": null,
+              "metadata": {
+                "outsideDiagnosticOwner": {
+                  "sentinel": "keep-D2"
+                },
+                "task00201Diagnostic": {
+                  "burst": 0,
+                  "committed": 0,
+                  "draft": 7,
+                  "label": "D2",
+                  "probeOnly": true
+                }
+              }
+            },
+            "executionSummary": {
+              "timing": {
+                "$undefined": true
+              },
+              "executionOrder": {
+                "$undefined": true
+              },
+              "success": {
+                "$undefined": true
+              }
+            },
+            "outputs": []
+          }
+        ],
+        "retainedCells": [
+          {
+            "object": 2,
+            "notebookObject": 1,
+            "index": 0,
+            "uri": "vscode-notebook-cell:$DIAGNOSTIC_WORKSPACE/AUTO-D2-save-1792688110161.ipynb#W0sZmlsZQ%3D%3D",
+            "textObject": 3,
+            "textClosed": false,
+            "textVersion": 1,
+            "language": "python",
+            "source": "# D2: metadata-only must preserve this source\nfictional_value = 42\n",
+            "metadata": {
+              "execution_count": null,
+              "metadata": {
+                "outsideDiagnosticOwner": {
+                  "sentinel": "keep-D2"
+                },
+                "task00201Diagnostic": {
+                  "burst": 0,
+                  "committed": 0,
+                  "draft": 7,
+                  "label": "D2",
+                  "probeOnly": true
+                }
+              }
+            },
+            "executionSummary": {
+              "timing": {
+                "$undefined": true
+              },
+              "executionOrder": {
+                "$undefined": true
+              },
+              "success": {
+                "$undefined": true
+              }
+            },
+            "outputs": []
+          }
+        ]
+      }
+    },
+    {
+      "seq": 4,
+      "at": "2026-10-23T15:44:03.185Z",
+      "elapsedMs": 211.3992,
+      "step": "startup",
+      "kind": "notebook.open",
+      "notebook": {
+        "object": 4,
+        "uri": "file:$DIAGNOSTIC_WORKSPACE/AUTO-D3-source-failure-focused-1792770243146.ipynb",
+        "type": "jupyter-notebook",
+        "version": 0,
+        "dirty": false,
+        "closed": false,
+        "metadata": {
+          "cells": [],
+          "metadata": {
+            "kernelspec": {
+              "display_name": "Python 3 (ipykernel)",
+              "language": "python",
+              "name": "python3"
+            },
+            "language_info": {
+              "name": "python"
+            },
+            "task00201Diagnostic": {
+              "probeOnly": true,
+              "case": "D3-mixed"
+            },
+            "outsideNotebookOwner": {
+              "sentinel": "preserve-notebook"
+            }
+          },
+          "nbformat": 4,
+          "nbformat_minor": 5,
+          "indentAmount": ""
+        },
+        "cells": [
+          {
+            "object": 5,
+            "notebookObject": 4,
+            "index": 0,
+            "uri": "vscode-notebook-cell:$DIAGNOSTIC_WORKSPACE/AUTO-D3-source-failure-focused-1792770243146.ipynb#W0sZmlsZQ%3D%3D",
+            "textObject": 6,
+            "textClosed": false,
+            "textVersion": 1,
+            "language": "python",
+            "source": "# D3 baseline\nfictional_value = 10\n",
+            "metadata": {
+              "execution_count": null,
+              "metadata": {
+                "outsideDiagnosticOwner": {
+                  "sentinel": "keep-D3"
+                },
+                "task00201Diagnostic": {
+                  "label": "D3",
+                  "draft": 0,
+                  "committed": 0,
+                  "burst": 0,
+                  "probeOnly": true
+                }
+              }
+            },
+            "executionSummary": {
+              "timing": {
+                "$undefined": true
+              },
+              "executionOrder": {
+                "$undefined": true
+              },
+              "success": {
+                "$undefined": true
+              }
+            },
+            "outputs": []
+          }
+        ],
+        "retainedCells": [
+          {
+            "object": 5,
+            "notebookObject": 4,
+            "index": 0,
+            "uri": "vscode-notebook-cell:$DIAGNOSTIC_WORKSPACE/AUTO-D3-source-failure-focused-1792770243146.ipynb#W0sZmlsZQ%3D%3D",
+            "textObject": 6,
+            "textClosed": false,
+            "textVersion": 1,
+            "language": "python",
+            "source": "# D3 baseline\nfictional_value = 10\n",
+            "metadata": {
+              "execution_count": null,
+              "metadata": {
+                "outsideDiagnosticOwner": {
+                  "sentinel": "keep-D3"
+                },
+                "task00201Diagnostic": {
+                  "label": "D3",
+                  "draft": 0,
+                  "committed": 0,
+                  "burst": 0,
+                  "probeOnly": true
+                }
+              }
+            },
+            "executionSummary": {
+              "timing": {
+                "$undefined": true
+              },
+              "executionOrder": {
+                "$undefined": true
+              },
+              "success": {
+                "$undefined": true
+              }
+            },
+            "outputs": []
+          }
+        ]
+      }
+    },
+    {
+      "seq": 5,
+      "at": "2026-10-23T15:44:03.655Z",
+      "elapsedMs": 681.4094,
+      "step": "startup",
+      "kind": "text.change",
+      "object": 6,
+      "uri": "vscode-notebook-cell:$DIAGNOSTIC_WORKSPACE/AUTO-D3-source-failure-focused-1792770243146.ipynb#W0sZmlsZQ%3D%3D",
+      "version": 2,
+      "reason": {
+        "$undefined": true
+      },
+      "changes": [
+        {
+          "rangeOffset": 32,
+          "rangeLength": 1,
+          "text": "2"
+        },
+        {
+          "rangeOffset": 13,
+          "rangeLength": 0,
+          "text": "xt focus"
+        },
+        {
+          "rangeOffset": 11,
+          "rangeLength": 1,
+          "text": "t t"
+        },
+        {
+          "rangeOffset": 10,
+          "rangeLength": 0,
+          "text": "ic"
+        },
+        {
+          "rangeOffset": 9,
+          "rangeLength": 0,
+          "text": "xp"
+        },
+        {
+          "rangeOffset": 7,
+          "rangeLength": 1,
+          "text": "ilure with "
+        },
+        {
+          "rangeOffset": 5,
+          "rangeLength": 1,
+          "text": "source-first f"
+        },
+        {
+          "rangeOffset": 2,
+          "rangeLength": 0,
+          "text": "AUTO "
+        }
+      ],
+      "source": "# AUTO D3 source-first failure with explicit text focus\nfictional_value = 20\n"
+    },
+    {
+      "seq": 6,
+      "at": "2026-10-23T15:44:03.657Z",
+      "elapsedMs": 683.1819,
+      "step": "startup",
+      "kind": "notebook.change",
+      "metadata": {
+        "$undefined": true
+      },
+      "contentChanges": [],
+      "cellChanges": [
+        {
+          "cell": {
+            "object": 5,
+            "notebookObject": 4,
+            "index": 0,
+            "uri": "vscode-notebook-cell:$DIAGNOSTIC_WORKSPACE/AUTO-D3-source-failure-focused-1792770243146.ipynb#W0sZmlsZQ%3D%3D",
+            "textObject": 6,
+            "textClosed": false,
+            "textVersion": 2,
+            "language": "python",
+            "source": "# AUTO D3 source-first failure with explicit text focus\nfictional_value = 20\n",
+            "metadata": {
+              "execution_count": null,
+              "metadata": {
+                "outsideDiagnosticOwner": {
+                  "sentinel": "keep-D3"
+                },
+                "task00201Diagnostic": {
+                  "label": "D3",
+                  "draft": 0,
+                  "committed": 0,
+                  "burst": 0,
+                  "probeOnly": true
+                }
+              }
+            },
+            "executionSummary": {
+              "timing": {
+                "$undefined": true
+              },
+              "executionOrder": {
+                "$undefined": true
+              },
+              "success": {
+                "$undefined": true
+              }
+            },
+            "outputs": []
+          },
+          "fields": [
+            "document",
+            "executionSummary",
+            "metadata",
+            "outputs",
+            "cell"
+          ],
+          "document": {
+            "object": 6,
+            "version": 2,
+            "source": "# AUTO D3 source-first failure with explicit text focus\nfictional_value = 20\n"
+          },
+          "metadata": {
+            "$undefined": true
+          },
+          "outputsPresent": false,
+          "executionSummary": {
+            "$undefined": true
+          }
+        }
+      ],
+      "notebook": {
+        "object": 4,
+        "uri": "file:$DIAGNOSTIC_WORKSPACE/AUTO-D3-source-failure-focused-1792770243146.ipynb",
+        "type": "jupyter-notebook",
+        "version": 1,
+        "dirty": false,
+        "closed": false,
+        "metadata": {
+          "cells": [],
+          "metadata": {
+            "kernelspec": {
+              "display_name": "Python 3 (ipykernel)",
+              "language": "python",
+              "name": "python3"
+            },
+            "language_info": {
+              "name": "python"
+            },
+            "task00201Diagnostic": {
+              "probeOnly": true,
+              "case": "D3-mixed"
+            },
+            "outsideNotebookOwner": {
+              "sentinel": "preserve-notebook"
+            }
+          },
+          "nbformat": 4,
+          "nbformat_minor": 5,
+          "indentAmount": ""
+        },
+        "cells": [
+          {
+            "object": 5,
+            "notebookObject": 4,
+            "index": 0,
+            "uri": "vscode-notebook-cell:$DIAGNOSTIC_WORKSPACE/AUTO-D3-source-failure-focused-1792770243146.ipynb#W0sZmlsZQ%3D%3D",
+            "textObject": 6,
+            "textClosed": false,
+            "textVersion": 2,
+            "language": "python",
+            "source": "# AUTO D3 source-first failure with explicit text focus\nfictional_value = 20\n",
+            "metadata": {
+              "execution_count": null,
+              "metadata": {
+                "outsideDiagnosticOwner": {
+                  "sentinel": "keep-D3"
+                },
+                "task00201Diagnostic": {
+                  "label": "D3",
+                  "draft": 0,
+                  "committed": 0,
+                  "burst": 0,
+                  "probeOnly": true
+                }
+              }
+            },
+            "executionSummary": {
+              "timing": {
+                "$undefined": true
+              },
+              "executionOrder": {
+                "$undefined": true
+              },
+              "success": {
+                "$undefined": true
+              }
+            },
+            "outputs": []
+          }
+        ],
+        "retainedCells": [
+          {
+            "object": 5,
+            "notebookObject": 4,
+            "index": 0,
+            "uri": "vscode-notebook-cell:$DIAGNOSTIC_WORKSPACE/AUTO-D3-source-failure-focused-1792770243146.ipynb#W0sZmlsZQ%3D%3D",
+            "textObject": 6,
+            "textClosed": false,
+            "textVersion": 2,
+            "language": "python",
+            "source": "# AUTO D3 source-first failure with explicit text focus\nfictional_value = 20\n",
+            "metadata": {
+              "execution_count": null,
+              "metadata": {
+                "outsideDiagnosticOwner": {
+                  "sentinel": "keep-D3"
+                },
+                "task00201Diagnostic": {
+                  "label": "D3",
+                  "draft": 0,
+                  "committed": 0,
+                  "burst": 0,
+                  "probeOnly": true
+                }
+              }
+            },
+            "executionSummary": {
+              "timing": {
+                "$undefined": true
+              },
+              "executionOrder": {
+                "$undefined": true
+              },
+              "success": {
+                "$undefined": true
+              }
+            },
+            "outputs": []
+          }
+        ]
+      }
+    },
+    {
+      "seq": 7,
+      "at": "2026-10-23T15:44:03.661Z",
+      "elapsedMs": 686.7513,
+      "step": "startup",
+      "kind": "notebook.change",
+      "metadata": {
+        "$undefined": true
+      },
+      "contentChanges": [],
+      "cellChanges": [
+        {
+          "cell": {
+            "object": 5,
+            "notebookObject": 4,
+            "index": 0,
+            "uri": "vscode-notebook-cell:$DIAGNOSTIC_WORKSPACE/AUTO-D3-source-failure-focused-1792770243146.ipynb#W0sZmlsZQ%3D%3D",
+            "textObject": 6,
+            "textClosed": false,
+            "textVersion": 2,
+            "language": "python",
+            "source": "# AUTO D3 source-first failure with explicit text focus\nfictional_value = 20\n",
+            "metadata": {
+              "execution_count": null,
+              "metadata": {
+                "outsideDiagnosticOwner": {
+                  "sentinel": "keep-D3"
+                },
+                "task00201Diagnostic": {
+                  "label": "D3",
+                  "draft": 0,
+                  "committed": 0,
+                  "burst": 0,
+                  "probeOnly": true
+                }
+              }
+            },
+            "executionSummary": {
+              "timing": {
+                "$undefined": true
+              },
+              "executionOrder": {
+                "$undefined": true
+              },
+              "success": {
+                "$undefined": true
+              }
+            },
+            "outputs": []
+          },
+          "fields": [
+            "document",
+            "executionSummary",
+            "metadata",
+            "outputs",
+            "cell"
+          ],
+          "document": {
+            "object": 6,
+            "version": 2,
+            "source": "# AUTO D3 source-first failure with explicit text focus\nfictional_value = 20\n"
+          },
+          "metadata": {
+            "$undefined": true
+          },
+          "outputsPresent": false,
+          "executionSummary": {
+            "$undefined": true
+          }
+        }
+      ],
+      "notebook": {
+        "object": 4,
+        "uri": "file:$DIAGNOSTIC_WORKSPACE/AUTO-D3-source-failure-focused-1792770243146.ipynb",
+        "type": "jupyter-notebook",
+        "version": 2,
+        "dirty": true,
+        "closed": false,
+        "metadata": {
+          "cells": [],
+          "metadata": {
+            "kernelspec": {
+              "display_name": "Python 3 (ipykernel)",
+              "language": "python",
+              "name": "python3"
+            },
+            "language_info": {
+              "name": "python"
+            },
+            "task00201Diagnostic": {
+              "probeOnly": true,
+              "case": "D3-mixed"
+            },
+            "outsideNotebookOwner": {
+              "sentinel": "preserve-notebook"
+            }
+          },
+          "nbformat": 4,
+          "nbformat_minor": 5,
+          "indentAmount": ""
+        },
+        "cells": [
+          {
+            "object": 5,
+            "notebookObject": 4,
+            "index": 0,
+            "uri": "vscode-notebook-cell:$DIAGNOSTIC_WORKSPACE/AUTO-D3-source-failure-focused-1792770243146.ipynb#W0sZmlsZQ%3D%3D",
+            "textObject": 6,
+            "textClosed": false,
+            "textVersion": 2,
+            "language": "python",
+            "source": "# AUTO D3 source-first failure with explicit text focus\nfictional_value = 20\n",
+            "metadata": {
+              "execution_count": null,
+              "metadata": {
+                "outsideDiagnosticOwner": {
+                  "sentinel": "keep-D3"
+                },
+                "task00201Diagnostic": {
+                  "label": "D3",
+                  "draft": 0,
+                  "committed": 0,
+                  "burst": 0,
+                  "probeOnly": true
+                }
+              }
+            },
+            "executionSummary": {
+              "timing": {
+                "$undefined": true
+              },
+              "executionOrder": {
+                "$undefined": true
+              },
+              "success": {
+                "$undefined": true
+              }
+            },
+            "outputs": []
+          }
+        ],
+        "retainedCells": [
+          {
+            "object": 5,
+            "notebookObject": 4,
+            "index": 0,
+            "uri": "vscode-notebook-cell:$DIAGNOSTIC_WORKSPACE/AUTO-D3-source-failure-focused-1792770243146.ipynb#W0sZmlsZQ%3D%3D",
+            "textObject": 6,
+            "textClosed": false,
+            "textVersion": 2,
+            "language": "python",
+            "source": "# AUTO D3 source-first failure with explicit text focus\nfictional_value = 20\n",
+            "metadata": {
+              "execution_count": null,
+              "metadata": {
+                "outsideDiagnosticOwner": {
+                  "sentinel": "keep-D3"
+                },
+                "task00201Diagnostic": {
+                  "label": "D3",
+                  "draft": 0,
+                  "committed": 0,
+                  "burst": 0,
+                  "probeOnly": true
+                }
+              }
+            },
+            "executionSummary": {
+              "timing": {
+                "$undefined": true
+              },
+              "executionOrder": {
+                "$undefined": true
+              },
+              "success": {
+                "$undefined": true
+              }
+            },
+            "outputs": []
+          }
+        ]
+      }
+    },
+    {
+      "seq": 8,
+      "at": "2026-10-23T15:44:03.794Z",
+      "elapsedMs": 819.9081,
+      "step": "startup",
+      "kind": "text.change",
+      "object": 6,
+      "uri": "vscode-notebook-cell:$DIAGNOSTIC_WORKSPACE/AUTO-D3-source-failure-focused-1792770243146.ipynb#W0sZmlsZQ%3D%3D",
+      "version": 3,
+      "reason": 1,
+      "changes": [
+        {
+          "rangeOffset": 74,
+          "rangeLength": 1,
+          "text": "1"
+        },
+        {
+          "rangeOffset": 47,
+          "rangeLength": 8,
+          "text": ""
+        },
+        {
+          "rangeOffset": 43,
+          "rangeLength": 3,
+          "text": "n"
+        },
+        {
+          "rangeOffset": 40,
+          "rangeLength": 2,
+          "text": ""
+        },
+        {
+          "rangeOffset": 37,
+          "rangeLength": 2,
+          "text": ""
+        },
+        {
+          "rangeOffset": 25,
+          "rangeLength": 11,
+          "text": "s"
+        },
+        {
+          "rangeOffset": 10,
+          "rangeLength": 14,
+          "text": "b"
+        },
+        {
+          "rangeOffset": 2,
+          "rangeLength": 5,
+          "text": ""
+        }
+      ],
+      "source": "# D3 baseline\nfictional_value = 10\n"
+    },
+    {
+      "seq": 9,
+      "at": "2026-10-23T15:44:03.796Z",
+      "elapsedMs": 821.7997,
+      "step": "startup",
+      "kind": "notebook.change",
+      "metadata": {
+        "$undefined": true
+      },
+      "contentChanges": [],
+      "cellChanges": [
+        {
+          "cell": {
+            "object": 5,
+            "notebookObject": 4,
+            "index": 0,
+            "uri": "vscode-notebook-cell:$DIAGNOSTIC_WORKSPACE/AUTO-D3-source-failure-focused-1792770243146.ipynb#W0sZmlsZQ%3D%3D",
+            "textObject": 6,
+            "textClosed": false,
+            "textVersion": 3,
+            "language": "python",
+            "source": "# D3 baseline\nfictional_value = 10\n",
+            "metadata": {
+              "execution_count": null,
+              "metadata": {
+                "outsideDiagnosticOwner": {
+                  "sentinel": "keep-D3"
+                },
+                "task00201Diagnostic": {
+                  "label": "D3",
+                  "draft": 0,
+                  "committed": 0,
+                  "burst": 0,
+                  "probeOnly": true
+                }
+              }
+            },
+            "executionSummary": {
+              "timing": {
+                "$undefined": true
+              },
+              "executionOrder": {
+                "$undefined": true
+              },
+              "success": {
+                "$undefined": true
+              }
+            },
+            "outputs": []
+          },
+          "fields": [
+            "document",
+            "executionSummary",
+            "metadata",
+            "outputs",
+            "cell"
+          ],
+          "document": {
+            "object": 6,
+            "version": 3,
+            "source": "# D3 baseline\nfictional_value = 10\n"
+          },
+          "metadata": {
+            "$undefined": true
+          },
+          "outputsPresent": false,
+          "executionSummary": {
+            "$undefined": true
+          }
+        }
+      ],
+      "notebook": {
+        "object": 4,
+        "uri": "file:$DIAGNOSTIC_WORKSPACE/AUTO-D3-source-failure-focused-1792770243146.ipynb",
+        "type": "jupyter-notebook",
+        "version": 3,
+        "dirty": true,
+        "closed": false,
+        "metadata": {
+          "cells": [],
+          "metadata": {
+            "kernelspec": {
+              "display_name": "Python 3 (ipykernel)",
+              "language": "python",
+              "name": "python3"
+            },
+            "language_info": {
+              "name": "python"
+            },
+            "task00201Diagnostic": {
+              "probeOnly": true,
+              "case": "D3-mixed"
+            },
+            "outsideNotebookOwner": {
+              "sentinel": "preserve-notebook"
+            }
+          },
+          "nbformat": 4,
+          "nbformat_minor": 5,
+          "indentAmount": ""
+        },
+        "cells": [
+          {
+            "object": 5,
+            "notebookObject": 4,
+            "index": 0,
+            "uri": "vscode-notebook-cell:$DIAGNOSTIC_WORKSPACE/AUTO-D3-source-failure-focused-1792770243146.ipynb#W0sZmlsZQ%3D%3D",
+            "textObject": 6,
+            "textClosed": false,
+            "textVersion": 3,
+            "language": "python",
+            "source": "# D3 baseline\nfictional_value = 10\n",
+            "metadata": {
+              "execution_count": null,
+              "metadata": {
+                "outsideDiagnosticOwner": {
+                  "sentinel": "keep-D3"
+                },
+                "task00201Diagnostic": {
+                  "label": "D3",
+                  "draft": 0,
+                  "committed": 0,
+                  "burst": 0,
+                  "probeOnly": true
+                }
+              }
+            },
+            "executionSummary": {
+              "timing": {
+                "$undefined": true
+              },
+              "executionOrder": {
+                "$undefined": true
+              },
+              "success": {
+                "$undefined": true
+              }
+            },
+            "outputs": []
+          }
+        ],
+        "retainedCells": [
+          {
+            "object": 5,
+            "notebookObject": 4,
+            "index": 0,
+            "uri": "vscode-notebook-cell:$DIAGNOSTIC_WORKSPACE/AUTO-D3-source-failure-focused-1792770243146.ipynb#W0sZmlsZQ%3D%3D",
+            "textObject": 6,
+            "textClosed": false,
+            "textVersion": 3,
+            "language": "python",
+            "source": "# D3 baseline\nfictional_value = 10\n",
+            "metadata": {
+              "execution_count": null,
+              "metadata": {
+                "outsideDiagnosticOwner": {
+                  "sentinel": "keep-D3"
+                },
+                "task00201Diagnostic": {
+                  "label": "D3",
+                  "draft": 0,
+                  "committed": 0,
+                  "burst": 0,
+                  "probeOnly": true
+                }
+              }
+            },
+            "executionSummary": {
+              "timing": {
+                "$undefined": true
+              },
+              "executionOrder": {
+                "$undefined": true
+              },
+              "success": {
+                "$undefined": true
+              }
+            },
+            "outputs": []
+          }
+        ]
+      }
+    },
+    {
+      "seq": 10,
+      "at": "2026-10-23T15:44:03.798Z",
+      "elapsedMs": 824.2947,
+      "step": "startup",
+      "kind": "notebook.change",
+      "metadata": {
+        "$undefined": true
+      },
+      "contentChanges": [],
+      "cellChanges": [
+        {
+          "cell": {
+            "object": 5,
+            "notebookObject": 4,
+            "index": 0,
+            "uri": "vscode-notebook-cell:$DIAGNOSTIC_WORKSPACE/AUTO-D3-source-failure-focused-1792770243146.ipynb#W0sZmlsZQ%3D%3D",
+            "textObject": 6,
+            "textClosed": false,
+            "textVersion": 3,
+            "language": "python",
+            "source": "# D3 baseline\nfictional_value = 10\n",
+            "metadata": {
+              "execution_count": null,
+              "metadata": {
+                "outsideDiagnosticOwner": {
+                  "sentinel": "keep-D3"
+                },
+                "task00201Diagnostic": {
+                  "label": "D3",
+                  "draft": 0,
+                  "committed": 0,
+                  "burst": 0,
+                  "probeOnly": true
+                }
+              }
+            },
+            "executionSummary": {
+              "timing": {
+                "$undefined": true
+              },
+              "executionOrder": {
+                "$undefined": true
+              },
+              "success": {
+                "$undefined": true
+              }
+            },
+            "outputs": []
+          },
+          "fields": [
+            "document",
+            "executionSummary",
+            "metadata",
+            "outputs",
+            "cell"
+          ],
+          "document": {
+            "object": 6,
+            "version": 3,
+            "source": "# D3 baseline\nfictional_value = 10\n"
+          },
+          "metadata": {
+            "$undefined": true
+          },
+          "outputsPresent": false,
+          "executionSummary": {
+            "$undefined": true
+          }
+        }
+      ],
+      "notebook": {
+        "object": 4,
+        "uri": "file:$DIAGNOSTIC_WORKSPACE/AUTO-D3-source-failure-focused-1792770243146.ipynb",
+        "type": "jupyter-notebook",
+        "version": 4,
+        "dirty": false,
+        "closed": false,
+        "metadata": {
+          "cells": [],
+          "metadata": {
+            "kernelspec": {
+              "display_name": "Python 3 (ipykernel)",
+              "language": "python",
+              "name": "python3"
+            },
+            "language_info": {
+              "name": "python"
+            },
+            "task00201Diagnostic": {
+              "probeOnly": true,
+              "case": "D3-mixed"
+            },
+            "outsideNotebookOwner": {
+              "sentinel": "preserve-notebook"
+            }
+          },
+          "nbformat": 4,
+          "nbformat_minor": 5,
+          "indentAmount": ""
+        },
+        "cells": [
+          {
+            "object": 5,
+            "notebookObject": 4,
+            "index": 0,
+            "uri": "vscode-notebook-cell:$DIAGNOSTIC_WORKSPACE/AUTO-D3-source-failure-focused-1792770243146.ipynb#W0sZmlsZQ%3D%3D",
+            "textObject": 6,
+            "textClosed": false,
+            "textVersion": 3,
+            "language": "python",
+            "source": "# D3 baseline\nfictional_value = 10\n",
+            "metadata": {
+              "execution_count": null,
+              "metadata": {
+                "outsideDiagnosticOwner": {
+                  "sentinel": "keep-D3"
+                },
+                "task00201Diagnostic": {
+                  "label": "D3",
+                  "draft": 0,
+                  "committed": 0,
+                  "burst": 0,
+                  "probeOnly": true
+                }
+              }
+            },
+            "executionSummary": {
+              "timing": {
+                "$undefined": true
+              },
+              "executionOrder": {
+                "$undefined": true
+              },
+              "success": {
+                "$undefined": true
+              }
+            },
+            "outputs": []
+          }
+        ],
+        "retainedCells": [
+          {
+            "object": 5,
+            "notebookObject": 4,
+            "index": 0,
+            "uri": "vscode-notebook-cell:$DIAGNOSTIC_WORKSPACE/AUTO-D3-source-failure-focused-1792770243146.ipynb#W0sZmlsZQ%3D%3D",
+            "textObject": 6,
+            "textClosed": false,
+            "textVersion": 3,
+            "language": "python",
+            "source": "# D3 baseline\nfictional_value = 10\n",
+            "metadata": {
+              "execution_count": null,
+              "metadata": {
+                "outsideDiagnosticOwner": {
+                  "sentinel": "keep-D3"
+                },
+                "task00201Diagnostic": {
+                  "label": "D3",
+                  "draft": 0,
+                  "committed": 0,
+                  "burst": 0,
+                  "probeOnly": true
+                }
+              }
+            },
+            "executionSummary": {
+              "timing": {
+                "$undefined": true
+              },
+              "executionOrder": {
+                "$undefined": true
+              },
+              "success": {
+                "$undefined": true
+              }
+            },
+            "outputs": []
+          }
+        ]
+      }
+    },
+    {
+      "seq": 11,
+      "at": "2026-10-23T15:44:03.911Z",
+      "elapsedMs": 937.4434,
+      "step": "startup",
+      "kind": "text.change",
+      "object": 6,
+      "uri": "vscode-notebook-cell:$DIAGNOSTIC_WORKSPACE/AUTO-D3-source-failure-focused-1792770243146.ipynb#W0sZmlsZQ%3D%3D",
+      "version": 4,
+      "reason": 2,
+      "changes": [
+        {
+          "rangeOffset": 32,
+          "rangeLength": 1,
+          "text": "2"
+        },
+        {
+          "rangeOffset": 13,
+          "rangeLength": 0,
+          "text": "xt focus"
+        },
+        {
+          "rangeOffset": 11,
+          "rangeLength": 1,
+          "text": "t t"
+        },
+        {
+          "rangeOffset": 10,
+          "rangeLength": 0,
+          "text": "ic"
+        },
+        {
+          "rangeOffset": 9,
+          "rangeLength": 0,
+          "text": "xp"
+        },
+        {
+          "rangeOffset": 7,
+          "rangeLength": 1,
+          "text": "ilure with "
+        },
+        {
+          "rangeOffset": 5,
+          "rangeLength": 1,
+          "text": "source-first f"
+        },
+        {
+          "rangeOffset": 2,
+          "rangeLength": 0,
+          "text": "AUTO "
+        }
+      ],
+      "source": "# AUTO D3 source-first failure with explicit text focus\nfictional_value = 20\n"
+    },
+    {
+      "seq": 12,
+      "at": "2026-10-23T15:44:03.912Z",
+      "elapsedMs": 938.4823,
+      "step": "startup",
+      "kind": "notebook.change",
+      "metadata": {
+        "$undefined": true
+      },
+      "contentChanges": [],
+      "cellChanges": [
+        {
+          "cell": {
+            "object": 5,
+            "notebookObject": 4,
+            "index": 0,
+            "uri": "vscode-notebook-cell:$DIAGNOSTIC_WORKSPACE/AUTO-D3-source-failure-focused-1792770243146.ipynb#W0sZmlsZQ%3D%3D",
+            "textObject": 6,
+            "textClosed": false,
+            "textVersion": 4,
+            "language": "python",
+            "source": "# AUTO D3 source-first failure with explicit text focus\nfictional_value = 20\n",
+            "metadata": {
+              "execution_count": null,
+              "metadata": {
+                "outsideDiagnosticOwner": {
+                  "sentinel": "keep-D3"
+                },
+                "task00201Diagnostic": {
+                  "label": "D3",
+                  "draft": 0,
+                  "committed": 0,
+                  "burst": 0,
+                  "probeOnly": true
+                }
+              }
+            },
+            "executionSummary": {
+              "timing": {
+                "$undefined": true
+              },
+              "executionOrder": {
+                "$undefined": true
+              },
+              "success": {
+                "$undefined": true
+              }
+            },
+            "outputs": []
+          },
+          "fields": [
+            "document",
+            "executionSummary",
+            "metadata",
+            "outputs",
+            "cell"
+          ],
+          "document": {
+            "object": 6,
+            "version": 4,
+            "source": "# AUTO D3 source-first failure with explicit text focus\nfictional_value = 20\n"
+          },
+          "metadata": {
+            "$undefined": true
+          },
+          "outputsPresent": false,
+          "executionSummary": {
+            "$undefined": true
+          }
+        }
+      ],
+      "notebook": {
+        "object": 4,
+        "uri": "file:$DIAGNOSTIC_WORKSPACE/AUTO-D3-source-failure-focused-1792770243146.ipynb",
+        "type": "jupyter-notebook",
+        "version": 5,
+        "dirty": false,
+        "closed": false,
+        "metadata": {
+          "cells": [],
+          "metadata": {
+            "kernelspec": {
+              "display_name": "Python 3 (ipykernel)",
+              "language": "python",
+              "name": "python3"
+            },
+            "language_info": {
+              "name": "python"
+            },
+            "task00201Diagnostic": {
+              "probeOnly": true,
+              "case": "D3-mixed"
+            },
+            "outsideNotebookOwner": {
+              "sentinel": "preserve-notebook"
+            }
+          },
+          "nbformat": 4,
+          "nbformat_minor": 5,
+          "indentAmount": ""
+        },
+        "cells": [
+          {
+            "object": 5,
+            "notebookObject": 4,
+            "index": 0,
+            "uri": "vscode-notebook-cell:$DIAGNOSTIC_WORKSPACE/AUTO-D3-source-failure-focused-1792770243146.ipynb#W0sZmlsZQ%3D%3D",
+            "textObject": 6,
+            "textClosed": false,
+            "textVersion": 4,
+            "language": "python",
+            "source": "# AUTO D3 source-first failure with explicit text focus\nfictional_value = 20\n",
+            "metadata": {
+              "execution_count": null,
+              "metadata": {
+                "outsideDiagnosticOwner": {
+                  "sentinel": "keep-D3"
+                },
+                "task00201Diagnostic": {
+                  "label": "D3",
+                  "draft": 0,
+                  "committed": 0,
+                  "burst": 0,
+                  "probeOnly": true
+                }
+              }
+            },
+            "executionSummary": {
+              "timing": {
+                "$undefined": true
+              },
+              "executionOrder": {
+                "$undefined": true
+              },
+              "success": {
+                "$undefined": true
+              }
+            },
+            "outputs": []
+          }
+        ],
+        "retainedCells": [
+          {
+            "object": 5,
+            "notebookObject": 4,
+            "index": 0,
+            "uri": "vscode-notebook-cell:$DIAGNOSTIC_WORKSPACE/AUTO-D3-source-failure-focused-1792770243146.ipynb#W0sZmlsZQ%3D%3D",
+            "textObject": 6,
+            "textClosed": false,
+            "textVersion": 4,
+            "language": "python",
+            "source": "# AUTO D3 source-first failure with explicit text focus\nfictional_value = 20\n",
+            "metadata": {
+              "execution_count": null,
+              "metadata": {
+                "outsideDiagnosticOwner": {
+                  "sentinel": "keep-D3"
+                },
+                "task00201Diagnostic": {
+                  "label": "D3",
+                  "draft": 0,
+                  "committed": 0,
+                  "burst": 0,
+                  "probeOnly": true
+                }
+              }
+            },
+            "executionSummary": {
+              "timing": {
+                "$undefined": true
+              },
+              "executionOrder": {
+                "$undefined": true
+              },
+              "success": {
+                "$undefined": true
+              }
+            },
+            "outputs": []
+          }
+        ]
+      }
+    },
+    {
+      "seq": 13,
+      "at": "2026-10-23T15:44:03.914Z",
+      "elapsedMs": 939.8459,
+      "step": "startup",
+      "kind": "notebook.change",
+      "metadata": {
+        "$undefined": true
+      },
+      "contentChanges": [],
+      "cellChanges": [
+        {
+          "cell": {
+            "object": 5,
+            "notebookObject": 4,
+            "index": 0,
+            "uri": "vscode-notebook-cell:$DIAGNOSTIC_WORKSPACE/AUTO-D3-source-failure-focused-1792770243146.ipynb#W0sZmlsZQ%3D%3D",
+            "textObject": 6,
+            "textClosed": false,
+            "textVersion": 4,
+            "language": "python",
+            "source": "# AUTO D3 source-first failure with explicit text focus\nfictional_value = 20\n",
+            "metadata": {
+              "execution_count": null,
+              "metadata": {
+                "outsideDiagnosticOwner": {
+                  "sentinel": "keep-D3"
+                },
+                "task00201Diagnostic": {
+                  "label": "D3",
+                  "draft": 0,
+                  "committed": 0,
+                  "burst": 0,
+                  "probeOnly": true
+                }
+              }
+            },
+            "executionSummary": {
+              "timing": {
+                "$undefined": true
+              },
+              "executionOrder": {
+                "$undefined": true
+              },
+              "success": {
+                "$undefined": true
+              }
+            },
+            "outputs": []
+          },
+          "fields": [
+            "document",
+            "executionSummary",
+            "metadata",
+            "outputs",
+            "cell"
+          ],
+          "document": {
+            "object": 6,
+            "version": 4,
+            "source": "# AUTO D3 source-first failure with explicit text focus\nfictional_value = 20\n"
+          },
+          "metadata": {
+            "$undefined": true
+          },
+          "outputsPresent": false,
+          "executionSummary": {
+            "$undefined": true
+          }
+        }
+      ],
+      "notebook": {
+        "object": 4,
+        "uri": "file:$DIAGNOSTIC_WORKSPACE/AUTO-D3-source-failure-focused-1792770243146.ipynb",
+        "type": "jupyter-notebook",
+        "version": 6,
+        "dirty": true,
+        "closed": false,
+        "metadata": {
+          "cells": [],
+          "metadata": {
+            "kernelspec": {
+              "display_name": "Python 3 (ipykernel)",
+              "language": "python",
+              "name": "python3"
+            },
+            "language_info": {
+              "name": "python"
+            },
+            "task00201Diagnostic": {
+              "probeOnly": true,
+              "case": "D3-mixed"
+            },
+            "outsideNotebookOwner": {
+              "sentinel": "preserve-notebook"
+            }
+          },
+          "nbformat": 4,
+          "nbformat_minor": 5,
+          "indentAmount": ""
+        },
+        "cells": [
+          {
+            "object": 5,
+            "notebookObject": 4,
+            "index": 0,
+            "uri": "vscode-notebook-cell:$DIAGNOSTIC_WORKSPACE/AUTO-D3-source-failure-focused-1792770243146.ipynb#W0sZmlsZQ%3D%3D",
+            "textObject": 6,
+            "textClosed": false,
+            "textVersion": 4,
+            "language": "python",
+            "source": "# AUTO D3 source-first failure with explicit text focus\nfictional_value = 20\n",
+            "metadata": {
+              "execution_count": null,
+              "metadata": {
+                "outsideDiagnosticOwner": {
+                  "sentinel": "keep-D3"
+                },
+                "task00201Diagnostic": {
+                  "label": "D3",
+                  "draft": 0,
+                  "committed": 0,
+                  "burst": 0,
+                  "probeOnly": true
+                }
+              }
+            },
+            "executionSummary": {
+              "timing": {
+                "$undefined": true
+              },
+              "executionOrder": {
+                "$undefined": true
+              },
+              "success": {
+                "$undefined": true
+              }
+            },
+            "outputs": []
+          }
+        ],
+        "retainedCells": [
+          {
+            "object": 5,
+            "notebookObject": 4,
+            "index": 0,
+            "uri": "vscode-notebook-cell:$DIAGNOSTIC_WORKSPACE/AUTO-D3-source-failure-focused-1792770243146.ipynb#W0sZmlsZQ%3D%3D",
+            "textObject": 6,
+            "textClosed": false,
+            "textVersion": 4,
+            "language": "python",
+            "source": "# AUTO D3 source-first failure with explicit text focus\nfictional_value = 20\n",
+            "metadata": {
+              "execution_count": null,
+              "metadata": {
+                "outsideDiagnosticOwner": {
+                  "sentinel": "keep-D3"
+                },
+                "task00201Diagnostic": {
+                  "label": "D3",
+                  "draft": 0,
+                  "committed": 0,
+                  "burst": 0,
+                  "probeOnly": true
+                }
+              }
+            },
+            "executionSummary": {
+              "timing": {
+                "$undefined": true
+              },
+              "executionOrder": {
+                "$undefined": true
+              },
+              "success": {
+                "$undefined": true
+              }
+            },
+            "outputs": []
+          }
+        ]
+      }
+    }
+  ],
+  "initialCellIdsComparison": {
+    "status": "failed",
+    "at": "2026-10-23T15:45:40.878Z",
+    "vscode": "1.143.0",
+    "build": {
+      "root": "$REPO",
+      "workspace": "$REPO\\results\\task-002-01\\workspace",
+      "preparedAt": "2026-10-23T15:45:00.073Z",
+      "base": "b6f94f06d253ca557a0ca9e8f51f11dd5c4613b6",
+      "branch": "codex/task-002-01-desktop",
+      "diff": "M tests/notebook-host-api/prepare.mjs\n M tests/notebook-host-api/structure.cjs\n?? tests/notebook-host-api/recovery.cjs\n?? tests/notebook-host-api/structure-ids.cjs",
+      "node": "v24.14.1",
+      "hashes": {
+        "package.json": "04d6f5100c67d133a194e14e847264ad033639a5969112d37670da894a5da7c7",
+        "extension.cjs": "d75bf423d0df234081657d8d019e03ba26636e64023a5a9b54d50df04b40dd9f",
+        "model.cjs": "4057e30f336b85e9d5f2396fd02d8f4ede6f8d34ff08bb91a078504da07473a5",
+        "fixtures.cjs": "b7d7f545274d09f2eb4bc2bc92bbc36c7f0c55ceb5126e18b4512f5c7401cd5d",
+        "smoke.cjs": "bcab7d623d0699a393d6eb8fdfa4110e9736e205eb631547ff07c657cb3138c8",
+        "automated.cjs": "56c0dfeb93832975a062531f321a87ffc16d3d3c5d7b0a1f4f1b3068765b6a4c",
+        "structure.cjs": "358c11bbd399b1506400df177d3549c8a86eecfa1c1605bde2cd5ba93c4ba48c",
+        "structure-delete.cjs": "7655ba5fa7fe816b3fbfcedb2e073be3e8045bacfe0c1077cf6bf5bce1abe755",
+        "structure-ids.cjs": "7644c4ee2db15833f59bf8c6d6440f33417d0bf9e7a5ddfdf4e66caeb67e41c8",
+        "recovery.cjs": "265ce3a3b2f3a2ba57008b800ba9ecf2a02a28e7d19e122c7db5cd8f402e51f7"
+      }
+    },
+    "options": {
+      "cellIds": true
+    },
+    "results": [],
+    "rawLog": "$REPO\\logs\\task-002-01\\2026-10-23T15-45-40-981Z-38160\\events.jsonl",
+    "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n2 !== 3\n",
+    "stack": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n2 !== 3\n\n\tat Object.run (c:\\Users\\tomoh\\ドキュメント\\ChatGPT\\vscode-extension-zizai\\task-002-01-desktop\\tests\\notebook-host-api\\dist\\structure.cjs:46:14)"
+  },
+  "initialCellIdsComparisonEvents": [
+    {
+      "seq": 1,
+      "at": "2026-10-23T15:45:40.985Z",
+      "elapsedMs": 2.2651,
+      "step": "startup",
+      "kind": "environment",
+      "session": "2026-10-23T15-45-40-981Z-38160",
+      "build": {
+        "root": "$REPO",
+        "workspace": "$REPO\\results\\task-002-01\\workspace",
+        "preparedAt": "2026-10-23T15:45:00.073Z",
+        "base": "b6f94f06d253ca557a0ca9e8f51f11dd5c4613b6",
+        "branch": "codex/task-002-01-desktop",
+        "diff": "M tests/notebook-host-api/prepare.mjs\n M tests/notebook-host-api/structure.cjs\n?? tests/notebook-host-api/recovery.cjs\n?? tests/notebook-host-api/structure-ids.cjs",
+        "node": "v24.14.1",
+        "hashes": {
+          "package.json": "04d6f5100c67d133a194e14e847264ad033639a5969112d37670da894a5da7c7",
+          "extension.cjs": "d75bf423d0df234081657d8d019e03ba26636e64023a5a9b54d50df04b40dd9f",
+          "model.cjs": "4057e30f336b85e9d5f2396fd02d8f4ede6f8d34ff08bb91a078504da07473a5",
+          "fixtures.cjs": "b7d7f545274d09f2eb4bc2bc92bbc36c7f0c55ceb5126e18b4512f5c7401cd5d",
+          "smoke.cjs": "bcab7d623d0699a393d6eb8fdfa4110e9736e205eb631547ff07c657cb3138c8",
+          "automated.cjs": "56c0dfeb93832975a062531f321a87ffc16d3d3c5d7b0a1f4f1b3068765b6a4c",
+          "structure.cjs": "358c11bbd399b1506400df177d3549c8a86eecfa1c1605bde2cd5ba93c4ba48c",
+          "structure-delete.cjs": "7655ba5fa7fe816b3fbfcedb2e073be3e8045bacfe0c1077cf6bf5bce1abe755",
+          "structure-ids.cjs": "7644c4ee2db15833f59bf8c6d6440f33417d0bf9e7a5ddfdf4e66caeb67e41c8",
+          "recovery.cjs": "265ce3a3b2f3a2ba57008b800ba9ecf2a02a28e7d19e122c7db5cd8f402e51f7"
+        }
+      },
+      "vscode": "1.143.0",
+      "appName": "Visual Studio Code",
+      "platform": "win32",
+      "arch": "x64",
+      "node": "v24.21.0",
+      "electron": "43.7.7",
+      "extensions": [
+        {
+          "id": "ms-toolsai.jupyter",
+          "version": {
+            "$undefined": true
+          },
+          "active": {
+            "$undefined": true
+          }
+        },
+        {
+          "id": "ms-python.python",
+          "version": {
+            "$undefined": true
+          },
+          "active": {
+            "$undefined": true
+          }
+        },
+        {
+          "id": "ms-python.vscode-python-envs",
+          "version": {
+            "$undefined": true
+          },
+          "active": {
+            "$undefined": true
+          }
+        },
+        {
+          "id": "vscode.ipynb",
+          "version": "10.0.0",
+          "active": false
+        }
+      ],
+      "notObservable": [
+        "kernel submitted source",
+        "internal execution ID",
+        "kernel cancellation completion from summary alone"
+      ]
+    },
+    {
+      "seq": 2,
+      "at": "2026-10-23T15:45:40.987Z",
+      "elapsedMs": 4.1684,
+      "step": "startup",
+      "kind": "snapshot",
+      "label": "activation",
+      "notebookEvents": 0,
+      "textEvents": 0,
+      "notebooks": [],
+      "pending": []
+    },
+    {
+      "seq": 3,
+      "at": "2026-10-23T15:45:41.327Z",
+      "elapsedMs": 343.8635,
+      "step": "startup",
+      "kind": "notebook.open",
+      "notebook": {
+        "object": 1,
+        "uri": "file:$DIAGNOSTIC_WORKSPACE/AUTO-D1-delete-with-ids-1792770341024.ipynb",
+        "type": "jupyter-notebook",
+        "version": 0,
+        "dirty": false,
+        "closed": false,
+        "metadata": {
+          "cells": [],
+          "metadata": {
+            "kernelspec": {
+              "display_name": "Python 3 (ipykernel)",
+              "language": "python",
+              "name": "python3"
+            },
+            "language_info": {
+              "name": "python"
+            },
+            "task00201Diagnostic": {
+              "probeOnly": true,
+              "case": "D1-structure"
+            },
+            "outsideNotebookOwner": {
+              "sentinel": "preserve-notebook"
+            }
+          },
+          "nbformat": 4,
+          "nbformat_minor": 5,
+          "indentAmount": ""
+        },
+        "cells": [
+          {
+            "object": 2,
+            "notebookObject": 1,
+            "index": 0,
+            "uri": "vscode-notebook-cell:$DIAGNOSTIC_WORKSPACE/AUTO-D1-delete-with-ids-1792770341024.ipynb#W0sZmlsZQ%3D%3D",
+            "textObject": 3,
+            "textClosed": false,
+            "textVersion": 1,
+            "language": "python",
+            "source": "# D1-A: move this cell\nvalue_a = 101\n",
+            "metadata": {
+              "execution_count": null,
+              "metadata": {
+                "outsideDiagnosticOwner": {
+                  "sentinel": "keep-A"
+                },
+                "task00201Diagnostic": {
+                  "label": "A",
+                  "draft": 0,
+                  "committed": 0,
+                  "burst": 0,
+                  "probeOnly": true
+                }
+              },
+              "id": "task00201-cell-0"
+            },
+            "executionSummary": {
+              "timing": {
+                "$undefined": true
+              },
+              "executionOrder": {
+                "$undefined": true
+              },
+              "success": {
+                "$undefined": true
+              }
+            },
+            "outputs": []
+          },
+          {
+            "object": 4,
+            "notebookObject": 1,
+            "index": 1,
+            "uri": "vscode-notebook-cell:$DIAGNOSTIC_WORKSPACE/AUTO-D1-delete-with-ids-1792770341024.ipynb#W1sZmlsZQ%3D%3D",
+            "textObject": 5,
+            "textClosed": false,
+            "textVersion": 1,
+            "language": "python",
+            "source": "# D1-B\nvalue_b = 202\n",
+            "metadata": {
+              "execution_count": null,
+              "metadata": {
+                "outsideDiagnosticOwner": {
+                  "sentinel": "keep-B"
+                },
+                "task00201Diagnostic": {
+                  "label": "B",
+                  "draft": 0,
+                  "committed": 0,
+                  "burst": 0,
+                  "probeOnly": true
+                }
+              },
+              "id": "task00201-cell-1"
+            },
+            "executionSummary": {
+              "timing": {
+                "$undefined": true
+              },
+              "executionOrder": {
+                "$undefined": true
+              },
+              "success": {
+                "$undefined": true
+              }
+            },
+            "outputs": []
+          },
+          {
+            "object": 6,
+            "notebookObject": 1,
+            "index": 2,
+            "uri": "vscode-notebook-cell:$DIAGNOSTIC_WORKSPACE/AUTO-D1-delete-with-ids-1792770341024.ipynb#W2sZmlsZQ%3D%3D",
+            "textObject": 7,
+            "textClosed": false,
+            "textVersion": 1,
+            "language": "python",
+            "source": "# D1-C\nvalue_c = 303\n",
+            "metadata": {
+              "execution_count": null,
+              "metadata": {
+                "outsideDiagnosticOwner": {
+                  "sentinel": "keep-C"
+                },
+                "task00201Diagnostic": {
+                  "label": "C",
+                  "draft": 0,
+                  "committed": 0,
+                  "burst": 0,
+                  "probeOnly": true
+                }
+              },
+              "id": "task00201-cell-2"
+            },
+            "executionSummary": {
+              "timing": {
+                "$undefined": true
+              },
+              "executionOrder": {
+                "$undefined": true
+              },
+              "success": {
+                "$undefined": true
+              }
+            },
+            "outputs": []
+          }
+        ],
+        "retainedCells": [
+          {
+            "object": 2,
+            "notebookObject": 1,
+            "index": 0,
+            "uri": "vscode-notebook-cell:$DIAGNOSTIC_WORKSPACE/AUTO-D1-delete-with-ids-1792770341024.ipynb#W0sZmlsZQ%3D%3D",
+            "textObject": 3,
+            "textClosed": false,
+            "textVersion": 1,
+            "language": "python",
+            "source": "# D1-A: move this cell\nvalue_a = 101\n",
+            "metadata": {
+              "execution_count": null,
+              "metadata": {
+                "outsideDiagnosticOwner": {
+                  "sentinel": "keep-A"
+                },
+                "task00201Diagnostic": {
+                  "label": "A",
+                  "draft": 0,
+                  "committed": 0,
+                  "burst": 0,
+                  "probeOnly": true
+                }
+              },
+              "id": "task00201-cell-0"
+            },
+            "executionSummary": {
+              "timing": {
+                "$undefined": true
+              },
+              "executionOrder": {
+                "$undefined": true
+              },
+              "success": {
+                "$undefined": true
+              }
+            },
+            "outputs": []
+          },
+          {
+            "object": 4,
+            "notebookObject": 1,
+            "index": 1,
+            "uri": "vscode-notebook-cell:$DIAGNOSTIC_WORKSPACE/AUTO-D1-delete-with-ids-1792770341024.ipynb#W1sZmlsZQ%3D%3D",
+            "textObject": 5,
+            "textClosed": false,
+            "textVersion": 1,
+            "language": "python",
+            "source": "# D1-B\nvalue_b = 202\n",
+            "metadata": {
+              "execution_count": null,
+              "metadata": {
+                "outsideDiagnosticOwner": {
+                  "sentinel": "keep-B"
+                },
+                "task00201Diagnostic": {
+                  "label": "B",
+                  "draft": 0,
+                  "committed": 0,
+                  "burst": 0,
+                  "probeOnly": true
+                }
+              },
+              "id": "task00201-cell-1"
+            },
+            "executionSummary": {
+              "timing": {
+                "$undefined": true
+              },
+              "executionOrder": {
+                "$undefined": true
+              },
+              "success": {
+                "$undefined": true
+              }
+            },
+            "outputs": []
+          },
+          {
+            "object": 6,
+            "notebookObject": 1,
+            "index": 2,
+            "uri": "vscode-notebook-cell:$DIAGNOSTIC_WORKSPACE/AUTO-D1-delete-with-ids-1792770341024.ipynb#W2sZmlsZQ%3D%3D",
+            "textObject": 7,
+            "textClosed": false,
+            "textVersion": 1,
+            "language": "python",
+            "source": "# D1-C\nvalue_c = 303\n",
+            "metadata": {
+              "execution_count": null,
+              "metadata": {
+                "outsideDiagnosticOwner": {
+                  "sentinel": "keep-C"
+                },
+                "task00201Diagnostic": {
+                  "label": "C",
+                  "draft": 0,
+                  "committed": 0,
+                  "burst": 0,
+                  "probeOnly": true
+                }
+              },
+              "id": "task00201-cell-2"
+            },
+            "executionSummary": {
+              "timing": {
+                "$undefined": true
+              },
+              "executionOrder": {
+                "$undefined": true
+              },
+              "success": {
+                "$undefined": true
+              }
+            },
+            "outputs": []
+          }
+        ]
+      }
+    },
+    {
+      "seq": 4,
+      "at": "2026-10-23T15:45:41.748Z",
+      "elapsedMs": 765.131,
+      "step": "startup",
+      "kind": "notebook.change",
+      "metadata": {
+        "$undefined": true
+      },
+      "contentChanges": [
+        {
+          "range": {
+            "start": 1,
+            "end": 2
+          },
+          "added": [],
+          "removed": [
+            {
+              "object": 4,
+              "notebookObject": 1,
+              "index": -1,
+              "uri": "vscode-notebook-cell:$DIAGNOSTIC_WORKSPACE/AUTO-D1-delete-with-ids-1792770341024.ipynb#W1sZmlsZQ%3D%3D",
+              "textObject": 5,
+              "textClosed": false,
+              "textVersion": 1,
+              "language": "python",
+              "source": "# D1-B\nvalue_b = 202\n",
+              "metadata": {
+                "execution_count": null,
+                "metadata": {
+                  "outsideDiagnosticOwner": {
+                    "sentinel": "keep-B"
+                  },
+                  "task00201Diagnostic": {
+                    "label": "B",
+                    "draft": 0,
+                    "committed": 0,
+                    "burst": 0,
+                    "probeOnly": true
+                  }
+                },
+                "id": "task00201-cell-1"
+              },
+              "executionSummary": {
+                "timing": {
+                  "$undefined": true
+                },
+                "executionOrder": {
+                  "$undefined": true
+                },
+                "success": {
+                  "$undefined": true
+                }
+              },
+              "outputs": []
+            }
+          ]
+        }
+      ],
+      "cellChanges": [],
+      "notebook": {
+        "object": 1,
+        "uri": "file:$DIAGNOSTIC_WORKSPACE/AUTO-D1-delete-with-ids-1792770341024.ipynb",
+        "type": "jupyter-notebook",
+        "version": 1,
+        "dirty": false,
+        "closed": false,
+        "metadata": {
+          "cells": [],
+          "metadata": {
+            "kernelspec": {
+              "display_name": "Python 3 (ipykernel)",
+              "language": "python",
+              "name": "python3"
+            },
+            "language_info": {
+              "name": "python"
+            },
+            "task00201Diagnostic": {
+              "probeOnly": true,
+              "case": "D1-structure"
+            },
+            "outsideNotebookOwner": {
+              "sentinel": "preserve-notebook"
+            }
+          },
+          "nbformat": 4,
+          "nbformat_minor": 5,
+          "indentAmount": ""
+        },
+        "cells": [
+          {
+            "object": 2,
+            "notebookObject": 1,
+            "index": 0,
+            "uri": "vscode-notebook-cell:$DIAGNOSTIC_WORKSPACE/AUTO-D1-delete-with-ids-1792770341024.ipynb#W0sZmlsZQ%3D%3D",
+            "textObject": 3,
+            "textClosed": false,
+            "textVersion": 1,
+            "language": "python",
+            "source": "# D1-A: move this cell\nvalue_a = 101\n",
+            "metadata": {
+              "execution_count": null,
+              "metadata": {
+                "outsideDiagnosticOwner": {
+                  "sentinel": "keep-A"
+                },
+                "task00201Diagnostic": {
+                  "label": "A",
+                  "draft": 0,
+                  "committed": 0,
+                  "burst": 0,
+                  "probeOnly": true
+                }
+              },
+              "id": "task00201-cell-0"
+            },
+            "executionSummary": {
+              "timing": {
+                "$undefined": true
+              },
+              "executionOrder": {
+                "$undefined": true
+              },
+              "success": {
+                "$undefined": true
+              }
+            },
+            "outputs": []
+          },
+          {
+            "object": 6,
+            "notebookObject": 1,
+            "index": 1,
+            "uri": "vscode-notebook-cell:$DIAGNOSTIC_WORKSPACE/AUTO-D1-delete-with-ids-1792770341024.ipynb#W2sZmlsZQ%3D%3D",
+            "textObject": 7,
+            "textClosed": false,
+            "textVersion": 1,
+            "language": "python",
+            "source": "# D1-C\nvalue_c = 303\n",
+            "metadata": {
+              "execution_count": null,
+              "metadata": {
+                "outsideDiagnosticOwner": {
+                  "sentinel": "keep-C"
+                },
+                "task00201Diagnostic": {
+                  "label": "C",
+                  "draft": 0,
+                  "committed": 0,
+                  "burst": 0,
+                  "probeOnly": true
+                }
+              },
+              "id": "task00201-cell-2"
+            },
+            "executionSummary": {
+              "timing": {
+                "$undefined": true
+              },
+              "executionOrder": {
+                "$undefined": true
+              },
+              "success": {
+                "$undefined": true
+              }
+            },
+            "outputs": []
+          }
+        ],
+        "retainedCells": [
+          {
+            "object": 2,
+            "notebookObject": 1,
+            "index": 0,
+            "uri": "vscode-notebook-cell:$DIAGNOSTIC_WORKSPACE/AUTO-D1-delete-with-ids-1792770341024.ipynb#W0sZmlsZQ%3D%3D",
+            "textObject": 3,
+            "textClosed": false,
+            "textVersion": 1,
+            "language": "python",
+            "source": "# D1-A: move this cell\nvalue_a = 101\n",
+            "metadata": {
+              "execution_count": null,
+              "metadata": {
+                "outsideDiagnosticOwner": {
+                  "sentinel": "keep-A"
+                },
+                "task00201Diagnostic": {
+                  "label": "A",
+                  "draft": 0,
+                  "committed": 0,
+                  "burst": 0,
+                  "probeOnly": true
+                }
+              },
+              "id": "task00201-cell-0"
+            },
+            "executionSummary": {
+              "timing": {
+                "$undefined": true
+              },
+              "executionOrder": {
+                "$undefined": true
+              },
+              "success": {
+                "$undefined": true
+              }
+            },
+            "outputs": []
+          },
+          {
+            "object": 4,
+            "notebookObject": 1,
+            "index": -1,
+            "uri": "vscode-notebook-cell:$DIAGNOSTIC_WORKSPACE/AUTO-D1-delete-with-ids-1792770341024.ipynb#W1sZmlsZQ%3D%3D",
+            "textObject": 5,
+            "textClosed": false,
+            "textVersion": 1,
+            "language": "python",
+            "source": "# D1-B\nvalue_b = 202\n",
+            "metadata": {
+              "execution_count": null,
+              "metadata": {
+                "outsideDiagnosticOwner": {
+                  "sentinel": "keep-B"
+                },
+                "task00201Diagnostic": {
+                  "label": "B",
+                  "draft": 0,
+                  "committed": 0,
+                  "burst": 0,
+                  "probeOnly": true
+                }
+              },
+              "id": "task00201-cell-1"
+            },
+            "executionSummary": {
+              "timing": {
+                "$undefined": true
+              },
+              "executionOrder": {
+                "$undefined": true
+              },
+              "success": {
+                "$undefined": true
+              }
+            },
+            "outputs": []
+          },
+          {
+            "object": 6,
+            "notebookObject": 1,
+            "index": 1,
+            "uri": "vscode-notebook-cell:$DIAGNOSTIC_WORKSPACE/AUTO-D1-delete-with-ids-1792770341024.ipynb#W2sZmlsZQ%3D%3D",
+            "textObject": 7,
+            "textClosed": false,
+            "textVersion": 1,
+            "language": "python",
+            "source": "# D1-C\nvalue_c = 303\n",
+            "metadata": {
+              "execution_count": null,
+              "metadata": {
+                "outsideDiagnosticOwner": {
+                  "sentinel": "keep-C"
+                },
+                "task00201Diagnostic": {
+                  "label": "C",
+                  "draft": 0,
+                  "committed": 0,
+                  "burst": 0,
+                  "probeOnly": true
+                }
+              },
+              "id": "task00201-cell-2"
+            },
+            "executionSummary": {
+              "timing": {
+                "$undefined": true
+              },
+              "executionOrder": {
+                "$undefined": true
+              },
+              "success": {
+                "$undefined": true
+              }
+            },
+            "outputs": []
+          }
+        ]
+      }
+    },
+    {
+      "seq": 5,
+      "at": "2026-10-23T15:45:41.759Z",
+      "elapsedMs": 776.5333,
+      "step": "startup",
+      "kind": "text.close",
+      "object": 5,
+      "uri": "vscode-notebook-cell:$DIAGNOSTIC_WORKSPACE/AUTO-D1-delete-with-ids-1792770341024.ipynb#W1sZmlsZQ%3D%3D",
+      "closed": true
+    }
+  ],
+  "commands": {
+    "prepare": "node tests/notebook-host-api/prepare.mjs",
+    "recovery": "Code.exe --new-window --skip-welcome --skip-release-notes --disable-workspace-trust --disable-extensions --user-data-dir $REPO/config/task-002-01-recovery --extensionDevelopmentPath $REPO/tests/notebook-host-api/dist --extensionTestsPath $REPO/tests/notebook-host-api/dist/recovery.cjs $REPO/tests/notebook-host-api/dist/probe.code-workspace",
+    "ids": "Code.exe --new-window --skip-welcome --skip-release-notes --disable-workspace-trust --disable-extensions --user-data-dir $REPO/config/task-002-01-ids --extensionDevelopmentPath $REPO/tests/notebook-host-api/dist --extensionTestsPath $REPO/tests/notebook-host-api/dist/structure-ids.cjs $REPO/tests/notebook-host-api/dist/probe.code-workspace",
+    "logs": [
+      "logs/task-002-01/prepare-recovery.txt",
+      "logs/task-002-01/recovery-host.txt",
+      "logs/task-002-01/prepare-structure-ids.txt",
+      "logs/task-002-01/structure-ids-host.txt"
+    ],
+    "launcherExitCodeIsNotTestResult": true
+  },
+  "judgments": [
+    {
+      "case": "D2-fresh-process-read",
+      "status": "合格（観測条件のみ）",
+      "expected": "以前の保存JSONと同じ架空ファイルを、新しいセッションでsource・所有外metadata・draft=7を保ちdirty=falseで読む。",
+      "actual": "一致。初回open前に対象モデルなし、独立セッションを記録。以前の同一オブジェクト再利用と区別。",
+      "productAcceptance": "未判定"
+    },
+    {
+      "case": "D3-source-first-failure-text-focus",
+      "status": "合格（部分適用と本文フォーカスでの回復操作の観測）",
+      "expected": "false後も両データの実値を記録し、本文フォーカスでUndo/Redoの実値を確認。",
+      "actual": "falseでもsource変更が残る。Notebook.cell.editで本文フォーカスをAPI確認後、Undoでbaseline、Redoで変更後source。metadataは全段階で不変。",
+      "staticFinding": "B01の部分適用を再現。以前のNotebookフォーカスのUndo無変化を否定しない。",
+      "productAcceptance": "原子性・正式復旧方式は成立と扱わない"
+    },
+    {
+      "case": "D1-delete-initial-cell-ids",
+      "status": "不合格（自動確認の期待不一致）",
+      "expected": "セル数3→削除2→Undo3→Redo2",
+      "actual": "3→2→Undo後2でassert失敗。Redo未実施。raw eventにもUndoによる復元なし。",
+      "hypothesis": "以前のUndo後のセルID補完がRedo不一致の原因か",
+      "conclusion": "初期cell.idを付けても別段階で失敗し、ID有無だけで原因を確定できない。フォーカスや非同期待ちを含むランナー条件は未確定。",
+      "productAcceptance": "製品不具合とも合格とも断定しない"
+    }
+  ],
+  "diagnosticRepairAfterRun": "structure.cjsに各操作後の状態をassertより前に保存する処理を追加。構文確認対象。追加後の実VS Code再実行は行っておらず、上記失敗を修復済みとはしない。",
+  "remaining": {
+    "D1": "標準UIで削除Undo/Redoの観測と自動確認不一致の区別が残る",
+    "D2": "今回の保存復元条件を確認済み。全製品要件の判断は別",
+    "D3": "4混在条件と本文フォーカス回復を採取。正式方式は未決定",
+    "D4": "実行中の設定/source変更が未実施。queued-edit保存JSONは未採取",
+    "D5": "待機中/開始後の削除/closeの4条件未実施",
+    "D6": "GUI応答性未実施、性能閾値未定"
+  },
+  "allCasesAccepted": false,
+  "productOrSpecificationChanged": false,
+  "kiro": "対象外"
+}

@@ -1,0 +1,305 @@
+{
+  "recordedAt": "2026-10-22T15:49:47.621Z",
+  "localDate": "2026-10-23",
+  "timezone": "Asia/Tokyo",
+  "purpose": "Diagnostic preparation evidence, not case acceptance or Task state source",
+  "issue": "https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/14",
+  "parent": "https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/2",
+  "target": {
+    "base": "85358a0147fb49221c807f3acc6b78fc8f555c95",
+    "branch": "codex/task-002-01-desktop",
+    "remoteResearchHeadAtInitialCheck": "85358a0147fb49221c807f3acc6b78fc8f555c95",
+    "remoteDiagnosticBranchAtInitialCheck": "absent",
+    "existingDesktopClone": {
+      "branch": "spike/task-001-01-notebook-ui",
+      "headAbbreviated": "3da9351",
+      "initialDirty": false,
+      "editedByThisTask": false
+    },
+    "initialChatWorkspace": "unborn main with pre-existing untracked docs/; left untouched",
+    "sourceFilesSha256": {
+      ".vscode/launch.json": "73b4ccef80d9369c080aa6ba7a38ef19ad3cbf08538cf2abe3c0757bceb30729",
+      ".vscode/tasks.json": "0740af4e29aa868dcdb0059a81855a04a9c1c5cdfd3667294ded485273d53edd",
+      "tests/notebook-host-api/package.json": "04d6f5100c67d133a194e14e847264ad033639a5969112d37670da894a5da7c7",
+      "tests/notebook-host-api/extension.cjs": "d75bf423d0df234081657d8d019e03ba26636e64023a5a9b54d50df04b40dd9f",
+      "tests/notebook-host-api/model.cjs": "4057e30f336b85e9d5f2396fd02d8f4ede6f8d34ff08bb91a078504da07473a5",
+      "tests/notebook-host-api/model.test.cjs": "c2812eb6d22755969c492b815cafe8b9c4c73c6be7e3870fa9a93c88b9315c66",
+      "tests/notebook-host-api/fixtures.cjs": "e1f407bea41d87c04ca3ef7872edb465fb748d5e8e4bb3ad711e692d3e406497",
+      "tests/notebook-host-api/prepare.mjs": "79378ddc09accc74d83b8d6d06ed823b4112d70000d8e86539bb16313e87294b",
+      "tests/notebook-host-api/smoke.cjs": "bcab7d623d0699a393d6eb8fdfa4110e9736e205eb631547ff07c657cb3138c8",
+      "tests/notebook-host-api/inspect.mjs": "ae4c600ba4c785377bd47d469daee00beebed08d944fd6c9263b23166b5c64c0",
+      "tests/notebook-host-api/README.md": "5df894c9c59472173f21d9cb65dbdc9d44ea92d2e039c9fd1295497a07edbdb9",
+      "tests/manual/TASK-002-01-notebook-host.md": "32fea79cb5eefeb25a355486538ed831506b18c9c19bc1a8aac395058e4e60ac",
+      "docs/research/notebook-host/TASK-002-01.md": "084ee8a59983908eb9954d89b91f34bf96d24cb7139455f957e8d5e0490726f6"
+    },
+    "uncommittedAtSmokePreparation": true
+  },
+  "missingRulesAtBase": [
+    "docs/features/coding-rules.md",
+    "docs/features/refactor-policy.md"
+  ],
+  "missingRuleHandling": "Previously documented absence; no other-app rules imported; user scope and existing project rules applied",
+  "environment": {
+    "windowsRegistry": {
+      "ProductName": "Windows 10 Home",
+      "DisplayVersion": "26H2",
+      "CurrentBuild": "26300",
+      "UBR": 9711
+    },
+    "vscode": {
+      "version": "1.143.0",
+      "commit": "2d0b7506a36c1d6db9a466440131a8e01eab2289",
+      "arch": "x64",
+      "staticVersion": "1.142.0",
+      "staticCommit": "d956e8a6ac5d904486557eea07e1d6bd62a4d36f",
+      "differentFromStaticBaseline": true,
+      "replacedByAgent": false
+    },
+    "jupyter": {
+      "selectedVersionAtInitialCLI": "2025.9.1",
+      "staticVersion": "2025.9.1",
+      "staticCommit": "fc61dfe2fd70a3d62d3ce0fef580757e7d64b81c",
+      "installedBinaryCommitProvenEqual": false
+    },
+    "pythonExtension": "2026.10.0",
+    "pythonEnvironmentsExtension": {
+      "initialCLI": "1.41.2026102101",
+      "afterIDESmokeInstalled": "1.41.2026102201",
+      "note": "IDE auto-update was observed in smoke profile logs; diagnostic desktop profile disables extension auto-update and IDE updates; actual desktop runtime versions logged at activation"
+    },
+    "cliNode": "v24.14.1",
+    "npm": "11.11.0",
+    "extensionHostNode": "v24.21.0",
+    "cliPython": "3.14.3",
+    "cliPythonExecutable": "C:\\Python314\\python.exe",
+    "ipykernel": "7.4.0",
+    "jupyter_client": "8.10.0",
+    "jupyter_core": "5.9.1",
+    "ipython": "9.17.1",
+    "pyzmq": "27.2.0",
+    "kernelspec": "python3 / Python 3 (ipykernel)",
+    "actualSelectedKernelExecutionVerified": false
+  },
+  "checks": [
+    {
+      "command": "node tests/notebook-host-api/prepare.mjs",
+      "result": "passed; syntax checks, diagnostic copy, synthetic notebooks, dedicated workspace and local profile",
+      "dependenciesInstalled": false
+    },
+    {
+      "command": "node --test tests/notebook-host-api/model.test.cjs",
+      "result": "1 passed / 0 failed",
+      "covers": [
+        "identity is object-based, not URI-based",
+        "metadata patch preserves outside owner",
+        "undefined vs false serialization",
+        "closed/replaced document guards",
+        "path containment"
+      ]
+    },
+    {
+      "command": "VS Code CLI extensionTestsPath=tests/notebook-host-api/dist/smoke.cjs",
+      "result": "passed",
+      "harnessOnly": true,
+      "at": "2026-10-22T15:43:34.616Z",
+      "commands": 7,
+      "metadataCommand": true,
+      "savedJsonCapture": true,
+      "tabClosed": true,
+      "closedAfterTabClose": false,
+      "documentCloseObserved": false,
+      "reopenedSameObject": true,
+      "delayedLocalUpdateRejected": true,
+      "closeWaitLimitMs": 5000,
+      "session": "2026-10-22T15-43-18-439Z-31040"
+    },
+    {
+      "command": "semantic comparison of existing .vscode entries to HEAD",
+      "result": "existing entries preserved; one diagnostic launch and task appended"
+    },
+    {
+      "command": "git diff --check",
+      "result": "passed"
+    },
+    {
+      "command": "focused read-only code review",
+      "result": "no important findings",
+      "remainingObservation": "delete then Undo of exact same cell during local delay is outside current D5 sequence and unverified"
+    }
+  ],
+  "observations": {
+    "metadataOnly": {
+      "before": {
+        "source": "# D1-A: move this cell\nvalue_a = 101\n",
+        "metadata": {
+          "execution_count": null,
+          "metadata": {
+            "outsideDiagnosticOwner": {
+              "sentinel": "keep-A"
+            },
+            "task00201Diagnostic": {
+              "label": "A",
+              "draft": 0,
+              "committed": 0,
+              "burst": 0,
+              "probeOnly": true
+            }
+          }
+        },
+        "version": 0,
+        "dirty": false
+      },
+      "after": {
+        "source": "# D1-A: move this cell\nvalue_a = 101\n",
+        "metadata": {
+          "execution_count": null,
+          "metadata": {
+            "outsideDiagnosticOwner": {
+              "sentinel": "keep-A"
+            },
+            "task00201Diagnostic": {
+              "label": "A",
+              "draft": 1,
+              "committed": 0,
+              "burst": 0,
+              "probeOnly": true
+            }
+          }
+        },
+        "version": 1,
+        "dirty": true
+      },
+      "result": true,
+      "savedCell": {
+        "cell_type": "code",
+        "execution_count": null,
+        "metadata": {
+          "outsideDiagnosticOwner": {
+            "sentinel": "keep-A"
+          },
+          "task00201Diagnostic": {
+            "burst": 0,
+            "committed": 0,
+            "draft": 1,
+            "label": "A",
+            "probeOnly": true
+          }
+        },
+        "outputs": [],
+        "source": [
+          "# D1-A: move this cell\n",
+          "value_a = 101\n"
+        ]
+      },
+      "note": "Harness smoke on a fresh SMOKE notebook; not full D2 acceptance"
+    },
+    "lifetime": {
+      "originalNotebookObject": 1,
+      "originalClosed": false,
+      "samePathOpenObjects": [
+        1
+      ],
+      "localRequestValid": false,
+      "invalidated": true,
+      "kernelStopped": "not-observed",
+      "note": "No Python execution or Jupyter controller was used in smoke. Tab closure is separate from NotebookDocument close."
+    }
+  },
+  "caseAcceptanceAtPreparation": {
+    "D1": {
+      "status": "未実施",
+      "staticReproductionJudgment": "未判定",
+      "productRequirementJudgment": "未判定",
+      "note": "Full case and user UI acceptance not completed by harness smoke"
+    },
+    "D2": {
+      "status": "未実施",
+      "staticReproductionJudgment": "未判定",
+      "productRequirementJudgment": "未判定",
+      "note": "Full case and user UI acceptance not completed by harness smoke"
+    },
+    "D3": {
+      "status": "未実施",
+      "staticReproductionJudgment": "未判定",
+      "productRequirementJudgment": "未判定",
+      "note": "Full case and user UI acceptance not completed by harness smoke"
+    },
+    "D4": {
+      "status": "未実施",
+      "staticReproductionJudgment": "未判定",
+      "productRequirementJudgment": "未判定",
+      "note": "Full case and user UI acceptance not completed by harness smoke"
+    },
+    "D5": {
+      "status": "未実施",
+      "staticReproductionJudgment": "未判定",
+      "productRequirementJudgment": "未判定",
+      "note": "Full case and user UI acceptance not completed by harness smoke"
+    },
+    "D6": {
+      "status": "未実施",
+      "staticReproductionJudgment": "未判定",
+      "productRequirementJudgment": "未判定",
+      "note": "Full case and user UI acceptance not completed by harness smoke"
+    }
+  },
+  "outOfScope": [
+    "Kiro",
+    "product implementation",
+    "formal schema/contracts",
+    "Current Specification changes",
+    "TASK-002-02 and later"
+  ],
+  "localEvidence": {
+    "rawEvents": "logs/task-002-01/2026-10-22T15-43-18-439Z-31040/events.jsonl",
+    "savedNotebook": "logs/task-002-01/2026-10-22T15-43-18-439Z-31040/9-saved-SMOKE-1792683798443.ipynb",
+    "savedSha256": "d94cfcd5cf59b0c9f3846d6172862a583692997694acdb47e21ec15ac606ecc0",
+    "preparationLog": "logs/task-002-01/prepare.txt",
+    "helperTestLog": "logs/task-002-01/model-green.txt",
+    "failures": "logs/task-002-01/setup-failures.local.json",
+    "note": "Raw local paths and full logs are not committed; this evidence contains synthetic values and selected versions only"
+  },
+  "failures": [
+    {
+      "command": "git clone --single-branch --branch research/task-005-01-boundaries <repository> task-002-01-desktop",
+      "result": "getaddrinfo() thread failed to start in sandbox",
+      "resolution": "Same clone command succeeded with approved escalation; existing TASK-001 clone untouched"
+    },
+    {
+      "command": "code --version; code --list-extensions --show-versions",
+      "result": "Sandbox EPERM at installation cwd / default Code log directory",
+      "resolution": "Approved elevated read completed; version and extension outputs saved locally"
+    },
+    {
+      "command": "python -m jupyter kernelspec list --json",
+      "result": "Jupyter command jupyter-kernelspec not found",
+      "resolution": "Used installed public jupyter_client.kernelspec.KernelSpecManager.get_all_specs; python3 kernel found; no installation needed"
+    },
+    {
+      "command": "node --test tests/notebook-host-api/model.test.cjs (initial RED)",
+      "result": "Expected failure: diagnostic model must exist",
+      "resolution": "Implemented isolated diagnostic helpers; final test passed"
+    },
+    {
+      "command": "code --extensionDevelopmentPath=<diagnostic-dist> --extensionTestsPath=<diagnostic-dist>/smoke.cjs ... (first close assertion)",
+      "result": "Assertion false !== true: doc.isClosed remained false after closing active editor",
+      "log": "logs/task-002-01/host-smoke-close-failure.txt",
+      "resolution": "Used public Tab API to close the exact notebook tab and investigated actual lifecycle"
+    },
+    {
+      "command": "same smoke command (specific tab close assertion)",
+      "result": "Specific tab closed but doc.isClosed remained false after 5000ms",
+      "resolution": "Separated tab closure from NotebookDocument disposal; record actual same-object reopening; last-tab closure invalidates local diagnostic requests; final smoke passed"
+    },
+    {
+      "command": "rg on a guessed generated renderer log directory",
+      "result": "Directory did not exist",
+      "resolution": "Enumerated actual generated log directories and collected the relevant failure log; no source change from this lookup"
+    },
+    {
+      "command": "git push -u origin codex/task-002-01-desktop",
+      "result": "GH007: push would publish a private email address; remote rejected",
+      "resolution": "Preserve GitHub privacy protection. Configure public GitHub noreply email in diagnostic clone only and rewrite author metadata of this task unpublished commit; no source/tree reset or other-branch changes."
+    }
+  ]
+}

@@ -1,0 +1,678 @@
+{
+  "asOf": "2026-10-25T12:05:51.964Z",
+  "scope": "TASK-002-01 existing Windows evidence reconciliation; no new GUI or kernel execution",
+  "head": "2b4ef78474aea6e0c7ab43c54437169c88f7cafa",
+  "branch": "codex/task-002-01-desktop",
+  "inputEvidence": [
+    {
+      "file": "TASK-002-01-windows-observations-20261023.json",
+      "sha256": "68a3833dc3f3f536e7faaa808a9b844861b9ba312ef937f81f252aa83ae4424e"
+    },
+    {
+      "file": "TASK-002-01-windows-followup-20261024.json",
+      "sha256": "890c6d980de9bf438491635b9edae896177c323cc864179e7f7c060de59322b0"
+    },
+    {
+      "file": "TASK-002-01-execution-observations-20261024.json",
+      "sha256": "e7cc5e99a43b10d82fd6bdf64adacbdd4d443737350efedf2a511c1b578bc908"
+    },
+    {
+      "file": "TASK-002-01-ui-observations-20261025.json",
+      "sha256": "c3e9efd66a870ece9c0d0bba15ec941bed0afe4761d9f25abfae522bcaa9b755"
+    },
+    {
+      "file": "TASK-002-01-verification-routes-20261025.json",
+      "sha256": "2d2cedd924c726e1816087c5cdb04fd5cbe38085b09ac92616b2e663918cb013"
+    }
+  ],
+  "originalManualLog": {
+    "file": "logs/task-002-01/2026-10-22T15-52-52-588Z-28492/events.jsonl",
+    "sha256": "77f5d37289a5bc272d8c2fd613ddb2d1b6d97a9dc764d389bd51f814a9d0ec21",
+    "notebookOpens": [
+      {
+        "seq": 3,
+        "file": "D1-structure.ipynb"
+      },
+      {
+        "seq": 4,
+        "file": "D1-structure-1792685008041.ipynb"
+      },
+      {
+        "seq": 53,
+        "file": "D4-basic.ipynb"
+      },
+      {
+        "seq": 92,
+        "file": "D4-nonempty-to-empty-1792689457820.ipynb"
+      },
+      {
+        "seq": 117,
+        "file": "D4-cancel-1792689744380.ipynb"
+      },
+      {
+        "seq": 152,
+        "file": "D4-queued-edit-1792691367724.ipynb"
+      }
+    ],
+    "limit": "This scan covers this recorded session only; unrecorded user actions cannot be inferred."
+  },
+  "D2": {
+    "apiStatus": "合格（記録済みの更新・保存・別プロセス読込条件）",
+    "standardCtrlSUI": "not-observed-in-automation",
+    "freshProcess": {
+      "case": "D2-fresh-process-read",
+      "status": "合格（観測条件のみ）",
+      "expected": "以前の保存JSONと同じ架空ファイルを、新しいセッションでsource・所有外metadata・draft=7を保ちdirty=falseで読む。",
+      "actual": "一致。初回open前に対象モデルなし、独立セッションを記録。以前の同一オブジェクト再利用と区別。",
+      "productAcceptance": "未判定"
+    },
+    "manualStatus": "未実施扱い（ケースに対応する手動経路の証跡不足）",
+    "repeatAPIRequired": false
+  },
+  "D3": {
+    "apiStatus": "合格（成功・部分適用の観測条件。製品の非破壊性の合格ではない）",
+    "mixed": [
+      {
+        "case": "D3-source-first-success",
+        "returned": true,
+        "sourceChanged": true,
+        "metadataChanged": true
+      },
+      {
+        "case": "D3-metadata-first-success",
+        "returned": true,
+        "sourceChanged": true,
+        "metadataChanged": true
+      },
+      {
+        "case": "D3-source-first-failure",
+        "returned": false,
+        "sourceChanged": true,
+        "metadataChanged": false
+      },
+      {
+        "case": "D3-metadata-first-failure",
+        "returned": false,
+        "sourceChanged": false,
+        "metadataChanged": true
+      }
+    ],
+    "textFocus": {
+      "case": "D3-source-first-failure-text-focus",
+      "status": "合格（部分適用と本文フォーカスでの回復操作の観測）",
+      "expected": "false後も両データの実値を記録し、本文フォーカスでUndo/Redoの実値を確認。",
+      "actual": "falseでもsource変更が残る。Notebook.cell.editで本文フォーカスをAPI確認後、Undoでbaseline、Redoで変更後source。metadataは全段階で不変。",
+      "staticFinding": "B01の部分適用を再現。以前のNotebookフォーカスのUndo無変化を否定しない。",
+      "productAcceptance": "原子性・正式復旧方式は成立と扱わない"
+    },
+    "manualStatus": "未実施扱い（4条件と回復はAPI経路。ユーザーのキー操作へ置換しない）",
+    "repeatAPIRequired": false
+  },
+  "D6": [
+    {
+      "case": "D6-existing-same-20",
+      "sent": 20,
+      "returns": [
+        {
+          "result": true,
+          "error": {
+            "$undefined": true
+          }
+        },
+        {
+          "result": true,
+          "error": {
+            "$undefined": true
+          }
+        },
+        {
+          "result": true,
+          "error": {
+            "$undefined": true
+          }
+        },
+        {
+          "result": true,
+          "error": {
+            "$undefined": true
+          }
+        },
+        {
+          "result": true,
+          "error": {
+            "$undefined": true
+          }
+        },
+        {
+          "result": true,
+          "error": {
+            "$undefined": true
+          }
+        },
+        {
+          "result": true,
+          "error": {
+            "$undefined": true
+          }
+        },
+        {
+          "result": true,
+          "error": {
+            "$undefined": true
+          }
+        },
+        {
+          "result": true,
+          "error": {
+            "$undefined": true
+          }
+        },
+        {
+          "result": true,
+          "error": {
+            "$undefined": true
+          }
+        },
+        {
+          "result": true,
+          "error": {
+            "$undefined": true
+          }
+        },
+        {
+          "result": true,
+          "error": {
+            "$undefined": true
+          }
+        },
+        {
+          "result": true,
+          "error": {
+            "$undefined": true
+          }
+        },
+        {
+          "result": true,
+          "error": {
+            "$undefined": true
+          }
+        },
+        {
+          "result": true,
+          "error": {
+            "$undefined": true
+          }
+        },
+        {
+          "result": true,
+          "error": {
+            "$undefined": true
+          }
+        },
+        {
+          "result": true,
+          "error": {
+            "$undefined": true
+          }
+        },
+        {
+          "result": true,
+          "error": {
+            "$undefined": true
+          }
+        },
+        {
+          "result": true,
+          "error": {
+            "$undefined": true
+          }
+        },
+        {
+          "result": true,
+          "error": {
+            "$undefined": true
+          }
+        }
+      ],
+      "events": 20,
+      "elapsedMs": 583.6509999999998,
+      "loggingAnd20msSettlingDelayIncluded": true,
+      "threshold": "not-defined",
+      "userUIResponsiveness": "not-observed-in-automation"
+    },
+    {
+      "case": "D6-existing-change-20",
+      "sent": 20,
+      "returns": [
+        {
+          "result": true,
+          "error": {
+            "$undefined": true
+          }
+        },
+        {
+          "result": true,
+          "error": {
+            "$undefined": true
+          }
+        },
+        {
+          "result": true,
+          "error": {
+            "$undefined": true
+          }
+        },
+        {
+          "result": true,
+          "error": {
+            "$undefined": true
+          }
+        },
+        {
+          "result": true,
+          "error": {
+            "$undefined": true
+          }
+        },
+        {
+          "result": true,
+          "error": {
+            "$undefined": true
+          }
+        },
+        {
+          "result": true,
+          "error": {
+            "$undefined": true
+          }
+        },
+        {
+          "result": true,
+          "error": {
+            "$undefined": true
+          }
+        },
+        {
+          "result": true,
+          "error": {
+            "$undefined": true
+          }
+        },
+        {
+          "result": true,
+          "error": {
+            "$undefined": true
+          }
+        },
+        {
+          "result": true,
+          "error": {
+            "$undefined": true
+          }
+        },
+        {
+          "result": true,
+          "error": {
+            "$undefined": true
+          }
+        },
+        {
+          "result": true,
+          "error": {
+            "$undefined": true
+          }
+        },
+        {
+          "result": true,
+          "error": {
+            "$undefined": true
+          }
+        },
+        {
+          "result": true,
+          "error": {
+            "$undefined": true
+          }
+        },
+        {
+          "result": true,
+          "error": {
+            "$undefined": true
+          }
+        },
+        {
+          "result": true,
+          "error": {
+            "$undefined": true
+          }
+        },
+        {
+          "result": true,
+          "error": {
+            "$undefined": true
+          }
+        },
+        {
+          "result": true,
+          "error": {
+            "$undefined": true
+          }
+        },
+        {
+          "result": true,
+          "error": {
+            "$undefined": true
+          }
+        }
+      ],
+      "events": 20,
+      "elapsedMs": 603.2237000000005,
+      "loggingAnd20msSettlingDelayIncluded": true,
+      "threshold": "not-defined",
+      "userUIResponsiveness": "not-observed-in-automation"
+    },
+    {
+      "case": "D6-new-same-20",
+      "sent": 20,
+      "returns": [
+        {
+          "result": true,
+          "error": {
+            "$undefined": true
+          }
+        },
+        {
+          "result": true,
+          "error": {
+            "$undefined": true
+          }
+        },
+        {
+          "result": true,
+          "error": {
+            "$undefined": true
+          }
+        },
+        {
+          "result": true,
+          "error": {
+            "$undefined": true
+          }
+        },
+        {
+          "result": true,
+          "error": {
+            "$undefined": true
+          }
+        },
+        {
+          "result": true,
+          "error": {
+            "$undefined": true
+          }
+        },
+        {
+          "result": true,
+          "error": {
+            "$undefined": true
+          }
+        },
+        {
+          "result": true,
+          "error": {
+            "$undefined": true
+          }
+        },
+        {
+          "result": true,
+          "error": {
+            "$undefined": true
+          }
+        },
+        {
+          "result": true,
+          "error": {
+            "$undefined": true
+          }
+        },
+        {
+          "result": true,
+          "error": {
+            "$undefined": true
+          }
+        },
+        {
+          "result": true,
+          "error": {
+            "$undefined": true
+          }
+        },
+        {
+          "result": true,
+          "error": {
+            "$undefined": true
+          }
+        },
+        {
+          "result": true,
+          "error": {
+            "$undefined": true
+          }
+        },
+        {
+          "result": true,
+          "error": {
+            "$undefined": true
+          }
+        },
+        {
+          "result": true,
+          "error": {
+            "$undefined": true
+          }
+        },
+        {
+          "result": true,
+          "error": {
+            "$undefined": true
+          }
+        },
+        {
+          "result": true,
+          "error": {
+            "$undefined": true
+          }
+        },
+        {
+          "result": true,
+          "error": {
+            "$undefined": true
+          }
+        },
+        {
+          "result": true,
+          "error": {
+            "$undefined": true
+          }
+        }
+      ],
+      "events": 20,
+      "elapsedMs": 587.3348999999998,
+      "loggingAnd20msSettlingDelayIncluded": true,
+      "threshold": "not-defined",
+      "userUIResponsiveness": "not-observed-in-automation"
+    },
+    {
+      "case": "D6-new-change-20",
+      "sent": 20,
+      "returns": [
+        {
+          "result": true,
+          "error": {
+            "$undefined": true
+          }
+        },
+        {
+          "result": true,
+          "error": {
+            "$undefined": true
+          }
+        },
+        {
+          "result": true,
+          "error": {
+            "$undefined": true
+          }
+        },
+        {
+          "result": true,
+          "error": {
+            "$undefined": true
+          }
+        },
+        {
+          "result": true,
+          "error": {
+            "$undefined": true
+          }
+        },
+        {
+          "result": true,
+          "error": {
+            "$undefined": true
+          }
+        },
+        {
+          "result": true,
+          "error": {
+            "$undefined": true
+          }
+        },
+        {
+          "result": true,
+          "error": {
+            "$undefined": true
+          }
+        },
+        {
+          "result": true,
+          "error": {
+            "$undefined": true
+          }
+        },
+        {
+          "result": true,
+          "error": {
+            "$undefined": true
+          }
+        },
+        {
+          "result": true,
+          "error": {
+            "$undefined": true
+          }
+        },
+        {
+          "result": true,
+          "error": {
+            "$undefined": true
+          }
+        },
+        {
+          "result": true,
+          "error": {
+            "$undefined": true
+          }
+        },
+        {
+          "result": true,
+          "error": {
+            "$undefined": true
+          }
+        },
+        {
+          "result": true,
+          "error": {
+            "$undefined": true
+          }
+        },
+        {
+          "result": true,
+          "error": {
+            "$undefined": true
+          }
+        },
+        {
+          "result": true,
+          "error": {
+            "$undefined": true
+          }
+        },
+        {
+          "result": true,
+          "error": {
+            "$undefined": true
+          }
+        },
+        {
+          "result": true,
+          "error": {
+            "$undefined": true
+          }
+        },
+        {
+          "result": true,
+          "error": {
+            "$undefined": true
+          }
+        }
+      ],
+      "events": 20,
+      "elapsedMs": 578.0173999999997,
+      "loggingAnd20msSettlingDelayIncluded": true,
+      "threshold": "not-defined",
+      "userUIResponsiveness": "not-observed-in-automation"
+    }
+  ],
+  "handoff": {
+    "recipientIssues": [
+      15,
+      37,
+      38
+    ],
+    "status": "technical inputs only; formal design and contract not adopted",
+    "nonDestructiveCommit": "false can leave source or metadata changed; actual values must be assessed",
+    "identity": "index/URI/reference alone cannot establish persistent identity",
+    "execution": "current source and success summary do not expose submitted source or internal execution ID",
+    "lifetime": "local guard rejection does not prove kernel stop; same path does not establish same session"
+  },
+  "pendingManualEvidence": [
+    "D1: valid-ID API comparison does not resolve the historical manual Redo mismatch; do not request an unchanged repeat",
+    "D2: standard save/tab close/same-path reopen not linked to this case",
+    "D3: actual keyboard Undo/Redo and focus not established by API calls",
+    "D4: running-change manual route; queued-edit saved JSON missing",
+    "D5: queued/running x delete/close, four manual conditions",
+    "D6: during-update UI responsiveness; after-save click report covers a different interval"
+  ],
+  "protectedFiles": [
+    {
+      "file": "tests/notebook-host-api/execution-auto.cjs",
+      "sha256": "a730c38318517137fb66647416ce1a2940227c696b93a524ebe2d2db0e5fd06b",
+      "unchanged": true
+    },
+    {
+      "file": "tests/notebook-host-api/execution-save-followup-ui.cjs",
+      "sha256": "82fc0dd9bdd9fe23822d19132549a0dd6114749bf9bead2c0d8ca90c8a62bc1a",
+      "unchanged": true
+    },
+    {
+      "file": "tests/notebook-host-api/extension.cjs",
+      "sha256": "988b0e70e4e7d2cad1e0227d21c567d49450063f9e5b18fa6bf2bdfe2206a009",
+      "unchanged": true
+    }
+  ],
+  "productAcceptance": "未判定",
+  "allCasesAccepted": false,
+  "windowsStarted": false,
+  "kernelStarted": false
+}
