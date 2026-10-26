@@ -1243,5 +1243,10 @@
     "file": "TASK-002-01-D3-source-first-success-manual-20261026.json",
     "status": "合格（この診断更新・手動Undo/Redo条件）",
     "allCasesAccepted": false
+  },
+  "D3MetadataFirstSuccessManual": {
+    "file": "TASK-002-01-D3-metadata-first-success-manual-20261026.json",
+    "status": "合格（この診断更新・手動Undo/Redo条件）",
+    "allCasesAccepted": false
   }
 }
