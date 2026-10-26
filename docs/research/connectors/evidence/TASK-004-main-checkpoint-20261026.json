@@ -1,0 +1,84 @@
+{
+  "date_jst": "2026-10-26",
+  "scope": "TASK-004 design checkpoint; not task completion or product release",
+  "branch": "codex/task-004-connectors",
+  "integration": {
+    "main_base": "8d4098acc7156eac6b5b5e53a52ddf8571a61f9e",
+    "tested_head": "ece03b6f102e55758c6708634b11d23ed24028f7",
+    "pre_integration_head": "41112ed2da56bad8df336f24425f8e31ba232e59",
+    "conflicts": false,
+    "other_main_files_unchanged": true,
+    "changed_paths_before_evidence": [
+      "docs/research/connectors/TASK-004-02.md"
+    ]
+  },
+  "canonical_design": {
+    "path": "docs/research/connectors/TASK-004-02.md",
+    "git_blob": "ae421ef82d825d48db47a2d9b1b25b530144ec2c",
+    "sha256": "9aa11b50f62c40383bb6bb9e9ad85d7368ad0fb0678c37aee58e1fb3d1471bea"
+  },
+  "environment": {
+    "os": "Windows",
+    "python": "3.14.3"
+  },
+  "verification": {
+    "classification": "document and syntax/static verification only",
+    "result": "pass",
+    "relative_links_and_anchors": 47,
+    "fixed_project_links": 9,
+    "legacy_examples_unchanged": 6,
+    "python_blocks_parsed": 15,
+    "call_examples_parsed": 21,
+    "actions": 15,
+    "draft_tables": 20,
+    "future_case_counts": {
+      "CSV": 14,
+      "XLS": 17,
+      "EXT": 13
+    },
+    "future_case_total": 44,
+    "zero_size_policy": "Excel 0 means no chunking",
+    "equal_row_policy": "undecided",
+    "diff_check": "pass",
+    "unmerged_index_entries": 0
+  },
+  "independent_review": {
+    "read_only": true,
+    "reviewed_head": "ece03b6f102e55758c6708634b11d23ed24028f7",
+    "critical": 0,
+    "important": 0,
+    "minor": 0,
+    "verdict": "ready to merge as documentation checkpoint",
+    "scope": "design content only"
+  },
+  "confirmed": [
+    "six dedicated connectors plus ordinary Python cells",
+    "zizai-runtime distribution, zizai import, one custom wheel",
+    "table type pandas.DataFrame",
+    "Excel chunk_size=0 means no chunking"
+  ],
+  "remaining": [
+    "Header row equals data-start row is undecided; strict-later validation proposal is not approved",
+    "Individual API/form assets, schema/type conversion/date/filter semantics and return information adoption remain pending",
+    "DuckDB source_step meaning, BigQuery authentication/SDK/job behavior, Shell arguments/exit handling remain pending",
+    "Dependency version/license and old connector reuse permission remain unconfirmed",
+    "TASK-004-07 old Python dedicated-connector issue stays open pending alignment decision"
+  ],
+  "not_executed": [
+    "Product implementation or connector runtime tests",
+    "Product unit/API/integration suite",
+    "Jupyter execution",
+    "Playwright UI automation",
+    "User manual UI",
+    "Real CSV/Excel/DuckDB processing",
+    "BigQuery real connection and billing",
+    "Windows BAT execution",
+    "Product build/distribution/CI/release verification"
+  ],
+  "ci_before_integration": {
+    "head": "41112ed2da56bad8df336f24425f8e31ba232e59",
+    "check_runs": 0,
+    "statuses": 0,
+    "meaning": "No CI result exists; not counted as a passing CI run"
+  }
+}
