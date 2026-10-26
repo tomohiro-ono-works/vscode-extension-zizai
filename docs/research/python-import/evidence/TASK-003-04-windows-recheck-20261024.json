@@ -1,0 +1,112 @@
+{
+  "schema_version": 1,
+  "task": "TASK-003-04",
+  "issue": 23,
+  "date_jst": "2026-10-24",
+  "tested_commit": "c846aa689fc3428cd6dad97566e76889443ace17",
+  "scope": "003 minimal package independent suite; Windows Python 3.14 build environment recheck",
+  "previous_result": "TASK-003-04-windows-20261024.json",
+  "root_cause": {
+    "normal_python": {
+      "setuptools_visible": true,
+      "pip_visible": true,
+      "setuptools_in_user_site": true,
+      "pip_in_user_site": false
+    },
+    "isolated_python": {
+      "setuptools_visible": false,
+      "pip_visible": true,
+      "isolated": 1,
+      "no_user_site": 1
+    },
+    "explanation": "The runner builds with -I, which excludes the user site containing setuptools. Normal Python import success did not satisfy the build subprocess prerequisite.",
+    "follow_on_error": "After a failed initial wheel build, built_wheel remains unset but the source directory already exists. Later test attempts to create that directory reported FileExistsError."
+  },
+  "correction": {
+    "kind": "test environment only",
+    "dedicated_workspace_venv": true,
+    "python": "3.14.3",
+    "setuptools": "81.0.0",
+    "pip": "25.3",
+    "setuptools_explicitly_provisioned_outside_runner": true,
+    "isolated_build_meta_import_verified": true,
+    "runner_isolation_preserved": true,
+    "source_fix_required": false,
+    "existing_notebook_kernel_changed": false,
+    "product_dependencies_changed": false
+  },
+  "command": "<build-venv-python> -m unittest discover -s tests/unit/python -p 'test_*.py' -v",
+  "runtime_selection": {
+    "ZIZAI_TEST_PYTHON_override_present": false,
+    "target": "same Python 3.14.3 as build venv; each test creates a separate disposable runtime venv"
+  },
+  "result": {
+    "exit_code": 0,
+    "tests_run": 9,
+    "passed": 9,
+    "failures": 0,
+    "errors": 0,
+    "duration_seconds": 17.942,
+    "test_results": [
+      {
+        "test": "test_diagnostic_detects_packages_shadowed_by_notebook_cwd (test_notebook_handoff.NotebookHandoffTests.test_diagnostic_detects_packages_shadowed_by_notebook_cwd)",
+        "result": "ok"
+      },
+      {
+        "test": "test_diagnostic_matches_the_wheel_without_exposing_local_paths (test_notebook_handoff.NotebookHandoffTests.test_diagnostic_matches_the_wheel_without_exposing_local_paths)",
+        "result": "ok"
+      },
+      {
+        "test": "test_notebook_is_unexecuted_and_uses_a_standard_kernel (test_notebook_handoff.NotebookHandoffTests.test_notebook_is_unexecuted_and_uses_a_standard_kernel)",
+        "result": "ok"
+      },
+      {
+        "test": "test_restart_check_distinguishes_current_and_fresh_processes (test_notebook_handoff.NotebookHandoffTests.test_restart_check_distinguishes_current_and_fresh_processes)",
+        "result": "ok"
+      },
+      {
+        "test": "test_hand_installation_enables_imports_without_source_paths (test_package_distribution.PackageDistributionTests.test_hand_installation_enables_imports_without_source_paths)",
+        "result": "ok"
+      },
+      {
+        "test": "test_import_preserves_cwd_environment_and_search_path (test_package_distribution.PackageDistributionTests.test_import_preserves_cwd_environment_and_search_path)",
+        "result": "ok"
+      },
+      {
+        "test": "test_package_imports_do_not_require_optional_sdks (test_package_distribution.PackageDistributionTests.test_package_imports_do_not_require_optional_sdks)",
+        "result": "ok"
+      },
+      {
+        "test": "test_sdist_rebuild_preserves_split_package_imports (test_package_distribution.PackageDistributionTests.test_sdist_rebuild_preserves_split_package_imports)",
+        "result": "ok"
+      },
+      {
+        "test": "test_wheel_contains_both_source_roots_without_unrelated_assets (test_package_distribution.PackageDistributionTests.test_wheel_contains_both_source_roots_without_unrelated_assets)",
+        "result": "ok"
+      }
+    ]
+  },
+  "local_log_artifact": {
+    "filename": "unit-python314-windows-build-venv.log",
+    "sha256": "aee85c2ad8227590c6e9b25b0c0826fa1b6c1819031e1d0c6e9c2b086688144f",
+    "publication": "Raw log retained locally; this evidence omits personal absolute paths"
+  },
+  "tested_source_hashes": {
+    "pyproject.toml": "8f953151f02538279a7a4730e6714b7322328bcfa28a83b9bb4f6e3c0c7996eb",
+    "apps/core/src/zizai/__init__.py": "8198e36711a40303cbbf13b3ade8d5a9b86844981b295d31459b555d433e27bf",
+    "apps/core/src/zizai/core/__init__.py": "5ae4ea87fc38110fdf7078d8f7715bc30b812c266000da61b0b7342ccc941e0f",
+    "apps/connectors/src/zizai/connectors/__init__.py": "a9bfb6caeee966f5c8fb054269386fb2587723e76f3eb8d581b96f56eef7197e",
+    "tests/unit/python/package_test_support.py": "738963abfae3a672a8359b8b7cf0404d41bdc35d909c27f66e926a226bcbad4b",
+    "tests/unit/python/test_package_distribution.py": "0d2b279b14033f1a442d9dd59cd8a534545dc084034769588102ee75297aeef2",
+    "tests/unit/python/test_notebook_handoff.py": "c1f2e0094c9b9c680728e2a12a559b18150165adf64435d6d7b7d48e4d0b0943",
+    "tests/manual/TASK-003-05-python.ipynb": "0f4c520a0fe9e0ded53b45bde1488750b010d61d49617f20c6ec5be5a62737b8"
+  },
+  "documentation_change": "tests/unit/python/README.md now states the existing -I dependency visibility prerequisite and gives a preflight command.",
+  "limitations": [
+    "This independent suite covers the existing minimal package and diagnostic tests.",
+    "It does not validate unimplemented common functions, actual business APIs, SDK absence at business call sites, contract assets, or actual package upgrades.",
+    "K05/K06 of the manual kernel procedure were not run in this recheck.",
+    "Previous failed evidence is preserved as historical results."
+  ],
+  "user_testing_required_now": false
+}
