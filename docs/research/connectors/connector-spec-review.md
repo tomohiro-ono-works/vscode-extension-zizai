@@ -1,6 +1,6 @@
 # コネクタ仕様：確認事項と暫定回答
 
-作成日：2026-10-27。Q01更新日：2026-10-28。対象：TASK-004-02、専用6コネクタ・15アクション。
+作成日：2026-10-27。Q01・Q02更新日：2026-10-28。対象：TASK-004-02、専用6コネクタ・15アクション。
 
 **レビュー用の案。以下の暫定回答は承認済み仕様ではない。**
 このファイルは、利用者がまとめて読んで修正できる設計資料であり、Taskの進捗管理ファイルではない。作業範囲・進捗・承認の正本は[Issue #26](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/26)。製品実装・Current Specification・正式契約を変更しない。
@@ -44,7 +44,7 @@ errorsは作業用の変換後データから逆算せず、前処理前の値�
 | Excelの行 | E01／E03はデータ開始行が見出しより後。同値・逆転は入力エラー。E03は指定範囲内の行位置 |
 | Excelの取得方式 | エンジン＋取得対象を組にした単一プルダウン。セル値と表示文字列を区別する。具体的な初期候補の採否はQ07 |
 | CSV／Excel書込 | 書込schemaは設けない。success／errorsのどちらを保存するかdfを明示選択。保存のserializeと業務の再変換を区別 |
-| 標準Pythonのrename | 全列名をコードに列挙した同名→同名の辞書セルと、renameセルを分ける。辞書セルは自動上書きしない。rename結果の同名列は拒否 |
+| Data Integrationの名称変更 | 標準Pythonのrenameを使い、全列名を列挙した辞書セルとrenameセルを分ける。辞書セルは自動上書きしない。rename後のcolumns.is_uniqueで同名を拒否。入力dfを一律に拒否する事前チェックは追加しない |
 | DuckDB既存DB | D01は既存DBを削除・置換せず開く。既存であることだけを理由に拒否しない |
 | 旧Python Issue | TASK-004-07 #31は現方針との整合待ち。専用実装・独断Closeを行わない |
 
@@ -55,11 +55,11 @@ errorsは作業用の変換後データから逆算せず、前処理前の値�
 
 | ID・アクション／元資料 | 入力・既定値の確認点 | 結果・副作用の確認点 | 対応する質問 |
 | --- | --- | --- | --- |
-| C01 [read_csv](csv.md#read_csv) | path、encoding、delimiter、見出し／開始行、chunk、columns、schema。旧date_cleansingを別評価 | df、行分離時は辞書。入力ファイルを変更しない | Q01〜06、Q11 |
+| C01 [read_csv](csv.md#read_csv) | path、encoding、delimiter、見出し／開始行、chunk、columns、schema。旧date_cleansingを別評価 | df、行分離時は辞書。入力ファイルを変更しない | Q01、Q03〜06、Q11 |
 | C02 [write_csv](csv.md#write_csv) | 明示df、保存先folder＋name、encoding、delimiter。output.csv案。書込schemaなし | 完了文字列を基準。indexなし・既存ファイル上書き・親folderを作らない旧動作を確認 | Q01、Q11〜12 |
-| E01 [read_excel](excel.md#read_excel) | path、方式、sheet、見出し／開始行、chunk、columns、schema | df／行分離辞書。方式ごとの取得値から変換 | Q01〜10 |
+| E01 [read_excel](excel.md#read_excel) | path、方式、sheet、見出し／開始行、chunk、columns、schema | df／行分離辞書。方式ごとの取得値から変換 | Q01、Q03〜10 |
 | E02 [write_excel](excel.md#write_excel) | 明示df、folder＋name、sheet、置換／追記。output.xlsx案。書込schemaなし | 完了文字列を基準。対象sheetの置換／追記、他sheet、部分書込を区別 | Q01、Q12〜14 |
-| E03 [read_excel_range](excel.md#read_excel_range) | E01と共通＋A1形式の範囲。行は範囲内。chunkなし | df／行分離辞書。範囲の空行・headerを確認 | Q01〜10 |
+| E03 [read_excel_range](excel.md#read_excel_range) | E01と共通＋A1形式の範囲。行は範囲内。chunkなし | df／行分離辞書。範囲の空行・headerを確認 | Q01、Q03〜10 |
 | D01 [create_db_file](duckdb.md#create_db_file) | folder、basename。folder作成・.duckdb補完は原資料からの暫定案 | 既存DB利用は確定。file_path／db_file／database／created_atの1行dfを基準に意味を照合 | Q01。細部はT06 |
 | D02 [execute_sql_file](duckdb.md#execute_sql_file) | DB path、SQL file、encoding。実行ごとにfile再読込、UTF-8案 | 結果df／情報dfを基準。DB変更、接続時作成、途中成功を区別 | Q01、Q15 |
 | D03 [execute_sql](duckdb.md#execute_sql) | DB path、SQL文字列。HostでSQLを解析・分割しない案 | D02と同じ結果規則。接続を呼出しごとに解放する案 | Q01、Q15 |
@@ -68,17 +68,17 @@ errorsは作業用の変換後データから逆算せず、前処理前の値�
 | B02 [execute_sql_file](bigquery.md#execute_sql_file) | project、SQL file、encoding。実行ごとに再読込、UTF-8案 | B01と同じ。file読取成功をJob成功に数えない | Q01、Q17 |
 | B03 [load_data](bigquery.md#load_data) | project／dataset／table、明示df、置換／追記、保存先schema | Job情報1行dfを基準。対象表の変更とserialize失敗を区別 | Q18〜19 |
 | I01 [replace_fields_forrenamelist](dataintegration.md#replace_fields_forrenamelist) | 明示df、rename CSV、明示した列名クレンジング。標準rename辞書とは別機能 | 加工df。入力を変更しない案。CSVの型定義による値変換を再評価 | Q01〜02、Q20 |
-| I02 [filter_rows](dataintegration.md#filter_rows) | 明示df、構造化条件。AND、演算子、include／exclude | 0行もdf。入力非変更。無効条件の読み飛ばし・比較時の推測を再評価 | Q02、Q21〜22 |
+| I02 [filter_rows](dataintegration.md#filter_rows) | 明示df、構造化条件。AND、演算子、include／exclude | 0行もdf。入力非変更。無効条件の読み飛ばし・比較時の推測を再評価 | Q21〜22 |
 | S01 [execute_bat](shell.md#execute_bat) | BAT path、args。cwdはQ01、argsはQ23、出力文字コードはQ24 | stdout／stderr／returncode等の1行情報dfを基準。非0は停止の旧動作を基準に例外設計。外部変更は巻き戻さない | Q01、Q23〜24 |
 
-標準Pythonの名称変更は15候補に新しい専用アクションとして追加登録した意味ではない。入力同名列はQ02、動的列取得→辞書literal生成→別セルの接続はT08で扱う。I01を廃止する判断はしていない。
+標準Pythonの名称変更と、その後の重複チェックはData Integrationの設計項目としてQ02へ記載する。正式なアクション登録・API追加を実施した意味ではない。動的列取得→辞書literal生成→別セルの接続はT08で扱い、既存I01のCSV方式との関係はT09で照合する。I01を廃止する判断はしていない。
 
 ## 4. 確認項目：Q01〜Q24の24件（回答済みを含む）
 
 **今回の全アクション照合で抽出した、利用者にまとめて確認する項目は24件。**
 過去に案内した「残り9個」「8項目」からの残数計算ではない。以前は一覧を固定せず質問を増やしており、その数字は残数の根拠に使えない。
 
-24件は当初抽出した総数で、現在の未回答数ではない。回答済みのIDも残し、採用範囲を各項に記録する。Q01は下記の回答により採用済み。
+24件は当初抽出した総数で、現在の未回答数ではない。回答済みのIDも残し、採用範囲を各項に記録する。Q01とQ02の名称変更後チェックは下記の回答により採用済み。
 
 - 各IDは下記の具体的な採用案への確認1件。回答済みの内容を再度問うものは除いた。
 - 1件に例や対象アクションが複数あっても、同じ動作方針の適用先として記載する。
@@ -96,14 +96,15 @@ errorsは作業用の変換後データから逆算せず、前処理前の値�
 - 実現の境界：既存Jupyterの起動・設定との接続はT01で照合する。コネクタ呼出しごとの強制chdirや独自カーネル起動を追加しない。実行後に利用者が明示的に作業フォルダを変更する標準Pythonの挙動は保持する。
 - 根拠：[採用判断と未実装範囲](TASK-004-02.md#notebook-root-20261028)。未保存Notebook・remoteカーネルでの保存場所との対応、tilde／環境変数／URI等はT01で別評価し、Hostの保存pathをそのままremoteの有効pathとみなさない。
 
-### Q02｜同じ列名で対象を区別できない場合
+### Q02｜Data Integrationで名称変更後の同名をどう防ぐか
 
-- 対象：列選択・型指定、I01／I02、標準rename辞書生成。
-- 確定済み：選択欄の二重指定とrename結果の同名は禁止。元dfの同名列の扱いは未決。
-- 質問：列名だけでは一意に対象を決められない操作は、エラーで止めてよいか。
-- 暫定回答：**曖昧な名前指定は停止。** 自動で列を消したり、独自の連番を付けたりしない。読取ライブラリが既に`A／A.1`等を返す場合は、その取得後の名前を使う。
-- 理由・例：実際に`A／A`のdfでAだけ指定すると、片方なのか両方なのか分からない。利用者がPythonで位置を指定して列名を整理してから続ける。
-- 補足：dfそのものの同名列を全面禁止する案ではない。名前の集合だけで判断せず、対象位置の重複を確認する。[pandasの説明](https://pandas.pydata.org/docs/user_guide/duplicates.html)と既存の人工df観測を根拠にする。
+- 対象：Data Integrationの名称変更。別セルの辞書と標準Pythonのdf.renameを使う。
+- 状態：**名称変更後の重複チェックを設計へ記載（2026-10-28）。** 利用者回答「integrationに追加しておいて」。製品実装ではない。
+- 確定回答：**rename後の全列名をcolumns.is_uniqueで検査し、重複ならValueErrorで止める。** 結果変数への今回の代入は検査成功後。未変更列との衝突も対象とする。
+- 具体例：A・Bを辞書でX・Xへ変更した場合、またはAだけをBへ変更してB・Bになった場合に停止する。
+- 入力側：辞書生成前に入力dfの同名列を一律に拒否するチェックは追加しない。元dfがA・Aなら標準renameのA→Bは両方に適用され、B・Bという結果を上記の検査で止める。プログラムの動作は一意に決まっており、LLMの曖昧な指定という問題ではない。
+- 訂正：当初の「曖昧な名前指定は停止」という一括方針案は採用しない。今回の判断をCSV読取・型指定・filter_rowsへの新しい入力制約に広げない。元データの同名列等の個別条件はT02／T09で照合する。
+- 根拠：[Data Integrationへの位置付け](TASK-004-02.md#integration-rename-check-20261028)、[pandasの重複ラベル](https://pandas.pydata.org/docs/user_guide/duplicates.html)。自動採番・列削除・既存辞書セルの自動上書きを追加しない。
 
 ### Q03｜明示型指定で扱う型の範囲
 
@@ -302,7 +303,7 @@ errorsは作業用の変換後データから逆算せず、前処理前の値�
 | T06 | DuckDBの正式なI/Oと情報df | folder作成・.duckdb補完は原資料維持の案。接続寿命、SQL file decode、表名の引用、0行結果、transaction、副作用。created_atの意味、旧source_stepの扱いは正確に説明し、架空step IDやdf変数名推測で埋めない | 004-05 #29、003-02 #21／005-03 #38。正式API確定前 |
 | T07 | BigQuery公式SDKとの接続 | ADC等の認証、location、結果取得／待機、RPC retryとjob_retry、取消。DataFrame連携APIを優先候補として比較し、JSON自前変換を当然に継承しない。Arrow等は必要経路だけ依存化。旧excuted_at、attrs、is_outputの採否は対象契約へ明示 | 004-06 #30、003-02 #21／005-03 #38／006-01 #41。SDK経路・情報列・依存固定前。実接続未実施 |
 | T08 | rename辞書セル・結果代入の生成 | 標準実行で取得した列名からrepr相当のliteralへ。全列列挙・辞書だけ別セル・自動上書きなし・結果重複拒否。取得とHost source生成の境界、再生成の手編集保護を照合。新UIやdf同期を作らない | 005-02 #37／03 #38、002-02 #15／04 #17。生成・保存設計確定前。製品接続未実施 |
-| T09 | Integrationの細部 | I01のCSV定義不備・重複・名称衝突・明示クレンジング／列除外・説明metadata。標準renameとCSV方式を混同しない。I02はpandas演算と条件ごとの検証を使い、独自の推論・条件実行エンジンを増やさない | 004-08 #32、003-02 #21／005-03 #38。各アクションの正式定義前 |
+| T09 | Integrationの細部 | 名称変更後の重複チェックをQ02として設計へ追加。入力df全般への事前拒否は追加しない。標準renameと既存I01のCSV方式を混同せず、正式登録・定義不備・列名クレンジング／列除外・説明metadataとの関係を照合。I02はpandas演算と条件ごとの検証を使い、独自の推論・条件実行エンジンを増やさない | 004-08 #32、003-02 #21／005-03 #38。各アクションの正式定義前 |
 | T10 | Shellと環境・依存・検証 | subprocessを基準に実引数／decode／非0／cwd／環境継承／出力量／取消・process寿命を確認。通常例外をすべてValueErrorへ包まない。情報dfを返すならpandas依存を明記。元code許諾と採用ライブラリのlicenseを分けて確認 | 004-09 #33／10 #34／11 #35、003-02 #21／006-01 #41／02 #42。正式実行方法・依存・検証計画の確定前 |
 
 T02〜T10の検証は、文書／人工例／製品単体／実接続／UIを区別する。親Task全体の完了を一律待ちせず、必要な対象成果が揃ったところから進める。CLI・依存準備・自動テスト・ログ収集はエージェント、手動UIはユーザー。UI自動は範囲・起動方法・担当の事前合意、手動UIは準備完了報告後の開始合図が必要。
