@@ -70,7 +70,7 @@ errorsは作業用の変換後データから逆算せず、前処理前の値�
 | D04 [create_table](duckdb.md#create_table) | DB path、明示df、table_name。名前の引用と識別子検証 | 情報dfを基準。同名table置換の採否、旧source_stepの意味を照合 | Q01、Q16。細部はT06 |
 | B01 [execute_sql](bigquery.md#execute_sql) | project、SQL。認証secretをsource等に保存しない。認証・locationはT07 | 結果df／非表Job情報df案。0行表の列、待機、更新・課金を区別 | Q17 |
 | B02 [execute_sql_file](bigquery.md#execute_sql_file) | project、SQL file、encoding。実行ごとに再読込、UTF-8案 | B01と同じ。file読取成功をJob成功に数えない | Q01、Q17 |
-| B03 [load_data](bigquery.md#load_data) | project／dataset／table、明示df、作成／置換／挿入（初期は作成）、保存先schemaはQ19 | Job情報1行dfを基準。既存なら作成エラー。対象表の変更とserialize失敗を区別 | Q18〜19 |
+| B03 [load_data](bigquery.md#load_data) | project／dataset／table、明示df、作成／置換／挿入（初期は作成）、保存する列ごとのデータ型を明示指定必須（Q19） | Job情報1行dfを基準。既存なら作成エラー。対象表の変更とserialize失敗を区別 | Q18〜19 |
 | I01 [replace_fields_forrenamelist](dataintegration.md#replace_fields_forrenamelist) | 明示df、rename CSV、明示した列名クレンジング。標準rename辞書とは別機能 | 加工df。入力を変更しない案。CSVの型定義による値変換を再評価 | Q01〜02、Q20 |
 | I02 [filter_rows](dataintegration.md#filter_rows) | 明示df、構造化条件。AND、演算子、include／exclude | 0行もdf。入力非変更。無効条件の読み飛ばし・比較時の推測を再評価 | Q21〜22 |
 | S01 [execute_bat](shell.md#execute_bat) | BAT path、args。cwdはQ01、argsはQ23、出力文字コードはQ24 | stdout／stderr／returncode等の1行情報dfを基準。非0は停止の旧動作を基準に例外設計。外部変更は巻き戻さない | Q01、Q23〜24 |
@@ -358,7 +358,7 @@ OKです。もし実装が難しければ明示指定でもOkです。
 | Q16 | 同名テーブルがあれば置き換える作成／置換アクションとして採用 |
 | Q17 | BigQuery／公式SDKの型を基準にdf化し、取得後の独自再推論・型変換を重ねない方針を採用 |
 | Q18 | 作成／置換／挿入の3択、初期は作成。既存なら作成エラー、置換・挿入はなければ作成 |
-| Q19 | 保存先の列型を必要時に明示指定できる案を具体例で説明。回答待ち |
+| Q19 | BigQueryロードでは保存する各列のデータ型を明示指定必須。SDK推論に任せて省略する案は不採用 |
 
 ### Q15｜DuckDBで実行するSQLの範囲
 
@@ -429,21 +429,23 @@ OKです。
 - 置換のWRITE_TRUNCATE、挿入のWRITE_APPEND、対象不在時の作成条件をT07で対応付ける。作成はcreate_tableのexists_ok=False等の公式APIを比較し、同時作成・型定義・ロード失敗時に新規空テーブルが残る場合も含めて設計する。[Client API](https://docs.cloud.google.com/python/docs/reference/bigquery/latest/google.cloud.bigquery.client.Client)。事前存在確認だけで競合時も保証できるとはしない。
 - 利用者の決めた動作をSDKの既定へ緩めない。正式保存ID・フォーム値・生成Pythonと省略時の初期動作は005／002／003と整合する。SDKでの表作成・ロードは今回実施していない。
 
-### Q19｜BigQueryに保存する列の型を、必要時に明示指定できるようにするか
+### Q19｜BigQueryロードで必須にする保存先の型指定
 
 - 対象：B03。
 - 確定済み：CSV／Excel書込schemaなしの判断を、BigQueryへ自動的には広げない。
-- 質問：ロード側schemaは保存先の型定義に限定し、名称変更・行分離・読取の前処理を再実行しない方針でよいか。
-- 暫定回答：**明示したdfをロードし、必要な場合だけBigQueryの保存先schemaを明示する。** attrs.ziz_schemaを隠れた優先設定にしない案。
+- 当初案（不採用）：通常はSDKに型を決めさせ、必要な場合だけ保存先schemaを指定する案は、以下の利用者回答により更新する。
+- 確定回答：**BigQueryロードでは、保存する各列のデータ型の明示指定を必須とする。** 型指定を省略してSDKの推論に任せる経路は設けない。attrs.ziz_schemaを隠れた入力補完に使わない。
 - 理由・例：errorsを保存するなら、変換前の値を格納できる保存先を利用者が選ぶ。SDKのschema指定はserializeに影響し得るので「何の変換も起きない」とは説明しない。
 - 補足：既存表との不整合は失敗として扱い、別dfへ自動振分けしない。SDK経路・Arrow依存・時刻／Decimal／入れ子の検証はT07。[公式Client API](https://docs.cloud.google.com/python/docs/reference/bigquery/latest/google.cloud.bigquery.client.Client)。
 回答：
 よくわからなかった説明して
 
+追加回答：
+データ型は明示指定必須です。
 
-#### 具体的な説明・回答待ち（2026-10-28）
+#### 回答の記録・必須条件（2026-10-28）
 
-- 状態：説明を求められているため、当初案を採用済みにしない。
+- 状態：**データ型の明示指定必須を採用。** 当初の「指定不要・SDKへ任せる」案は不採用。
 - ここでいうschemaは、BigQueryのテーブルへ「どの列を、どの型で保存するか」という列定義。例えば入力dfに次の値がある場合、保存先は次の列型に対応する。
 
 | 列名 | 入力dfの値の例 | BigQueryに保存する型の例 |
@@ -451,10 +453,10 @@ OKです。
 | 商品コード | 文字列00123 | STRING |
 | 数量 | 整数2 | INT64 |
 
-- 新規テーブルでは通常、公式SDKがdfの型を基に列型を決める。必要なら保存先の列型を明示することもできる。例えば0行dfで型の手がかりもない列に対し、明示した型を使う案。[公式DataFrameロードAPI](https://docs.cloud.google.com/python/docs/reference/bigquery/latest/google.cloud.bigquery.client.Client)。
-- 今回の質問は、通常はSDKに任せつつ、必要な場合にだけ「商品コードはSTRING、数量はINT64」のように保存先の型を指定できるようにするか、という意味。列名変更・クレンジング・行分離を再実行する設定にはしない案。
+- 必須条件：「商品コードはSTRING、数量はINT64」のように、保存する列ごとの型を明示する。指定のない列をSDKの推論・dfのdtype・attrsで補完して通さず、入力不足として停止する設計入力とする。0行dfでも型指定を省略する理由にしない。
+- 作成・置換・挿入の各モードで同じ必須条件を使う。取得後のdfをロードする処理であり、列名変更・クレンジング・行分離を自動でやり直す機能をこの回答から追加しない。[公式DataFrameロードAPI](https://docs.cloud.google.com/python/docs/reference/bigquery/latest/google.cloud.bigquery.client.Client)へ明示した型をどう渡すかは対象経路と照合する。
 - SDKは指定schemaをロード形式への変換にも使うため、型と値が合わないと失敗する場合がある。入力dfをZizai側で加工し直す機能や、任意の値をどの型でも保存できる機能を追加する話ではない。
-- 既存テーブルへ挿入する場合も、その列型との整合が必要で、指定するだけで既存表の型を書き換える機能にはしない。具体的なUI部品・入力構造・生成方法は、設定を設けるかという利用者判断と分けて設計する。
+- 既存テーブルへ挿入する場合も、その列型との整合が必要で、指定するだけで既存表の型を書き換える機能にはしない。005-03と列名・型の入力構造／必須検証、002と生成する引数、003とSDK境界を正式定義前に整合する。具体的なUI部品・入力構造・生成方法の実装完了を意味しない。
 
 ### Q20｜CSVのRENAME定義で値の型まで変えるか
 
