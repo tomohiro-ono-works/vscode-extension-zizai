@@ -573,6 +573,21 @@ Q24　出力時の文字コードはcp932でよいかってはなし？
 - 前後空白・改行の保持、decode失敗時の情報保持・返却、正式入力項目の要否は未確定として整理する。旧cp932固定・置換decode・stripの自動継承はしない。Pythonのtext modeには改行変換もあるため、保持範囲をT10で照合する。製品実装・BAT／実機・UI検証は未実施。
 - 根拠：[Microsoft chcp](https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/chcp)、[コードページ番号](https://learn.microsoft.com/en-us/windows/win32/intl/code-page-identifiers)、[Python subprocessのencoding・PIPE](https://docs.python.org/3.14/library/subprocess.html#frequently-used-arguments)、[VS CodeのWindowsターミナル](https://code.visualstudio.com/docs/terminal/advanced#_windows-and-conpty)。
 
+### 実行メタ情報：追加確認4点への回答（2026-10-29）
+
+Q01〜Q24とは別に、dfと実行メタ情報の持ち方について確認した4点を記録する。
+
+| 項目 | 利用者の回答・状態 |
+| --- | --- |
+| M01 用途 | 基本は使わない。printだけでもよいかもしれない。APIのstatusのような情報を想定し、メタ情報自体が不要な可能性もある |
+| M02 持ち方 | dfと同じ結果にまとめる使いにくさを懸念。まとめるならデータとメタ情報を持つ辞書が候補。df自体の付帯情報保持機能を質問。方式は未決 |
+| M03 保存 | 不要。専用の永続保存・Notebook metadataへの追加保存を要件にしない。通常のNotebook出力保存は既存挙動と区別 |
+| M04 再実行 | 最新のみ。独自の実行履歴は不要 |
+
+- 回答の趣旨を、後続セルからのメタ情報参照を必須とする要件へ広げない。通常dfを返して必要なstatus等だけprintする案を先に比較する。常時print・表示項目・辞書返却・df.attrsの採用を、この回答で確定しない。
+- df.attrsは付帯情報の辞書として存在するが、pandas公式では実験的機能。concat／mergeの継承にも条件がある。保持機能の存在だけで、最新実行の情報を保つ仕組みとして採用しない。[pandas公式](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.attrs.html)。
+- 反映先：[要件定義](TASK-004-02.md#requirements-20261029)。既存のsuccess／errors辞書や、書込の明示df選択を変更しない。
+
 ## 5. 質問にせずエージェント側で詰める事項
 
 未完了を隠すための分類ではない。ここには、既存の方針に沿って調査・設計・担当間照合する事項を置く。
