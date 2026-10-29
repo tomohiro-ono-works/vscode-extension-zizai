@@ -588,6 +588,15 @@ Q01〜Q24とは別に、dfと実行メタ情報の持ち方について確認し
 - df.attrsはpandas公式では実験的機能で、concat／mergeの継承にも条件がある。今回の実行情報を返却dfに保持する範囲と、後続の任意加工での自動更新・履歴管理を区別する。[pandas公式](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.attrs.html)。製品適合は未検証。
 - 反映先：[要件定義](TASK-004-02.md#requirements-20261029)。既存のsuccess／errors辞書や、書込の明示df選択を変更しない。
 
+<a id="execution-results-review-20261029"></a>
+#### M05：データ表を返さない処理の戻り値（追加確認・未回答）
+
+- 判明した差：CSV／Excel保存は完了文字列、DB／表作成・BigQueryロード・Shell等は処理情報だけのdfを返す。これらを業務データのdfと区別せず、attrs採用を機械的に適用しない。
+- 質問：データ表を返さない処理は、処理情報の通常Python辞書を返す形に揃えてよいか。
+- 暫定回答：辞書へ揃える。保存ならstatusと保存先、BigQueryならJob ID、Shellならstdout／stderr／returncode等を参照できる。通常dfはそのまま返し、実行情報はattrs。読取のsuccess／errorsも変えない。
+- 現状維持との差：完了文字列の解析や、処理情報dfから1行目を取り出す操作を減らせる。一方、元のstr／情報dfからの戻り値変更になるため、回答前は正式採用しない。具体的なキー一覧や、全アクションを同じdata／meta wrapperで包む承認ではない。
+- [対象アクションと既存戻り値の照合](TASK-004-02.md#return-shapes-review-20261029)。M01〜M04の保存不要・最新のみ・attrs保持の回答は維持する。
+
 ## 5. 質問にせずエージェント側で詰める事項
 
 未完了を隠すための分類ではない。ここには、既存の方針に沿って調査・設計・担当間照合する事項を置く。
