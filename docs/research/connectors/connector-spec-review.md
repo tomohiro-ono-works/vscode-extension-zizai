@@ -580,12 +580,12 @@ Q01〜Q24とは別に、dfと実行メタ情報の持ち方について確認し
 | 項目 | 利用者の回答・状態 |
 | --- | --- |
 | M01 用途 | 基本は使わない。printだけでもよいかもしれない。APIのstatusのような情報を想定し、メタ情報自体が不要な可能性もある |
-| M02 持ち方 | dfと同じ結果にまとめる使いにくさを懸念。まとめるならデータとメタ情報を持つ辞書が候補。df自体の付帯情報保持機能を質問。方式は未決 |
+| M02 持ち方 | df.attrs["execution"]に実行メタ情報の辞書を保持する。例の説明後「よいですね。そこにいれましょう。」と承認。dfの列・戻り値の形は変えない |
 | M03 保存 | 不要。専用の永続保存・Notebook metadataへの追加保存を要件にしない。通常のNotebook出力保存は既存挙動と区別 |
 | M04 再実行 | 最新のみ。独自の実行履歴は不要 |
 
-- 回答の趣旨を、後続セルからのメタ情報参照を必須とする要件へ広げない。通常dfを返して必要なstatus等だけprintする案を先に比較する。常時print・表示項目・辞書返却・df.attrsの採用を、この回答で確定しない。
-- df.attrsは付帯情報の辞書として存在するが、pandas公式では実験的機能。concat／mergeの継承にも条件がある。保持機能の存在だけで、最新実行の情報を保つ仕組みとして採用しない。[pandas公式](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.attrs.html)。
+- 後続セルからの参照を必須の利用手順にはしない。保持先はdf.attrs["execution"]で承認済み。常時print・表示項目・共通wrapperの追加まで採用した意味ではない。保存不要・最新のみを維持する。
+- df.attrsはpandas公式では実験的機能で、concat／mergeの継承にも条件がある。今回の実行情報を返却dfに保持する範囲と、後続の任意加工での自動更新・履歴管理を区別する。[pandas公式](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.attrs.html)。製品適合は未検証。
 - 反映先：[要件定義](TASK-004-02.md#requirements-20261029)。既存のsuccess／errors辞書や、書込の明示df選択を変更しない。
 
 ## 5. 質問にせずエージェント側で詰める事項
