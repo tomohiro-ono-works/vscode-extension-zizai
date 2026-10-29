@@ -60,20 +60,20 @@ errorsは作業用の変換後データから逆算せず、前処理前の値�
 | ID・アクション／元資料 | 入力・既定値の確認点 | 結果・副作用の確認点 | 対応する質問 |
 | --- | --- | --- | --- |
 | C01 [read_csv](csv.md#read_csv) | path、encoding、delimiter、見出し／開始行、chunk、columns、schema。クレンジングはQ05でIntegrationへ移管 | df、行分離時は辞書。入力ファイルを変更しない | Q01、Q03〜06、Q11 |
-| C02 [write_csv](csv.md#write_csv) | 明示df、保存先folder＋name、encoding、delimiter。output.csv案。書込schemaなし | 完了文字列を基準。indexなし・既存ファイル上書き・親folderを作らない旧動作を確認 | Q01、Q11〜12 |
+| C02 [write_csv](csv.md#write_csv) | 明示df、保存先folder＋name、encoding、delimiter。output.csv案。書込schemaなし | 処理情報dict（M05）。indexなし・既存ファイル上書き・親folderを作らない旧動作を確認 | Q01、Q11〜12、M05 |
 | E01 [read_excel](excel.md#read_excel) | path、方式、sheet、見出し／開始行、chunk、columns、schema | df／行分離辞書。方式ごとの取得値から変換 | Q01、Q03〜10 |
-| E02 [write_excel](excel.md#write_excel) | 明示df、folder＋name、sheet、置換／追記。output.xlsx案。書込schemaなし | 完了文字列を基準。対象sheetの置換／追記、他sheet、部分書込を区別 | Q01、Q12〜14 |
+| E02 [write_excel](excel.md#write_excel) | 明示df、folder＋name、sheet、作成／置換／挿入（初期は作成）。書込schemaなし | 処理情報dict（M05）。対象sheetの操作、他sheet、部分書込を区別 | Q01、Q12〜14、M05 |
 | E03 [read_excel_range](excel.md#read_excel_range) | E01と共通＋A1形式の範囲。行は範囲内。chunkなし | df／行分離辞書。範囲の空行・headerを確認 | Q01、Q03〜10 |
-| D01 [create_db_file](duckdb.md#create_db_file) | folder、basename。folder作成・.duckdb補完は原資料からの暫定案 | 既存DB利用は確定。file_path／db_file／database／created_atの1行dfを基準に意味を照合 | Q01。細部はT06 |
-| D02 [execute_sql_file](duckdb.md#execute_sql_file) | DB path、SQL file、encoding。実行ごとにfile再読込、UTF-8案 | 結果df／情報dfを基準。DB変更、接続時作成、途中成功を区別 | Q01、Q15 |
+| D01 [create_db_file](duckdb.md#create_db_file) | folder、basename。folder作成・.duckdb補完は原資料からの暫定案 | 既存DB利用は確定。DBの処理情報dict（M05）。旧情報項目の意味を照合 | Q01、M05。細部はT06 |
+| D02 [execute_sql_file](duckdb.md#execute_sql_file) | DB path、SQL file、encoding。実行ごとにfile再読込、UTF-8案 | 表ならdf、表がなければ処理情報dict（M05）。DB変更、接続時作成、途中成功を区別 | Q01、Q15、M05 |
 | D03 [execute_sql](duckdb.md#execute_sql) | DB path、SQL文字列。HostでSQLを解析・分割しない案 | D02と同じ結果規則。接続を呼出しごとに解放する案 | Q01、Q15 |
-| D04 [create_table](duckdb.md#create_table) | DB path、明示df、table_name。名前の引用と識別子検証 | 情報dfを基準。同名table置換の採否、旧source_stepの意味を照合 | Q01、Q16。細部はT06 |
-| B01 [execute_sql](bigquery.md#execute_sql) | project、SQL。認証secretをsource等に保存しない。認証・locationはT07 | 結果df／非表Job情報df案。0行表の列、待機、更新・課金を区別 | Q17 |
+| D04 [create_table](duckdb.md#create_table) | DB path、明示df、table_name。名前の引用と識別子検証 | 処理情報dict（M05）。同名tableは置換。旧source_stepの意味を照合 | Q01、Q16、M05。細部はT06 |
+| B01 [execute_sql](bigquery.md#execute_sql) | project、SQL。認証secretをsource等に保存しない。認証・locationはT07 | 表ならdf、表がなければJob等の処理情報dict（M05）。0行表の列、待機、更新・課金を区別 | Q17、M05 |
 | B02 [execute_sql_file](bigquery.md#execute_sql_file) | project、SQL file、encoding。実行ごとに再読込、UTF-8案 | B01と同じ。file読取成功をJob成功に数えない | Q01、Q17 |
-| B03 [load_data](bigquery.md#load_data) | project／dataset／table、明示df、作成／置換／挿入（初期は作成）、保存する列ごとのデータ型を明示指定必須（Q19） | Job情報1行dfを基準。既存なら作成エラー。対象表の変更とserialize失敗を区別 | Q18〜19 |
+| B03 [load_data](bigquery.md#load_data) | project／dataset／table、明示df、作成／置換／挿入（初期は作成）、保存する列ごとのデータ型を明示指定必須（Q19） | Job等の処理情報dict（M05）。既存なら作成エラー。対象表の変更とserialize失敗を区別 | Q18〜19、M05 |
 | I01 [replace_fields_forrenamelist](dataintegration.md#replace_fields_forrenamelist) | 明示df、rename CSV、明示した列名クレンジング。標準rename辞書とは別機能 | 加工df。名称変更にセル値の型変換を混ぜず、追加の型キャストは別処理（Q20） | Q01〜02、Q20 |
 | I02 [filter_rows](dataintegration.md#filter_rows) | 明示df、構造化条件。AND、演算子、include／exclude | 比較用の値を適切な型へ変換して行を選ぶ。元dfの値・型は変更しない。0行もdf | Q21〜22 |
-| S01 [execute_bat](shell.md#execute_bat) | BAT path、args。cwdはQ01、argsはQ23、出力文字コードはQ24 | stdout／stderr／returncode等の1行情報dfを基準。非0は停止の旧動作を基準に例外設計。外部変更は巻き戻さない | Q01、Q23〜24 |
+| S01 [execute_bat](shell.md#execute_bat) | BAT path、args。cwdはQ01、argsはQ23、出力文字コードはQ24 | stdout／stderr／returncode等の処理情報dict（M05）。非0の通常例外と外部変更を区別 | Q01、Q23〜24、M05 |
 
 標準Pythonの名称変更と、その後の重複チェックはData Integrationの設計項目としてQ02へ記載する。正式なアクション登録・API追加を実施した意味ではない。動的列取得→辞書literal生成→別セルの接続はT08で扱い、既存I01のCSV方式との関係はT09で照合する。I01を廃止する判断はしていない。
 
@@ -589,12 +589,13 @@ Q01〜Q24とは別に、dfと実行メタ情報の持ち方について確認し
 - 反映先：[要件定義](TASK-004-02.md#requirements-20261029)。既存のsuccess／errors辞書や、書込の明示df選択を変更しない。
 
 <a id="execution-results-review-20261029"></a>
-#### M05：データ表を返さない処理の戻り値（追加確認・未回答）
+#### M05：データ表を返さない処理の戻り値（採用済み・2026-10-29）
 
 - 判明した差：CSV／Excel保存は完了文字列、DB／表作成・BigQueryロード・Shell等は処理情報だけのdfを返す。これらを業務データのdfと区別せず、attrs採用を機械的に適用しない。
 - 質問：データ表を返さない処理は、処理情報の通常Python辞書を返す形に揃えてよいか。
-- 暫定回答：辞書へ揃える。保存ならstatusと保存先、BigQueryならJob ID、Shellならstdout／stderr／returncode等を参照できる。通常dfはそのまま返し、実行情報はattrs。読取のsuccess／errorsも変えない。
-- 現状維持との差：完了文字列の解析や、処理情報dfから1行目を取り出す操作を減らせる。一方、元のstr／情報dfからの戻り値変更になるため、回答前は正式採用しない。具体的なキー一覧や、全アクションを同じdata／meta wrapperで包む承認ではない。
+- 確定回答：辞書へ揃える。保存なら保存先、BigQueryならJob ID、Shellならstdout／stderr／returncode等の処理情報を保持する。通常dfはそのまま返し、実行情報はattrs。読取のsuccess／errorsも変えない。
+- 利用者回答：**dfを返却しない場合は、辞書でOKです。**
+- 現状維持との差：旧完了文字列や情報だけのdfから、処理情報dictへ整理する。表の列がある0行dfを辞書へ変える指示ではない。具体的なキー一覧、旧情報の削除、全アクションを同じdata／meta wrapperで包む承認ではない。失敗を返却dictで握り潰す方式は追加しない。
 - [対象アクションと既存戻り値の照合](TASK-004-02.md#return-shapes-review-20261029)。M01〜M04の保存不要・最新のみ・attrs保持の回答は維持する。
 
 ## 5. 質問にせずエージェント側で詰める事項
