@@ -2,6 +2,8 @@
 
 **2026-11-01の利用者承認を反映。** [未完了の定義と検証分担](../decisions/2026-10-23-python-foundation.md#validation-boundary-20261101)を現在の方針とする。未設定sourceの判断差のうち、必須不足・入力不正時は処理コードを生成しない点と検証の分担は利用者が明示承認した。アプリは入力内容、Pythonはファイル存在・実変数・接続等の実環境を確認する。過去のValueError／Run All停止を生成・統合期待値へ採用しない。製品入口・正式契約・依存／許諾・N05等は未充足を維持し、今回製品ビルド・実機検証は行わない。
 
+2026-11-02、[TASK-006-06 / #71](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/71)で、[coding-rulesの旧依存記述](../../coding-rules.md#legacy-rule-mapping-20261102)を現行アーキテクチャ・開発手順に整合した。旧Engine・Bridge・.zizd・固定GUI資産・旧Gate／Browser Runtimeは現行の必須条件にしない。規約の旧原文は固定commitで参照可能にし、refactor-policyの所在、個別API・正式契約・製品編集範囲等の別の未決は変更しない。新しい実行方式・製品依存・ビルド入口を採用した意味ではない。
+
 <a id="dependency-reconciliation-20261101"></a>
 ## 既存成果と現在の依存条件の照合（2026-11-01）
 
