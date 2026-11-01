@@ -1,0 +1,323 @@
+{
+  "date_jst": "2026-11-02",
+  "task": "TASK-002-01",
+  "scope": "17 prepared diagnostic cases and one kernel-bootstrap Notebook; schema validation only",
+  "baseline_head": "659f7d22463c865034257704cf8ed09a43ffc9c2",
+  "uncommitted_validation_script": {
+    "path": "tests/notebook-host-api/validate-notebooks.py",
+    "sha256": "2280e4d6e56306965319b586a9c6869742756b9cf363b6889e50eb371fc851e5"
+  },
+  "fixture_source": {
+    "path": "tests/notebook-host-api/fixtures.cjs",
+    "sha256": "d0511c1dde2bde2dd0edc06f1be3a114dac93ec8669a7de26b15ce1e680e365c"
+  },
+  "environment": {
+    "python": "3.14.3",
+    "packages": {
+      "attrs": "26.1.0",
+      "fastjsonschema": "2.22.3",
+      "jsonschema": "4.26.0",
+      "jsonschema-specifications": "2025.9.1",
+      "jupyter_core": "5.9.1",
+      "nbformat": "5.11.1",
+      "pip": "25.3",
+      "platformdirs": "4.14.3",
+      "referencing": "0.37.0",
+      "rpds-py": "2026.9.1",
+      "traitlets": "5.16.1"
+    },
+    "isolated_diagnostic_environment": true,
+    "product_dependencies_changed": false
+  },
+  "validation": {
+    "scope": "explicit diagnostic notebooks; schema validation only",
+    "python": "3.14.3",
+    "packages": {
+      "attrs": "26.1.0",
+      "fastjsonschema": "2.22.3",
+      "jsonschema": "4.26.0",
+      "jsonschema-specifications": "2025.9.1",
+      "jupyter_core": "5.9.1",
+      "nbformat": "5.11.1",
+      "pip": "25.3",
+      "platformdirs": "4.14.3",
+      "referencing": "0.37.0",
+      "rpds-py": "2026.9.1",
+      "traitlets": "5.16.1"
+    },
+    "conversion_or_normalization_requested": false,
+    "kernel_or_GUI_execution": false,
+    "passed": 18,
+    "failed": 0,
+    "results": [
+      {
+        "file": "D4-basic.ipynb",
+        "status": "PASS",
+        "warnings": [],
+        "data_unchanged": true,
+        "file_unchanged": true,
+        "sha256": "2b23675829908c15f2c5016d7340db55914b194dc44a48f71537d28f7ee8629b",
+        "nbformat": [
+          4,
+          5
+        ]
+      },
+      {
+        "file": "D1-structure.ipynb",
+        "status": "PASS",
+        "warnings": [],
+        "data_unchanged": true,
+        "file_unchanged": true,
+        "sha256": "a39d31bfa3f68595a8054057b5fe0f8d4f26e837236a65926452e46ced630892",
+        "nbformat": [
+          4,
+          5
+        ]
+      },
+      {
+        "file": "D2-save.ipynb",
+        "status": "PASS",
+        "warnings": [],
+        "data_unchanged": true,
+        "file_unchanged": true,
+        "sha256": "cd9c0501a6286b5ac7a5db8091d4b5e688eb2bd433e456264e777338fdbde640",
+        "nbformat": [
+          4,
+          5
+        ]
+      },
+      {
+        "file": "D3-mixed.ipynb",
+        "status": "PASS",
+        "warnings": [],
+        "data_unchanged": true,
+        "file_unchanged": true,
+        "sha256": "da9db4fd5687f9546a25753fdd5cd35e27d1bf08d5821326e35cec5002e22fcb",
+        "nbformat": [
+          4,
+          5
+        ]
+      },
+      {
+        "file": "D4-environment.ipynb",
+        "status": "PASS",
+        "warnings": [],
+        "data_unchanged": true,
+        "file_unchanged": true,
+        "sha256": "f56ab4d10c459a4d852a805de39aa12e528d3a374c939481c3e7fb366a104f6a",
+        "nbformat": [
+          4,
+          5
+        ]
+      },
+      {
+        "file": "D4-success.ipynb",
+        "status": "PASS",
+        "warnings": [],
+        "data_unchanged": true,
+        "file_unchanged": true,
+        "sha256": "c690fe99a5f34b8dab2be29630ef180303cf1d531f2117c8f8fd662e7fd8ae2b",
+        "nbformat": [
+          4,
+          5
+        ]
+      },
+      {
+        "file": "D4-exception.ipynb",
+        "status": "PASS",
+        "warnings": [],
+        "data_unchanged": true,
+        "file_unchanged": true,
+        "sha256": "f3b99e5984794e4fd0148ecc306c2887e49f4e82891d153296ad54ca623867e1",
+        "nbformat": [
+          4,
+          5
+        ]
+      },
+      {
+        "file": "D4-cancel.ipynb",
+        "status": "PASS",
+        "warnings": [],
+        "data_unchanged": true,
+        "file_unchanged": true,
+        "sha256": "277627c24d9d246731f89bd1b6d3e78eb95e83cbb09d44efbc1106496b9d5fa5",
+        "nbformat": [
+          4,
+          5
+        ]
+      },
+      {
+        "file": "D4-empty.ipynb",
+        "status": "PASS",
+        "warnings": [],
+        "data_unchanged": true,
+        "file_unchanged": true,
+        "sha256": "2ce1fd4fd8d750da2f758c69c603a4d39a05200f862b3413b4553a3c129b69a7",
+        "nbformat": [
+          4,
+          5
+        ]
+      },
+      {
+        "file": "D4-running-edit.ipynb",
+        "status": "PASS",
+        "warnings": [],
+        "data_unchanged": true,
+        "file_unchanged": true,
+        "sha256": "55b9368035a17cc34826b5f1b5c9703948c3f79be8d13d3c31242ed81fa03bbf",
+        "nbformat": [
+          4,
+          5
+        ]
+      },
+      {
+        "file": "D4-nonempty-to-empty.ipynb",
+        "status": "PASS",
+        "warnings": [],
+        "data_unchanged": true,
+        "file_unchanged": true,
+        "sha256": "22d744bfac93ddde2daae82fb5f993972a42d5bc8ebc7791a66ab0232f47283f",
+        "nbformat": [
+          4,
+          5
+        ]
+      },
+      {
+        "file": "D4-queued-edit.ipynb",
+        "status": "PASS",
+        "warnings": [],
+        "data_unchanged": true,
+        "file_unchanged": true,
+        "sha256": "e3d6534622714bdf514cad749e9531d7cb582c84568d8f57dea88e43bf75ff48",
+        "nbformat": [
+          4,
+          5
+        ]
+      },
+      {
+        "file": "D5-queued-delete.ipynb",
+        "status": "PASS",
+        "warnings": [],
+        "data_unchanged": true,
+        "file_unchanged": true,
+        "sha256": "0901f00ff29c3de08129f6e0d2877a7bb5928f660a6e30bc1834fcdcc6cb4f4f",
+        "nbformat": [
+          4,
+          5
+        ]
+      },
+      {
+        "file": "D5-running-delete.ipynb",
+        "status": "PASS",
+        "warnings": [],
+        "data_unchanged": true,
+        "file_unchanged": true,
+        "sha256": "c47260219ff36e58865ac028711e8a182ecba08e1de2aa49ff8655c8284a80ea",
+        "nbformat": [
+          4,
+          5
+        ]
+      },
+      {
+        "file": "D5-queued-close.ipynb",
+        "status": "PASS",
+        "warnings": [],
+        "data_unchanged": true,
+        "file_unchanged": true,
+        "sha256": "9f365e8d5dea18f832a960e42de9f946fe52711d3a6cab0f8b791337b5ce613a",
+        "nbformat": [
+          4,
+          5
+        ]
+      },
+      {
+        "file": "D5-running-close.ipynb",
+        "status": "PASS",
+        "warnings": [],
+        "data_unchanged": true,
+        "file_unchanged": true,
+        "sha256": "cf8ea696feef2d977a396f42841c3b89243d47b8eb2ea1c8d0f735291f74588b",
+        "nbformat": [
+          4,
+          5
+        ]
+      },
+      {
+        "file": "D6-burst.ipynb",
+        "status": "PASS",
+        "warnings": [],
+        "data_unchanged": true,
+        "file_unchanged": true,
+        "sha256": "f9b5ea87271fac621bdb068fab48f9f7b2b10e97cd2ae06c7e810d7609545c40",
+        "nbformat": [
+          4,
+          5
+        ]
+      },
+      {
+        "file": "USER-kernel-bootstrap-20261024.ipynb",
+        "status": "PASS",
+        "warnings": [],
+        "data_unchanged": true,
+        "file_unchanged": true,
+        "sha256": "f56ab4d10c459a4d852a805de39aa12e528d3a374c939481c3e7fb366a104f6a",
+        "nbformat": [
+          4,
+          5
+        ]
+      }
+    ]
+  },
+  "negative_controls": {
+    "direct_api_expectation": {
+      "expected": "ValidationError on missing cell.id",
+      "actual": "MissingIDFieldWarning and an ID added to the in-memory validation copy; no ValidationError",
+      "status": "expectation mismatch; preserved as failed check",
+      "exit_code": 1
+    },
+    "strict_cli": {
+      "expected_exit_code": 1,
+      "actual_exit_code": 1,
+      "expected_rejection_confirmed": true,
+      "result": {
+        "file": "negative-missing-cell-id.ipynb",
+        "status": "FAIL",
+        "warnings": [
+          "Cell is missing an id field, this will become a hard error in future nbformat versions. You may want to use `normalize()` on your notebooks before validations (available since nbformat 5.1.4). Previous versions of nbformat are fixing this issue transparently, and will stop doing so in the future."
+        ],
+        "data_unchanged": false,
+        "file_unchanged": true,
+        "sha256": "a3175a6e3934569a684600ec256b5bd690e600a6bf8dc76e9618d418f5be5582",
+        "nbformat": [
+          4,
+          5
+        ],
+        "error_type": "ValueError",
+        "error": "Notebook changed during validation"
+      }
+    }
+  },
+  "verification_history": [
+    "First positive run: 18 pass / 0 fail",
+    "Direct API negative control expected exception and failed; result retained",
+    "Evidence assembly initially asserted negative validation copy unchanged and failed; actual copy normalization recorded, original file unchanged",
+    "Report field clarified to conversion_or_normalization_requested; no validation predicate changed",
+    "Current script positive: 18 pass / 0 fail; negative: exit1 as expected; earlier reports retained"
+  ],
+  "limits": [
+    "No GUI, kernel or Notebook code executed",
+    "No conversion or normalization requested; library changes to a validation copy are treated as failure",
+    "Original Notebook files never written",
+    "Old evidence and earlier no-ID fixtures not overwritten or reclassified",
+    "Saved runtime results and API observations outside these 18 prepared files not schema-validated here",
+    "D4/D5/D6 runtime and UI gaps remain; Task is not complete"
+  ],
+  "sources": [
+    "https://nbformat.readthedocs.io/en/latest/api.html#nbformat.validate",
+    "https://pypi.org/project/nbformat/5.11.1/"
+  ],
+  "dependency_setup": {
+    "first_attempt": "name-resolution failure; exit1; local log retained",
+    "network_authorized_attempt": "nbformat5.11.1 installed in ignored isolated diagnostic environment; exit0"
+  }
+}
