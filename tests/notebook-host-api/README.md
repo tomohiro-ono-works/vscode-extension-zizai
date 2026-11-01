@@ -13,6 +13,24 @@
 
 ## エージェントが実行する準備
 
+<a id="notebook-schema-cli"></a>
+### Notebook形式のCLI検証
+
+`validate-notebooks.py` は指定した診断Notebookの検査用コピーをnbformatのschemaに照合し、原ファイルへ書き込まない。変換・normalizeを要求せず、ライブラリ内部の補完によるコピーの変化も警告も不合格にし、原ファイルhashを照合する。reportは既存ファイルへ上書きしない。nbformat 5.11.1のAPIはcell.id不足に対して警告と検査用コピーへのID補完を行う場合があるため、例外の有無だけで合格としない。
+
+次のPowerShell例は、診断用の隔離環境へ検証依存を導入し、既存prepareで作った17ケースとbootstrap1件を検査する。製品依存・通常Python環境は変更しない。初回だけ環境を用意し、Notebook未生成なら既存のprepare手順を先に行う。過去のNotebook・reportは保護する。
+
+```powershell
+python -m venv logs/notebook-schema-env
+& ./logs/notebook-schema-env/Scripts/python.exe -m pip install nbformat==5.11.1
+$schemaCases = node -e "process.stdout.write(JSON.stringify(Object.keys(require('./tests/notebook-host-api/fixtures.cjs').cases)))" | ConvertFrom-Json
+$schemaFiles = @($schemaCases | ForEach-Object { Join-Path 'results/task-002-01/workspace' ($_.ToString() + '.ipynb') })
+$schemaFiles += 'results/task-002-01/workspace/USER-kernel-bootstrap-20261024.ipynb'
+& ./logs/notebook-schema-env/Scripts/python.exe tests/notebook-host-api/validate-notebooks.py @schemaFiles --report logs/notebook-schema-report.json
+```
+
+実行結果と対象hashは[2026-11-02証跡](../../docs/research/notebook-host/evidence/TASK-002-01-schema-validation-20261102.json)を参照。形式合格を、実行・UI・保存復元・製品Hostの合格にしない。過去のIDなし観測は再分類しない。
+
 共通ルール取り込み後の分類は [操作計画の検証経路と担当](../manual/TASK-002-01-notebook-host.md#検証経路と担当) を参照する。このフォルダーの公開API・標準コマンド直接呼び出しはAPI・結合テストで、UI自動テストや手動UIの代替ではない。特に `execution-save-followup-ui.cjs` は最初のカーネル選択支援の後をAPIで自動操作する入口であり、手動の編集・ごみ箱・タブ終了の代替として再起動しない。Playwrightの対象・開始方法・担当の合意前は新たなUI自動化を行わない。既存証跡の分析と単体・構文確認は、GUIを起動せず独立して行える。
 
 `execution-save-followup.cjs` はD4の実行待ちsource変更＋同一セルへの標準再要求＋保存JSON、D5待機中close後の修正済み保存だけを採取する。以前の各ケース全体は繰り返さない。45秒で標準カーネル出力が得られなければ未実施として終了する。`execution-save-followup-ui.cjs` は同じ2条件について標準UI選択・最初の実行を期限なしで待つ診断入口で、初回失敗を退避してから使う。`null` はこのユーザー選択待ちだけの指定であり、後続観測の時間制限と通常runnerの既定10分待機は維持する。結果は `execution-save-followup-result.local.json` とし、従来の `execution-auto-result.local.json` は上書きしない。セル置換でもfixtureの標準cell.idをAPI外側metadataへ渡す。
