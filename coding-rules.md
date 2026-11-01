@@ -135,6 +135,7 @@ Taskの変更権限は、明示されたGoal、Scope、Constraints、Acceptance 
 <a id="verification-and-evidence"></a>
 ## 検証と実施根拠
 
+- エージェントが行う操作は[許可する操作方法](docs/development.md#allowed-test-operations)に従い、CLI/APIと、合意した範囲のPlaywrightのみとする。LLMによる直接GUI操作を準備・代替手段として使用しない。
 - 対象の識別: 対象commit、環境、定義・期待結果、実行Command、結果を記録。未コミット変更を含む場合は関係するdiff／hash等で区別し、HEADのSHAだけで検証済みと扱わない。詳細は[開発手順](docs/development.md)と[Taskルール](docs/tasks/task-rules.md)へ。
 - Python syntaxだけでなく、変更が影響する公開behaviorを検証する。
 - YAMLはparse、Pathは実在/拒否境界、移動は旧参照0を確認する。
