@@ -1,5 +1,14 @@
 # 開発・ビルド手順の設計案
 
+<a id="integrated-build-inputs-20261101"></a>
+## mainへの収録と製品ビルド前提の区別（2026-11-01）
+
+main `75ae2a8` で001〜006の引継ぎを収録した。C05の[既存宣言の対応](../research/connectors/TASK-004-02.md#integrated-crosscheck-20261101)、003の[原本と対象返答](../research/python-import/TASK-003-02.md#integrated-public-boundary-20261101)、005の[生成境界](../research/contracts/TASK-005-03.md#integrated-generation-boundary-20261101)、002の[N05出典留保](../research/notebook-host/TASK-002-01.md#integrated-n05-provenance-20261101)から対象入力を確認できる。過去の未収録・未回答という記述は保存時点の履歴として読む。
+
+これは製品entry・manifest／lock、個別APIの採用経路・必要依存／許諾、正式契約・生成資産を確定した記録ではない。現在のPython consumerがない契約資産や新core helperを、収集対象を埋めるために追加しない。未設定source、型付き列名・上限、BigQuery／Shell等の必要な対象条件を確定せず、全製品の完成待ちにも広げない。
+
+AGENTSが参照する現行coding-rules／refactor-policyは、このmainの追跡ファイルには未収録である。旧アプリの同名参考資料で代用せず、今回新しい規約を作って実装権限を補わない。旧Windows全16件の結果と修正後選択5件の成功、未実施UI・CI・ZIPの区分を保持する。現在の充足根拠・残作業は[Issue #42](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/42)を正本とする。
+
 更新日：2026-11-01。対象：[TASK-006-02](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/42)。
 
 本書は、製品の開発環境・ビルド入口を整備するための設計案である。現在使える導入手順、製品設定の作成許可、動作成立の記録ではない。作業範囲・進捗・確認結果は担当Issueを正本とする。
