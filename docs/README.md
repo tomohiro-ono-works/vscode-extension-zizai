@@ -6,7 +6,7 @@
 2. [開発手順](development.md) と [Task の案内](tasks/README.md) を読み、担当Issueと親Issueのゴール・スコープ・制約・完了条件を確認する。
 3. 下記の参照順序で関係する設計を確認し、個別仕様・決定記録がある場合は併せて読む。
 
-コーディングルールの実ファイルは[リポジトリ直下](../coding-rules.md)にある。AGENTS.mdの旧参照先 `docs/features/coding-rules.md` からの参照を訂正した。ルール内の[参照先の状態](../coding-rules.md#reference-status-20261102)を確認し、旧アプリの資料・承認を本プロジェクトの現行仕様へ読み替えない。
+コーディングルールの実ファイルは[リポジトリ直下](../coding-rules.md)にある。AGENTS.mdの旧参照先 `docs/features/coding-rules.md` からの参照を訂正した。ルール内の[適用範囲・参照・旧資料](../coding-rules.md#reference-status-20261102)と[旧依存記述の対応](../coding-rules.md#legacy-rule-mapping-20261102)を確認し、旧アプリの資料・承認を本プロジェクトの現行仕様へ読み替えない。
 
 ## 資料の配置と状態
 
