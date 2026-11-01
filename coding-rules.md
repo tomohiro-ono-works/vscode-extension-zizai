@@ -1,6 +1,26 @@
 <a id="coding-rules"></a>
 # コーディングルール
 
+<a id="reference-status-20261102"></a>
+## 参照先の確認（2026-11-02）
+
+本ファイルの配置はリポジトリ直下の `coding-rules.md`。今回の修正は参照先の訂正であり、以下の規則本文・旧承認・旧アプリ固有の契約を新たに採用するものではない。`Status: Current Specification` 等の日付・状態表記は原資料の記録として保持し、本プロジェクトの現行仕様・Task制約を上書きしない。
+
+- 元の `../README.md#...` への7リンクは、移設済みの[旧アプリ文書管理資料](docs/research/other-app/documentation-guide.md)の同名アンカーへ訂正した。本プロジェクトの文書・承認の扱いは[docs入口](docs/README.md)と[Taskルール](docs/tasks/task-rules.md)を参照する。
+- `architecture.md` はルートの旧アプリ資料を指す。本プロジェクトの責務は [docs/features/architecture.md](docs/features/architecture.md) を参照する。リンク先を似た名前の現行仕様へ黙って付け替えない。
+- 以下の8リンクは参照先未収録であり、元の参照表記を保持する。別資料への推測置換や、参照先の新設は今回行わない。
+
+| 未収録の参照先 | 本文中の参照数 |
+| --- | --- |
+| `../tasks/done/TASK-044/approval-log.md#044-00-20261005-03` | 1 |
+| `frontend-libraries.md#vendoring-and-version-record` | 1 |
+| `../../tests/manual/README.md` | 1 |
+| `data-contract.md` | 1 |
+| `connectors.md` | 1 |
+| `browser-runtime.md`（support／performanceを含む） | 3 |
+
+本文の旧Remote Safe Gate実行先 `.github/scripts/remote_safe_gate.py` も未収録であり、実行可能な現行コマンドとして案内しない。別文書 `refactor-policy.md` の所在・規則整備は今回の対象外とする。
+
 日本語化日: 2026-10-04（表記変更）。従来の見出しへの参照を維持。
 
 - 改訂日: 2026-10-05。開発サイクル・正本の更新経路・品質策定を[TASK-044の決裁](../tasks/done/TASK-044/approval-log.md#044-00-20261005-03)に基づき統合。
@@ -28,18 +48,18 @@ Taskの変更権限は、明示されたGoal、Scope、Constraints、Acceptance 
 <a id="development-cycle"></a>
 ## 開発サイクル
 
-1. 調査・設計: 完了条件から、振る舞い・責務・IF・データの流れ・影響を具体化。詳細設計の文書化は[必要な条件](../README.md#detailed-design-documentation)に限定。
-2. 評価・承認: [評価レベルと承認境界](../README.md#approval-boundaries)に従い、必要な設計判断をまとめて提示。
+1. 調査・設計: 完了条件から、振る舞い・責務・IF・データの流れ・影響を具体化。詳細設計の文書化は[必要な条件](docs/research/other-app/documentation-guide.md#detailed-design-documentation)に限定。
+2. 評価・承認: [評価レベルと承認境界](docs/research/other-app/documentation-guide.md#approval-boundaries)に従い、必要な設計判断をまとめて提示。
 3. ケース作成: 設計で期待する振る舞いが明らかになった部分から、入力・前提・期待結果・必須条件を作成／追記。設計と並行した草案は可能。正式な合否基準は承認済み仕様と対応付け。
 4. 実装・スクリプト整備: 許可された正本を実装。対象IF・期待結果が確定し、検証可能な部分から自動テストと手動実行手順を作成／追記。実装との並行・先行を許容し、担当領域のTest-first条件を維持。問題発生時だけの作成としない。
 5. テスト実行: 対象版・必要な実装・定義・環境・個別承認が揃った段階で、変更に必要な単体・結合・環境別・全体の確認を実施。実装時の関連検証を後の全体テストへ先送りしない。
 6. 修正・再検証: 結果を先に記録し、Taskが許可する範囲で原因調査・修正・影響範囲の再実行。[検証と実施根拠](#verification-and-evidence)の条件を適用。
-7. 完了・リリース: 完了条件と残る影響を確認し、[進捗と根拠](../README.md#progress-and-handoff-information)をTaskへ反映。Task完了・テスト合格・出荷承認・実際のリリースを区別。
+7. 完了・リリース: 完了条件と残る影響を確認し、[進捗と根拠](docs/research/other-app/documentation-guide.md#progress-and-handoff-information)をTaskへ反映。Task完了・テスト合格・出荷承認・実際のリリースを区別。
 
-- 分割: ケース作成・スクリプト整備・実行は別の成果として管理。大規模な全体テストや開始条件・担当成果が異なる場合は別Subtask。小さなTaskは[文書管理](../README.md#task-and-subtask-separation)に従い、同じTask内で区別して記録可能。
+- 分割: ケース作成・スクリプト整備・実行は別の成果として管理。大規模な全体テストや開始条件・担当成果が異なる場合は別Subtask。小さなTaskは[文書管理](docs/research/other-app/documentation-guide.md#task-and-subtask-separation)に従い、同じTask内で区別して記録可能。
 - 定義の正本: 再利用する自動テストは既存のテストコード、手動ケース・具体的手順は[手動テスト規約](../../tests/manual/README.md)のYAML。ケース表・実施ガイド・中間形式で二重管理しない。
 - 設計変更: 承認・許可範囲を確認し、担当仕様／必要な設計 → ケース → スクリプト／手順へ影響を反映。対象版・環境・定義版を固定して再検証。実装に合わせた期待結果の無断変更・過去結果の書換えなし。
-- 記録: 文書・定義・結果の配置と重複抑制は[テストと実施根拠](../README.md#tests-and-execution-evidence)を参照。
+- 記録: 文書・定義・結果の配置と重複抑制は[テストと実施根拠](docs/research/other-app/documentation-guide.md#tests-and-execution-evidence)を参照。
 
 <a id="security-quality-target"></a>
 ## セキュリティの目標品質と比較
@@ -48,7 +68,7 @@ Taskの変更権限は、明示されたGoal、Scope、Constraints、Acceptance 
 - 比較: Jupyter／VS Code等の身近な製品を評価軸ごとの物差しとして使用。自分たちの現状・目標・根拠と比較し、相対位置を説明。
 - 条件: 比較対象の版・構成・利用前提、参照した一次資料と確認日を明示。実装済み・検証済み・未確認を分け、条件の違いを説明。
 - 位置づけ: 比較対象と同じ品質を満たすことを一律の必須条件にしない。自分たちの目標はTaskの要求と承認済みセキュリティ条件に従って定める。
-- 分担: 技術設計・品質の根拠・検証はCodex。オーナーへの提示・判断は[承認境界](../README.md#approval-boundaries)に従い、操作・保護方針・残る利用者影響を平易に説明。
+- 分担: 技術設計・品質の根拠・検証はCodex。オーナーへの提示・判断は[承認境界](docs/research/other-app/documentation-guide.md#approval-boundaries)に従い、操作・保護方針・残る利用者影響を平易に説明。
 
 ## Python
 
@@ -105,7 +125,7 @@ Taskの変更権限は、明示されたGoal、Scope、Constraints、Acceptance 
 <a id="verification-and-evidence"></a>
 ## 検証と実施根拠
 
-- 対象の識別: 対象commit、環境、定義・期待結果、実行Command、結果を記録。未コミット変更を含む場合は関係するdiff／hash等で区別し、HEADのSHAだけで検証済みと扱わない。詳細は[テストと実施根拠](../README.md#tests-and-execution-evidence)へ。
+- 対象の識別: 対象commit、環境、定義・期待結果、実行Command、結果を記録。未コミット変更を含む場合は関係するdiff／hash等で区別し、HEADのSHAだけで検証済みと扱わない。詳細は[テストと実施根拠](docs/research/other-app/documentation-guide.md#tests-and-execution-evidence)へ。
 - Python syntaxだけでなく、変更が影響する公開behaviorを検証する。
 - YAMLはparse、Pathは実在/拒否境界、移動は旧参照0を確認する。
 - 実行方法と判定方法が確定しているTest、Lint、Static check、Buildは、既存Command、Script、Runnerを直接使用する。

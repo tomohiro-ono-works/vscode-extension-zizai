@@ -18,7 +18,7 @@ main `75ae2a8` で001〜006の引継ぎを収録した。C05の[既存宣言の�
 
 これは製品entry・manifest／lock、個別APIの採用経路・必要依存／許諾、正式契約・生成資産を確定した記録ではない。現在のPython consumerがない契約資産や新core helperを、収集対象を埋めるために追加しない。未設定source、型付き列名・上限、BigQuery／Shell等の必要な対象条件を確定せず、全製品の完成待ちにも広げない。
 
-AGENTSが参照する現行coding-rules／refactor-policyは、このmainの追跡ファイルには未収録である。旧アプリの同名参考資料で代用せず、今回新しい規約を作って実装権限を補わない。旧Windows全16件の結果と修正後選択5件の成功、未実施UI・CI・ZIPの区分を保持する。現在の充足根拠・残作業は[Issue #42](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/42)を正本とする。
+2026-11-02、AGENTSのcoding-rules参照先を[ルートの実ファイル](../../coding-rules.md#reference-status-20261102)へ訂正した。以前の「未収録」は旧指定先 `docs/features/coding-rules.md` に実ファイルがなかったことを指し、ルートのファイル消失ではない。旧アプリ固有の内容は現行仕様へ自動適用せず、refactor-policyの所在と未収録の参照先は未解決のまま扱う。今回新しい規約を作って実装権限を補わない。旧Windows全16件の結果と修正後選択5件の成功、未実施UI・CI・ZIPの区分を保持する。現在の充足根拠・残作業は[Issue #42](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/42)を正本とする。
 
 更新日：2026-11-01。対象：[TASK-006-02](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/42)。
 
