@@ -8,6 +8,8 @@
 
 コーディングルールの実ファイルは[リポジトリ直下](../coding-rules.md)にある。AGENTS.mdの旧参照先 `docs/features/coding-rules.md` からの参照を訂正した。ルール内の[適用範囲・参照・旧資料](../coding-rules.md#reference-status-20261102)と[旧依存記述の対応](../coding-rules.md#legacy-rule-mapping-20261102)を確認し、旧アプリの資料・承認を本プロジェクトの現行仕様へ読み替えない。
 
+リファクタリング・整理は[既存規則への参照入口](../coding-rules.md#refactoring-and-cleanup)から確認する。未提供の `refactor-policy.md` を新設・採用したものではなく、既存の権限・正本・責務・検証・記録の規則を参照する。
+
 ## 資料の配置と状態
 
 | 配置先 | 用途 | 現在の状態 |

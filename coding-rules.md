@@ -19,7 +19,7 @@
 | `connectors.md` | 1 |
 | `browser-runtime.md`（support／performanceを含む） | 3 |
 
-旧Remote Safe Gate実行先 `.github/scripts/remote_safe_gate.py` も未収録。旧baseline `8b66fe6` と監査オプションは旧原文の記録として保持し、実行可能な現行コマンドや今回検証済みのGateとして扱わない。別文書 `refactor-policy.md` の所在・規則整備と、新Gateの実装は本作業の対象外とする。
+旧Remote Safe Gate実行先 `.github/scripts/remote_safe_gate.py` も未収録。旧baseline `8b66fe6` と監査オプションは旧原文の記録として保持し、実行可能な現行コマンドや今回検証済みのGateとして扱わない。旧参照先 `docs/features/refactor-policy.md` の実体は未確認だが、既存資料に定義済みの整理・責務変更の規則は[本書の参照入口](#refactoring-and-cleanup)から確認できる。旧文書を復元・採用した意味ではなく、新Gateの実装も行わない。
 
 旧依存記述の対応は[本書末尾](#legacy-rule-mapping-20261102)を参照する。実施結果・承認経緯はIssue #71を正本とする。
 
@@ -55,6 +55,21 @@ Taskの変更権限は、明示されたGoal、Scope、Constraints、Acceptance 
 - 定義の正本: 再利用する自動テストは既存のテストコード、手動ケース・具体的手順は[tests入口](tests/README.md)から該当する既存ケース・手順を参照する。未収録の旧YAML規約を必須にせず、ケース表・実施ガイド・中間形式で二重管理しない。
 - 設計変更: 承認・許可範囲を確認し、担当仕様／必要な設計 → ケース → スクリプト／手順へ影響を反映。対象版・環境・定義版を固定して再検証。実装に合わせた期待結果の無断変更・過去結果の書換えなし。
 - 記録: 文書・定義・結果の配置と重複抑制は[Taskルール](docs/tasks/task-rules.md)と[開発手順](docs/development.md)を参照。
+
+<a id="refactoring-and-cleanup"></a>
+## リファクタリング・整理の参照先
+
+本節は既存規則への入口であり、新しい規則・作業権限・承認条件を追加しない。未提供の別文書を推測して再作成せず、次の定義を対象Taskに適用する。
+
+| 確認事項 | 既存の定義 |
+| --- | --- |
+| 編集範囲・仕様変更の権限 | [実装前の確認](#before-implementation)：Goal・Scope・Constraints・Acceptance Criteriaに限定。Refactorを理由に現行仕様を変更しない |
+| 正本・所有者・コピー／生成物の更新 | [正本のソースと同期コピー](#canonical-source-and-synchronized-copies)：直接編集の可否・更新経路を確認し、不明な所有者を推測しない |
+| 責務分離と状態の所有 | [現行の責務分担](docs/features/architecture.md#current-responsibility-map)・[状態の所有](docs/features/architecture.md#state-ownership)に従う |
+| 検証範囲・未コミット差分の識別・失敗時の扱い | [検証と実施根拠](#verification-and-evidence)・[開発手順](docs/development.md)：影響する振る舞いを確認し、許可のない調査・修正・再実行へ拡大しない |
+| 判断・結果・残作業の記録と完了 | [Taskルール](docs/tasks/task-rules.md)：Issueへ記録し、必須の確認が未実施・不合格のまま完了にしない |
+
+この参照入口を整えただけで、個別Taskの編集範囲・対象の所有者・未確定契約が確定したことにはならない。確認できない対象条件は担当Issueで未確定として扱い、その条件に影響されない作業を進める。
 
 <a id="security-quality-target"></a>
 ## セキュリティの目標品質と比較
