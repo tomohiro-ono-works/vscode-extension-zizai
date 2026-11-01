@@ -7,6 +7,51 @@
 **Q01〜Q19の利用者判断はFIX（2026-10-28）。** Q06の見出しもない空ファイルは読取エラー、Q12の列名がない0列dfは保存エラーとする最終確認へ、利用者から「OKです」と回答を得た。Q08の容易に実現できる場合の非表示列対応、Q10の実装が難しい場合のシート明示指定等の条件も含めて確定する。Q15〜Q19の回答も受領済み。Q20以降、技術的な成立確認・関連設計の整合・製品実装の完了は別に扱う。
 このファイルは、利用者がまとめて読んで修正できる設計資料であり、Taskの進捗管理ファイルではない。作業範囲・進捗・承認の正本は[Issue #26](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/26)。製品実装・Current Specification・正式契約を変更しない。
 
+<a id="consolidation-status-20261101"></a>
+## 設計統合時の回答の扱い（2026-11-01）
+
+利用者回答Q01〜Q24とメタ情報の既存採用判断は維持する。今回、新しい利用者質問・仕様判断は追加していない。[チャットに残っていた設計情報](TASK-004-02.md#consolidation-inputs-20261101)として、005のc49f92f回答の所在と、既存BigQueryコードの限定確認を追記した。005の追加回答は全面照合・正式採用済みではなく、BigQueryの観測も新仕様ではない。既存のC05／N05の未決事項を取り消さない。
+
+担当範囲・引継ぎ元・送信承認・誤送信と取消状況・検証・残作業は[Issue #26](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/26)の統合用記録を参照する。長文チャットの転記を統合先の前提にせず、設計判断は既存資料、進捗・依存・再開条件はIssueを参照できる状態にする。廃止したTask管理Markdownは再作成しない。
+
+<a id="reply-005-status-20261031"></a>
+## 005 Draftとの照合状態（2026-10-31）
+
+[PR #60](https://github.com/tomohiro-ono-works/vscode-extension-zizai/pull/60)はDraft・未マージ、照合したheadは072608b。[004から005への詳細回答](TASK-004-02.md#reply-to-005-20261031)で、利用者の採用済み動作、004内の公開宣言、共有定義の提案、未確定の接続を区別する。005案を受領したことを正式採用・main反映・他担当の合意へ読み替えない。
+
+| 状態 | 該当する内容 |
+| --- | --- |
+| 利用者判断として採用済み | 返却3形、separateの2キー、保存先フォーム2欄、名前欄は名前だけ、全列の辞書セル・別renameセル、上流再実行で辞書を上書きしないこと等 |
+| 004で採用回答した公開宣言 | 下記のC05回答に対応するconstructor・required／初期値・Python省略／null・例外区分・旧返却情報の移し先。共通定義の正式採用とは別 |
+| 提案中 | 004の新しい公開名／ID等の正式登録、005のkernelPathJoin／splitDataFramesという定義表現・版・生成との接続。動作上の方向整合と正式採用を分ける |
+| 要判断・未確定 | 型付き列名・MultiIndex等の意味と表現、根拠ある件数／bytes等の上限、002のN05-01〜03。既存のBigQuery／Shellの対象未決も維持 |
+
+保存先2欄はそれぞれrequired・非空・nullable=false。未入力／unset・空文字・nullは別に保持して確定時に項目エラーとし、cwd・"."・旧値を補完しない。正常な2値だけを固定pathlib式へ渡す。通常Pythonのoutput_pathはpath全体を受ける。
+
+005レビュー例のnameFieldIdはoutput_file_name、004の欄はfile_nameであるため、C02／E02の個別定義はfile_nameへ対応付ける必要がある。共通形式が使えることと、例のIDまで一致することを混同しない。004側の保存キーを黙って改名せず、公開Pythonへ新引数も追加しない。
+
+行分離の条件は確定値on_conversion_error="separate"で、エラー件数ではない。schema未指定でも型変換を追加せず同じsuccess／errors辞書を返し、0件のerrorsもdf。1binding→2追加代入→元binding表示を維持する。フォームでrequiredの選択をunsetにしたときのエラーと、通常Pythonの引数省略default=raiseを区別する。
+
+renameの受渡しは全列名の型・順序・列数・重複を保持する。入力同名列を一律禁止・削除・自動採番せず、変更後の同名は採用済みの結果検査で停止する。0行と0列を区別し、空文字列の列名へfilenameの非空条件を流用しない。文字列への黙示変換や先頭N列への切詰めはしない。型付き表現と上限数値は005／002へ必要条件を返し、独自の通信・runtime helperを作らない。
+
+<a id="reply-crosscheck-20261031"></a>
+## 003／005との設計照合への004回答（2026-10-31）
+
+これは追加の利用者質問・回答ではなく、[003 Issue #21の最終回答票](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/21)への004の設計判断。003の追補は未コミットのため、mainへ収録済みとは扱わない。[詳細な公開宣言・返却対応](TASK-004-02.md#reply-to-003-20261031)を正本の設計記述とし、旧候補の型・既定値・返却形とは区別する。005は公開版072608bの§L／§Mと、Issue #38／#37の回答を受領した段階で、正式な共通定義へ反映済みとはしない。
+
+| 照合単位 | 004の回答 | 未決・次に必要な設計回答 |
+| --- | --- | --- |
+| C05-01／R01・R06 | 配置・引数なしconstructorと7群の省略／null補完は採用可。通常例外区分も採用可。フォームrequired・初期値とPython省略値を詳細表で分離 | 003／005の具体宣言への対象確認。Shellのdecode方式と出力の対応範囲は未決 |
+| C05-02／R03 | 名前欄は名前だけという利用者判断を反映。folder必須・非空・null不可、初期未入力。無言のbasename抽出・trimはしない。通常Pythonのoutput_pathはpath全体を受ける | kernelPathJoinの個別定義・2field消費と002のN05-01生成／保存。003の新path helperは不要 |
+| C05-03／R02・R04 | 返却3形と1binding＋2追加代入は採用可。最小項目だけに削る扱いは要修正。既存情報をdict／各dfのexecutionへ保持。created_atは処理情報生成時刻、source_step不返却は旧contextに対応値がない理由を明示 | BigQueryの未取得追加情報の表現、005／002の条件付き追加source・再確定／保存。wrapper・df同期・変数消去は追加しない |
+| C05-04／R05 | renameの辞書セル・実行セルとcleanse_columnsを分離する案は採用可。003のruntime helperは不要 | 002／005のN05-02列名受取・対象相関／失効、N05-03明示2セル作成・部分適用。型付き列名等の安全な表現も該当範囲で未決 |
+
+省略と明示Noneが同じ処理結果になるconditions／args／I01前後処理も、保存・生成では別に保持する。E01／E03のsheetは省略または空文字ならactive、明示None不可。E02のsheetは必須の非空strで、説明用Sheet1をフォームの既定値へ昇格させない。SQLファイルのencodingは省略utf-8、空／Noneを黙って補完しない。
+
+R02ではC02／E02の旧完了文字列をmessageへ、D02／D03のstatus／executed_at、D04のcreated_at、BigQueryのdataset_id／table_id／url／excuted_at、Shellの既存9項目を保持する。BigQueryの旧綴りexcuted_atを黙って改名しない。separateの両dfは今回の実行情報をそれぞれattrs["execution"]へ持つ。全attrsの任意加工後の継承や実行履歴を新たに設計しない。
+
+004-02完了に残るのは、この具体宣言の対象合意、未決の返却／Shell条件、N05-01〜03の設計接続・定義への対応。相手の実module・全内部アルゴリズム・製品UI・CI／配布の完成を一律に待たず、未接続を後続実装へ移しただけで完了にはしない。採用済み動作を変更する必要がある具体差は今回見つかっておらず、同じ利用者判断を再質問しない。
+
 ## 1. 今回重要と考えること
 
 - **値を失う前に保持する。** CSVの文字列、Excelで選んだ取得方式の値を保持する。先頭ゼロ、空文字、timezoneなどを先に消すと、後から復元できない。
