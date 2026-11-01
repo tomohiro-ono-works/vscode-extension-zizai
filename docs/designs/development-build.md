@@ -1,6 +1,6 @@
 # 開発・ビルド手順の設計案
 
-更新日：2026-10-27。対象：[TASK-006-02](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/42)。
+更新日：2026-11-01。対象：[TASK-006-02](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/42)。
 
 本書は、製品の開発環境・ビルド入口を整備するための設計案である。現在使える導入手順、製品設定の作成許可、動作成立の記録ではない。作業範囲・進捗・確認結果は担当Issueを正本とする。
 
@@ -214,3 +214,15 @@ PR #53の更新版では、003自身の最小単位を3つのpackage入口とし
 003の既存runnerは隔離Pythonの -I からbackend・pipを読めるビルド環境を必要とする。ユーザーsiteにだけbackendがある通常Pythonを、専用ビルド環境と同一視しない。専用venvでのWindows独立9件再確認を受領し、環境前提を006の設計に反映する。003の結果受領時点では006で未再実行だったが、2026-10-27のmain統合前に既存9件（単体1・API結合8）を再確認した。最小wheelの作成・使い捨て環境への導入を含む結果は[統合前確認の証跡](../research/development/evidence/TASK-006-main-checkpoint-20261027.json)を参照し、全採用処理を含む製品ビルドの合格とは区別する。
 
 005のPR #51 `e207d3f59e49905e0e786a5301d55cbb56b0465e` に、values.schema.jsonと生成／check CLIの第1単位がある。正本→build/contracts/js/values.schema.json、manifest.jsonの収集条件とbuild前check終了0を受領した。Python生成資産・正式action等は未提供。本文§7.3の比較は旧固定版の履歴であり、現行案ではzizai-runtime／zizaiと通常Python・専用6コネクタを受領済み。未設定sourceの異なる判断の影響は対象契約での整合事項として残し、この値構造単位に混在させない。
+
+### 10.1 会話で確認済みの改行対策と再確認範囲
+
+以下は設計統合に向けて会話から補記する既存の確認・利用者回答であり、新しい方式の提案・採用や追加の調査・実行結果ではない。
+
+利用者の「あれ、でもさこの改行のは無しって前やったよね」という指摘を受け、001のNodeForm試作の[既存対策 e4d0f92](https://github.com/tomohiro-ono-works/vscode-extension-zizai/commit/e4d0f92a47144e636631536e1344f8f21d9ad597)を当時確認した。一時Git処理に `core.autocrlf=false`／`core.eol=lf` を指定し、利用者のGit設定から分離する対策である。005の[PR #58](https://github.com/tomohiro-ono-works/vscode-extension-zizai/pull/58)でも同方針の修正を受領済みであり、この既存対策の有無を最初から調べ直す必要はない。global設定の変更や原本のバイト一致・hash検証の緩和は行っていない。
+
+当時の005側の報告はLinuxで16件合格、006の追加実行はWindowsで9件合格・7件不合格だった。005側にエラーがなかったこととWindowsでの不合格は、実行環境が異なるため両立する。006がその時点で実行した範囲ではPython既存9件とNode診断モデル1件は合格していたが、プロジェクト全体で同種問題がないことを網羅確認した意味ではない。修正後の判定は上記の選択5件に限定し、旧全件結果や末尾空白pathの未解決を上書きしない。
+
+利用者の「また、その部分だけ再チェックしてmainへ再プッシュするように指示したいです」「001は再実行しなくていいよね？」を受け、当時の依頼・再確認を005の改行関連ケースに限定した。001の処理と共通Git設定は変更せず、001の既存結果を維持した。これは今回の改行再確認の対象指定であり、将来の変更に必要な001の検証を一律に省略する承認ではない。当時のmain反映は完了済みで、設計統合時の新しいマージ許可を意味しない。
+
+006の差分空白検査でもCRLFを末尾空白として検出した履歴があり、`git -c core.whitespace=cr-at-eol diff --check` によりCRLFを扱う検査へ修正済みである。これは検査コマンド単位の指定で、利用者の共通設定や原本照合を変更する方法ではない。
