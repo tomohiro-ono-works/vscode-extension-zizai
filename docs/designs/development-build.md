@@ -4,6 +4,8 @@
 
 2026-11-02、[TASK-006-06 / #71](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/71)で、[coding-rulesの旧依存記述](../../coding-rules.md#legacy-rule-mapping-20261102)を現行アーキテクチャ・開発手順に整合した。旧Engine・Bridge・.zizd・固定GUI資産・旧Gate／Browser Runtimeは現行の必須条件にしない。規約の旧原文は固定commitで参照可能にし、refactor-policyの所在、個別API・正式契約・製品編集範囲等の別の未決は変更しない。新しい実行方式・製品依存・ビルド入口を採用した意味ではない。
 
+同日、別途残っていたrefactor-policyの確認では、編集権限・正本・責務・検証・記録の規則が既存資料に定義済みであることを照合し、[参照入口](../../coding-rules.md#refactoring-and-cleanup)へ集約した。旧ファイルの実体が未確認である事実と、現在適用する規則の参照先が確認できたことを分ける。旧ファイルの所在だけを一律の待機条件にせず、個別Taskに必要な所有者・更新経路・具体的な編集範囲等は引き続き照合する。新しい規則やrefactor-policyファイルの新設は行わない。
+
 <a id="dependency-reconciliation-20261101"></a>
 ## 既存成果と現在の依存条件の照合（2026-11-01）
 
