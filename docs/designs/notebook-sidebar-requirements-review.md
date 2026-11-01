@@ -1,5 +1,12 @@
 # サイドバーの選択・保存・復元と要件対応
 
+<a id="integrated-ui-inputs-20261101"></a>
+## 統合後の参照先と既存UI承認（2026-11-01）
+
+main `75ae2a8` には001〜006の引継ぎ資料が収録されている。既存のサイドバー・1つの共通メニュー・下書き保持・確定NG時source不変の承認は維持し、比較HTMLの後着選択を取消と扱わない。C05の回答対応は[004の照合表](../research/connectors/TASK-004-02.md#integrated-crosscheck-20261101)、N05案の出典と受渡しは[Host資料](../research/notebook-host/TASK-002-01.md#integrated-n05-provenance-20261101)を参照する。
+
+収録・既存回答の照合はR01の正式契約、R02の非破壊整合／現在設定の実行対応、R03の製品entry／runner、R04の適用規約の充足を意味しない。入力上限・移行分担と未設定sourceの承認差も残る。UIが仮コードや独自復旧を追加して補わず、対象工程の条件と既存U／K／Mケースを維持する。進捗と必要成果は[Issue #11](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/11)を正本とする。
+
 基準は[全体設計](01全体設計.md)、[Notebook UI設計](02NotebookUI設計.md)、[承認済みサイドバー設計](../features/notebook-sidebar.md)。既存の12項目と画面・状態・通知の対応を確認し、UIが決める動作とHost／正式契約から受け取る部分を分ける。新しいwire名・metadataキー・復旧APIは定義しない。
 
 「フェーズ1」は全体設計の実装順序案にある「セル選択・metadata：選択・保存・復元」を指す作業上の切り分け。初回リリース全体やTASK-001-03〜05の完了条件を縮小するものではない。確定・生成コード・実行対応の要件も保持し、必要な工程で照合する。
