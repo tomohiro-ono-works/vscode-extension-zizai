@@ -1,0 +1,476 @@
+{
+  "issue": "https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/14",
+  "scope": "Read-only follow-up of existing D5 logs; no re-execution or UI operation",
+  "mainAdopted": false,
+  "publicNormalCompletionSummary": "not observed; historical evidence preserved",
+  "findings": [
+    {
+      "case": "D5-running-delete",
+      "run": 12,
+      "finalSnapshotAt": "2026-11-02T02:13:55.905Z",
+      "logClock": "Asia/Tokyo UTC+09:00, 2026-11-02",
+      "jupyterLog": {
+        "localFile": "results\\20261102-d5-12\\profile\\logs\\20261102T111148\\window1\\exthost\\output_logging_20261102T111152\\3-Jupyter.log",
+        "sha256": "800e0b1d6b667c92cbd8c172c41404f936952583e682a7e0aedaca0d99da60db",
+        "excerptsThroughFinalSnapshot": [
+          {
+            "line": 23,
+            "time": "11:12:09.656",
+            "excerpt": "11:12:09.656 [info] Starting Kernel (Python Path: c:\\Python314\\python.exe, Unknown, 3.14.3) for <target-notebook> (disableUI=true)"
+          },
+          {
+            "line": 28,
+            "time": "11:12:11.922",
+            "excerpt": "11:12:11.922 [info] Kernel successfully started"
+          },
+          {
+            "line": 29,
+            "time": "11:12:15.977",
+            "excerpt": "11:12:15.977 [info] Interrupt kernel execution"
+          },
+          {
+            "line": 30,
+            "time": "11:12:15.977",
+            "excerpt": "11:12:15.977 [info] Interrupt requested ~\\ドキュメント\\ChatGPT\\vscode-extension-zizai\\design-integration-20261101\\results\\task-002-01\\workspace\\PW-20261102-d5-12\\PW-20261102-d5-12-D5-running-delete.ipynb"
+          },
+          {
+            "line": 31,
+            "time": "11:12:15.977",
+            "excerpt": "11:12:15.977 [info] Interrupt kernel execution"
+          },
+          {
+            "line": 32,
+            "time": "11:12:15.977",
+            "excerpt": "11:12:15.977 [info] Interrupting kernel: python3143jvsc74a57bd0d914262c65099bb1f03733b571a9c84311579dd3aebc0f36061f8bb9aa209c86"
+          },
+          {
+            "line": 33,
+            "time": "11:12:15.978",
+            "excerpt": "11:12:15.978 [info] Interrupting kernel via custom event (Win32)"
+          },
+          {
+            "line": 34,
+            "time": "11:12:15.997",
+            "excerpt": "11:12:15.997 [info] Disposing request as the cell (-1) was deleted ~\\ドキュメント\\ChatGPT\\vscode-extension-zizai\\design-integration-20261101\\results\\task-002-01\\workspace\\PW-20261102-d5-12\\PW-20261102-d5-12-D5-running-delete.ipynb"
+          },
+          {
+            "line": 35,
+            "time": "11:12:16.002",
+            "excerpt": "11:12:16.002 [warn] Cell completed with errors (cancelled)"
+          },
+          {
+            "line": 36,
+            "time": "11:12:16.003",
+            "excerpt": "11:12:16.003 [warn] Cancel all remaining cells due to cancellation or failure in execution"
+          },
+          {
+            "line": 37,
+            "time": "11:12:16.005",
+            "excerpt": "11:12:16.005 [info] Interrupt requested & sent for ~\\ドキュメント\\ChatGPT\\vscode-extension-zizai\\design-integration-20261101\\results\\task-002-01\\workspace\\PW-20261102-d5-12\\PW-20261102-d5-12-D5-running-delete.ipynb in notebookEditor."
+          },
+          {
+            "line": 38,
+            "time": "11:13:42.318",
+            "excerpt": "11:13:42.318 [warn] Unhandled message found: execute_reply"
+          }
+        ]
+      },
+      "publicEventLog": {
+        "localFile": "C:\\Users\\tomoh\\ドキュメント\\ChatGPT\\vscode-extension-zizai\\design-integration-20261101\\logs\\task-002-01\\2026-11-02T02-11-58-428Z-16944\\events.jsonl",
+        "sha256": "65156b60c7af37a775872491ed1d5cfed376d506f87cb74e294076fb7cdf946d",
+        "eventsAfterFinalSnapshot": 0
+      },
+      "finalDocuments": [
+        {
+          "object": 5,
+          "closed": false,
+          "dirty": false,
+          "retainedCells": [
+            {
+              "object": 6,
+              "index": -1,
+              "executionSummary": {
+                "timing": {
+                  "$undefined": true
+                },
+                "executionOrder": 1,
+                "success": {
+                  "$undefined": true
+                }
+              },
+              "outputs": [
+                {
+                  "id": 10,
+                  "metadata": {
+                    "outputType": "stream"
+                  },
+                  "items": [
+                    {
+                      "mime": "application/vnd.code.notebook.stdout",
+                      "bytes": 19,
+                      "sha256": "252a3f26d94d4e242e9269b0d948d9be65f92ce622c0bd111ea4835fb34416ba"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "object": 8,
+              "index": 0,
+              "executionSummary": {
+                "timing": {
+                  "$undefined": true
+                },
+                "executionOrder": {
+                  "$undefined": true
+                },
+                "success": {
+                  "$undefined": true
+                }
+              },
+              "outputs": []
+            }
+          ]
+        }
+      ],
+      "interpretation": "Jupyter logged interrupt request, deleted-cell request disposal and cancellation of remaining cells. A later unhandled execute_reply was logged; its execution identity and contents were not recorded.",
+      "kernelPhysicalStopProved": false,
+      "window": {
+        "endSignalReceived": true,
+        "closedAt": "2026-11-02T02:24:51.137Z"
+      },
+      "publicTerminalSummaryObservations": 0
+    },
+    {
+      "case": "D5-queued-close",
+      "run": 13,
+      "finalSnapshotAt": "2026-11-02T02:16:29.561Z",
+      "logClock": "Asia/Tokyo UTC+09:00, 2026-11-02",
+      "jupyterLog": {
+        "localFile": "results\\20261102-d5-13\\profile\\logs\\20261102T111422\\window1\\exthost\\output_logging_20261102T111427\\3-Jupyter.log",
+        "sha256": "42c2cac81cc0a44ff72b8f1f4aab8121345b9eb6858c3ab8f72574c5c631e7b2",
+        "excerptsThroughFinalSnapshot": [
+          {
+            "line": 23,
+            "time": "11:14:43.530",
+            "excerpt": "11:14:43.530 [info] Starting Kernel (Python Path: c:\\Python314\\python.exe, Unknown, 3.14.3) for <target-notebook> (disableUI=true)"
+          },
+          {
+            "line": 28,
+            "time": "11:14:45.793",
+            "excerpt": "11:14:45.793 [info] Kernel successfully started"
+          },
+          {
+            "line": 29,
+            "time": "11:14:49.693",
+            "excerpt": "11:14:49.693 [info] Disposing request as the cell (0) was deleted ~\\ドキュメント\\ChatGPT\\vscode-extension-zizai\\design-integration-20261101\\results\\task-002-01\\workspace\\PW-20261102-d5-13\\PW-20261102-d5-13-D5-queued-close.ipynb"
+          },
+          {
+            "line": 30,
+            "time": "11:14:49.694",
+            "excerpt": "11:14:49.694 [info] Disposing request as the cell (1) was deleted ~\\ドキュメント\\ChatGPT\\vscode-extension-zizai\\design-integration-20261101\\results\\task-002-01\\workspace\\PW-20261102-d5-13\\PW-20261102-d5-13-D5-queued-close.ipynb"
+          },
+          {
+            "line": 31,
+            "time": "11:14:49.695",
+            "excerpt": "11:14:49.695 [info] Dispose Kernel <target-notebook> associated with <target-notebook>"
+          },
+          {
+            "line": 32,
+            "time": "11:14:49.707",
+            "excerpt": "11:14:49.707 [info] Process Execution: c:\\WINDOWS\\System32\\taskkill.exe /F /T /PID 7716"
+          },
+          {
+            "line": 33,
+            "time": "11:14:49.726",
+            "excerpt": "11:14:49.726 [warn] Cell completed with errors (cancelled)"
+          },
+          {
+            "line": 34,
+            "time": "11:14:49.729",
+            "excerpt": "11:14:49.729 [warn] Cancel all remaining cells due to dead kernel"
+          },
+          {
+            "line": 35,
+            "time": "11:14:49.850",
+            "excerpt": "11:14:49.850 [info] Starting Kernel (Python Path: c:\\Python314\\python.exe, Unknown, 3.14.3) for <target-notebook> (disableUI=true)"
+          },
+          {
+            "line": 40,
+            "time": "11:14:52.276",
+            "excerpt": "11:14:52.276 [info] Kernel successfully started"
+          }
+        ]
+      },
+      "publicEventLog": {
+        "localFile": "C:\\Users\\tomoh\\ドキュメント\\ChatGPT\\vscode-extension-zizai\\design-integration-20261101\\logs\\task-002-01\\2026-11-02T02-14-33-872Z-17476\\events.jsonl",
+        "sha256": "679a0a62a142065098c97e5529ec1625a1d13a3463a538375eb7c2b50fb69e80",
+        "eventsAfterFinalSnapshot": 0
+      },
+      "finalDocuments": [
+        {
+          "object": 5,
+          "closed": true,
+          "dirty": false,
+          "retainedCells": [
+            {
+              "object": 6,
+              "index": 0,
+              "executionSummary": {
+                "timing": {
+                  "$undefined": true
+                },
+                "executionOrder": 1,
+                "success": {
+                  "$undefined": true
+                }
+              },
+              "outputs": [
+                {
+                  "id": 10,
+                  "metadata": {
+                    "outputType": "stream"
+                  },
+                  "items": [
+                    {
+                      "mime": "application/vnd.code.notebook.stdout",
+                      "bytes": 19,
+                      "sha256": "6ce6d8e245a6b350d0cbb4bcb772578079d7f30f54bc873b6f251f88bffbd53a"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "object": 8,
+              "index": 1,
+              "executionSummary": {
+                "timing": {
+                  "$undefined": true
+                },
+                "executionOrder": {
+                  "$undefined": true
+                },
+                "success": {
+                  "$undefined": true
+                }
+              },
+              "outputs": []
+            }
+          ]
+        },
+        {
+          "object": 11,
+          "closed": false,
+          "dirty": false,
+          "retainedCells": [
+            {
+              "object": 12,
+              "index": 0,
+              "executionSummary": {
+                "timing": {
+                  "$undefined": true
+                },
+                "executionOrder": {
+                  "$undefined": true
+                },
+                "success": {
+                  "$undefined": true
+                }
+              },
+              "outputs": [
+                {
+                  "id": 14,
+                  "metadata": {
+                    "outputType": "stream"
+                  },
+                  "items": [
+                    {
+                      "mime": "application/vnd.code.notebook.stdout",
+                      "bytes": 19,
+                      "sha256": "6ce6d8e245a6b350d0cbb4bcb772578079d7f30f54bc873b6f251f88bffbd53a"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "object": 15,
+              "index": 1,
+              "executionSummary": {
+                "timing": {
+                  "$undefined": true
+                },
+                "executionOrder": {
+                  "$undefined": true
+                },
+                "success": {
+                  "$undefined": true
+                }
+              },
+              "outputs": []
+            }
+          ]
+        }
+      ],
+      "interpretation": "Jupyter logged request disposal, kernel disposal, cancelled execution and cancellation of remaining cells due to dead kernel. A new target kernel startup was then logged. Public API normal-completion summary remains absent.",
+      "kernelPhysicalStopProved": false,
+      "window": {
+        "endSignalReceived": true,
+        "closedAt": "2026-11-02T02:24:49.706Z"
+      },
+      "publicTerminalSummaryObservations": 0
+    },
+    {
+      "case": "D5-running-close",
+      "run": 14,
+      "finalSnapshotAt": "2026-11-02T02:19:39.557Z",
+      "logClock": "Asia/Tokyo UTC+09:00, 2026-11-02",
+      "jupyterLog": {
+        "localFile": "results\\20261102-d5-14\\profile\\logs\\20261102T111723\\window1\\exthost\\output_logging_20261102T111727\\3-Jupyter.log",
+        "sha256": "a5305ffa5ca53420f2447e76c7f6408318657dabd364c58b3b508106d4d1aa64",
+        "excerptsThroughFinalSnapshot": [
+          {
+            "line": 23,
+            "time": "11:17:52.813",
+            "excerpt": "11:17:52.813 [info] Starting Kernel (Python Path: c:\\Python314\\python.exe, Unknown, 3.14.3) for <target-notebook> (disableUI=true)"
+          },
+          {
+            "line": 28,
+            "time": "11:17:56.356",
+            "excerpt": "11:17:56.356 [info] Kernel successfully started"
+          },
+          {
+            "line": 29,
+            "time": "11:17:59.667",
+            "excerpt": "11:17:59.667 [info] Disposing request as the cell (0) was deleted ~\\ドキュメント\\ChatGPT\\vscode-extension-zizai\\design-integration-20261101\\results\\task-002-01\\workspace\\PW-20261102-d5-14\\PW-20261102-d5-14-D5-running-close.ipynb"
+          },
+          {
+            "line": 30,
+            "time": "11:17:59.668",
+            "excerpt": "11:17:59.668 [info] Dispose Kernel <target-notebook> associated with <target-notebook>"
+          },
+          {
+            "line": 31,
+            "time": "11:17:59.681",
+            "excerpt": "11:17:59.681 [info] Process Execution: c:\\WINDOWS\\System32\\taskkill.exe /F /T /PID 28456"
+          },
+          {
+            "line": 32,
+            "time": "11:17:59.690",
+            "excerpt": "11:17:59.690 [warn] Cell completed with errors (cancelled)"
+          },
+          {
+            "line": 33,
+            "time": "11:17:59.693",
+            "excerpt": "11:17:59.693 [warn] Cancel all remaining cells due to dead kernel"
+          },
+          {
+            "line": 34,
+            "time": "11:17:59.866",
+            "excerpt": "11:17:59.866 [info] Starting Kernel (Python Path: c:\\Python314\\python.exe, Unknown, 3.14.3) for <target-notebook> (disableUI=true)"
+          },
+          {
+            "line": 39,
+            "time": "11:18:02.344",
+            "excerpt": "11:18:02.344 [info] Kernel successfully started"
+          }
+        ]
+      },
+      "publicEventLog": {
+        "localFile": "C:\\Users\\tomoh\\ドキュメント\\ChatGPT\\vscode-extension-zizai\\design-integration-20261101\\logs\\task-002-01\\2026-11-02T02-17-34-920Z-9504\\events.jsonl",
+        "sha256": "439f5e4114bfc526fe369555b1384f0976ebfe23c229c3ca7ea63a290f340ec7",
+        "eventsAfterFinalSnapshot": 0
+      },
+      "finalDocuments": [
+        {
+          "object": 5,
+          "closed": true,
+          "dirty": false,
+          "retainedCells": [
+            {
+              "object": 6,
+              "index": 0,
+              "executionSummary": {
+                "timing": {
+                  "$undefined": true
+                },
+                "executionOrder": 1,
+                "success": {
+                  "$undefined": true
+                }
+              },
+              "outputs": [
+                {
+                  "id": 8,
+                  "metadata": {
+                    "outputType": "stream"
+                  },
+                  "items": [
+                    {
+                      "mime": "application/vnd.code.notebook.stdout",
+                      "bytes": 19,
+                      "sha256": "252a3f26d94d4e242e9269b0d948d9be65f92ce622c0bd111ea4835fb34416ba"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "object": 9,
+          "closed": false,
+          "dirty": false,
+          "retainedCells": [
+            {
+              "object": 10,
+              "index": 0,
+              "executionSummary": {
+                "timing": {
+                  "$undefined": true
+                },
+                "executionOrder": {
+                  "$undefined": true
+                },
+                "success": {
+                  "$undefined": true
+                }
+              },
+              "outputs": [
+                {
+                  "id": 12,
+                  "metadata": {
+                    "outputType": "stream"
+                  },
+                  "items": [
+                    {
+                      "mime": "application/vnd.code.notebook.stdout",
+                      "bytes": 19,
+                      "sha256": "252a3f26d94d4e242e9269b0d948d9be65f92ce622c0bd111ea4835fb34416ba"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "interpretation": "Jupyter logged request disposal, kernel disposal, cancelled execution and cancellation of remaining cells due to dead kernel. A new target kernel startup was then logged. Public API normal-completion summary remains absent.",
+      "kernelPhysicalStopProved": false,
+      "window": {
+        "endSignalReceived": true,
+        "closedAt": "2026-11-02T02:24:47.703Z"
+      },
+      "publicTerminalSummaryObservations": 0
+    }
+  ],
+  "limits": [
+    "Jupyter diagnostic logs supplement but do not replace public API or user-manual evidence",
+    "Cancelled requests and disposal commands do not prove synchronous physical kernel termination",
+    "The late execute_reply warning does not identify the execution generation or message content",
+    "Application-shutdown cleanup after the final snapshot is excluded from cancellation evidence",
+    "No Task acceptance criteria, test results or product specification changed",
+    "Raw logs remain local; supporting excerpts and hashes are shared"
+  ]
+}
