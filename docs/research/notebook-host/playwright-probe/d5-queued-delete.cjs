@@ -9,9 +9,13 @@ const { _electron: electron } = require('playwright');
 
 async function main() {
   const { values } = parseArgs({ options: {
-    vscode: { type: 'string' }, out: { type: 'string' }
+    vscode: { type: 'string' }, out: { type: 'string' }, case: { type: 'string', default: 'D5-queued-delete' }
   }});
   if (!values.vscode || !values.out) throw new Error('--vscode and --out are required');
+  const caseName = values.case;
+  if (!['D5-queued-delete', 'D5-running-delete', 'D5-queued-close', 'D5-running-close'].includes(caseName)) throw new Error('Unapproved D5 case');
+  const queuedCase = caseName.includes('-queued-');
+  const closeCase = caseName.endsWith('-close');
   const repo = path.resolve(__dirname, '../../../..');
   const out = path.resolve(repo, values.out);
   const relative = path.relative(path.join(repo, 'results'), out);
@@ -34,28 +38,31 @@ async function main() {
   // User approved trust for this new folder only, not its parents or old data.
   const fixtureFolder = path.join(build.workspace, `PW-${run}`);
   await fs.mkdir(fixtureFolder);
-  const target = path.join(fixtureFolder, `PW-${run}-D5-queued-delete.ipynb`);
+  const target = path.join(fixtureFolder, `PW-${run}-${caseName}.ipynb`);
   const bootstrap = path.join(fixtureFolder, `PW-${run}-kernel.ipynb`);
-  await fs.writeFile(target, JSON.stringify(notebook('D5-queued-delete'), null, 2), { flag: 'wx' });
+  const originalFixture = notebook(caseName);
+  await fs.writeFile(target, JSON.stringify(originalFixture, null, 2), { flag: 'wx' });
   await fs.writeFile(bootstrap, JSON.stringify(notebook('D4-environment'), null, 2), { flag: 'wx' });
   const profile = path.join(out, 'profile');
   await fs.mkdir(path.join(profile, 'User'), { recursive: true });
   await fs.writeFile(path.join(profile, 'User/settings.json'), JSON.stringify({
     'window.title': 'TASK-002-01 D5 Playwright ${activeEditorShort}',
     'window.restoreWindows': 'none', 'workbench.startupEditor': 'none',
+    'window.dialogStyle': 'custom',
     'files.autoSave': 'off', 'extensions.autoUpdate': false,
     'extensions.autoCheckUpdates': false, 'update.mode': 'none',
     'workbench.editorAssociations': { '*.ipynb': 'jupyter-notebook' },
     'python.defaultInterpreterPath': 'C:\\Python314\\python.exe'
   }, null, 2), { flag: 'wx' });
   const report = {
-    case: 'D5-queued-delete', route: 'fixed Playwright UI automation',
+    case: caseName, route: 'fixed Playwright UI automation',
     manualPass: false, outcome: 'not_started', stages: [],
     startedAt: new Date().toISOString(), target, bootstrap, fixtureFolder,
     playwright: require('playwright/package.json').version,
     profileCopied: false, securityFeaturesDisabled: false
   };
   report.runnerSha256 = crypto.createHash('sha256').update(await fs.readFile(__filename)).digest('hex');
+  await fs.copyFile(__filename, path.join(out, 'runner.cjs'));
   let app, page, closed;
   const save = () => fs.writeFile(path.join(out, 'result.local.json'), JSON.stringify(report, null, 2));
   async function stage(name, data = {}) {
@@ -198,39 +205,83 @@ async function main() {
     await selectPython();
     await marker('execution-request-before');
     await runAll();
-    const startedHashes = ['D5 blocker started\n', 'D5 blocker started\r\n'].map(text => crypto.createHash('sha256').update(text).digest('hex'));
+    const startedLabel = queuedCase ? 'D5 blocker' : 'D5 running';
+    const startedHashes = [`${startedLabel} started\n`, `${startedLabel} started\r\n`].map(text => crypto.createHash('sha256').update(text).digest('hex'));
     await waitEvents(es => es.some(e => e.notebook?.uri?.includes(path.basename(target)) && e.notebook.cells[0]?.outputs.some(o => o.items.some(i => startedHashes.includes(i.sha256)))), 60000);
     await stage('blocker_started_output_observed_in_public_event');
-    const queued = page.locator('.code-cell-row:visible').filter({ hasText: 'D5 queued original' });
-    if (await queued.count() !== 1) throw new Error('Queued cell UI is not unique');
-    await queued.locator('.monaco-editor').click();
+    const targetIndex = queuedCase ? 1 : 0;
+    const selectedCell = page.locator('.code-cell-row:visible').filter({ hasText: queuedCase ? 'D5 queued original' : "print('D5 running started'" });
+    if (await selectedCell.count() !== 1) throw new Error('Target cell UI is not unique');
+    await selectedCell.locator('.monaco-editor').click();
     await page.keyboard.press('Escape');
     await command('TASK-002-01: D5 Arm Delayed Local Update');
     const armed = await waitEvents(events => events.some(e => e.kind === 'local-delay.arm'), 5000);
     const arm = armed.find(e => e.kind === 'local-delay.arm');
     report.arm = arm;
     const prior = [...armed].reverse().find(e => e.notebook?.uri?.includes(path.basename(target)));
-    const targetState = prior?.notebook?.cells?.[1];
-    if (!targetState || targetState.object !== arm.cellObject) throw new Error('Arm target is not the queued cell');
-    if (targetState.executionSummary?.timing?.startTime) throw new Error('Queued target already started');
-    report.queuedBeforeDeletion = { cell: targetState, uiText: await queued.innerText() };
-    await page.screenshot({ path: path.join(out, 'queued-before-delete.png') });
+    const targetState = prior?.notebook?.cells?.[targetIndex];
+    if (!targetState || targetState.object !== arm.cellObject) throw new Error('Arm target does not match the intended cell');
+    if (queuedCase && targetState.executionSummary?.timing?.startTime) throw new Error('Queued target already started');
+    report.targetBeforeMutation = { cell: targetState, uiText: await selectedCell.innerText() };
+    await page.screenshot({ path: path.join(out, 'target-before-mutation.png') });
     await marker('D5-before-close-or-delete');
-    await queued.hover();
-    const remove = queued.getByRole('button', { name: /Delete Cell/ });
-    await remove.click();
-    await stage('queued_cell_delete_button_clicked');
+    if (closeCase) {
+      // Explicit condition: save before closing; this does not test unsaved-close dialogs.
+      await page.keyboard.press('Control+s');
+      await waitEvents(es => es.some(e => e.kind === 'notebook.save' && e.notebook.uri.includes(path.basename(target))), 5000);
+      report.closeCondition = 'saved before closing; no unsaved-close dialog acceptance inferred';
+      await page.keyboard.press('Control+w');
+      await waitEvents(es => es.some(e => e.kind === 'notebook.tabClosed' && e.uri.includes(path.basename(target))), 5000);
+      await page.keyboard.press('Control+Shift+t');
+      await page.locator('.tabs-container .tab.active').filter({ hasText: path.basename(target) }).waitFor({ state: 'visible', timeout: 5000 });
+      await marker('reopened');
+      await stage('tab_closed_and_same_path_reopened_through_UI');
+    } else {
+      await selectedCell.hover();
+      await selectedCell.getByRole('button', { name: /Delete Cell/ }).click();
+      if (!queuedCase) {
+        const confirmation = page.locator('.monaco-dialog-box');
+        await confirmation.waitFor({ state: 'visible', timeout: 3000 });
+        report.deleteConfirmation = await confirmation.innerText();
+        if (!report.deleteConfirmation.includes('This cell is running, are you sure you want to delete it?')) throw new Error('Unexpected deletion confirmation');
+        await confirmation.getByRole('button', { name: 'Delete', exact: true }).click();
+        await confirmation.waitFor({ state: 'hidden', timeout: 3000 });
+      }
+      await stage('target_cell_delete_button_clicked');
+    }
     const events = await waitEvents(es => es.some(e => e.kind === 'local-delay.guard' && e.token === arm.token), 20000);
     report.guard = events.find(e => e.kind === 'local-delay.guard' && e.token === arm.token);
     if (report.guard.valid !== false) throw new Error('Old diagnostic target remained valid');
-    await waitEvents(es => es.some(e => e.notebook?.uri?.includes(path.basename(target)) && e.notebook.cells.length === 1 && e.notebook.cells[0].executionSummary?.success === true), 105000);
+    if (caseName === 'D5-queued-delete') {
+      await waitEvents(es => es.some(e => e.notebook?.uri?.includes(path.basename(target)) && e.notebook.cells.length === 1 && e.notebook.cells[0].executionSummary?.success === true), 105000);
+    } else {
+      const completion = es => es.some(e => e.notebook?.uri?.includes(path.basename(target)) &&
+        e.notebook.retainedCells.some(c => c.source === originalFixture.cells[0].source.join('') && typeof c.executionSummary?.success === 'boolean'));
+      try { await waitEvents(completion, Math.max(1000, Date.parse(arm.at) + 100000 - Date.now())); }
+      catch (error) {
+        if (!error.message.startsWith('Diagnostic observation timeout')) throw error;
+        report.executionCompletion = 'not observed within 100 seconds after arm';
+      }
+    }
     await marker('observation-complete'); await page.keyboard.press('Control+s');
-    await waitEvents(es => es.some(e => e.kind === 'notebook.save' && e.notebook.uri.includes(path.basename(target))), 10000);
+    await marker('saved');
+    const finalEvents = await waitEvents(es => es.some(e => e.kind === 'snapshot' && e.label === 'saved'), 10000);
+    const finalSnapshot = finalEvents.filter(e => e.kind === 'snapshot' && e.label === 'saved').at(-1);
+    const active = finalSnapshot.notebooks.filter(n => n.uri.includes(path.basename(target)) && !n.closed);
+    if (active.length !== 1 || active[0].dirty) throw new Error('Final Notebook saved state not verified');
+    report.finalObservation = finalSnapshot;
     const saved = JSON.parse(await fs.readFile(target, 'utf8'));
-    if (saved.cells.length !== 1 || saved.cells[0].metadata.outsideDiagnosticOwner.sentinel !== 'keep-blocker') throw new Error('Saved fixture invariant failed');
+    const expectedCells = closeCase ? originalFixture.cells : originalFixture.cells.filter((_, i) => i !== targetIndex);
+    if (saved.cells.length !== expectedCells.length) throw new Error('Saved cell count differs');
+    for (let i = 0; i < expectedCells.length; i++) {
+      if (saved.cells[i].source.join('') !== expectedCells[i].source.join('') || saved.cells[i].id !== expectedCells[i].id ||
+          JSON.stringify(saved.cells[i].metadata.outsideDiagnosticOwner) !== JSON.stringify(expectedCells[i].metadata.outsideDiagnosticOwner) ||
+          saved.cells[i].metadata.task00201Diagnostic?.delayedLocalToken) throw new Error('Saved fixture invariant failed');
+    }
+    if (JSON.stringify(saved.metadata.outsideNotebookOwner) !== JSON.stringify(originalFixture.metadata.outsideNotebookOwner)) throw new Error('Unowned Notebook metadata changed');
     report.saved = saved;
     await fs.copyFile(report.eventLog, path.join(out, 'events.jsonl'));
-    report.outcome = 'observed'; await stage('saved_one_cell_and_guard_rejected_old_target');
+    report.outcome = 'observed'; await stage('saved_expected_cells_and_guard_rejected_old_target');
   } catch (error) {
     report.outcome = 'not_observed'; report.error = { name: error.name, message: error.message };
     process.exitCode = 1;
