@@ -1,0 +1,76 @@
+{
+  "date_jst": "2026-11-02",
+  "purpose": "VS Code Playwright exploratory research; not a product test suite",
+  "branch": "codex/research-vscode-playwright-20261102",
+  "baseline": "2f31bd508e842f350b355ccc566c33039b36558c",
+  "environment": {
+    "node": "v24.14.1",
+    "playwright": "1.64.1",
+    "product": {
+      "name": "Code",
+      "version": "1.144.0"
+    }
+  },
+  "observed": [
+    {
+      "name": "electron_connected",
+      "at": "2026-11-02T00:11:32.180Z"
+    },
+    {
+      "name": "workbench_visible",
+      "at": "2026-11-02T00:11:34.630Z"
+    },
+    {
+      "name": "command_palette_open",
+      "at": "2026-11-02T00:11:35.576Z"
+    },
+    {
+      "name": "command_palette_closed",
+      "at": "2026-11-02T00:11:36.716Z"
+    }
+  ],
+  "outcome": "startup and palette open/close observed",
+  "real_mouse_used": false,
+  "input_method": "Playwright page.keyboard.press only",
+  "background_or_minimized_verified": false,
+  "isolation": {
+    "new_empty_user_data_dir": true,
+    "profile_copied": false,
+    "separate_shared_data_dir": true,
+    "extensions_disabled": true,
+    "workspace_opened": false,
+    "security_features_disabled": false,
+    "requested_debug_address": "127.0.0.1"
+  },
+  "network_observation": {
+    "process_scope": "Playwright launcher and its Code.exe descendants",
+    "listening_TCP_count": 0,
+    "meaning": "point-in-time observation only; not a security audit or a statement that no connections exist",
+    "failed_initial_checks": [
+      "CIM access blocked inside sandbox",
+      "No listener rows for launcher PID",
+      "No listener rows for first Code.exe PID"
+    ]
+  },
+  "source_hashes": {
+    "package-lock.json": "5c735ad1cdb6c55c9779c2ff68b54ad38103d406ec1e7157379e5e966cd5f54e",
+    "package.json": "aa05373eb011e61c138bf7da035c8b3c581ae9d4d4be0edee68b41094024a74d",
+    "probe.cjs": "a563cd119cfb27b6d7184418853ef05d05b6a56c9da149bdd41cb4ce29bbacb3"
+  },
+  "screenshots": {
+    "workbench.png": "5c60aff30e922a60f114032da36bfa44c64cd27b1416be4a563f5051f4bd9f9c",
+    "command-palette.png": "3fd9efd53c291b2f7460105fdce8eca599aaae86ed80807aa5b98bb4ba335c04"
+  },
+  "window_state": "retained awaiting user end signal",
+  "limits": [
+    "Empty window only; extensions disabled",
+    "No Notebook, Jupyter, kernel, D5 deletion or tab-close cases executed",
+    "No formal UI or user-manual acceptance inferred",
+    "Foreground focus interruption during launch and background/minimization behavior not measured"
+  ],
+  "references": [
+    "https://github.com/microsoft/vscode/blob/main/test/automation/src/playwrightElectron.ts",
+    "https://github.com/microsoft/vscode/blob/main/test/automation/src/playwrightDriver.ts",
+    "https://playwright.dev/docs/api/class-electron"
+  ]
+}
