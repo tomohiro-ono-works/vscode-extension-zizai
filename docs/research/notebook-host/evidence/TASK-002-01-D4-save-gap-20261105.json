@@ -1,0 +1,91 @@
+{
+  "localDate": "2026-11-05",
+  "scope": "D4 queued-edit save gap identification from existing materials; no GUI/kernel/re-execution",
+  "originalObservation": {
+    "case": "D4-queued-edit",
+    "rawLog": "logs/task-002-01/2026-10-22T15-52-52-588Z-28492/events.jsonl",
+    "rawSha256": "77f5d37289a5bc272d8c2fd613ddb2d1b6d97a9dc764d389bd51f814a9d0ec21",
+    "events": 183,
+    "target": "D4-queued-edit-1792691367724.ipynb",
+    "targetSaveEvents": 0,
+    "lastVersion": 25,
+    "finalCells": [
+      {
+        "source": "import time\nprint('blocker started', flush=True)\ntime.sleep(90)\nprint('blocker finished', flush=True)\n",
+        "executionSummary": {
+          "timing": {
+            "startTime": 1792691383010,
+            "endTime": 1792691473016
+          },
+          "executionOrder": 1,
+          "success": true
+        },
+        "outputs": 1
+      },
+      {
+        "source": "print('diagnostic CHANGED current source')\n",
+        "executionSummary": {
+          "timing": {
+            "startTime": 1792691473050,
+            "endTime": 1792691473053
+          },
+          "executionOrder": 2,
+          "success": true
+        },
+        "outputs": 1
+      }
+    ],
+    "savedFile": {
+      "sha256": "775ac8663094bc65aaa5e98825945ea877b3247e34f09f48b9deb517f3138ded",
+      "cells": [
+        {
+          "source": "import time\nprint('blocker started', flush=True)\ntime.sleep(90)\nprint('blocker finished', flush=True)\n",
+          "execution_count": null,
+          "outputs": 0
+        },
+        {
+          "source": "print('queued ORIGINAL')\n",
+          "execution_count": null,
+          "outputs": 0
+        }
+      ]
+    }
+  },
+  "laterFollowup": {
+    "recordedAt": "2026-10-24T16:55:09.269Z",
+    "reportStatus": "running",
+    "reportSha256": "f6f626722babf48c2be86840cb0c14306cb2cc9d8e81e80ead40b7fae130f570",
+    "resultCases": [
+      "environment-selected-standard-kernel"
+    ],
+    "rawSha256": "f8dc6b3aa5beb7a73d8930647c8d7e0f9e583402b496e759a76dd3b468959825",
+    "events": 7,
+    "lastEventAt": "2026-10-24T18:28:53.278Z",
+    "targetOpenSaveOrCompletionEvents": 0,
+    "interpretation": "Historical running field is an incomplete saved record, not evidence that a process is currently running. No completion record for D4 queued save in this named attempt."
+  },
+  "established": "Existing memory snapshot has changed source and success summary, but exact-run persisted JSON is absent; disk still contains baseline with no execution output. Later named followup does not fill this gap.",
+  "noRepeatedCases": [
+    "D4 running metadata update API",
+    "D4 running source update API",
+    "D4 basic/exception/empty/cancel cases",
+    "D5 queued close already separately observed"
+  ],
+  "nextProposed": {
+    "status": "not agreed; not implemented or started",
+    "scope": "One dedicated synthetic D4-queued-edit Notebook: fixed Playwright standard Run All; after blocker started and before downstream output, existing diagnostic source-changed command; request same downstream cell once via standard UI; observe completion; Ctrl+S then verify saved JSON and nbformat",
+    "purpose": "Acquire current-run source/metadata/output/summary and saved-file correspondence missing in original exact case; not rerun existing running-edit API conditions",
+    "operator": "Agent CLI / fixed Playwright",
+    "kernel": "Existing standard Python/Jupyter only; no custom kernel or dependency installation",
+    "retain": "Window until user end cue, then close app and verify diagnostic port listeners gone",
+    "limit": "Current IDE version differs. Cannot reconstruct original persisted file, infer submitted source/internal execution ID, request acceptance count, kernel physical stop or product recovery."
+  },
+  "auditPreparationFailure": {
+    "command": "node logs/d4-save-gap-audit-20261105.cjs",
+    "exitCode": 1,
+    "reason": "Initial report assembly had a missing object-closing brace; corrected assembly only, no diagnostic/kernel rerun."
+  },
+  "taskComplete": false,
+  "hostDesignStartPrerequisiteSatisfied": false,
+  "mainReflected": false
+}
