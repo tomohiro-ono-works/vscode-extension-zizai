@@ -9,8 +9,9 @@ const { _electron: electron } = require('playwright');
 const sha = b => crypto.createHash('sha256').update(b).digest('hex');
 const pause = ms => new Promise(r => setTimeout(r, ms));
 async function main() {
-  const { values } = parseArgs({ options: { vscode: { type: 'string' }, out: { type: 'string' } } });
+  const { values } = parseArgs({ options: { vscode: { type: 'string' }, out: { type: 'string' }, route: { type: 'string', default: 'both' } } });
   if (!values.vscode || !values.out) throw new Error('--vscode and --out required');
+  if (!['both', 'keys', 'public'].includes(values.route)) throw new Error('Invalid route');
   const repo = path.resolve(__dirname, '../../../..'), out = path.resolve(repo, values.out);
   const relative = path.relative(path.join(repo, 'results'), out);
   if (!relative || relative.startsWith('..') || path.isAbsolute(relative)) throw new Error('New results folder required');
@@ -45,7 +46,7 @@ async function main() {
     'workbench.editorAssociations': { '*.ipynb': 'jupyter-notebook' }
   }, null, 2), { flag: 'wx' });
   const report = { case: 'D3-same-value-twice-redo-comparison', startedAt: new Date().toISOString(),
-    outcome: 'in_progress', stages: [], cases: [], diagnosticHashes: hashes,
+    outcome: 'in_progress', requestedRoute: values.route, stages: [], cases: [], diagnosticHashes: hashes,
     runnerSha256: sha(await fs.readFile(__filename)), bridgeSha256: sha(await fs.readFile(path.join(dev, 'd3-public-redo.cjs'))),
     manifestSha256: sha(await fs.readFile(path.join(dev, 'package.json'))),
     originalCoreUnchanged: true, separateResearchBridge: true,
@@ -102,13 +103,17 @@ async function main() {
     return { seq: e.seq, at: e.at, notebook: doc };
   }
   async function notebookFocus(cell, action) {
-    await cell.locator('.monaco-editor').click(); await page.keyboard.press('Escape');
+    await cell.locator('.monaco-editor').click();
+    // One Escape can leave native EditContext focused. Use the visible standard
+    // command and verify container focus rather than assuming Escape succeeded.
+    await command('Stop Editing Cell');
     const focus = await page.evaluate(() => {
       const e = document.activeElement;
       return { at: Date.now(), tag: e?.tagName, role: e?.getAttribute('role'), classes: e?.className,
-        inNotebook: Boolean(e?.closest('.notebook-editor')), inQuickInput: Boolean(e?.closest('.quick-input-widget')) };
+        inNotebook: Boolean(e?.closest('.notebook-editor')), inCellEditor: Boolean(e?.closest('.monaco-editor')),
+        inQuickInput: Boolean(e?.closest('.quick-input-widget')) };
     });
-    if (!focus.inNotebook || focus.inQuickInput) throw new Error('Notebook focus not established');
+    if (!focus.inNotebook || focus.inCellEditor || focus.inQuickInput) throw new Error('Notebook container focus not established');
     return { action, ...focus };
   }
   const metadataValue = snap => snap.notebook.cells[0].metadata.metadata.task00201Diagnostic.mixed ?? null;
@@ -152,11 +157,13 @@ async function main() {
         }
       }, true);
     });
-    for (const route of ['keys', 'public']) {
+    for (const route of values.route === 'both' ? ['keys', 'public'] : [values.route]) {
       const target = 'PW-' + run + '-D3-' + route + '.ipynb';
       await page.getByText(target, { exact: true }).dblclick();
       await page.locator('.tab.active').filter({ hasText: target }).waitFor({ state: 'visible', timeout: 15000 });
-      const cell = page.locator('.code-cell-row:visible').filter({ hasText: 'fictional_value = 10' });
+      // Cached inactive Notebook rows can pass :visible after switching tabs.
+      // Bind the row to the exact synthetic target through its rendered data-uri.
+      const cell = page.locator('.code-cell-row').filter({ has: page.locator('.monaco-editor[data-uri*="' + target + '"]') });
       await cell.waitFor({ state: 'visible', timeout: 30000 });
       if (await cell.count() !== 1) throw new Error('D3 target cell not unique');
       const item = { route, target, focus: [], states: [], startedAt: new Date().toISOString() }; report.cases.push(item);
@@ -207,9 +214,11 @@ async function main() {
   } catch (error) {
     report.outcome = 'not_observed'; report.error = { name: error.name, message: error.message }; process.exitCode = 1;
     if (page) {
+      report.keysAtStop = await page.evaluate(() => window.__task00201D3Keys ?? []).catch(() => []);
       await page.screenshot({ path: path.join(out, 'stopped.png') }).catch(() => {});
       await fs.writeFile(path.join(out, 'stopped-dom.txt'), await page.locator('body').innerText().catch(() => 'unavailable'));
     }
+    if (report.eventLog) await fs.copyFile(report.eventLog, path.join(out, 'events.jsonl')).catch(() => {});
   }
   await save(); console.log(JSON.stringify({ outcome: report.outcome, cases: report.cases.map(c => ({ route: c.route, redoRestored: c.redoRestored })), error: report.error }));
   if (app && !report.closedAt) {

@@ -1,0 +1,769 @@
+{
+  "localDate": "2026-11-05",
+  "scope": "Approved D3 same-value update twice / Undo twice / Redo comparison; no kernel",
+  "status": "Two scoped Redo routes observed; original 1.143.1 root cause remains undetermined",
+  "actualUpdateAttempts": 8,
+  "allEightApplyReturnsFalse": true,
+  "comparison": [
+    {
+      "run": "20261105-d3-04",
+      "route": "keys",
+      "caseOutcome": "redo restored metadata in this explicit-container-focus condition",
+      "runnerSha256": "359aaea23aa556aa757537d25d1fb3d2feceee48b9cefc72d022fb7fb0803a9d",
+      "bridgeSha256": "e238fc73e6e73d00b0a62cd176a4a891d1d8e04535720e1cec04acdbe8455c38",
+      "diagnosticHashes": {
+        "extension.cjs": "0eda3f81faca4fe08b3ac27a756dac47a9e922fe27aa46fb880393b62559a5a3",
+        "model.cjs": "b3b7fbc4a801088846e66e6adfd768b54d71b8d23f6dda43a8aae4b7f95d22f8",
+        "fixtures.cjs": "d0511c1dde2bde2dd0edc06f1be3a114dac93ec8669a7de26b15ce1e680e365c",
+        "package.json": "ac666b8b731db226f53cb4d605ac9cebfcfb3493bed94b45ce6aa9b5f3a951b2"
+      },
+      "rawLog": {
+        "file": "$REPO\\logs\\task-002-01\\2026-11-04T15-16-54-016Z-20092\\events.jsonl",
+        "sha256": "e4364baf5c71b4d23534da187eb27f94d854b67e37d02c90ff7de891634276fa"
+      },
+      "environment": {
+        "vscode": "1.145.0",
+        "extensions": [
+          {
+            "id": "ms-toolsai.jupyter",
+            "version": "2025.9.1",
+            "active": true
+          },
+          {
+            "id": "ms-python.python",
+            "version": "2026.10.0",
+            "active": false
+          },
+          {
+            "id": "ms-python.vscode-python-envs",
+            "version": "1.41.2026110401",
+            "active": true
+          },
+          {
+            "id": "vscode.ipynb",
+            "version": "10.0.0",
+            "active": true
+          }
+        ]
+      },
+      "focus": [
+        {
+          "action": "undo1",
+          "at": 1793805417651,
+          "tag": "DIV",
+          "role": "list",
+          "classes": "monaco-list list_id_6 mouse-support selection-single element-focused last-focused",
+          "inNotebook": true,
+          "inCellEditor": false,
+          "inQuickInput": false
+        },
+        {
+          "action": "undo2",
+          "at": 1793805419267,
+          "tag": "DIV",
+          "role": "list",
+          "classes": "monaco-list list_id_6 mouse-support selection-single element-focused last-focused",
+          "inNotebook": true,
+          "inCellEditor": false,
+          "inQuickInput": false
+        },
+        {
+          "action": "redo",
+          "at": 1793805420628,
+          "tag": "DIV",
+          "role": "list",
+          "classes": "monaco-list list_id_6 mouse-support selection-single element-focused last-focused",
+          "inNotebook": true,
+          "inCellEditor": false,
+          "inQuickInput": false
+        }
+      ],
+      "keys": [
+        {
+          "at": 1793805417656,
+          "key": "z",
+          "code": "KeyZ",
+          "trusted": true,
+          "tag": "DIV",
+          "classes": "monaco-list list_id_6 mouse-support selection-single element-focused last-focused",
+          "inNotebook": true,
+          "inQuickInput": false
+        },
+        {
+          "at": 1793805419271,
+          "key": "z",
+          "code": "KeyZ",
+          "trusted": true,
+          "tag": "DIV",
+          "classes": "monaco-list list_id_6 mouse-support selection-single element-focused last-focused",
+          "inNotebook": true,
+          "inQuickInput": false
+        },
+        {
+          "at": 1793805420630,
+          "key": "y",
+          "code": "KeyY",
+          "trusted": true,
+          "tag": "DIV",
+          "classes": "monaco-list list_id_6 mouse-support selection-single element-focused last-focused",
+          "inNotebook": true,
+          "inQuickInput": false
+        }
+      ],
+      "states": [
+        {
+          "step": "baseline",
+          "seq": 3,
+          "at": "2026-11-04T15:16:55.246Z",
+          "version": 0,
+          "dirty": false,
+          "source": "# D3 baseline\nfictional_value = 10\n",
+          "metadata": {
+            "execution_count": null,
+            "metadata": {
+              "outsideDiagnosticOwner": {
+                "sentinel": "keep-D3"
+              },
+              "task00201Diagnostic": {
+                "label": "D3",
+                "draft": 0,
+                "committed": 0,
+                "burst": 0,
+                "probeOnly": true
+              }
+            },
+            "id": "task00201-D3-mixed-0"
+          }
+        },
+        {
+          "step": "apply1",
+          "seq": 8,
+          "at": "2026-11-04T15:16:56.186Z",
+          "version": 1,
+          "dirty": true,
+          "source": "# D3 baseline\nfictional_value = 10\n",
+          "metadata": {
+            "execution_count": null,
+            "metadata": {
+              "outsideDiagnosticOwner": {
+                "sentinel": "keep-D3"
+              },
+              "task00201Diagnostic": {
+                "label": "D3",
+                "draft": 0,
+                "committed": 0,
+                "burst": 0,
+                "probeOnly": true,
+                "mixed": "metadata-first-failure"
+              }
+            },
+            "id": "task00201-D3-mixed-0"
+          }
+        },
+        {
+          "step": "apply2",
+          "seq": 13,
+          "at": "2026-11-04T15:16:56.860Z",
+          "version": 2,
+          "dirty": true,
+          "source": "# D3 baseline\nfictional_value = 10\n",
+          "metadata": {
+            "execution_count": null,
+            "metadata": {
+              "outsideDiagnosticOwner": {
+                "sentinel": "keep-D3"
+              },
+              "task00201Diagnostic": {
+                "label": "D3",
+                "draft": 0,
+                "committed": 0,
+                "burst": 0,
+                "probeOnly": true,
+                "mixed": "metadata-first-failure"
+              }
+            },
+            "id": "task00201-D3-mixed-0"
+          }
+        },
+        {
+          "step": "undo1",
+          "seq": 15,
+          "at": "2026-11-04T15:16:58.528Z",
+          "version": 3,
+          "dirty": true,
+          "source": "# D3 baseline\nfictional_value = 10\n",
+          "metadata": {
+            "execution_count": null,
+            "metadata": {
+              "outsideDiagnosticOwner": {
+                "sentinel": "keep-D3"
+              },
+              "task00201Diagnostic": {
+                "label": "D3",
+                "draft": 0,
+                "committed": 0,
+                "burst": 0,
+                "probeOnly": true,
+                "mixed": "metadata-first-failure"
+              }
+            },
+            "id": "task00201-D3-mixed-0"
+          }
+        },
+        {
+          "step": "undo2",
+          "seq": 17,
+          "at": "2026-11-04T15:16:59.944Z",
+          "version": 4,
+          "dirty": false,
+          "source": "# D3 baseline\nfictional_value = 10\n",
+          "metadata": {
+            "execution_count": null,
+            "metadata": {
+              "outsideDiagnosticOwner": {
+                "sentinel": "keep-D3"
+              },
+              "task00201Diagnostic": {
+                "label": "D3",
+                "draft": 0,
+                "committed": 0,
+                "burst": 0,
+                "probeOnly": true
+              }
+            },
+            "id": "task00201-D3-mixed-0"
+          }
+        },
+        {
+          "step": "redo",
+          "seq": 19,
+          "at": "2026-11-04T15:17:01.299Z",
+          "version": 5,
+          "dirty": true,
+          "source": "# D3 baseline\nfictional_value = 10\n",
+          "metadata": {
+            "execution_count": null,
+            "metadata": {
+              "outsideDiagnosticOwner": {
+                "sentinel": "keep-D3"
+              },
+              "task00201Diagnostic": {
+                "label": "D3",
+                "draft": 0,
+                "committed": 0,
+                "burst": 0,
+                "probeOnly": true,
+                "mixed": "metadata-first-failure"
+              }
+            },
+            "id": "task00201-D3-mixed-0"
+          }
+        }
+      ],
+      "notebookChanges": [
+        {
+          "seq": 6,
+          "at": "2026-11-04T15:16:56.153Z",
+          "version": 1
+        },
+        {
+          "seq": 11,
+          "at": "2026-11-04T15:16:56.851Z",
+          "version": 2
+        },
+        {
+          "seq": 14,
+          "at": "2026-11-04T15:16:57.670Z",
+          "version": 3
+        },
+        {
+          "seq": 16,
+          "at": "2026-11-04T15:16:59.272Z",
+          "version": 4
+        },
+        {
+          "seq": 18,
+          "at": "2026-11-04T15:17:00.632Z",
+          "version": 5
+        }
+      ],
+      "savedSha256": "ab87210e2a029f235f447e822f431c7266e0e4cb83eba7d7d264a599118f358b",
+      "sourceIdForeignMetadataPreserved": true,
+      "savedDirty": false,
+      "executionCount": null,
+      "outputs": 0
+    },
+    {
+      "run": "20261105-d3-05",
+      "route": "public",
+      "caseOutcome": "redo restored metadata in this explicit-container-focus condition",
+      "runnerSha256": "78afc46fea230a1a3b6366858cca6a8b781a1e9438920cea86ebcb44a862b748",
+      "bridgeSha256": "e238fc73e6e73d00b0a62cd176a4a891d1d8e04535720e1cec04acdbe8455c38",
+      "diagnosticHashes": {
+        "extension.cjs": "0eda3f81faca4fe08b3ac27a756dac47a9e922fe27aa46fb880393b62559a5a3",
+        "model.cjs": "b3b7fbc4a801088846e66e6adfd768b54d71b8d23f6dda43a8aae4b7f95d22f8",
+        "fixtures.cjs": "d0511c1dde2bde2dd0edc06f1be3a114dac93ec8669a7de26b15ce1e680e365c",
+        "package.json": "ac666b8b731db226f53cb4d605ac9cebfcfb3493bed94b45ce6aa9b5f3a951b2"
+      },
+      "rawLog": {
+        "file": "$REPO\\logs\\task-002-01\\2026-11-04T15-20-13-776Z-13496\\events.jsonl",
+        "sha256": "552a76a8075d13ea3972dfc46dcb8b2e628e65689e9aed05061ce362eab95b86"
+      },
+      "environment": {
+        "vscode": "1.145.0",
+        "extensions": [
+          {
+            "id": "ms-toolsai.jupyter",
+            "version": "2025.9.1",
+            "active": true
+          },
+          {
+            "id": "ms-python.python",
+            "version": "2026.10.0",
+            "active": false
+          },
+          {
+            "id": "ms-python.vscode-python-envs",
+            "version": "1.41.2026110401",
+            "active": true
+          },
+          {
+            "id": "vscode.ipynb",
+            "version": "10.0.0",
+            "active": true
+          }
+        ]
+      },
+      "focus": [
+        {
+          "action": "undo1",
+          "at": 1793805617477,
+          "tag": "DIV",
+          "role": "list",
+          "classes": "monaco-list list_id_6 mouse-support selection-single element-focused last-focused",
+          "inNotebook": true,
+          "inCellEditor": false,
+          "inQuickInput": false
+        },
+        {
+          "action": "undo2",
+          "at": 1793805619111,
+          "tag": "DIV",
+          "role": "list",
+          "classes": "monaco-list list_id_6 mouse-support selection-single element-focused last-focused",
+          "inNotebook": true,
+          "inCellEditor": false,
+          "inQuickInput": false
+        },
+        {
+          "action": "redo",
+          "at": 1793805620564,
+          "tag": "DIV",
+          "role": "list",
+          "classes": "monaco-list list_id_6 mouse-support selection-single element-focused last-focused",
+          "inNotebook": true,
+          "inCellEditor": false,
+          "inQuickInput": false
+        }
+      ],
+      "keys": [
+        {
+          "at": 1793805617482,
+          "key": "z",
+          "code": "KeyZ",
+          "trusted": true,
+          "tag": "DIV",
+          "classes": "monaco-list list_id_6 mouse-support selection-single element-focused last-focused",
+          "inNotebook": true,
+          "inQuickInput": false
+        },
+        {
+          "at": 1793805619115,
+          "key": "z",
+          "code": "KeyZ",
+          "trusted": true,
+          "tag": "DIV",
+          "classes": "monaco-list list_id_6 mouse-support selection-single element-focused last-focused",
+          "inNotebook": true,
+          "inQuickInput": false
+        }
+      ],
+      "states": [
+        {
+          "step": "baseline",
+          "seq": 3,
+          "at": "2026-11-04T15:20:15.055Z",
+          "version": 0,
+          "dirty": false,
+          "source": "# D3 baseline\nfictional_value = 10\n",
+          "metadata": {
+            "execution_count": null,
+            "metadata": {
+              "outsideDiagnosticOwner": {
+                "sentinel": "keep-D3"
+              },
+              "task00201Diagnostic": {
+                "label": "D3",
+                "draft": 0,
+                "committed": 0,
+                "burst": 0,
+                "probeOnly": true
+              }
+            },
+            "id": "task00201-D3-mixed-0"
+          }
+        },
+        {
+          "step": "apply1",
+          "seq": 8,
+          "at": "2026-11-04T15:20:15.952Z",
+          "version": 1,
+          "dirty": true,
+          "source": "# D3 baseline\nfictional_value = 10\n",
+          "metadata": {
+            "execution_count": null,
+            "metadata": {
+              "outsideDiagnosticOwner": {
+                "sentinel": "keep-D3"
+              },
+              "task00201Diagnostic": {
+                "label": "D3",
+                "draft": 0,
+                "committed": 0,
+                "burst": 0,
+                "probeOnly": true,
+                "mixed": "metadata-first-failure"
+              }
+            },
+            "id": "task00201-D3-mixed-0"
+          }
+        },
+        {
+          "step": "apply2",
+          "seq": 13,
+          "at": "2026-11-04T15:20:16.626Z",
+          "version": 2,
+          "dirty": true,
+          "source": "# D3 baseline\nfictional_value = 10\n",
+          "metadata": {
+            "execution_count": null,
+            "metadata": {
+              "outsideDiagnosticOwner": {
+                "sentinel": "keep-D3"
+              },
+              "task00201Diagnostic": {
+                "label": "D3",
+                "draft": 0,
+                "committed": 0,
+                "burst": 0,
+                "probeOnly": true,
+                "mixed": "metadata-first-failure"
+              }
+            },
+            "id": "task00201-D3-mixed-0"
+          }
+        },
+        {
+          "step": "undo1",
+          "seq": 15,
+          "at": "2026-11-04T15:20:18.285Z",
+          "version": 3,
+          "dirty": true,
+          "source": "# D3 baseline\nfictional_value = 10\n",
+          "metadata": {
+            "execution_count": null,
+            "metadata": {
+              "outsideDiagnosticOwner": {
+                "sentinel": "keep-D3"
+              },
+              "task00201Diagnostic": {
+                "label": "D3",
+                "draft": 0,
+                "committed": 0,
+                "burst": 0,
+                "probeOnly": true,
+                "mixed": "metadata-first-failure"
+              }
+            },
+            "id": "task00201-D3-mixed-0"
+          }
+        },
+        {
+          "step": "undo2",
+          "seq": 17,
+          "at": "2026-11-04T15:20:19.859Z",
+          "version": 4,
+          "dirty": false,
+          "source": "# D3 baseline\nfictional_value = 10\n",
+          "metadata": {
+            "execution_count": null,
+            "metadata": {
+              "outsideDiagnosticOwner": {
+                "sentinel": "keep-D3"
+              },
+              "task00201Diagnostic": {
+                "label": "D3",
+                "draft": 0,
+                "committed": 0,
+                "burst": 0,
+                "probeOnly": true
+              }
+            },
+            "id": "task00201-D3-mixed-0"
+          }
+        },
+        {
+          "step": "redo",
+          "seq": 20,
+          "at": "2026-11-04T15:20:21.586Z",
+          "version": 5,
+          "dirty": true,
+          "source": "# D3 baseline\nfictional_value = 10\n",
+          "metadata": {
+            "execution_count": null,
+            "metadata": {
+              "outsideDiagnosticOwner": {
+                "sentinel": "keep-D3"
+              },
+              "task00201Diagnostic": {
+                "label": "D3",
+                "draft": 0,
+                "committed": 0,
+                "burst": 0,
+                "probeOnly": true,
+                "mixed": "metadata-first-failure"
+              }
+            },
+            "id": "task00201-D3-mixed-0"
+          }
+        }
+      ],
+      "publicCall": {
+        "route": "vscode.commands.executeCommand(redo)",
+        "at": "2026-11-04T15:20:20.721Z",
+        "before": {
+          "uri": "file:///c%3A/Users/tomoh/%E3%83%89%E3%82%AD%E3%83%A5%E3%83%A1%E3%83%B3%E3%83%88/ChatGPT/vscode-extension-zizai/design-integration-20261101/results/task-002-01/workspace/PW-20261105-d3-05/PW-20261105-d3-05-D3-public.ipynb",
+          "version": 4,
+          "dirty": false,
+          "source": "# D3 baseline\nfictional_value = 10\n",
+          "metadata": {
+            "execution_count": null,
+            "metadata": {
+              "outsideDiagnosticOwner": {
+                "sentinel": "keep-D3"
+              },
+              "task00201Diagnostic": {
+                "label": "D3",
+                "draft": 0,
+                "committed": 0,
+                "burst": 0,
+                "probeOnly": true
+              }
+            },
+            "id": "task00201-D3-mixed-0"
+          }
+        },
+        "returnedAt": "2026-11-04T15:20:20.725Z",
+        "after": {
+          "uri": "file:///c%3A/Users/tomoh/%E3%83%89%E3%82%AD%E3%83%A5%E3%83%A1%E3%83%B3%E3%83%88/ChatGPT/vscode-extension-zizai/design-integration-20261101/results/task-002-01/workspace/PW-20261105-d3-05/PW-20261105-d3-05-D3-public.ipynb",
+          "version": 5,
+          "dirty": true,
+          "source": "# D3 baseline\nfictional_value = 10\n",
+          "metadata": {
+            "execution_count": null,
+            "metadata": {
+              "outsideDiagnosticOwner": {
+                "sentinel": "keep-D3"
+              },
+              "task00201Diagnostic": {
+                "label": "D3",
+                "draft": 0,
+                "committed": 0,
+                "burst": 0,
+                "probeOnly": true,
+                "mixed": "metadata-first-failure"
+              }
+            },
+            "id": "task00201-D3-mixed-0"
+          }
+        }
+      },
+      "notebookChanges": [
+        {
+          "seq": 6,
+          "at": "2026-11-04T15:20:15.912Z",
+          "version": 1
+        },
+        {
+          "seq": 11,
+          "at": "2026-11-04T15:20:16.575Z",
+          "version": 2
+        },
+        {
+          "seq": 14,
+          "at": "2026-11-04T15:20:17.486Z",
+          "version": 3
+        },
+        {
+          "seq": 16,
+          "at": "2026-11-04T15:20:19.115Z",
+          "version": 4
+        },
+        {
+          "seq": 18,
+          "at": "2026-11-04T15:20:20.723Z",
+          "version": 5
+        }
+      ],
+      "savedSha256": "ab87210e2a029f235f447e822f431c7266e0e4cb83eba7d7d264a599118f358b",
+      "sourceIdForeignMetadataPreserved": true,
+      "savedDirty": false,
+      "executionCount": null,
+      "outputs": 0
+    }
+  ],
+  "failures": [
+    {
+      "run": "20261105-d3-03",
+      "status": "stopped before Redo",
+      "error": "Undo2 did not restore baseline",
+      "states": [
+        {
+          "step": "baseline",
+          "version": 0,
+          "dirty": false
+        },
+        {
+          "step": "apply1",
+          "version": 1,
+          "dirty": true
+        },
+        {
+          "step": "apply2",
+          "version": 2,
+          "dirty": true
+        },
+        {
+          "step": "undo1",
+          "version": 2,
+          "dirty": true
+        },
+        {
+          "step": "undo2",
+          "version": 2,
+          "dirty": true
+        }
+      ],
+      "focus": [
+        {
+          "action": "undo1",
+          "at": 1793805186053,
+          "tag": "DIV",
+          "role": "textbox",
+          "classes": "native-edit-context",
+          "inNotebook": true,
+          "inQuickInput": false
+        },
+        {
+          "action": "undo2",
+          "at": 1793805189071,
+          "tag": "DIV",
+          "role": "textbox",
+          "classes": "native-edit-context",
+          "inNotebook": true,
+          "inQuickInput": false
+        }
+      ],
+      "keys": [
+        {
+          "at": 1793805186057,
+          "key": "z",
+          "code": "KeyZ",
+          "trusted": true,
+          "tag": "DIV",
+          "classes": "native-edit-context",
+          "inNotebook": true,
+          "inQuickInput": false
+        },
+        {
+          "at": 1793805189073,
+          "key": "z",
+          "code": "KeyZ",
+          "trusted": true,
+          "tag": "DIV",
+          "classes": "native-edit-context",
+          "inNotebook": true,
+          "inQuickInput": false
+        }
+      ],
+      "readOnlyFollowup": "DOM input/focus read only, initial localhost connection EACCES then same read with approved network path",
+      "finding": "Single Escape left native-edit-context focused. The probe only checked inside Notebook and incorrectly treated that as container focus. Two trusted Ctrl+Z events caused no recorded Notebook change. Fixed preparation uses visible Stop Editing Cell and rejects embedded editor focus; not a product/IDE source fix."
+    },
+    {
+      "run": "20261105-d3-04",
+      "status": "keyboard case observed, whole runner stopped on later public preparation",
+      "error": "locator.click: Error: strict mode violation: locator('.code-cell-row:visible').filter({ hasText: 'fictional_value = 10' }).locator('.monaco-editor') resolved to 2 elements:",
+      "publicStates": [
+        {
+          "step": "baseline",
+          "version": 0
+        },
+        {
+          "step": "apply1",
+          "version": 1
+        },
+        {
+          "step": "apply2",
+          "version": 2
+        }
+      ],
+      "finding": "Cached inactive Notebook row made generic :visible locator ambiguous. No click was made at ambiguity. Bind to exact generated filename in rendered editor data-uri. Do not erase successful keyboard case or repeat it; public case alone performed on new fixture in run05."
+    }
+  ],
+  "schema": {
+    "passed": 2,
+    "failed": 0,
+    "conversionOrNormalizationRequested": false,
+    "results": [
+      {
+        "sha256": "ab87210e2a029f235f447e822f431c7266e0e4cb83eba7d7d264a599118f358b",
+        "status": "PASS",
+        "warnings": [],
+        "fileUnchanged": true,
+        "dataUnchanged": true
+      },
+      {
+        "sha256": "ab87210e2a029f235f447e822f431c7266e0e4cb83eba7d7d264a599118f358b",
+        "status": "PASS",
+        "warnings": [],
+        "fileUnchanged": true,
+        "dataUnchanged": true
+      }
+    ]
+  },
+  "originalCoreUnchanged": true,
+  "readOnlyDomObserversOnly": true,
+  "noInternalIdeApi": true,
+  "noSyntheticDomEvents": true,
+  "noPhysicalMouse": true,
+  "noKernelExecution": true,
+  "applications": {
+    "retained": [
+      "20261105-d3-03",
+      "20261105-d3-04",
+      "20261105-d3-05"
+    ],
+    "endSignalReceived": false,
+    "priorStartup01and02AlreadyExited": true
+  },
+  "limitations": [
+    "Successful routes use VS Code1.145.0 and explicit Stop Editing Cell; original manual discrepancy was1.143.1 and its exact key dispatch/focus were not logged.",
+    "Current observations do not establish original root cause, universal Undo/Redo reliability, atomic editing or product recovery.",
+    "API bridge command is invoked from palette; direct keyboard and public command have different dispatch preparation.",
+    "Partial metadata application despite false remains observed. Original D3 manual failure remains unchanged.",
+    "No minimized/hidden/background reliability trial; no manual UI pass, formal framework/CI adoption or main merge."
+  ],
+  "taskComplete": false,
+  "hostDesignStartPrerequisiteSatisfied": false,
+  "mainReflected": false
+}
