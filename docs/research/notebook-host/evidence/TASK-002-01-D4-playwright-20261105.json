@@ -1,0 +1,317 @@
+{
+  "localDate": "2026-11-05",
+  "case": "D4-queued-edit-rerequest-save",
+  "scope": "One approved D4 queued-edit, same-cell repeat UI input, completion and save observation",
+  "outcome": "observed_saved_changed_result",
+  "startedAt": "2026-11-04T15:57:47.977Z",
+  "stages": [
+    {
+      "name": "electron_connected",
+      "at": "2026-11-04T15:57:48.508Z"
+    },
+    {
+      "name": "approved_fixture_folder_trusted",
+      "at": "2026-11-04T15:57:55.182Z"
+    },
+    {
+      "name": "run_all_kernel_prompt_completed",
+      "at": "2026-11-04T15:58:00.322Z"
+    },
+    {
+      "name": "kernel_preflight_saved",
+      "at": "2026-11-04T15:58:06.181Z"
+    },
+    {
+      "name": "blocker_started",
+      "at": "2026-11-04T15:58:11.510Z"
+    },
+    {
+      "name": "repeat_standard_ui_key_sent_once",
+      "at": "2026-11-04T15:58:13.336Z"
+    },
+    {
+      "name": "saved_source_output_metadata_observed",
+      "at": "2026-11-04T15:59:41.027Z"
+    }
+  ],
+  "runnerSha256": "92d901d516cadf64e06a128782361f6a09c6a50edbac63e2d5f85b6ac54b10c6",
+  "diagnosticHashes": {
+    "extension.cjs": "0eda3f81faca4fe08b3ac27a756dac47a9e922fe27aa46fb880393b62559a5a3",
+    "model.cjs": "b3b7fbc4a801088846e66e6adfd768b54d71b8d23f6dda43a8aae4b7f95d22f8",
+    "fixtures.cjs": "d0511c1dde2bde2dd0edc06f1be3a114dac93ec8669a7de26b15ce1e680e365c",
+    "package.json": "ac666b8b731db226f53cb4d605ac9cebfcfb3493bed94b45ce6aa9b5f3a951b2"
+  },
+  "environment": {
+    "seq": 1,
+    "at": "2026-11-04T15:57:57.665Z",
+    "elapsedMs": 1.0531,
+    "step": "startup",
+    "kind": "environment",
+    "session": "2026-11-04T15-57-57-664Z-8824",
+    "build": {
+      "root": "$REPO",
+      "workspace": "$REPO\\results\\task-002-01\\workspace",
+      "preparedAt": "2026-11-01T14:01:33.456Z",
+      "base": "faa27ce3188ddad4ce350fc302c72ea0e21d2322",
+      "branch": "codex/task-002-phase1-resume-20261101",
+      "diff": "",
+      "node": "v24.14.1",
+      "hashes": {
+        "package.json": "ac666b8b731db226f53cb4d605ac9cebfcfb3493bed94b45ce6aa9b5f3a951b2",
+        "extension.cjs": "0eda3f81faca4fe08b3ac27a756dac47a9e922fe27aa46fb880393b62559a5a3",
+        "model.cjs": "b3b7fbc4a801088846e66e6adfd768b54d71b8d23f6dda43a8aae4b7f95d22f8",
+        "fixtures.cjs": "d0511c1dde2bde2dd0edc06f1be3a114dac93ec8669a7de26b15ce1e680e365c",
+        "smoke.cjs": "70ca0a344dbaf3df2e18d46c5b208f97895cfb903d4d3f6a7a8eb5cf7610bfb0",
+        "automated.cjs": "a2822bdd175e395607060149d03111395ecc6375df9220edcc28a1a03bda0d5a",
+        "structure.cjs": "e9acd7c6783f2acb60baa8009de77e076b5c8aa632502b940f2abb146a971d21",
+        "structure-delete.cjs": "18a2a8102fd05a10d3731678030ae4081f985655c852c75538a1950b8f5304b3",
+        "structure-ids.cjs": "5dfbebdc645ca52d7ed164fff9ea839b1b0578189742c6327ba9a63927ede1e9",
+        "structure-focus.cjs": "bfbd54fe5c043d620dfd0f341d7caec6199d8344f7e3d6299448c70db00ed817",
+        "recovery.cjs": "1b160c106cbf69b5e05fd13f4732dc3db07e79b938bed17f5018b93c3051c23d",
+        "execution-auto.cjs": "5f04f253066de2eb504331f6377892bb8eecf29dd2af80d03727f7d61712b709",
+        "execution-save-followup.cjs": "403913a80e1ed1bf41d51939b92ca0f757489aba3fc0722ec97b703f40740002",
+        "execution-save-followup-ui.cjs": "348ec207bbb031660f19a3081571c4d19dcbc08deb9703ca9cdec164ad3f7588",
+        "running-close.cjs": "bb1db9e5f10a5d0af0af44966b910bc348b8568f8e6fcf76eb81cf724d81d90f"
+      }
+    },
+    "vscode": "1.145.0",
+    "appName": "Visual Studio Code",
+    "platform": "win32",
+    "arch": "x64",
+    "node": "v24.22.1",
+    "electron": "43.8.3",
+    "extensions": [
+      {
+        "id": "ms-toolsai.jupyter",
+        "version": "2025.9.1",
+        "active": true
+      },
+      {
+        "id": "ms-python.python",
+        "version": "2026.10.0",
+        "active": false
+      },
+      {
+        "id": "ms-python.vscode-python-envs",
+        "version": "1.41.2026110401",
+        "active": true
+      },
+      {
+        "id": "vscode.ipynb",
+        "version": "10.0.0",
+        "active": true
+      }
+    ],
+    "notObservable": [
+      "kernel submitted source",
+      "internal execution ID",
+      "kernel cancellation completion from summary alone"
+    ]
+  },
+  "kernelEnvironment": {
+    "python": "3.14.3 (tags/v3.14.3:323c59a, Feb  3 2026, 16:04:56) [MSC v.1944 64 bit (AMD64)]",
+    "ipykernel": "7.4.0",
+    "jupyter_client": "8.10.0"
+  },
+  "timing": {
+    "blockerStartedEventAt": "2026-11-04T15:58:09.143Z",
+    "mutationReturnAt": "2026-11-04T15:58:12.672Z",
+    "repeatInputAt": 1793807893332,
+    "blockerStartTime": 1793807889123,
+    "blockerEndTime": 1793807979127,
+    "downstreamStartTime": 1793807979138,
+    "downstreamEndTime": 1793807979141
+  },
+  "beforeMutation": {
+    "seq": 30,
+    "notebookVersion": 11,
+    "downstreamSource": "print('queued ORIGINAL')\n",
+    "downstreamOutputs": 0,
+    "downstreamStartTimeObserved": false
+  },
+  "mutation": {
+    "returned": true,
+    "returnSeq": 36,
+    "afterSeq": 37
+  },
+  "repeatInput": [
+    {
+      "at": 1793807893332,
+      "trusted": true,
+      "key": "Enter",
+      "ctrl": true,
+      "alt": true,
+      "inNotebook": true,
+      "inEditor": false
+    }
+  ],
+  "focus": {
+    "at": 1793807893326,
+    "role": "list",
+    "inNotebook": true,
+    "inCellEditor": false
+  },
+  "saved": {
+    "eventSeq": 51,
+    "snapshotSeq": 52,
+    "at": "2026-11-04T15:59:40.197Z",
+    "version": 25,
+    "dirty": false,
+    "sha256": "85f7312edc13e1b0a587a55b45c7ec21d52a55ed6950677bee0b490cc74cc3a8",
+    "cells": [
+      {
+        "index": 0,
+        "source": "import time\nprint('blocker started', flush=True)\ntime.sleep(90)\nprint('blocker finished', flush=True)\n",
+        "cellId": "task00201-D4-queued-edit-0",
+        "metadata": {
+          "outsideDiagnosticOwner": {
+            "sentinel": "keep-blocker"
+          },
+          "task00201Diagnostic": {
+            "burst": 0,
+            "committed": 0,
+            "draft": 0,
+            "label": "blocker",
+            "probeOnly": true
+          }
+        },
+        "executionCount": 1,
+        "executionSummary": {
+          "timing": {
+            "startTime": 1793807889123,
+            "endTime": 1793807979127
+          },
+          "executionOrder": 1,
+          "success": true
+        },
+        "outputs": [
+          {
+            "name": "stdout",
+            "output_type": "stream",
+            "text": [
+              "blocker started\n",
+              "blocker finished\n"
+            ]
+          }
+        ],
+        "sourceMetadataCountAndOutputHashesMatch": true
+      },
+      {
+        "index": 1,
+        "source": "print('diagnostic CHANGED current source')\n",
+        "cellId": "task00201-D4-queued-edit-1",
+        "metadata": {
+          "outsideDiagnosticOwner": {
+            "sentinel": "keep-queued"
+          },
+          "task00201Diagnostic": {
+            "burst": 0,
+            "committed": 0,
+            "draft": 0,
+            "label": "queued",
+            "probeOnly": true
+          }
+        },
+        "executionCount": 2,
+        "executionSummary": {
+          "timing": {
+            "startTime": 1793807979138,
+            "endTime": 1793807979141
+          },
+          "executionOrder": 2,
+          "success": true
+        },
+        "outputs": [
+          {
+            "name": "stdout",
+            "output_type": "stream",
+            "text": [
+              "diagnostic CHANGED current source\n"
+            ]
+          }
+        ],
+        "sourceMetadataCountAndOutputHashesMatch": true
+      }
+    ]
+  },
+  "schema": {
+    "passed": 2,
+    "failed": 0,
+    "conversionOrNormalizationRequested": false,
+    "results": [
+      {
+        "sha256": "85f7312edc13e1b0a587a55b45c7ec21d52a55ed6950677bee0b490cc74cc3a8",
+        "status": "PASS",
+        "warnings": [],
+        "fileUnchanged": true,
+        "dataUnchanged": true
+      },
+      {
+        "sha256": "adf436bae4f98f36d890926cf0e0c560b054bff4c989e4ce04c97b633ff69cb7",
+        "status": "PASS",
+        "warnings": [],
+        "fileUnchanged": true,
+        "dataUnchanged": true
+      }
+    ]
+  },
+  "keybindingReference": {
+    "commit": "a717861c07586a53d83b80d742cd3f59b20a6273",
+    "path": "src/vs/workbench/contrib/notebook/browser/controller/executeActions.ts",
+    "lines": [
+      260,
+      273
+    ],
+    "windowsKey": "Control+Alt+Enter"
+  },
+  "rawLog": {
+    "sha256": "7f2d416edcb6780495bccd45467bd00435d3512927a8c7fd7edf0615af35cc12",
+    "events": 52
+  },
+  "isolation": {
+    "newProfile": true,
+    "newFolder": true,
+    "profileCopied": false,
+    "normalSettingsUnchanged": true,
+    "coreUnchanged": true,
+    "loopbackDebugRequested": true,
+    "noInternalIdeApi": true,
+    "appRuntimeMetadataRead": "process.debugPort only; not editor state",
+    "noLlmGui": true,
+    "noPhysicalMouse": true,
+    "noSyntheticDomEvents": true
+  },
+  "cleanup": {
+    "status": "window retained until user end signal",
+    "capturedDiagnosticPorts": [
+      50942,
+      50944
+    ],
+    "kernelCount": 2,
+    "kernelPorts": [
+      9002,
+      9004,
+      9003,
+      9001,
+      9000,
+      9007,
+      9009,
+      9008,
+      9006,
+      9005
+    ],
+    "secretKeysIncluded": false,
+    "next": "After user end cue, close dedicated app, then CLI check all twelve captured ports with runtime-ports.cjs --phase check. No close/port disappearance claimed yet."
+  },
+  "limitations": [
+    "Old queued-edit exact-run saved JSON is still absent; this is a new versioned observation, not recovered old evidence.",
+    "One trusted repeat key input is observed; actual command acceptance count, internal execution ID and submitted source are not observed.",
+    "Changed output and saved current source do not prove current formal product configuration success, atomicity or a production recovery mechanism.",
+    "No minimized/hidden/background stability trial, no physical kernel-stop guarantee, no unrelated D4/D5 reruns.",
+    "Research branch only; no main merge, formal framework/CI adoption or manual-UI pass."
+  ],
+  "oldGapPreserved": true,
+  "taskComplete": false,
+  "hostDesignStartPrerequisiteSatisfied": false,
+  "mainReflected": false
+}
