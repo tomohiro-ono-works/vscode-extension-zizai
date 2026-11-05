@@ -69,7 +69,26 @@
     "VSIX installation/product replacement",
     "clean rerun of the amended all-in-one runner"
   ],
-  "cleanup": "dedicated window retained until user end signal; two debug ports not yet closed; no kernel launched",
+  "cleanup": {
+    "userEndSignalReceived": true,
+    "verifiedAt": "2026-11-05T14:40:24.552152+00:00",
+    "dedicatedPid": 24428,
+    "processExited": true,
+    "ports": [
+      {
+        "port": 50996,
+        "listeners": 0
+      },
+      {
+        "port": 50998,
+        "listeners": 0
+      }
+    ],
+    "kernelLaunched": false,
+    "method": "dedicated-window Playwright CDP close request; independent tasklist/netstat verification",
+    "originalStdinUnavailable": true,
+    "closeClientExitedBeforeWritingItsCompletionReport": true
+  },
   "artifacts": [
     {
       "path": "results/20261105-path-completion-01/result.local.json",
@@ -110,6 +129,10 @@
     {
       "path": "results/20261105-path-completion-01/file-inserted.png",
       "sha256": "915552f6750af8287d0de724889b82f79c2b602e3bb037b93e3fcc88d0b09acb"
+    },
+    {
+      "path": "results/20261105-path-completion-01/closed-verified.local.json",
+      "sha256": "9b0fcd7e8eaa5704935926e6028308ae36c22c8f2baa4d13ce84fe0768f4df12"
     }
   ]
 }
