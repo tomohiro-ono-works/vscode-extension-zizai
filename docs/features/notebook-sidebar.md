@@ -18,6 +18,8 @@
 
 ### 今回の試作結果と残る確認
 
+2026-11-05追記：利用者の実画面確認への「OKです。」を受け、[固定Playwright](../research/notebook-host/playwright-probe/path-completion.cjs)で、同じ専用VS Codeウィンドウの@folder選択→標準簡易ダイアログ→literal挿入・保存、@fileの同経路、キャンセル後の空文字保持を確認した。[証跡](../research/notebook-ui/evidence/path-completion-20261105.json)。Notebookのmetadata・空出力・未実行を各保存時に確認し、コマンドパレットは使っていない。製品情報取得の接続エラー、C:／c:の比較、簡易ファイル選択の確定操作で一旦停止した記録を保持し、既存ウィンドウへのPlaywright再接続で継続した。修正は検査側だけで試作拡張のsourceは不変。単一の初回成功・修正済み一体runnerのクリーン再実行とはしない。以下の「実画面未確認」は初回CLI試作時の履歴で、今回観測した3経路について更新する。OS標準ダイアログ・Remote・製品導入は未確認のまま。専用ウィンドウは終了合図待ちで保持している。
+
 依存追加なしで研究用拡張を実装した。`node --test tests/notebook-ui-gate/path-completion/extension.test.cjs` は6件合格・0失敗。補完提示時にダイアログを開かないこと、file選択とfolder選択、引用符・日本語・backslash・snippet記号を含むパスのliteral挿入、キャンセル、選択待機中の対象変更／編集／close、非file URIを扱わないことを公開APIのモックで確認した。先行する未実装時の5件の失敗は想定どおりで、`logs/path-completion-red-20261105.txt` に保持。実装後結果は `logs/path-completion-cli-20261105.txt`。構文もCLIで確認した。
 
 実際のVS Codeでの補完順位・候補確定からの発火、標準ダイアログでの選択・キャンセル、Notebookへの実反映は未確認。VSIX生成・導入・製品置換・GUI／kernel起動は行っていない。Remote／WSL／リモートkernelへのパス適合、セル以外のPythonファイル、関数引数内や既存文字列内等の入力文脈の使い勝手は今回の成立確認に含めない。これらを通常経路の合格へ読み替えず、まずローカルNotebookの1経路を実画面で確認する。旧フォーム・metadata設計の全体再編やTaskの完了判定は、この小さな試作だけで行わない。

@@ -1,0 +1,115 @@
+{
+  "case": "Notebook path completion: folder / file / cancellation",
+  "dateJST": "2026-11-05",
+  "extensionSourceCommit": "cf6b807",
+  "extensionSha256": "a1d1cfcd0f475a741dcbcf1a91017a364b7ebb60ceced637a5f9682689409541",
+  "vscode": "1.145.0 (local executable product version)",
+  "playwright": "1.64.1",
+  "node": "v24.14.1",
+  "route": "CLI-launched fixed Playwright; real Notebook editor and VS Code standard simple file dialog",
+  "outcome": "observed in one dedicated window through continuation scripts; not a clean first-attempt pass",
+  "stages": [
+    {
+      "name": "existing_dedicated_window_reconnected",
+      "at": "2026-11-05T14:24:58.702Z"
+    },
+    {
+      "name": "dedicated_fixture_trusted",
+      "at": "2026-11-05T14:25:02.894Z"
+    },
+    {
+      "name": "folder_completion_opened_standard_dialog",
+      "at": "2026-11-05T14:25:04.896Z"
+    },
+    {
+      "name": "folder_literal_inserted_and_saved",
+      "at": "2026-11-05T14:29:28.595Z"
+    },
+    {
+      "name": "file_literal_inserted_and_saved",
+      "at": "2026-11-05T14:34:02.927Z"
+    },
+    {
+      "name": "cancel_preserved_empty_literal_and_surrounding_code",
+      "at": "2026-11-05T14:34:04.971Z"
+    }
+  ],
+  "checks": {
+    "folder": {
+      "sourceMatches": true,
+      "metadataPreserved": true,
+      "outputsEmpty": true,
+      "executionCount": null
+    },
+    "file": {
+      "sourceMatches": true,
+      "metadataPreserved": true,
+      "outputsEmpty": true,
+      "executionCount": null
+    },
+    "cancel": {
+      "sourceMatches": true,
+      "metadataPreserved": true,
+      "outputsEmpty": true,
+      "executionCount": null
+    }
+  },
+  "commandPaletteUsed": false,
+  "pythonExecuted": false,
+  "userProfileModified": false,
+  "initialFailuresPreserved": [
+    "startup product metadata query failed with garbage-collected promise",
+    "comparison rejected C: to c: URI drive-letter normalization",
+    "file-picker acceptance needed its observed confirmation button"
+  ],
+  "repairScope": "runner metadata query, Windows drive-letter comparison, and Playwright file-picker confirmation only; prototype extension unchanged",
+  "notVerified": [
+    "OS-native file dialog",
+    "Remote/WSL/kernel path mapping",
+    "VSIX installation/product replacement",
+    "clean rerun of the amended all-in-one runner"
+  ],
+  "cleanup": "dedicated window retained until user end signal; two debug ports not yet closed; no kernel launched",
+  "artifacts": [
+    {
+      "path": "results/20261105-path-completion-01/result.local.json",
+      "sha256": "c672eef07aec6ba49bfc37b7fe17a55b62d9a79da7ec30b6de62020ce68f196d"
+    },
+    {
+      "path": "results/20261105-path-completion-01/result-resume.local.json",
+      "sha256": "167f4c0112f1c298b03c60dd39fc326eab4df55c60809a9719aae9d1d5757d97"
+    },
+    {
+      "path": "results/20261105-path-completion-01/result-complete.local.json",
+      "sha256": "63d39122ee01d6bd03951d67762c4b81a43722aafb57a75a3bc2d3ef733d1bee"
+    },
+    {
+      "path": "results/20261105-path-completion-01/result-final.local.json",
+      "sha256": "78d491ce515588bd45718f39bd6ae94bb998b9691d6f306d78c0eddcf7734c5a"
+    },
+    {
+      "path": "results/20261105-path-completion-01/resume.cjs",
+      "sha256": "311898beddd73fc41c11dd0a43675175f6d42b6cd0ea69eb2b5e21a3b58c6e36"
+    },
+    {
+      "path": "results/20261105-path-completion-01/resume2.cjs",
+      "sha256": "5dca9bdf779076d3b624de76d795f590cb9c22fd25805583d799209a4118ff9f"
+    },
+    {
+      "path": "results/20261105-path-completion-01/resume3.cjs",
+      "sha256": "fabd319a38bf9567022fb64a4177cf23ef787f4c5d5ef863353cda36db275dcc"
+    },
+    {
+      "path": "results/20261105-path-completion-01/folder-dialog.png",
+      "sha256": "16cc8102c641ac0824ab64cea702d0e4651df1ab8dbe625954ebfc7a8e49b3a3"
+    },
+    {
+      "path": "results/20261105-path-completion-01/folder-inserted.png",
+      "sha256": "fb9ed2a922fd3a5650681acccd763a3f0404a7d4e15372099bd0fdf38a6d229a"
+    },
+    {
+      "path": "results/20261105-path-completion-01/file-inserted.png",
+      "sha256": "915552f6750af8287d0de724889b82f79c2b602e3bb037b93e3fcc88d0b09acb"
+    }
+  ]
+}
