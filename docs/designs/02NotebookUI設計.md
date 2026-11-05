@@ -1,5 +1,7 @@
 # 02 Notebook UI詳細設計 — Zizai
 
+**現行の変更範囲（2026-11-05）：** [スニペット入力支援への変更](../decisions/2026-10-22-notebook-sidebar.md#snippet-input-direction-20261105)を優先する。以下の独自選択UI・サイドバーフォーム・下書き／確定・フォーム用metadata・旧モード切替は変更前の設計記録。標準Notebook編集・保存・実行と、今回廃止していない機能要件は維持する。新しい入口の実測と移行範囲は[既存の個別設計](../features/notebook-sidebar.md#path-completion-research-20261105)に記録し、旧UIテストを新方式の合格として転用しない。
+
 更新日：2026-10-26
 
 対象：VS Code 上の Jupyter Notebook（`.ipynb`）。Kiroは任意の参考利用で、動作保証・必須検証の対象外

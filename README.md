@@ -1,5 +1,7 @@
 # Zizai — VS Code 拡張機能
 
+**2026-11-05の現行方針：** 独自フォーム・セル側の処理選択UIをやめ、Notebook内のスニペット補完を入口にする。[変更根拠と維持する要件](docs/decisions/2026-10-22-notebook-sidebar.md#snippet-input-direction-20261105)。@file／@folderの補完選択→標準簡易ダイアログ→Python文字列挿入は研究用拡張で確認済み。挿入後のコードを利用者が編集し、標準Jupyterで実行する。コマンドパレット・IPython magicは使わない。全処理スニペット・製品導入／配布は未完了。以下のフォーム・下書き／確定・設定metadataの記述は変更前の設計記録で、新しい入力支援の実装条件にはしない。他の既存機能を一括廃止した意味ではない。
+
 Jupyter Notebook（`.ipynb`）のセル内でコネクタとアクションを選び、フォームの設定から通常の Python コードを生成する拡張機能です。生成されたコードを確認・編集し、Jupyter 標準のセル実行で処理します。
 
 正式対象はVS Codeです。Kiroは任意の参考利用で、動作保証・必須検証・出荷判定の対象には含めません。詳細フォームはサイドバーに表示し、Notebookとの連携は正式対象版のVS Codeで確認します。[対象IDEの判断記録](docs/decisions/2026-10-22-vscode-distribution-scope.md)を参照してください。
