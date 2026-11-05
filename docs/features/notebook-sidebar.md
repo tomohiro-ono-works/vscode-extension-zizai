@@ -1,5 +1,29 @@
 # Notebookのサイドバー設定UI — 設計
 
+<a id="path-completion-research-20261105"></a>
+## 2026-11-05：フォームUIからスニペット入力支援への方針変更・最小試作
+
+利用者は「UIは無くしましょうか。スニペットにしてコマンドベースで選択できるようにしたいです。」と提案し、「コマンドパレットは一切使わないです。」と指定した。その後「特定スニペット時に拡張機能が発火してフォルダ指定できるようにしたいです。」への、セル内の@file／@folder補完選択→標準ダイアログ→Python文字列挿入案に「OKです。」と回答した。この方針を次の設計入力とし、下記の旧サイドバー設計を新規実装する作業は進めない。旧承認・調査記録は保持する。全既存Taskの責務・完了条件を、この試作だけで一括変更・充足したとはしない。
+
+今回の実施単位は、Python Notebookセルで補完を選んだときだけファイル／フォルダ選択を開く、小さな研究用拡張。IPythonセルマジック、コマンドパレット、独自フォーム、Python実行、metadata同期は使用しない。挿入したコードを利用者が直接編集・標準Jupyterで実行する。単なる入力・候補表示だけではダイアログを開かない。
+
+### 試作の範囲と手順
+
+1. `tests/notebook-ui-gate/path-completion/extension.test.cjs` に、補完の確定後だけ起動すること、file／folderの選択、Python文字列の引用、キャンセル、待機中に対象セルが変わった際の誤編集防止のCLI確認を置く。依存追加なしでnode:testを使い、まず未実装の失敗を確認する。
+2. 同じフォルダの `extension.cjs` と `package.json` に、PythonのNotebookセルだけを対象とするCompletionItem・内部command・標準showOpenDialogを実装する。補完は空文字literalを挿入し、選択後にその挿入箇所だけを置換する。キャンセルは空文字を残し、元の周囲コード・metadata・出力を変更しない。初回試作はローカルfile URIに限定し、Remote向けのパス変換を推測しない。
+3. 補完確定後の対象document・版・挿入範囲を確認し、ダイアログ中に別セルへ移動・編集・closeした場合は選択結果を書き込まない。パスはSnippetStringへ再展開せず、Python文字列として通常のtext editで挿入する。パスやコードをログへ出さない。
+4. CLIテストと構文・差分を確認して研究ブランチへcommit／pushし、結果をIssue #10へ記録する。実画面での補完・ダイアログ・Notebook反映は別の確認であり、APIモックの合格で代用しない。新たなGUI起動・操作は今回行わない。
+
+スニペット後のcommandは[CompletionItem.command](https://code.visualstudio.com/api/references/vscode-api#CompletionItem)、標準選択は[showOpenDialog](https://code.visualstudio.com/api/references/vscode-api#window.showOpenDialog)を使う。VS Code標準の静的snippet JSONだけに任意commandを追加できる、という設計ではない。
+
+### 今回の試作結果と残る確認
+
+依存追加なしで研究用拡張を実装した。`node --test tests/notebook-ui-gate/path-completion/extension.test.cjs` は6件合格・0失敗。補完提示時にダイアログを開かないこと、file選択とfolder選択、引用符・日本語・backslash・snippet記号を含むパスのliteral挿入、キャンセル、選択待機中の対象変更／編集／close、非file URIを扱わないことを公開APIのモックで確認した。先行する未実装時の5件の失敗は想定どおりで、`logs/path-completion-red-20261105.txt` に保持。実装後結果は `logs/path-completion-cli-20261105.txt`。構文もCLIで確認した。
+
+実際のVS Codeでの補完順位・候補確定からの発火、標準ダイアログでの選択・キャンセル、Notebookへの実反映は未確認。VSIX生成・導入・製品置換・GUI／kernel起動は行っていない。Remote／WSL／リモートkernelへのパス適合、セル以外のPythonファイル、関数引数内や既存文字列内等の入力文脈の使い勝手は今回の成立確認に含めない。これらを通常経路の合格へ読み替えず、まずローカルNotebookの1経路を実画面で確認する。旧フォーム・metadata設計の全体再編やTaskの完了判定は、この小さな試作だけで行わない。
+
+---
+
 更新日：2026-11-05。担当：[TASK-001-03](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/10)。独自の実行状態廃止は[今回の判断](../decisions/2026-10-23-python-foundation.md#standard-execution-display-20261105)を参照。
 
 **配置方針に続き、本書の操作・状態・通知の案は2026-10-23の利用者の「そうですね。進めてOKです。」で承認された。[承認記録](../decisions/2026-10-22-notebook-sidebar.md)を参照する。実装計画の作成へ進む承認であり、正式な共通契約の確定・製品実装・PR統合の完了とは区別する。**

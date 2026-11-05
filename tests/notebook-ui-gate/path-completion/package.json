@@ -1,0 +1,12 @@
+{
+  "name": "zizai-path-completion-research",
+  "displayName": "Zizai Path Completion RESEARCH",
+  "description": "Research-only @file/@folder completion. Not the product extension.",
+  "version": "0.0.1",
+  "publisher": "zizai-lab",
+  "private": true,
+  "engines": { "vscode": "^1.105.0" },
+  "main": "./extension.cjs",
+  "activationEvents": ["onNotebook:jupyter-notebook"],
+  "scripts": { "test": "node --test extension.test.cjs" }
+}
