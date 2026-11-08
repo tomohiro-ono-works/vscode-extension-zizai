@@ -20,7 +20,7 @@ async function main() {
       return [...root.querySelectorAll("span")].filter(element => getComputedStyle(element, "::before").content === JSON.stringify(text));
     }
   }));
-  const { values } = parseArgs({ options: { vscode: { type: "string" }, out: { type: "string" }, manual: { type: "boolean" }, hover: { type: "boolean", default: true } } });
+  const { values } = parseArgs({ options: { vscode: { type: "string" }, out: { type: "string" }, manual: { type: "boolean" }, hover: { type: "boolean", default: true }, human: { type: "boolean" } } });
   assert(values.vscode && values.out, "--vscode and --out are required");
   const out = path.resolve(root, values.out);
   const relative = path.relative(path.join(root, "results"), out);
@@ -55,7 +55,8 @@ async function main() {
   const report = { startedAt: new Date().toISOString(), outcome: "in_progress", stages: [],
     playwright: researchRequire("playwright/package.json").version, node: process.version,
     commandPaletteUsed: false, kernelExecuted: false, userProfileModified: false, ports: [],
-    mode: values.hover ? "hover" : "ctrl-click", hoverGeometry: [] };
+    mode: values.hover ? "hover" : "ctrl-click", hoverGeometry: [],
+    continuousPointerMovement: !!values.human, savesBetweenChoices: !values.human };
   const save = () => fs.writeFile(path.join(out, "result.local.json"), JSON.stringify(report, null, 2));
   async function stage(name) { report.stages.push(name); await save(); console.log(name); }
   let app, page;
@@ -147,7 +148,37 @@ async function main() {
         assert(sameColumn, "Menu must share [C]'s horizontal position");
         assert.equal(await page.locator(".quick-input-widget").isVisible(), false);
         await page.screenshot({ path: path.join(out, "hover-" + value + ".png") });
-        await link.click({ modifiers: [] });
+        if (values.human) {
+          const box = await link.boundingBox();
+          assert(box, "Candidate must have a visible target");
+          const from = { x: hintBox.x + hintBox.width / 2, y: hintBox.y + hintBox.height / 2 };
+          const to = { x: box.x + box.width / 2, y: box.y + box.height / 2 };
+          const steps = Math.ceil(Math.hypot(to.x - from.x, to.y - from.y));
+          report.pointer = { value, from, to, steps, stepDelayMs: 8 };
+          for (let step = 1; step <= steps; step += 1) {
+            await page.mouse.move(from.x + (to.x - from.x) * step / steps, from.y + (to.y - from.y) * step / steps);
+            await new Promise(resolve => setTimeout(resolve, 8));
+            if (!await link.isVisible()) {
+              report.pointer.disappearedAtStep = step;
+              throw Error("Hover disappeared while moving from [C] to " + value);
+            }
+          }
+          await page.mouse.down(); await page.mouse.up();
+          let reflected = false;
+          for (let attempt = 0; attempt < 30; attempt += 1) {
+            const text = await editor.locator(".view-lines").innerText();
+            if (text.includes('"' + value + '"')) { reflected = true; break; }
+            await new Promise(resolve => setTimeout(resolve, 100));
+          }
+          assert(reflected, "Selected value must appear in the editor without saving first");
+          if (value === "csv") {
+            report.csvBeforeSave = { reflected: true };
+            await stage("csv_reflected_without_save");
+            continue;
+          }
+        } else {
+          await link.click({ modifiers: [] });
+        }
       } else {
       await hint.click({ modifiers: ["Control"] });
       const input = page.locator(".quick-input-widget input").first();
