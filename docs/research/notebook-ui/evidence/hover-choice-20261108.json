@@ -1,0 +1,109 @@
+{
+  "outcome": "observed",
+  "mode": "hover",
+  "playwright": "1.64.1",
+  "node": "v24.14.1",
+  "stages": [
+    "dedicated_workbench_ready",
+    "inline_C_visible",
+    "csv_chosen_and_saved",
+    "excel_chosen_and_saved"
+  ],
+  "hoverGeometry": [
+    {
+      "value": "csv",
+      "hint": {
+        "x": 562.6934814453125,
+        "y": 170.90774536132812,
+        "width": 28.67559814453125,
+        "height": 17.142868041992188
+      },
+      "menu": {
+        "x": 555.8631591796875,
+        "y": 88.85417175292969,
+        "width": 93.98809814453125,
+        "height": 80.99702453613281
+      },
+      "direction": "above",
+      "sameColumn": true
+    },
+    {
+      "value": "excel",
+      "hint": {
+        "x": 562.6934814453125,
+        "y": 170.90774536132812,
+        "width": 28.67559814453125,
+        "height": 17.142868041992188
+      },
+      "menu": {
+        "x": 555.8631591796875,
+        "y": 88.85417175292969,
+        "width": 93.98809814453125,
+        "height": 80.99702453613281
+      },
+      "direction": "above",
+      "sameColumn": true
+    }
+  ],
+  "csv": {
+    "sourceMatches": true,
+    "metadataPreserved": true,
+    "executionCount": null,
+    "outputsEmpty": true
+  },
+  "excel": {
+    "sourceMatches": true,
+    "metadataPreserved": true,
+    "executionCount": null,
+    "outputsEmpty": true
+  },
+  "commandPaletteUsed": false,
+  "kernelExecuted": false,
+  "userProfileModified": false,
+  "vscode": "1.145.2",
+  "dateJST": "2026-11-08",
+  "route": "Playwright hover on generated [C], click candidate link without modifiers, save",
+  "renderer": "TextEditorDecoration + HoverProvider with explicit literal range",
+  "windowClosed": true,
+  "debugListenersAfterClose": 0,
+  "localArtifacts": "results/task009-hover-20261108-10/ (ignored, preserved locally)",
+  "priorAttempts": [
+    {
+      "runs": "01-03",
+      "result": "command reached but encoded URI was normalized; target lookup failed"
+    },
+    {
+      "runs": "04",
+      "result": "click and save succeeded with old Ctrl-click footer; not final renderer"
+    },
+    {
+      "runs": "05",
+      "result": "footer removed; first hover shifted left outside marker column"
+    },
+    {
+      "runs": "06",
+      "result": "test selector used transient decoration class; failed before hover"
+    },
+    {
+      "runs": "07-09",
+      "result": "decoration alone did not display candidate hover on marker"
+    },
+    {
+      "runs": "10",
+      "result": "explicit HoverProvider range; initial choice and reselection passed including geometry"
+    }
+  ],
+  "limits": [
+    "only one bundled field, not parent/child choices or path selection",
+    "native hover placement is not pixel positioning controlled by extension",
+    "manual user review not automatically graded",
+    "no Python magic execution or VSIX installation"
+  ],
+  "sourceSha256": {
+    "apps/extension/extension.cjs": "08c03769d59915f49c6183895ba85d482269026972b8699a43a2680166d7ba32",
+    "apps/extension/selection.cjs": "7ab761527da4e7f1ff5a4fe58974510708e845bc97c728aa91f9bcf6fab28ef9",
+    "apps/extension/definitions.json": "3e65197ecfcb2dc4b075861a0bf0b08ed1d8deae8f529035ec6a7b23e318cecf",
+    "apps/extension/package.json": "c9c0da7012261be361628542422b76456a72270fc3d94cbdace40fbbd980739d",
+    "tests/e2e/inline-choice.cjs": "23487a2eff7973f638e4f589ecdb47404862f7d91cd348486278064c3c325fb9"
+  }
+}
