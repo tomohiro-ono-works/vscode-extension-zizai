@@ -6,7 +6,7 @@
 <a id="reference-status-20261102"></a>
 ## 適用範囲・参照・旧資料（2026-11-02）
 
-本ファイルの配置はリポジトリ直下の `coding-rules.md`。[TASK-006-06 / #71](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/71)で、旧アプリ依存の規則を[削除前のアーキテクチャ記録](https://github.com/tomohiro-ono-works/vscode-extension-zizai/blob/65631504f146a4dfa2ab52d557e58db53c2e6a00/docs/features/architecture.md)・[開発手順](docs/development.md)・[Taskルール](docs/tasks/task-rules.md)に整合した。これらの既存仕様・Task制約・利用者の承認範囲を上書きせず、個別API・通信・metadata等の未決を本規則だけで正式採用しない。
+本ファイルの配置はリポジトリ直下の `coding-rules.md`。[旧規約整理のPR #72](https://github.com/tomohiro-ono-works/vscode-extension-zizai/pull/72)で、旧アプリ依存の規則を[削除前のアーキテクチャ記録](https://github.com/tomohiro-ono-works/vscode-extension-zizai/blob/65631504f146a4dfa2ab52d557e58db53c2e6a00/docs/features/architecture.md)・[開発手順](docs/development.md)・[Taskルール](docs/tasks/task-rules.md)に整合した。これらの既存仕様・Task制約・利用者の承認範囲を上書きせず、個別API・通信・metadata等の未決を本規則だけで正式採用しない。
 
 - 参照パスだけを修正した時点の[規則全文・旧承認・旧参照表記](https://github.com/tomohiro-ono-works/vscode-extension-zizai/blob/46113b95901d7102d3482f1b7c7382c0210974d4/coding-rules.md)を固定commitで保持する。旧日本語化日2026-10-04、旧改訂日2026-10-05、旧 `Status: Current Specification`／`Last verified: 2026-08-21`、TASK-044の決裁表記は原資料の記録であり、本プロジェクトで取得した承認ではない。
 - [旧アプリ文書管理資料](https://github.com/tomohiro-ono-works/vscode-extension-zizai/blob/65631504f146a4dfa2ab52d557e58db53c2e6a00/docs/research/other-app/documentation-guide.md)と[旧アーキテクチャ](https://github.com/tomohiro-ono-works/vscode-extension-zizai/blob/65631504f146a4dfa2ab52d557e58db53c2e6a00/architecture.md)は出典確認用。旧要件・設計は2026-11-08に利用者依頼で撤去した。現在の状態は[docs入口](docs/README.md)で確認し、履歴の資料を現行仕様として適用しない。
@@ -23,7 +23,7 @@
 
 旧Remote Safe Gate実行先 `.github/scripts/remote_safe_gate.py` も未収録。旧baseline `8b66fe6` と監査オプションは旧原文の記録として保持し、実行可能な現行コマンドや今回検証済みのGateとして扱わない。旧参照先 `docs/features/refactor-policy.md` の実体は未確認だが、既存資料に定義済みの整理・責務変更の規則は[本書の参照入口](#refactoring-and-cleanup)から確認できる。旧文書を復元・採用した意味ではなく、新Gateの実装も行わない。
 
-旧依存記述の対応は[本書末尾](#legacy-rule-mapping-20261102)を参照する。実施結果・承認経緯はIssue #71を正本とする。
+旧依存記述の対応は[本書末尾](#legacy-rule-mapping-20261102)を参照する。旧Issue #71は利用者承認による今回の撤去対象。残した規約の整合差分は[PR #72](https://github.com/tomohiro-ono-works/vscode-extension-zizai/pull/72)と[当時の固定commit](https://github.com/tomohiro-ono-works/vscode-extension-zizai/blob/c09b577541dbc9bb89680fb70458363d30c21a0b/coding-rules.md)で確認する。
 
 <a id="before-implementation"></a>
 ## 実装前の確認
