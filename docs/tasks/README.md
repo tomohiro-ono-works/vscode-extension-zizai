@@ -8,6 +8,10 @@
 
 保持したIssueは過去の調査記録です。旧Taskのスコープ・完了条件・後続依頼を新方式の現行要件として適用しません。過去の不合格・未検証を変更していません。
 
-新しいTaskはまだ作成していません。残した[技術調査](../README.md)を再利用し、新要件を確定してから必要なTaskを設定します。
+## 新方式のTask
+
+- [TASK-008 / #76：新方式の要件仕様書と参照入口の整備](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/76)
+
+仕様の正本は[新方式の要件仕様書](../features/requirements.md)。Taskの状態・結果はIssueで管理します。残した[技術調査](../README.md)を再利用し、実装Taskは対象の未決事項を解消してから設定します。
 
 [Task・Subtask運用ルール](task-rules.md)・[Taskひな形](../../template/task.md)・[Subtaskひな形](../../template/subtask.md)

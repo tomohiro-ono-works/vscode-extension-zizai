@@ -2,7 +2,7 @@
 
 更新日：2026-10-24。
 
-この文書を Task の分類、分割、Issueの関係、記載項目、状態管理の基準とします。実際の開発 Task は、ユーザーの依頼と [アーキテクチャ](https://github.com/tomohiro-ono-works/vscode-extension-zizai/blob/65631504f146a4dfa2ab52d557e58db53c2e6a00/docs/features/architecture.md) にある責務を確認して作成します。
+この文書を Task の分類、分割、Issueの関係、記載項目、状態管理の基準とします。実際の開発 Task は、ユーザーの依頼と[新方式の要件仕様書](../features/requirements.md)にある責務・未決事項を確認して作成します。以下の領域表は作業分類であり、旧フォーム・metadata・初期化管理を製品要件として復活させる根拠ではありません。
 
 ## 作業記録の正本
 
