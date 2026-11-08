@@ -24,6 +24,7 @@ function register(vscode, context, definitions) {
         JSON.stringify(request.value));
       const applied = await vscode.workspace.applyEdit(edit);
       if (!applied) vscode.window.showWarningMessage("選択値を反映できませんでした。");
+      if (applied) await vscode.commands.executeCommand("editor.action.hideHover");
       return applied;
     } catch {
       vscode.window.showWarningMessage("選択値を反映できませんでした。");

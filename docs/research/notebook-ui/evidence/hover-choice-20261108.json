@@ -131,8 +131,8 @@
     "localArtifacts": "results/task009-hover-human-20261108-01/",
     "priorScopeLimit": "prior fast pointer path succeeded; not evidence of normal-speed mouse entry reliability",
     "upstreamFix": "https://github.com/microsoft/vscode/pull/345887",
-    "fixedEnvironmentComparison": "pending user approval; no installed editor modification",
-    "reselectionWithoutInterveningSave": "not reached because first menu disappeared; unresolved",
+    "fixedEnvironmentComparison": "completed; see hover-insiders-20261108.json; preview passed after extension reselection fix, stable limitation retained",
+    "reselectionWithoutInterveningSave": "initially not reached on stable; separately failed and was fixed/verified on preview; see hover-insiders-20261108.json",
     "currentHumanRunnerSha256": "85313b9a8b6a74f250b3288955fd62657aea103628c0ad7721d05e0265b7528e"
   }
 }

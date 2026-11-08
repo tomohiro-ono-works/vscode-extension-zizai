@@ -14,6 +14,7 @@ function harness() {
   let rendered = [];
   let hoverProvider;
   const commands = new Map();
+  const executedCommands = [];
   const document = {
     uri: { scheme: "vscode-notebook-cell", toString: () => "vscode-notebook-cell:/fixture.ipynb#cell" },
     languageId: "python", version: 1, isClosed: false,
@@ -33,7 +34,10 @@ function harness() {
     MarkdownString: class { constructor(value) { this.value = value; } },
     Hover: class { constructor(content, range) { this.contents = [content]; this.range = range; } },
     WorkspaceEdit: class { replace(uri, range, value) { Object.assign(this, { uri, range, value }); } },
-    commands: { registerCommand(id, callback) { commands.set(id, callback); return { dispose() {} }; } },
+    commands: {
+      registerCommand(id, callback) { commands.set(id, callback); return { dispose() {} }; },
+      async executeCommand(id) { executedCommands.push(id); }
+    },
     languages: { registerHoverProvider(selector, provider) { hoverProvider = provider; return { dispose() {} }; } },
     workspace: {
       textDocuments: [document],
@@ -57,7 +61,7 @@ function harness() {
   };
   register(api, { subscriptions: [] }, definitions);
   return {
-    api, document, text: () => source,
+    api, document, executedCommands, text: () => source,
     decorations: () => { refresh(); return rendered; },
     tooltip: () => hoverProvider.provideHover(document, new api.Position(1, 17)).contents[0],
     pick: request => commands.get("zizai.setValue")(request),
@@ -93,6 +97,16 @@ test("cancel and stale hint leave the source untouched", async () => {
   h.document.version += 1;
   assert.equal(await h.pick(request), false);
   assert.equal(h.text(), initial);
+});
+
+test("selection dismisses the cached menu and reselection uses the current document", async () => {
+  const h = harness();
+  const cachedExcel = h.choiceRequest("excel");
+  assert.equal(await h.pick(h.choiceRequest("csv")), true);
+  assert.deepEqual(h.executedCommands, ["editor.action.hideHover"]);
+  assert.equal(await h.pick(cachedExcel), false, "Stale menus must still be rejected");
+  assert.equal(await h.pick(h.choiceRequest("excel")), true);
+  assert.equal(h.text(), initial.replace('= ""', '= "excel"'));
 });
 
 test("ordinary Python documents are not edited by a command request", async () => {

@@ -40,7 +40,9 @@ async function main() {
   }
   await fs.mkdir(path.join(profile, "User"), { recursive: true });
   await fs.writeFile(path.join(profile, "User/settings.json"), JSON.stringify({
-    "window.title": values.manual ? "ZizAI Hover Hands-on ${activeEditorShort}" : "ZizAI Hover Trial ${activeEditorShort}",
+    "window.title": values.manual
+      ? (path.basename(values.vscode).includes("Insiders") ? "ZizAI Insiders Hands-on ${activeEditorShort}" : "ZizAI Hover Hands-on ${activeEditorShort}")
+      : "ZizAI Hover Trial ${activeEditorShort}",
     "window.restoreWindows": "none", "workbench.startupEditor": "none",
     "files.autoSave": "off", "extensions.autoUpdate": false, "extensions.autoCheckUpdates": false,
     "update.mode": "none", "editor.inlayHints.enabled": "on", "editor.multiCursorModifier": "alt",
@@ -109,7 +111,7 @@ async function main() {
     if (values.manual) {
       report.outcome = "awaiting_user";
       await stage("ready_for_user_no_automatic_selection");
-      console.log("READY: ZizAI Hover Hands-on. Window stays open until user closes it or an approved finish signal arrives.");
+      console.log("READY: Hands-on window stays open until user closes it or an approved finish signal arrives.");
       await new Promise(resolve => {
         const onInput = input => {
           if (input.trim() !== "finish") return;
@@ -171,8 +173,9 @@ async function main() {
             await new Promise(resolve => setTimeout(resolve, 100));
           }
           assert(reflected, "Selected value must appear in the editor without saving first");
+          await hover.waitFor({ state: "hidden", timeout: 5000 });
           if (value === "csv") {
-            report.csvBeforeSave = { reflected: true };
+            report.csvBeforeSave = { reflected: true, menuClosed: true };
             await stage("csv_reflected_without_save");
             continue;
           }
