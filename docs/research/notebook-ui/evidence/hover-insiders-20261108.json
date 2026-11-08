@@ -135,5 +135,26 @@
     "preview comparison is not approval of a product minimum version",
     "only one bundled field; parent/child choices, paths, VSIX incomplete",
     "user manual review pending"
-  ]
+  ],
+  "manualUserVerification": {
+    "feedback": "OKでした！ありがとう。",
+    "closeAuthorization": "OKです。終了してOKです",
+    "environment": "1.146.0-insider, dedicated ZizAI Insiders Hands-on",
+    "scope": "user accepted this one-field hands-on trial; not all TASK-009 criteria",
+    "manualArtifacts": "results/task009-insiders-hands-on-20261108-01/",
+    "closedAt": "2026-11-08T13:12:20.365Z",
+    "closeSignalReceived": true,
+    "finalProcessCount": 0,
+    "finalListenerCountAcrossThreeHandsOnWindows": 0,
+    "finalMonitoredPorts": [
+      50709,
+      50711,
+      55113,
+      55115,
+      54584,
+      54586
+    ],
+    "preserved": "dedicated Notebooks, profiles, archives, screenshots and logs; no recursive cleanup",
+    "normalInstallationChanged": false
+  }
 }
