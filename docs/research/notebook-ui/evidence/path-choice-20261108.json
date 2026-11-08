@@ -58,12 +58,18 @@
     "tests/e2e/path-flow.cjs": "ff6143fd0901d81782a8f899bdd894784ef225385eda45b6c61dec3f2ae2e369"
   },
   "limits": [
-    "absolute local paths are an initial implementation proposal, formal rule not approved",
+    "absolute local paths were provisional at the time of the run; approved by the user afterward as recorded below",
     "OS native dialog, Remote/WSL, VSIX installation not exercised",
     "only bundled setting fields, not external definitions or Python magic implementation"
   ],
   "cliTests": {
     "passed": 18,
     "failed": 0
+  },
+  "pathRuleApproval": {
+    "source": "current design chat",
+    "verbatim": "OKです。絶対パスで良いです。",
+    "decision": "reflect selected local files and folders as absolute paths; do not convert to relative paths",
+    "scope": "path notation only; does not approve untested environments"
   }
 }
