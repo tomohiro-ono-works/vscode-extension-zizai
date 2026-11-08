@@ -20,7 +20,7 @@ async function main() {
       return [...root.querySelectorAll("span")].filter(element => getComputedStyle(element, "::before").content === JSON.stringify(text));
     }
   }));
-  const { values } = parseArgs({ options: { vscode: { type: "string" }, out: { type: "string" }, manual: { type: "boolean" }, hover: { type: "boolean", default: true }, human: { type: "boolean" } } });
+  const { values } = parseArgs({ options: { vscode: { type: "string" }, out: { type: "string" }, manual: { type: "boolean" }, hover: { type: "boolean", default: true }, human: { type: "boolean" }, paths: { type: "boolean" } } });
   assert(values.vscode && values.out, "--vscode and --out are required");
   const out = path.resolve(root, values.out);
   const relative = path.relative(path.join(root, "results"), out);
@@ -46,9 +46,13 @@ async function main() {
     "window.restoreWindows": "none", "workbench.startupEditor": "none",
     "files.autoSave": "off", "extensions.autoUpdate": false, "extensions.autoCheckUpdates": false,
     "update.mode": "none", "editor.inlayHints.enabled": "on", "editor.multiCursorModifier": "alt",
+    "files.simpleDialog.enable": values.paths ? true : undefined,
+    "window.dialogStyle": values.paths ? "custom" : undefined,
     "workbench.editorAssociations": { "*.ipynb": "jupyter-notebook" }
   }), { flag: "wx" });
-  const originalSource = '%%ziz.connector.action.selector\nconnector.name = "" # preserve\nother = "keep"';
+  const originalSource = values.paths
+    ? '%%ziz.connector.action.setting\nfile_path = "" # file\nfolder_path = "" # folder\nother = "keep"'
+    : '%%ziz.connector.action.selector\nconnector.name = "" # preserve\nother = "keep"';
   const fixture = { cells: [{ cell_type: "code", execution_count: null, id: "inline-choice-cell",
     metadata: { trialPreserve: true }, outputs: [], source: originalSource.split(/(?<=\n)/) }],
     metadata: { language_info: { name: "python" }, trialPreserve: true }, nbformat: 4, nbformat_minor: 5 };
@@ -94,17 +98,17 @@ async function main() {
     // Decorations use generated CSS text, not source text. Read its selector; interact via Playwright.
     let markerSelector;
     for (let i = 0; i < 100 && !markerSelector; i += 1) {
-      markerSelector = await editor.locator(".view-line span").evaluateAll(elements => {
-        const marker = elements.find(element => getComputedStyle(element, "::before").content === '"[C]"');
+      markerSelector = await editor.locator(".view-line span").evaluateAll((elements, label) => {
+        const marker = elements.find(element => getComputedStyle(element, "::before").content === JSON.stringify(label));
         return marker ? "span." + [...marker.classList].map(value => CSS.escape(value)).join(".") : undefined;
-      });
+      }, values.paths ? "[P]" : "[C]");
       if (!markerSelector) await new Promise(resolve => setTimeout(resolve, 100));
     }
     assert(markerSelector, "[C] decoration must be rendered");
     report.decorationElements = await editor.locator('span[class*="ced-"]').evaluateAll(elements => elements.map(element => ({
       text: element.textContent, before: getComputedStyle(element, "::before").content
     })));
-    const hint = editor.locator("zizaiMarker=[C]").first();
+    const hint = editor.locator("zizaiMarker=" + (values.paths ? "[P]" : "[C]")).first();
     await hint.waitFor({ state: "visible", timeout: 20000 });
     await page.screenshot({ path: path.join(out, "inline-hint.png") });
     await stage("inline_C_visible");
@@ -128,6 +132,11 @@ async function main() {
         });
       });
       report.outcome = "manual_handoff_finished_not_automatically_graded";
+      return;
+    }
+    if (values.paths) {
+      await require("./path-flow.cjs").runPathFlow({ page, editor, workspace, notebookFile, originalSource, report, out, stage });
+      report.outcome = "observed";
       return;
     }
     for (const value of ["csv", "excel"]) {
@@ -224,12 +233,17 @@ async function main() {
     if (app) {
       try { if (!report.closedAt) await app.close(); report.closedAt ||= new Date().toISOString(); }
       catch (error) { report.closeError = error.message; process.exitCode = 1; }
-      const listing = execFileSync("netstat.exe", ["-ano", "-p", "tcp"], { encoding: "utf8", windowsHide: true });
-      report.portCheck = report.ports.filter(Number.isInteger).map(port => ({ port,
-        listeners: listing.split(/\r?\n/).filter(line => {
-          const columns = line.trim().split(/\s+/);
-          return columns[0] === "TCP" && Number(columns[1]?.split(":").at(-1)) === port && columns[3] === "LISTENING";
-        }).length }));
+      // Electron's protocol endpoint can outlive the window briefly during normal shutdown.
+      for (let attempt = 0; attempt < 25; attempt += 1) {
+        const listing = execFileSync("netstat.exe", ["-ano", "-p", "tcp"], { encoding: "utf8", windowsHide: true });
+        report.portCheck = report.ports.filter(Number.isInteger).map(port => ({ port,
+          listeners: listing.split(/\r?\n/).filter(line => {
+            const columns = line.trim().split(/\s+/);
+            return columns[0] === "TCP" && Number(columns[1]?.split(":").at(-1)) === port && columns[3] === "LISTENING";
+          }).length }));
+        if (report.portCheck.every(item => item.listeners === 0)) break;
+        await new Promise(resolve => setTimeout(resolve, 200));
+      }
       if (report.portCheck.some(item => item.listeners)) process.exitCode = 1;
     }
     await save();

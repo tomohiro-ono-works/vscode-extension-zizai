@@ -1,0 +1,69 @@
+{
+  "dateJST": "2026-11-08",
+  "subtask": "TASK-009-02 / #79",
+  "environment": "VS Code 1.146.0-insider, dedicated profile",
+  "previewCommit": "29ce94ad8d36c62affc08484e262d5c4fbdd0b3d",
+  "playwright": "1.64.1",
+  "node": "v24.14.1",
+  "outcome": "observed",
+  "stages": [
+    "dedicated_workbench_ready",
+    "inline_C_visible",
+    "file_selected_without_save",
+    "file_reselected_without_save",
+    "file_cancel_kept_previous_value",
+    "folder_selected_without_save",
+    "folder_reselected_without_save",
+    "folder_cancel_kept_previous_value",
+    "all_path_operations_saved_and_preserved"
+  ],
+  "paths": {
+    "fileSelection": true,
+    "fileReselection": true,
+    "fileCancelPreserved": true,
+    "folderSelection": true,
+    "folderReselection": true,
+    "folderCancelPreserved": true,
+    "sourceAndMetadataPreserved": true,
+    "absolutePaths": true,
+    "saveOnlyAfterAllSixOperations": true,
+    "dialog": "VS Code standard simple file dialog; OS native dialog not exercised"
+  },
+  "closed": true,
+  "debugListenersAfterClose": 0,
+  "commandPaletteUsed": false,
+  "kernelExecuted": false,
+  "userProfileModified": false,
+  "localArtifacts": "results/task009-paths-20261108-03/ (ignored, preserved locally)",
+  "earlierAttempts": [
+    {
+      "run": "01",
+      "result": "path inserted, but test tried to click a button after Enter had already closed the dialog; timed out"
+    },
+    {
+      "run": "02",
+      "result": "six operations and save observed; immediate shutdown check still saw one transient listener, exit1"
+    },
+    {
+      "run": "03",
+      "result": "after dialog-close and bounded shutdown waits: six operations, save and port checks observed, exit0"
+    }
+  ],
+  "sourceSha256": {
+    "apps/extension/extension.cjs": "d3a5c73e35a42555d20dd63e81705e0b7cc527ce26da2e63dfb967e21d1077f7",
+    "apps/extension/selection.cjs": "ff8787e2d42d6c54249bd949ff5198ab043b9d50b18f037b571dc7aa030693ae",
+    "apps/extension/definitions.json": "059d40cf94312e836514c4479ce8c69b44eb97a472361992518e00b56a42d570",
+    "apps/extension/package.json": "c9c0da7012261be361628542422b76456a72270fc3d94cbdace40fbbd980739d",
+    "tests/e2e/inline-choice.cjs": "39f7835c7a07e10358170e3d651381a0c28ece46f6f2af36d69fce67e12595cf",
+    "tests/e2e/path-flow.cjs": "ff6143fd0901d81782a8f899bdd894784ef225385eda45b6c61dec3f2ae2e369"
+  },
+  "limits": [
+    "absolute local paths are an initial implementation proposal, formal rule not approved",
+    "OS native dialog, Remote/WSL, VSIX installation not exercised",
+    "only bundled setting fields, not external definitions or Python magic implementation"
+  ],
+  "cliTests": {
+    "passed": 18,
+    "failed": 0
+  }
+}

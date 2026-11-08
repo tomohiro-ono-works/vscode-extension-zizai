@@ -7,6 +7,12 @@
           "choices": ["csv", "excel"]
         }
       }
+    },
+    "ziz.connector.action.setting": {
+      "fields": {
+        "file_path": { "label": "P", "kind": "file" },
+        "folder_path": { "label": "P", "kind": "folder" }
+      }
     }
   }
 }

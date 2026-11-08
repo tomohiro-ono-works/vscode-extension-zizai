@@ -1,6 +1,8 @@
 "use strict";
-const { findSelections, replaceChoice } = require("./selection.cjs");
+const path = require("node:path");
+const { findSelections, replaceChoice, replacePath } = require("./selection.cjs");
 const SET = "zizai.setValue";
+const PICK_PATH = "zizai.pickPath";
 
 function supported(document) {
   return !document.isClosed && document.uri.scheme === "vscode-notebook-cell" && document.languageId === "python";
@@ -33,16 +35,50 @@ function register(vscode, context, definitions) {
   }
   context.subscriptions.push(vscode.commands.registerCommand(SET, setValue));
 
+  context.subscriptions.push(vscode.commands.registerCommand(PICK_PATH, async request => {
+    if (!request || typeof request.documentKey !== "string") return false;
+    const uri = Buffer.from(request.documentKey, "base64").toString("utf8");
+    const document = vscode.workspace.textDocuments.find(doc => doc.uri.toString() === uri);
+    if (!document || !supported(document) || document.version !== request.version) return false;
+    const source = document.getText();
+    const field = findSelections(source, definitions).find(item => item.start === request.start && item.field === request.field);
+    if (!field || !["file", "folder"].includes(field.kind)) return false;
+    try {
+      await vscode.commands.executeCommand("editor.action.hideHover");
+      const selected = await vscode.window.showOpenDialog({
+        canSelectFiles: field.kind === "file", canSelectFolders: field.kind === "folder", canSelectMany: false,
+        defaultUri: path.isAbsolute(field.current) ? vscode.Uri.file(field.current) : undefined,
+        openLabel: field.kind === "file" ? "このファイルを使用" : "このフォルダーを使用"
+      });
+      if (!selected?.length) return false;
+      if (selected[0].scheme !== "file" || !supported(document) || document.version !== request.version) return false;
+      if (replacePath(source, field, selected[0].fsPath) === source) return false;
+      const edit = new vscode.WorkspaceEdit();
+      edit.replace(document.uri,
+        new vscode.Range(document.positionAt(field.start), document.positionAt(field.end)),
+        JSON.stringify(selected[0].fsPath));
+      const applied = await vscode.workspace.applyEdit(edit);
+      if (!applied) vscode.window.showWarningMessage("パスを反映できませんでした。");
+      return applied;
+    } catch {
+      vscode.window.showWarningMessage("パスを反映できませんでした。対象セルで選び直してください。");
+      return false;
+    }
+  }));
+
   function tooltipFor(document, field) {
     const target = { version: document.version, start: field.start, field: field.field,
       documentKey: Buffer.from(document.uri.toString(), "utf8").toString("base64") };
-    const links = field.choices.map(value => {
+    const isPath = ["file", "folder"].includes(field.kind);
+    const command = isPath ? PICK_PATH : SET;
+    const links = isPath ? ["[" + (field.kind === "file" ? "ファイルを選択" : "フォルダーを選択") + "]" +
+      "(command:" + command + "?" + encodeURIComponent(JSON.stringify([target])) + ")"] : field.choices.map(value => {
       const text = value.replace(/[\\`*_{}\[\]()<>#+.!|]/g, "\\$&");
       const args = encodeURIComponent(JSON.stringify([{ ...target, value }]));
       return "[" + text + "](command:" + SET + "?" + args + ")";
     });
     const tooltip = new vscode.MarkdownString("値を選択\n\n" + links.join("\n\n"));
-    tooltip.isTrusted = { enabledCommands: [SET] };
+    tooltip.isTrusted = { enabledCommands: [command] };
     tooltip.supportHtml = false;
     return tooltip;
   }

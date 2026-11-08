@@ -1,4 +1,5 @@
 "use strict";
+const path = require("node:path");
 
 // Pure source editing: no VS Code, filesystem, Python or kernel side effects.
 function findSelections(source, definitions) {
@@ -16,8 +17,9 @@ function findSelections(source, definitions) {
         "^([ \\t]*" + escaped + "[ \\t]*=[ \\t]*)(\"(?:[^\"\\\\\\r\\n]|\\\\.)*\")([ \\t]*(?:#.*)?\\r?)$"
       );
       const match = pattern.exec(lines[line]);
-      if (!match || !Array.isArray(definition.choices) ||
-          !definition.choices.every(value => typeof value === "string")) continue;
+      const isPath = definition.kind === "file" || definition.kind === "folder";
+      if (!match || (!isPath && (!Array.isArray(definition.choices) ||
+          !definition.choices.every(value => typeof value === "string")))) continue;
       let current;
       try {
         current = JSON.parse(match[2]);
@@ -28,7 +30,8 @@ function findSelections(source, definitions) {
       const character = match[1].length;
       result.push({
         magic: magic[1], field, label: definition.label,
-        choices: [...definition.choices], current, line, character,
+        kind: isPath ? definition.kind : "choice",
+        choices: isPath ? [] : [...definition.choices], current, line, character,
         start: offset + character, end: offset + character + match[2].length,
         original: match[2]
       });
@@ -39,9 +42,19 @@ function findSelections(source, definitions) {
 }
 
 function replaceChoice(source, selection, value) {
-  if (typeof value !== "string" || !selection.choices.includes(value) ||
+  if (!selection.choices.includes(value)) return source;
+  return replaceLiteral(source, selection, value);
+}
+
+function replacePath(source, selection, value) {
+  if (!["file", "folder"].includes(selection.kind) || typeof value !== "string" || !path.isAbsolute(value)) return source;
+  return replaceLiteral(source, selection, value);
+}
+
+function replaceLiteral(source, selection, value) {
+  if (typeof value !== "string" ||
       source.slice(selection.start, selection.end) !== selection.original) return source;
   return source.slice(0, selection.start) + JSON.stringify(value) + source.slice(selection.end);
 }
 
-module.exports = { findSelections, replaceChoice };
+module.exports = { findSelections, replaceChoice, replacePath };
