@@ -1,5 +1,7 @@
 # Pythonパッケージの独立確認
 
+> 2026-11-08：旧設計撤去後も関係する技術調査として保持。本文の旧Task条件・設計案・承認は当時の記録で、新方式の現行仕様ではありません。過去の結果・未実施を変更していません。
+
 対象は003-03の最小パッケージと003-04の先行確認です。コネクタの業務処理やJupyterの実機確認ではありません。
 
 ## 操作経路による分類と担当
@@ -65,6 +67,6 @@ backendとpipを実行するのはコマンド先頭のPythonで、隔離venvを
 
 003-02のU01〜U05の対象部分を確認します。個別SDK欠落時の処理、共通関数・戻り値、実際のwheel更新とカーネル再起動、正式な契約資産の読込は対象実装が成立してから確認します。現在の最小入口の合格で、これらを合格にしません。
 
-[正本と配布経路](../../../apps/core/README.md)・[設計と確認ケース](../../../docs/research/python-import/TASK-003-02.md)を参照してください。
+[正本と配布経路](../../../apps/core/README.md)・[設計と確認ケース](https://github.com/tomohiro-ono-works/vscode-extension-zizai/blob/65631504f146a4dfa2ab52d557e58db53c2e6a00/docs/research/python-import/TASK-003-02.md)を参照してください。
 
 003-05の[実機手順とNotebook](../../manual/TASK-003-05-python.md)を用意しています。Notebookの診断コードも通常Pythonプロセスと実wheelで確認しますが、ipykernelを起動した結果や、VS Code上のカーネル再起動の合格には数えません。現在は配布5件＋Notebook診断4件の合計9件です。テスト専用のpackage生成・導入処理は`package_test_support.py`へ集約し、製品packageへは収録しません。

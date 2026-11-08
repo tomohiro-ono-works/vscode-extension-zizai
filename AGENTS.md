@@ -2,12 +2,12 @@
 
 - Rules updated: 2026-11-02
 
-- Start with [docs/README.md](docs/README.md), then open the assigned GitHub Issue from [the task index](docs/tasks/README.md). Read its parent Issue and required references. Task/Subtask scope, state, decisions, and results are maintained in Issues; existing Task Markdown is an immutable migration record.
+- Start with [docs/README.md](docs/README.md), then open the assigned GitHub Issue from [the task index](docs/tasks/README.md). Read its parent Issue and required references. Task/Subtask scope, state, decisions, and results are maintained in Issues; old Task documents are retired by the user-authorized 2026-11-08 reset; retained research is not Current Specification.
 - Before creating or splitting a Task, read [Task/Subtask authoring rules](docs/tasks/task-rules.md) and use the linked templates.
 - When creating, updating, or assessing a Task/Subtask, classify dependencies as mandatory prerequisites, mutual coordination, or unresolved under [dependency rules](docs/tasks/task-rules.md#dependency-classification). Record required deliverables, affected stages, and fulfillment evidence in the assigned Issue; apply conditions to the relevant scope without changing existing authority or constraints.
 - Read the Task's `References` before opening unrelated documentation. Load only the sections needed for the current decision.
 - Agent-operated testing and preparation must use only CLI/API or Playwright within the agreed scope, following [allowed operations](docs/development.md#allowed-test-operations). Do not use LLM-driven direct GUI interaction, including Computer Use/sky, or wrap such interaction as CLI/API testing.
-- Current Specifications are under `docs/features/`; repository architecture is defined in `docs/features/architecture.md`.
+- The former specifications were removed by the user-authorized 2026-11-08 reset. New requirements are not yet written. Read `docs/README.md` for retained research; do not treat historical research, proposals, or prototype code as Current Specification.
 - Implementation and verification rules are in [coding-rules.md](coding-rules.md) at the repository root, aligned with this Project's current architecture and development procedures. Its scope and provenance note distinguishes current rules from legacy records; unprovided legacy material does not become a mandatory procedure. Cleanup and responsibility changes follow the [existing refactoring rules](coding-rules.md#refactoring-and-cleanup).
 - Before creating a Task, planning implementation, or fixing an Edit Scope, identify the responsibility area and follow [canonical-source preflight](coding-rules.md#canonical-source-and-synchronized-copies). Do not infer ownership or editability from names or paths; leave unresolved ownership explicit.
 - Document roles, Task/Subtask structure, and writing conventions follow [docs/README.md](docs/README.md#document-responsibilities).

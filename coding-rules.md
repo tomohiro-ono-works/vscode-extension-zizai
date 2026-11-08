@@ -1,13 +1,15 @@
 <a id="coding-rules"></a>
 # コーディングルール
 
+> 2026-11-08：旧要件・設計は利用者依頼で撤去しました。一般的な品質・保護・作業規則は継続します。以下の履歴リンクは出典確認用であり、旧フォーム／Host設計への適合を要求しません。新方式の詳細は未確定です。
+
 <a id="reference-status-20261102"></a>
 ## 適用範囲・参照・旧資料（2026-11-02）
 
-本ファイルの配置はリポジトリ直下の `coding-rules.md`。[TASK-006-06 / #71](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/71)で、旧アプリ依存の規則を[現行アーキテクチャ](docs/features/architecture.md)・[開発手順](docs/development.md)・[Taskルール](docs/tasks/task-rules.md)に整合した。これらの既存仕様・Task制約・利用者の承認範囲を上書きせず、個別API・通信・metadata等の未決を本規則だけで正式採用しない。
+本ファイルの配置はリポジトリ直下の `coding-rules.md`。[TASK-006-06 / #71](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/71)で、旧アプリ依存の規則を[削除前のアーキテクチャ記録](https://github.com/tomohiro-ono-works/vscode-extension-zizai/blob/65631504f146a4dfa2ab52d557e58db53c2e6a00/docs/features/architecture.md)・[開発手順](docs/development.md)・[Taskルール](docs/tasks/task-rules.md)に整合した。これらの既存仕様・Task制約・利用者の承認範囲を上書きせず、個別API・通信・metadata等の未決を本規則だけで正式採用しない。
 
 - 参照パスだけを修正した時点の[規則全文・旧承認・旧参照表記](https://github.com/tomohiro-ono-works/vscode-extension-zizai/blob/46113b95901d7102d3482f1b7c7382c0210974d4/coding-rules.md)を固定commitで保持する。旧日本語化日2026-10-04、旧改訂日2026-10-05、旧 `Status: Current Specification`／`Last verified: 2026-08-21`、TASK-044の決裁表記は原資料の記録であり、本プロジェクトで取得した承認ではない。
-- [旧アプリ文書管理資料](docs/research/other-app/documentation-guide.md)と[旧アーキテクチャ](architecture.md)は出典確認用。現在の適用先は[docs入口](docs/README.md)と現行アーキテクチャで確認する。
+- [旧アプリ文書管理資料](https://github.com/tomohiro-ono-works/vscode-extension-zizai/blob/65631504f146a4dfa2ab52d557e58db53c2e6a00/docs/research/other-app/documentation-guide.md)と[旧アーキテクチャ](https://github.com/tomohiro-ono-works/vscode-extension-zizai/blob/65631504f146a4dfa2ab52d557e58db53c2e6a00/architecture.md)は出典確認用。旧要件・設計は2026-11-08に利用者依頼で撤去した。現在の状態は[docs入口](docs/README.md)で確認し、履歴の資料を現行仕様として適用しない。
 - 旧資料で参照されていた以下の8リンクは未収録。現在の必須手順から外し、原文の参照表記を下表と固定commitで保持する。類似資料への推測置換や未収録規約の新設は行わない。
 
 | 未収録の旧参照先 | 旧本文中の参照数 |
@@ -36,7 +38,7 @@ Taskの変更権限は、明示されたGoal、Scope、Constraints、Acceptance 
 
 - 確認: 変更候補を正本のソース、Application Adapter／統合、vendor／mirror、生成物へ分類。担当する現行仕様で所有者・直接編集の可否・更新経路を確認。名前・pathだけで推測しない。
 - 正本: コピーだけのpatchを行わず、担当仕様で定める正本を変更・検証し、その経路で反映。
-- 外部upstream: 担当仕様が求めるテスト・取得元commit／版の確定・同期／再vendorを実施。NodeFormの原本・評価patch・テーマCSS・Hostアダプター・生成物と許諾は、[既存の取込条件](docs/research/notebook-ui/TASK-001-02.md)に従って区別する。部品評価を製品への取込・適合完了へ読み替えない。
+- 外部upstream: 担当仕様が求めるテスト・取得元commit／版の確定・同期／再vendorを実施。撤去済みNodeForm評価における原本・patch・生成物と許諾の履歴は、[既存の取込条件](https://github.com/tomohiro-ono-works/vscode-extension-zizai/blob/65631504f146a4dfa2ab52d557e58db53c2e6a00/docs/research/notebook-ui/TASK-001-02.md)に従って区別する。部品評価を製品への取込・適合完了へ読み替えない。
 - 生成物・同一Repository内のコピー: 担当仕様の生成・同期手順と検証を使用。上流commitの条件を一律に追加せず、Task外のcommit・同期を許可しない。
 - 不明点: 正本・所有者・更新経路が未確認の場合は、その編集スコープを推測で確定しない。確認済みの独立作業は継続可能。
 
@@ -65,7 +67,7 @@ Taskの変更権限は、明示されたGoal、Scope、Constraints、Acceptance 
 | --- | --- |
 | 編集範囲・仕様変更の権限 | [実装前の確認](#before-implementation)：Goal・Scope・Constraints・Acceptance Criteriaに限定。Refactorを理由に現行仕様を変更しない |
 | 正本・所有者・コピー／生成物の更新 | [正本のソースと同期コピー](#canonical-source-and-synchronized-copies)：直接編集の可否・更新経路を確認し、不明な所有者を推測しない |
-| 責務分離と状態の所有 | [現行の責務分担](docs/features/architecture.md#current-responsibility-map)・[状態の所有](docs/features/architecture.md#state-ownership)に従う |
+| 責務分離と状態の所有 | [現行の責務分担](https://github.com/tomohiro-ono-works/vscode-extension-zizai/blob/65631504f146a4dfa2ab52d557e58db53c2e6a00/docs/features/architecture.md#current-responsibility-map)・[状態の所有](https://github.com/tomohiro-ono-works/vscode-extension-zizai/blob/65631504f146a4dfa2ab52d557e58db53c2e6a00/docs/features/architecture.md#state-ownership)に従う |
 | 検証範囲・未コミット差分の識別・失敗時の扱い | [検証と実施根拠](#verification-and-evidence)・[開発手順](docs/development.md)：影響する振る舞いを確認し、許可のない調査・修正・再実行へ拡大しない |
 | 判断・結果・残作業の記録と完了 | [Taskルール](docs/tasks/task-rules.md)：Issueへ記録し、必須の確認が未実施・不合格のまま完了にしない |
 
@@ -83,9 +85,9 @@ Taskの変更権限は、明示されたGoal、Scope、Constraints、Acceptance 
 ## Python
 
 - 変数・関数は`snake_case`、classは`PascalCase`を使用する。
-- Connector入口は[現行の責務・呼出し境界](docs/features/architecture.md#dependency-boundaries)と、003／004／005の対象ごとの採用済み宣言に従う。未確定のclass／method／signatureを規約で固定せず、旧共通execute入口を要求しない。
+- ConnectorはVS Codeから独立した通常のPython処理として設計する。公開APIは新要件で定め、旧003／004／005の設計案や共通execute入口を必須にしない。
 - 通常の戻り値・Python例外はJupyter標準の結果・例外表示へ返す。例外を握りつぶしたり、旧EngineやNode.jsへの独自橋渡しを追加したりしない。
-- File pathは対象仕様でbaseと許可範囲を確認し、relative/absolute、traversal、symlinkを区別する。アプリの入力検査とPythonによる実環境の検査は[承認済みの分担](docs/decisions/2026-10-23-python-foundation.md#validation-boundary-20261101)に従い、ファイル存在をアプリ側の生成前提にしない。
+- File pathは対象仕様でbaseと許可範囲を確認し、relative/absolute、traversal、symlinkを区別する。アプリの入力検査とPythonによる実環境の検査は[承認済みの分担](https://github.com/tomohiro-ono-works/vscode-extension-zizai/blob/65631504f146a4dfa2ab52d557e58db53c2e6a00/docs/decisions/2026-10-23-python-foundation.md#validation-boundary-20261101)に従い、ファイル存在をアプリ側の生成前提にしない。
 - Import時副作用を増やさない。避けられない初期化はTestで隔離可能にする。
 - External service、実資格情報、browser/OS操作を通常Testの必須条件にしない。
 
@@ -94,7 +96,7 @@ Taskの変更権限は、明示されたGoal、Scope、Constraints、Acceptance 
 - 変数・関数は`camelCase`、classは`PascalCase`、定数は`UPPER_SNAKE_CASE`を使用する。
 - `const`を優先し、再代入時だけ`let`を使う。`var`は追加しない。
 - 文字列は既存コードに合わせてdouble quote、statementはsemicolon付きとする。
-- State計算、DOM描画、UI／Host通信、画面固有処理を混在させず、[現行の責務分離](docs/features/architecture.md#current-responsibility-map)に従う。
+- State計算、表示、VS Code API操作、Python業務処理の責務を混在させない。新方式の境界は新要件で定義する。
 - 視覚状態はclass/data属性とCSSで表し、JSへ色値を直書きしない。
 - 新しい`window.*` globalは必要最小限とし、UI／Hostの既存境界に従う。旧window.zizPackagesやBridgeを前提にせず、未確定の正式通信形式を推測して固定しない。
 - Error logと利用者向け表示を分離し、復旧不能な初期化失敗は継続しない。
@@ -102,7 +104,7 @@ Taskの変更権限は、明示されたGoal、Scope、Constraints、Acceptance 
 <a id="css-and-ui"></a>
 ## CSSとUI
 
-- 色・テーマは[対象UIの設計](docs/features/notebook-sidebar.md)と採用部品のテーマCSSに従う。旧apps/gui/css/00_tokens.cssを存在する製品資産として要求しない。
+- 色・テーマは採用するVS Code APIと対象部品に合わせる。撤去済みフォーム設計・旧GUI資産を必須にしない。
 - 新規tokenは対象UI・採用部品で確認した責務に沿わせ、未確定の製品ファイル名・token体系を規約だけで追加しない。
 - Component CSSは対象componentへ閉じ、global selectorや既存tokenの意味変更を避ける。
 - Semantic stateとinteractive stateを混同せず、hover等でerror/successの意味を消さない。
@@ -111,9 +113,9 @@ Taskの変更権限は、明示されたGoal、Scope、Constraints、Acceptance 
 <a id="data-bridge-and-connector-contracts"></a>
 ## Notebook・UI／Host・Pythonの契約
 
-- 保存対象は通常の.ipynbのsource・metadata・標準出力であり、[現行の所有・保存境界](docs/features/architecture.md#state-ownership)に従う。旧.zizdの保存・schema・互換期間を導入しない。
-- UI／Host通信・metadataとPython呼出し／フォームの境界は[005-02](docs/research/contracts/TASK-005-02.md)・[005-03](docs/research/contracts/TASK-005-03.md)の対象入力と採用状態を照合する。値schemaや案のmain収録だけで正式契約の成立・採用を認定しない。
-- [標準Jupyter実行と責務分離](docs/features/architecture.md#dependency-boundaries)を維持し、独自kernel・実行サーバー・Run All・DataFrame同期・旧Bridge Protocolを追加しない。
+- 保存対象は通常の.ipynbのsource・metadata・標準出力であり、[現行の所有・保存境界](https://github.com/tomohiro-ono-works/vscode-extension-zizai/blob/65631504f146a4dfa2ab52d557e58db53c2e6a00/docs/features/architecture.md#state-ownership)に従う。旧.zizdの保存・schema・互換期間を導入しない。
+- UI／Host通信・metadataとPython呼出し／フォームの境界は[005-02](https://github.com/tomohiro-ono-works/vscode-extension-zizai/blob/65631504f146a4dfa2ab52d557e58db53c2e6a00/docs/research/contracts/TASK-005-02.md)・[005-03](https://github.com/tomohiro-ono-works/vscode-extension-zizai/blob/65631504f146a4dfa2ab52d557e58db53c2e6a00/docs/research/contracts/TASK-005-03.md)の対象入力と採用状態を照合する。値schemaや案のmain収録だけで正式契約の成立・採用を認定しない。
+- [標準Jupyter実行と責務分離](https://github.com/tomohiro-ono-works/vscode-extension-zizai/blob/65631504f146a4dfa2ab52d557e58db53c2e6a00/docs/features/architecture.md#dependency-boundaries)を維持し、独自kernel・実行サーバー・Run All・DataFrame同期・旧Bridge Protocolを追加しない。
 - 対象となる設定・状態・UI表示・Host更新・Python呼出しを変更する場合は、関係する境界を照合し、一方だけを更新しない。未決API・版・移行・非破壊回復を規則で解決済みにしない。
 
 <a id="reproducibility-and-local-configuration"></a>
