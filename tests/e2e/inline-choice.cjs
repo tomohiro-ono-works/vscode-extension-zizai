@@ -11,7 +11,7 @@ const researchRequire = createRequire(path.join(root, "docs/research/notebook-ho
 const { _electron: electron } = researchRequire("playwright");
 
 async function main() {
-  const { values } = parseArgs({ options: { vscode: { type: "string" }, out: { type: "string" } } });
+  const { values } = parseArgs({ options: { vscode: { type: "string" }, out: { type: "string" }, manual: { type: "boolean" } } });
   assert(values.vscode && values.out, "--vscode and --out are required");
   const out = path.resolve(root, values.out);
   const relative = path.relative(path.join(root, "results"), out);
@@ -23,7 +23,7 @@ async function main() {
   await fs.mkdir(workspace); await fs.mkdir(extensions);
   await fs.mkdir(path.join(profile, "User"), { recursive: true });
   await fs.writeFile(path.join(profile, "User/settings.json"), JSON.stringify({
-    "window.title": "ZizAI Inline Choice Trial ${activeEditorShort}",
+    "window.title": values.manual ? "ZizAI Hands-on ${activeEditorShort}" : "ZizAI Inline Choice Trial ${activeEditorShort}",
     "window.restoreWindows": "none", "workbench.startupEditor": "none",
     "files.autoSave": "off", "extensions.autoUpdate": false, "extensions.autoCheckUpdates": false,
     "update.mode": "none", "editor.inlayHints.enabled": "on", "editor.multiCursorModifier": "alt",
@@ -74,6 +74,28 @@ async function main() {
     await hint.waitFor({ state: "visible", timeout: 20000 });
     await page.screenshot({ path: path.join(out, "inline-hint.png") });
     await stage("inline_C_visible");
+    if (values.manual) {
+      report.outcome = "awaiting_user";
+      await stage("ready_for_user_no_automatic_selection");
+      console.log("READY: ZizAI Hands-on. Window stays open until user closes it or an approved finish signal arrives.");
+      await new Promise(resolve => {
+        const onInput = input => {
+          if (input.trim() !== "finish") return;
+          report.endSignalReceived = true;
+          process.stdin.off("data", onInput);
+          resolve();
+        };
+        process.stdin.setEncoding("utf8");
+        process.stdin.on("data", onInput);
+        app.once("close", () => {
+          report.closedAt = new Date().toISOString();
+          process.stdin.off("data", onInput);
+          resolve();
+        });
+      });
+      report.outcome = "manual_handoff_finished_not_automatically_graded";
+      return;
+    }
     for (const value of ["csv", "excel"]) {
       await hint.click({ modifiers: ["Control"] });
       const input = page.locator(".quick-input-widget input").first();
@@ -113,7 +135,7 @@ async function main() {
   } finally {
     await save();
     if (app) {
-      try { await app.close(); report.closedAt = new Date().toISOString(); }
+      try { if (!report.closedAt) await app.close(); report.closedAt ||= new Date().toISOString(); }
       catch (error) { report.closeError = error.message; process.exitCode = 1; }
       const listing = execFileSync("netstat.exe", ["-ano", "-p", "tcp"], { encoding: "utf8", windowsHide: true });
       report.portCheck = report.ports.filter(Number.isInteger).map(port => ({ port,
