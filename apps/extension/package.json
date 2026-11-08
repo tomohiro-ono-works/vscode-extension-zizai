@@ -1,0 +1,14 @@
+{
+  "name": "zizai-notebook-input",
+  "displayName": "ZizAI Notebook Input (Development)",
+  "description": "Notebook inline choice experiment. No Python execution or program generation.",
+  "version": "0.0.1",
+  "publisher": "zizai-lab",
+  "private": true,
+  "engines": { "vscode": "^1.105.0" },
+  "activationEvents": ["onNotebook:jupyter-notebook"],
+  "main": "./extension.cjs",
+  "scripts": {
+    "test": "node --test ../../tests/unit/extension/*.test.cjs"
+  }
+}

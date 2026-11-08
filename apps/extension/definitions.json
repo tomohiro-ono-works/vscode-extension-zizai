@@ -1,0 +1,12 @@
+{
+  "magics": {
+    "ziz.connector.action.selector": {
+      "fields": {
+        "connector.name": {
+          "label": "C",
+          "choices": ["csv", "excel"]
+        }
+      }
+    }
+  }
+}
