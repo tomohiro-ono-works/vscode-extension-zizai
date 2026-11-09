@@ -17,7 +17,7 @@ async function runDependentFlow({ page, editor, workspace, notebookFile, fixture
   }
   async function choose(markerLabel, value) {
     const marker = editor.locator('zizaiMarker=[' + markerLabel + ']');
-    await marker.hover();
+    await marker.hover({ scroll: 'none' });
     const menu = page.locator('.monaco-hover').filter({ has: page.getByRole('link', { name: value, exact: true }) });
     const link = menu.getByRole('link', { name: value, exact: true });
     await link.waitFor({ state: 'visible', timeout: 10000 });
@@ -29,7 +29,19 @@ async function runDependentFlow({ page, editor, workspace, notebookFile, fixture
     const movement = { markerLabel, value, from, to, steps, menu: await menu.boundingBox() };
     (report.dependentMovements ||= []).push(movement);
     for (let step=1; step<=steps; step++) {
-      await page.mouse.move(from.x + (to.x-from.x)*step/steps, from.y + (to.y-from.y)*step/steps);
+      const point = { x:from.x + (to.x-from.x)*step/steps, y:from.y + (to.y-from.y)*step/steps };
+      if (report.diagnosePointer) {
+        const hit = await page.evaluate(point => {
+          const hover = document.querySelector('.monaco-hover');
+          const describe = e => e ? { tag:e.tagName, class:e.className,
+            ancestors:[e.parentElement,e.parentElement?.parentElement].filter(Boolean).map(x=>x.className),
+            inHover:!!hover?.contains(e) } : null;
+          return { exact:describe(document.elementFromPoint(point.x,point.y)),
+            rounded:describe(document.elementFromPoint(Math.round(point.x),Math.round(point.y))) };
+        },point);
+        (movement.hitTargets ||= []).push({step,point,hit});
+      }
+      await page.mouse.move(point.x,point.y);
       await new Promise(resolve => setTimeout(resolve, 8));
       if (!await link.isVisible()) { movement.disappearedAtStep = step; throw Error('Dependent hover disappeared during continuous movement'); }
     }

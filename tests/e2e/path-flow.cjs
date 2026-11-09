@@ -3,7 +3,7 @@ const fs = require("node:fs/promises");
 const path = require("node:path");
 const assert = require("node:assert/strict");
 
-async function runPathFlow({ page, editor, workspace, notebookFile, originalSource, report, out, stage }) {
+async function runPathFlow({ page, editor, workspace, notebookFile, originalSource, report, out, stage, hoverProbe, hoverProbeAutoScroll }) {
   const folder1 = path.join(workspace, "資料 O'Reilly-${HOME}");
   const folder2 = path.join(workspace, "別のフォルダー");
   await fs.mkdir(folder1); await fs.mkdir(folder2);
@@ -14,6 +14,10 @@ async function runPathFlow({ page, editor, workspace, notebookFile, originalSour
   const expected = { file_path: "", folder_path: "" };
   const normalize = text => text.replace(/\u00a0/g, " ").replace(/[A-Z]:/g, drive => drive.toLowerCase());
   const sourceText = async () => (await editor.locator(".view-lines .view-line").allTextContents()).join("");
+  if (hoverProbe) {
+    await require('./hover-probe.cjs').runHoverProbe({ page, editor, report, stage, automaticScroll: hoverProbeAutoScroll });
+    return {};
+  }
   async function verifyVisible() {
     let ok = false;
     for (let attempt = 0; attempt < 40; attempt += 1) {
@@ -26,7 +30,7 @@ async function runPathFlow({ page, editor, workspace, notebookFile, originalSour
   }
   async function select(kind, selected) {
     const marker = editor.locator("zizaiMarker=[P]").nth(kind === "file" ? 0 : 1);
-    await marker.hover();
+    await marker.hover({ scroll: 'none' });
     const name = kind === "file" ? "ファイルを選択" : "フォルダーを選択";
     const hover = page.locator(".monaco-hover").filter({ has: page.getByRole("link", { name, exact: true }) });
     const link = hover.getByRole("link", { name, exact: true });

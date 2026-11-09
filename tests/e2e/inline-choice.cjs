@@ -20,8 +20,10 @@ async function main() {
       return [...root.querySelectorAll("span")].filter(element => getComputedStyle(element, "::before").content === JSON.stringify(text));
     }
   }));
-  const { values } = parseArgs({ options: { vscode: { type: "string" }, out: { type: "string" }, vsix: { type: "string" }, undo: { type: "boolean" }, dependent: { type: "boolean" }, manual: { type: "boolean" }, hover: { type: "boolean", default: true }, human: { type: "boolean" }, paths: { type: "boolean" } } });
+  const { values } = parseArgs({ options: { vscode: { type: "string" }, out: { type: "string" }, vsix: { type: "string" }, undo: { type: "boolean" }, dependent: { type: "boolean" }, 'hover-probe': { type: "boolean" }, 'hover-probe-auto-scroll': { type: "boolean" }, manual: { type: "boolean" }, hover: { type: "boolean", default: true }, human: { type: "boolean" }, paths: { type: "boolean" } } });
   assert(values.vscode && values.out, "--vscode and --out are required");
+  if (values['hover-probe']) assert(!values.manual && !values.undo, 'Use hover diagnostics separately from manual/Undo runs');
+  if (values['hover-probe-auto-scroll']) assert(values['hover-probe'] && values.paths, 'Automatic-scroll control requires the path hover probe');
   const out = path.resolve(root, values.out);
   const relative = path.relative(path.join(root, "results"), out);
   assert(relative && !relative.startsWith("..") && !path.isAbsolute(relative), "Use a new results subfolder");
@@ -39,6 +41,14 @@ async function main() {
     }
   }
   if (values.hover && !values.vsix) await fs.cp(path.join(root, "apps/extension/node_modules/yaml"), path.join(extension, "node_modules/yaml"), { recursive: true });
+  if (values['hover-probe'] && !values.vsix) {
+    const file = path.join(extension, 'extension.cjs');
+    const code = await fs.readFile(file, 'utf8');
+    const needle = 'provideHover(document, position) {';
+    assert(code.includes(needle));
+    const log = JSON.stringify(path.join(out, 'provider-position.local.jsonl'));
+    await fs.writeFile(file, code.replace(needle, needle + " require('node:fs').appendFileSync(" + log + ", JSON.stringify({ line: position.line, character: position.character, at: Date.now() }) + '\\n');"));
+  }
   await fs.mkdir(path.join(profile, "User"), { recursive: true });
   await fs.writeFile(path.join(profile, "User/settings.json"), JSON.stringify({
     "window.title": values.manual
@@ -73,6 +83,7 @@ async function main() {
     mode: values.hover ? "hover" : "ctrl-click", hoverGeometry: [],
     continuousPointerMovement: !!(values.human || values.paths || values.dependent), savesBetweenChoices: !(values.human || values.paths || values.dependent),
     deployment: values.vsix ? "installed-vsix" : "extensionDevelopmentPath" };
+  report.diagnosePointer = !!(values['hover-probe'] && values.dependent);
   const save = () => fs.writeFile(path.join(out, "result.local.json"), JSON.stringify(report, null, 2));
   async function stage(name) { report.stages.push(name); await save(); console.log(name); }
   let app, page;
@@ -102,10 +113,10 @@ async function main() {
         "--shared-data-dir=" + path.join(out, "shared-data"), "--extensions-dir=" + extensions,
         ...(values.vsix ? [] : ["--extensionDevelopmentPath=" + extension]), workspace] });
     report.pid = app.process().pid;
-    report.ports.push(await app.evaluate(() => process.debugPort));
-    report.ports.push(Number((await fs.readFile(path.join(profile, "DevToolsActivePort"), "utf8")).split("\n")[0]));
     page = await app.firstWindow();
     await page.locator(".monaco-workbench").waitFor({ state: "visible", timeout: 30000 });
+    report.ports.push(await app.evaluate(() => process.debugPort));
+    report.ports.push(Number((await fs.readFile(path.join(profile, "DevToolsActivePort"), "utf8")).split("\n")[0]));
     const trust = page.getByRole("button", { name: /Yes, I trust the authors/ });
     if (await trust.waitFor({ state: "visible", timeout: 3500 }).then(() => true, () => false)) {
       await trust.click();
@@ -122,16 +133,25 @@ async function main() {
     await page.getByText("inline-choice.ipynb", { exact: true }).dblclick();
     const editor = page.locator('.monaco-editor[data-uri*="inline-choice.ipynb"]').first();
     await editor.waitFor({ state: "visible", timeout: 30000 });
+    // Trust UI can arrive after the initial workbench; handle only our synthetic workspace.
+    async function trustRestrictedSyntheticWorkspace() {
+      if (!await page.getByText(/Restricted Mode is intended for safe code browsing/).isVisible()) return;
+      await page.getByText('Manage', { exact: true }).click();
+      await page.locator('.workspace-trust-editor').getByRole('button', { name:'Trust', exact:true }).click();
+      await page.locator('.workspace-trust-editor').getByRole('button', { name:"Don't Trust", exact:true }).waitFor({ state:'visible' });
+      await page.locator('.monaco-modal-editor-block').getByRole('button', { name:/Close Modal Editor/ }).click();
+    }
     // Decorations use generated CSS text, not source text. Read its selector; interact via Playwright.
     let markerSelector;
     for (let i = 0; i < 100 && !markerSelector; i += 1) {
+      await trustRestrictedSyntheticWorkspace();
       markerSelector = await editor.locator(".view-line span").evaluateAll((elements, label) => {
         const marker = elements.find(element => getComputedStyle(element, "::before").content === JSON.stringify(label));
         return marker ? "span." + [...marker.classList].map(value => CSS.escape(value)).join(".") : undefined;
       }, values.paths ? "[P]" : "[C]");
       if (!markerSelector) await new Promise(resolve => setTimeout(resolve, 100));
     }
-    assert(markerSelector, "[C] decoration must be rendered");
+    assert(markerSelector, (values.paths ? '[P]' : '[C]') + ' decoration must be rendered');
     report.decorationElements = await editor.locator('span[class*="ced-"]').evaluateAll(elements => elements.map(element => ({
       text: element.textContent, before: getComputedStyle(element, "::before").content
     })));
@@ -187,7 +207,7 @@ async function main() {
       return;
     }
     if (values.paths) {
-      const flow = await require("./path-flow.cjs").runPathFlow({ page, editor, workspace, notebookFile, originalSource, report, out, stage });
+      const flow = await require("./path-flow.cjs").runPathFlow({ page, editor, workspace, notebookFile, originalSource, report, out, stage, hoverProbe: values['hover-probe'], hoverProbeAutoScroll: values['hover-probe-auto-scroll'] });
       await verifyUndo(flow.previousSource, flow.currentSource);
       report.outcome = "observed";
       return;
@@ -199,7 +219,7 @@ async function main() {
     }
     for (const value of ["csv", "excel"]) {
       if (values.hover) {
-        await hint.hover();
+        await hint.hover({ scroll: 'none' });
         const hover = page.locator(".monaco-hover").filter({ has: page.getByRole("link", { name: value, exact: true }) });
         const link = hover.getByRole("link", { name: value, exact: true });
         await link.waitFor({ state: "visible", timeout: 10000 });
