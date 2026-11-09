@@ -1,14 +1,25 @@
 {
   "name": "zizai-notebook-input",
-  "displayName": "ZizAI Notebook Input (Development)",
+  "displayName": "ZizAI Notebook Input (Preview)",
   "description": "Notebook inline choice experiment. No Python execution or program generation.",
   "version": "0.0.1",
   "publisher": "zizai-lab",
   "private": true,
-  "engines": { "vscode": "^1.105.0" },
-  "activationEvents": ["onNotebook:jupyter-notebook"],
+  "license": "UNLICENSED",
+  "repository": { "type": "git", "url": "https://github.com/tomohiro-ono-works/vscode-extension-zizai.git" },
+  "files": ["extension.cjs", "selection.cjs", "definitions.json", "README.md"],
+  "engines": {
+    "vscode": "^1.105.0"
+  },
+  "activationEvents": [
+    "onNotebook:jupyter-notebook"
+  ],
   "main": "./extension.cjs",
   "scripts": {
-    "test": "node --test ../../tests/unit/extension/*.test.cjs"
+    "test": "node --test ../../tests/unit/extension/*.test.cjs",
+    "package:vsix": "vsce package --pre-release --no-dependencies --skip-license --githubBranch codex/task-009-notebook-input"
+  },
+  "devDependencies": {
+    "@vscode/vsce": "4.1.0"
   }
 }

@@ -37,10 +37,15 @@ async function runPathFlow({ page, editor, workspace, notebookFile, originalSour
     const from = { x: start.x + start.width / 2, y: start.y + start.height / 2 };
     const to = { x: target.x + target.width / 2, y: target.y + target.height / 2 };
     const steps = Math.ceil(Math.hypot(to.x - from.x, to.y - from.y));
+    const movement = { kind, from, to, steps, marker: start, menu: await hover.boundingBox() };
+    (report.pathPointerMovements ||= []).push(movement);
     for (let step = 1; step <= steps; step += 1) {
       await page.mouse.move(from.x + (to.x - from.x) * step / steps, from.y + (to.y - from.y) * step / steps);
       await new Promise(resolve => setTimeout(resolve, 8));
-      assert(await link.isVisible(), "Path menu must remain visible while moving into it");
+      if (!await link.isVisible()) {
+        movement.disappearedAtStep = step;
+        throw Error("Path menu must remain visible while moving into it");
+      }
     }
     await page.mouse.down(); await page.mouse.up();
     const input = page.locator(".quick-input-widget input").first();
@@ -77,7 +82,8 @@ async function runPathFlow({ page, editor, workspace, notebookFile, originalSour
     await new Promise(resolve => setTimeout(resolve, 100));
   }
   assert.equal(normalize(saved.cells[0].source.join("")), normalize(expectedSource));
-  assert.equal(saved.cells.length, 1);
+  assert.equal(saved.cells.length, 2);
+  assert.deepEqual(saved.cells[1], { cell_type: "code", execution_count: null, id: "untouched-cell", metadata: { keep: "untouched" }, outputs: [], source: ['untouched = "keep"'] });
   assert.equal(saved.cells[0].metadata.trialPreserve, true);
   assert.equal(saved.metadata.trialPreserve, true);
   assert.equal(saved.cells[0].execution_count, null);
@@ -88,6 +94,9 @@ async function runPathFlow({ page, editor, workspace, notebookFile, originalSour
     dialog: "VS Code standard simple file dialog; OS native dialog not exercised" };
   await page.screenshot({ path: path.join(out, "paths-final.png") });
   await stage("all_path_operations_saved_and_preserved");
+  return { currentSource: expectedSource, previousSource: originalSource
+    .replace('file_path = ""', "file_path = " + JSON.stringify(file2))
+    .replace('folder_path = ""', "folder_path = " + JSON.stringify(folder1)) };
 }
 
 module.exports = { runPathFlow };

@@ -20,7 +20,7 @@ async function main() {
       return [...root.querySelectorAll("span")].filter(element => getComputedStyle(element, "::before").content === JSON.stringify(text));
     }
   }));
-  const { values } = parseArgs({ options: { vscode: { type: "string" }, out: { type: "string" }, manual: { type: "boolean" }, hover: { type: "boolean", default: true }, human: { type: "boolean" }, paths: { type: "boolean" } } });
+  const { values } = parseArgs({ options: { vscode: { type: "string" }, out: { type: "string" }, vsix: { type: "string" }, undo: { type: "boolean" }, manual: { type: "boolean" }, hover: { type: "boolean", default: true }, human: { type: "boolean" }, paths: { type: "boolean" } } });
   assert(values.vscode && values.out, "--vscode and --out are required");
   const out = path.resolve(root, values.out);
   const relative = path.relative(path.join(root, "results"), out);
@@ -32,7 +32,7 @@ async function main() {
   await fs.mkdir(workspace); await fs.mkdir(extensions);
   // Freeze the new hover trial so neither dedicated window follows live source edits.
   const extension = values.hover ? path.join(out, "extension") : path.join(root, "apps/extension");
-  if (values.hover) {
+  if (values.hover && !values.vsix) {
     await fs.mkdir(extension);
     for (const file of ["extension.cjs", "selection.cjs", "definitions.json", "package.json"]) {
       await fs.copyFile(path.join(root, "apps/extension", file), path.join(extension, file));
@@ -54,7 +54,8 @@ async function main() {
     ? '%%ziz.connector.action.setting\nfile_path = "" # file\nfolder_path = "" # folder\nother = "keep"'
     : '%%ziz.connector.action.selector\nconnector.name = "" # preserve\nother = "keep"';
   const fixture = { cells: [{ cell_type: "code", execution_count: null, id: "inline-choice-cell",
-    metadata: { trialPreserve: true }, outputs: [], source: originalSource.split(/(?<=\n)/) }],
+    metadata: { trialPreserve: true }, outputs: [], source: originalSource.split(/(?<=\n)/) },
+    { cell_type: "code", execution_count: null, id: "untouched-cell", metadata: { keep: "untouched" }, outputs: [], source: ['untouched = "keep"'] }],
     metadata: { language_info: { name: "python" }, trialPreserve: true }, nbformat: 4, nbformat_minor: 5 };
   const notebookFile = path.join(workspace, "inline-choice.ipynb");
   await fs.writeFile(notebookFile, JSON.stringify(fixture, null, 2), { flag: "wx" });
@@ -62,18 +63,35 @@ async function main() {
     playwright: researchRequire("playwright/package.json").version, node: process.version,
     commandPaletteUsed: false, kernelExecuted: false, userProfileModified: false, ports: [],
     mode: values.hover ? "hover" : "ctrl-click", hoverGeometry: [],
-    continuousPointerMovement: !!values.human, savesBetweenChoices: !values.human };
+    continuousPointerMovement: !!values.human, savesBetweenChoices: !values.human,
+    deployment: values.vsix ? "installed-vsix" : "extensionDevelopmentPath" };
   const save = () => fs.writeFile(path.join(out, "result.local.json"), JSON.stringify(report, null, 2));
   async function stage(name) { report.stages.push(name); await save(); console.log(name); }
   let app, page;
   try {
     const env = { ...process.env };
     delete env.ELECTRON_RUN_AS_NODE; delete env.VSCODE_DEV; delete env.VSCODE_PORTABLE;
+    if (values.vsix) {
+      const appRoot = path.dirname(path.resolve(values.vscode));
+      const candidates = [appRoot, ...(await fs.readdir(appRoot, { withFileTypes: true })).filter(e => e.isDirectory()).map(e => path.join(appRoot, e.name))];
+      let cli;
+      for (const candidate of candidates) {
+        const file = path.join(candidate, "resources/app/out/cli.js");
+        if (await fs.access(file).then(() => true, () => false)) { cli = file; break; }
+      }
+      assert(cli, "VS Code bundled CLI must be present");
+      const cliArgs = [cli, "--user-data-dir=" + profile, "--extensions-dir=" + extensions];
+      const cliOptions = { env: { ...env, ELECTRON_RUN_AS_NODE: "1" }, encoding: "utf8", windowsHide: true, timeout: 60000 };
+      report.installOutput = execFileSync(path.resolve(values.vscode), [...cliArgs, "--install-extension", path.resolve(values.vsix)], cliOptions);
+      report.installedExtensions = execFileSync(path.resolve(values.vscode), [...cliArgs, "--list-extensions", "--show-versions"], cliOptions).trim();
+      assert(report.installedExtensions.includes("zizai-lab.zizai-notebook-input@0.0.1"));
+      await stage("vsix_installed_in_isolated_profile");
+    }
     app = await electron.launch({ executablePath: path.resolve(values.vscode), env, timeout: 45000,
       args: ["--new-window", "--skip-welcome", "--skip-release-notes", "--disable-telemetry", "--disable-updates",
         "--locale=en", "--remote-debugging-address=127.0.0.1", "--user-data-dir=" + profile,
         "--shared-data-dir=" + path.join(out, "shared-data"), "--extensions-dir=" + extensions,
-        "--extensionDevelopmentPath=" + extension, workspace] });
+        ...(values.vsix ? [] : ["--extensionDevelopmentPath=" + extension]), workspace] });
     report.pid = app.process().pid;
     report.ports.push(await app.evaluate(() => process.debugPort));
     report.ports.push(Number((await fs.readFile(path.join(profile, "DevToolsActivePort"), "utf8")).split("\n")[0]));
@@ -112,6 +130,31 @@ async function main() {
     await hint.waitFor({ state: "visible", timeout: 20000 });
     await page.screenshot({ path: path.join(out, "inline-hint.png") });
     await stage("inline_C_visible");
+    async function verifyUndo(previous, current) {
+      if (!values.undo) return;
+      const normalize = text => {
+        text = text.replaceAll("\r\n", "\n");
+        return values.paths ? text.replace(/[A-Z]:/g, drive => drive.toLowerCase()) : text;
+      };
+      for (const [key, expected] of [["Control+z", previous], ["Control+y", current]]) {
+        await editor.locator(".view-lines").click();
+        await page.keyboard.press(key);
+        await page.keyboard.press("Control+s");
+        let saved;
+        for (let attempt = 0; attempt < 50; attempt += 1) {
+          saved = JSON.parse(await fs.readFile(notebookFile, "utf8"));
+          if (normalize(saved.cells[0].source.join("")) === normalize(expected)) break;
+          await new Promise(resolve => setTimeout(resolve, 100));
+        }
+        assert.equal(normalize(saved.cells[0].source.join("")), normalize(expected));
+        assert.deepEqual(saved.cells[1], fixture.cells[1]);
+        assert.equal(saved.cells[0].metadata.trialPreserve, true);
+        assert.equal(saved.cells[0].execution_count, null);
+        assert.deepEqual(saved.cells[0].outputs, []);
+        await stage(key === "Control+z" ? "undo_saved_and_unrelated_cell_preserved" : "redo_saved_and_unrelated_cell_preserved");
+      }
+      report.undoRedo = true;
+    }
     if (values.manual) {
       report.outcome = "awaiting_user";
       await stage("ready_for_user_no_automatic_selection");
@@ -135,7 +178,8 @@ async function main() {
       return;
     }
     if (values.paths) {
-      await require("./path-flow.cjs").runPathFlow({ page, editor, workspace, notebookFile, originalSource, report, out, stage });
+      const flow = await require("./path-flow.cjs").runPathFlow({ page, editor, workspace, notebookFile, originalSource, report, out, stage });
+      await verifyUndo(flow.previousSource, flow.currentSource);
       report.outcome = "observed";
       return;
     }
@@ -209,7 +253,8 @@ async function main() {
         if (saved.cells[0].source.join("") === expected) break;
         await new Promise(resolve => setTimeout(resolve, 100));
       }
-      assert.equal(saved.cells.length, 1);
+      assert.equal(saved.cells.length, 2);
+      assert.deepEqual(saved.cells[1], fixture.cells[1]);
       assert.equal(saved.cells[0].source.join(""), expected);
       assert.equal(saved.cells[0].execution_count, null);
       assert.deepEqual(saved.cells[0].outputs, []);
@@ -218,6 +263,7 @@ async function main() {
       report[value] = { sourceMatches: true, metadataPreserved: true, executionCount: null, outputsEmpty: true };
       await stage(value + "_chosen_and_saved");
     }
+    await verifyUndo(originalSource.replace('= ""', '= "csv"'), originalSource.replace('= ""', '= "excel"'));
     await page.screenshot({ path: path.join(out, "reselected-excel.png") });
     report.outcome = "observed";
   } catch (error) {
