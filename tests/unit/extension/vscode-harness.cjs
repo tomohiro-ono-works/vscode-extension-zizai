@@ -8,6 +8,7 @@ function createHarness(definitions, initial) {
   let hoverProvider;
   const commands = new Map();
   const executedCommands = [];
+  const edits = [];
   const document = {
     uri: { scheme: "vscode-notebook-cell", toString: () => "vscode-notebook-cell:/fixture.ipynb#cell" },
     languageId: "python", version: 1, isClosed: false,
@@ -26,7 +27,7 @@ function createHarness(definitions, initial) {
     InlayHint: class { constructor(position, label) { Object.assign(this, { position, label }); } },
     MarkdownString: class { constructor(value) { this.value = value; } },
     Hover: class { constructor(content, range) { this.contents = [content]; this.range = range; } },
-    WorkspaceEdit: class { replace(uri, range, value) { Object.assign(this, { uri, range, value }); } },
+    WorkspaceEdit: class { constructor() { this.changes = []; } replace(uri, range, value) { this.changes.push({ uri, range, value }); } },
     commands: {
       registerCommand(id, callback) { commands.set(id, callback); return { dispose() {} }; },
       async executeCommand(id) { executedCommands.push(id); }
@@ -36,10 +37,13 @@ function createHarness(definitions, initial) {
       textDocuments: [document],
       onDidChangeTextDocument(callback) { refresh = callback; return { dispose() {} }; },
       async applyEdit(edit) {
-        assert.equal(edit.uri, document.uri);
         const lines = source.split("\n");
         const offset = position => lines.slice(0, position.line).reduce((sum, line) => sum + line.length + 1, 0) + position.character;
-        source = source.slice(0, offset(edit.range.start)) + edit.value + source.slice(offset(edit.range.end));
+        edits.push(edit.changes);
+        for (const change of [...edit.changes].sort((a, b) => offset(b.range.start) - offset(a.range.start))) {
+          assert.equal(change.uri, document.uri);
+          source = source.slice(0, offset(change.range.start)) + change.value + source.slice(offset(change.range.end));
+        }
         document.version += 1;
         refresh();
         return true;
@@ -54,7 +58,7 @@ function createHarness(definitions, initial) {
   };
   register(api, { subscriptions: [] }, definitions);
   return {
-    api, document, executedCommands, text: () => source,
+    api, document, executedCommands, edits, text: () => source,
     decorations: () => { refresh(); return rendered; },
     tooltip: () => hoverProvider.provideHover(document, new api.Position(1, 17)).contents[0],
     pick: request => commands.get("zizai.setValue")(request),

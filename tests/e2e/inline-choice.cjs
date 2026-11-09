@@ -20,7 +20,7 @@ async function main() {
       return [...root.querySelectorAll("span")].filter(element => getComputedStyle(element, "::before").content === JSON.stringify(text));
     }
   }));
-  const { values } = parseArgs({ options: { vscode: { type: "string" }, out: { type: "string" }, vsix: { type: "string" }, undo: { type: "boolean" }, manual: { type: "boolean" }, hover: { type: "boolean", default: true }, human: { type: "boolean" }, paths: { type: "boolean" } } });
+  const { values } = parseArgs({ options: { vscode: { type: "string" }, out: { type: "string" }, vsix: { type: "string" }, undo: { type: "boolean" }, dependent: { type: "boolean" }, manual: { type: "boolean" }, hover: { type: "boolean", default: true }, human: { type: "boolean" }, paths: { type: "boolean" } } });
   assert(values.vscode && values.out, "--vscode and --out are required");
   const out = path.resolve(root, values.out);
   const relative = path.relative(path.join(root, "results"), out);
@@ -34,10 +34,11 @@ async function main() {
   const extension = values.hover ? path.join(out, "extension") : path.join(root, "apps/extension");
   if (values.hover && !values.vsix) {
     await fs.mkdir(extension);
-    for (const file of ["extension.cjs", "selection.cjs", "definitions.json", "package.json"]) {
+    for (const file of ["extension.cjs", "selection.cjs", "definitions.cjs", "definitions.yaml", "package.json"]) {
       await fs.copyFile(path.join(root, "apps/extension", file), path.join(extension, file));
     }
   }
+  if (values.hover && !values.vsix) await fs.cp(path.join(root, "apps/extension/node_modules/yaml"), path.join(extension, "node_modules/yaml"), { recursive: true });
   await fs.mkdir(path.join(profile, "User"), { recursive: true });
   await fs.writeFile(path.join(profile, "User/settings.json"), JSON.stringify({
     "window.title": values.manual
@@ -52,7 +53,14 @@ async function main() {
   }), { flag: "wx" });
   const originalSource = values.paths
     ? '%%ziz.connector.action.setting\nfile_path = "" # file\nfolder_path = "" # folder\nother = "keep"'
+    : values.dependent ? '%%ziz.connector.action.selector\nconnector.name = "" # parent\nconnector.action.name = "" # child\nother = "keep"'
     : '%%ziz.connector.action.selector\nconnector.name = "" # preserve\nother = "keep"';
+  let externalYaml;
+  if (values.dependent) {
+    await fs.mkdir(path.join(workspace, '.vscode'));
+    externalYaml = 'version: 1\nmagics:\n  ziz.connector.action.selector:\n    fields:\n      connector.name: {label: C, choices: [csv, excel]}\n      connector.action.name:\n        label: A\n        dependsOn: connector.name\n        choicesByValue: {csv: [shared, csv_only], excel: [shared, excel_only]}\n';
+    await fs.writeFile(path.join(workspace, '.vscode/zizai-definitions.yaml'), externalYaml, { flag: 'wx' });
+  }
   const fixture = { cells: [{ cell_type: "code", execution_count: null, id: "inline-choice-cell",
     metadata: { trialPreserve: true }, outputs: [], source: originalSource.split(/(?<=\n)/) },
     { cell_type: "code", execution_count: null, id: "untouched-cell", metadata: { keep: "untouched" }, outputs: [], source: ['untouched = "keep"'] }],
@@ -63,7 +71,7 @@ async function main() {
     playwright: researchRequire("playwright/package.json").version, node: process.version,
     commandPaletteUsed: false, kernelExecuted: false, userProfileModified: false, ports: [],
     mode: values.hover ? "hover" : "ctrl-click", hoverGeometry: [],
-    continuousPointerMovement: !!values.human, savesBetweenChoices: !values.human,
+    continuousPointerMovement: !!(values.human || values.paths || values.dependent), savesBetweenChoices: !(values.human || values.paths || values.dependent),
     deployment: values.vsix ? "installed-vsix" : "extensionDevelopmentPath" };
   const save = () => fs.writeFile(path.join(out, "result.local.json"), JSON.stringify(report, null, 2));
   async function stage(name) { report.stages.push(name); await save(); console.log(name); }
@@ -84,7 +92,8 @@ async function main() {
       const cliOptions = { env: { ...env, ELECTRON_RUN_AS_NODE: "1" }, encoding: "utf8", windowsHide: true, timeout: 60000 };
       report.installOutput = execFileSync(path.resolve(values.vscode), [...cliArgs, "--install-extension", path.resolve(values.vsix)], cliOptions);
       report.installedExtensions = execFileSync(path.resolve(values.vscode), [...cliArgs, "--list-extensions", "--show-versions"], cliOptions).trim();
-      assert(report.installedExtensions.includes("zizai-lab.zizai-notebook-input@0.0.1"));
+      const version = JSON.parse(await fs.readFile(path.join(root, 'apps/extension/package.json'), 'utf8')).version;
+      assert(report.installedExtensions.includes("zizai-lab.zizai-notebook-input@" + version));
       await stage("vsix_installed_in_isolated_profile");
     }
     app = await electron.launch({ executablePath: path.resolve(values.vscode), env, timeout: 45000,
@@ -129,7 +138,7 @@ async function main() {
     const hint = editor.locator("zizaiMarker=" + (values.paths ? "[P]" : "[C]")).first();
     await hint.waitFor({ state: "visible", timeout: 20000 });
     await page.screenshot({ path: path.join(out, "inline-hint.png") });
-    await stage("inline_C_visible");
+    await stage(values.paths ? "inline_P_visible" : "inline_C_visible");
     async function verifyUndo(previous, current) {
       if (!values.undo) return;
       const normalize = text => {
@@ -181,6 +190,11 @@ async function main() {
       const flow = await require("./path-flow.cjs").runPathFlow({ page, editor, workspace, notebookFile, originalSource, report, out, stage });
       await verifyUndo(flow.previousSource, flow.currentSource);
       report.outcome = "observed";
+      return;
+    }
+    if (values.dependent) {
+      await require('./dependent-flow.cjs').runDependentFlow({ page, editor, workspace, notebookFile, fixture, report, stage, externalYaml });
+      report.outcome = 'observed';
       return;
     }
     for (const value of ["csv", "excel"]) {

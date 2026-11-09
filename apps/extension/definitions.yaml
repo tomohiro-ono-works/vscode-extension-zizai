@@ -1,0 +1,17 @@
+version: 1
+magics:
+  ziz.connector.action.selector:
+    fields:
+      connector.name:
+        label: C
+        choices: [csv, excel]
+      connector.action.name:
+        label: A
+        dependsOn: connector.name
+        choicesByValue:
+          csv: [import, export]
+          excel: [export]
+  ziz.connector.action.setting:
+    fields:
+      file_path: {label: P, kind: file}
+      folder_path: {label: P, kind: folder}

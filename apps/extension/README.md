@@ -2,7 +2,7 @@
 
 ## 試作VSIXの作成・導入
 
-これは実装済みの1項目の候補選択とファイル／フォルダー選択を試す内部プレビューです。外部定義の読込・親子候補は未実装で、TASK-009全体の完成版ではありません。Marketplaceへは公開しません。正式な対応版は未決です。manifestのAPI下限は品質保証範囲を意味せず、安定版1.145.2には下記の操作上の制限があります。
+これは候補選択・親子候補・YAML定義・ファイル／フォルダー選択の内部プレビューです。TASK-009全体の完成版ではありません。Marketplaceへは公開しません。正式な対応版は未決です。manifestのAPI下限は品質保証範囲を意味せず、安定版1.145.2には下記の操作上の制限があります。
 
 生成にはNode.js 22以降とnpmを使用します。`apps/extension`で次を実行します。
 
@@ -12,12 +12,12 @@ npm test
 npm run package:vsix
 ```
 
-`zizai-notebook-input-0.0.1.vsix`が同フォルダーへ生成されます。公式vsce 4.1.0と依存解決をlockfileで固定し、実行時依存は同梱しません。梱包はmanifest・README・2個のcjs・同梱定義だけで、検証Notebook・ログ・node_modulesは含めません。`UNLICENSED`は公開ライセンスを付与しない内部試作の表記です。
+`zizai-notebook-input-0.0.2.vsix`が同フォルダーへ生成されます。公式vsce 4.1.0とYAMLパーサyaml 2.9.1をlockfileで固定します。実行時にはyamlの必要なJS・manifest・LICENSEを同梱します。開発用vsce・minimatch、検証Notebook・ログは含めません。`UNLICENSED`は公開ライセンスを付与しない内部試作の表記です。
 
 専用VS CodeのCLIで導入できます。以下の絶対パスは自身の専用環境へ置き換えます。通常利用のprofileへは自動導入しません。
 
 ```powershell
-& 'C:\専用VSCode\bin\code-insiders.cmd' --user-data-dir 'C:\専用検証\profile' --extensions-dir 'C:\専用検証\extensions' --install-extension 'C:\生成先\zizai-notebook-input-0.0.1.vsix'
+& 'C:\専用VSCode\bin\code-insiders.cmd' --user-data-dir 'C:\専用検証\profile' --extensions-dir 'C:\専用検証\extensions' --install-extension 'C:\生成先\zizai-notebook-input-0.0.2.vsix'
 & 'C:\専用VSCode\bin\code-insiders.cmd' --user-data-dir 'C:\専用検証\profile' --extensions-dir 'C:\専用検証\extensions' --list-extensions --show-versions
 ```
 
@@ -48,9 +48,43 @@ connector.name = "" # この文字列だけを置換対象にする
 
 `replaceChoice(source, selection, value)`は、定義にある選択値を引用した文字列として返します。キャンセル・候補外・対象値の変更時は元sourceを返します。この関数自体はNotebookの保存・編集・Python実行を行いません。
 
-`extension.cjs`が表示・ホバーの候補リンク・対象値の編集へ接続します。リンクから実行できるコマンドは拡張自身の値選択に限定し、HTMLは許可しません。セルURIはMarkdown側のURI正規化で変わらないようデータとして符号化して渡し、現在のdocument URIと厳密照合します。`package.json`が開発用拡張の入口、`definitions.json`が同梱候補です。CSV／Excelは候補表示の例であり、業務アクションの採用・実装を意味しません。Notebookの保存はVS Code標準機能を使います。
+`extension.cjs`が表示・ホバーの候補リンク・対象値の編集へ接続します。リンクから実行できるコマンドは拡張自身の値選択に限定し、HTMLは許可しません。セルURIはMarkdown側のURI正規化で変わらないようデータとして符号化して渡し、現在のdocument URIと厳密照合します。`package.json`が開発用拡張の入口、`definitions.yaml`が同梱候補です。CSV／Excelは候補表示の例であり、業務アクションの採用・実装を意味しません。Notebookの保存はVS Code標準機能を使います。
 
-定義の構造は`magics[マジック名].fields[項目名]`に`label`と文字列配列`choices`を持つ、最初の検討用の形です。公開schema・外部定義の読込・親子候補への対応が完成したという意味ではありません。
+## YAML定義と親子候補
+
+Notebookが属するworkspace folderの `.vscode/zizai-definitions.yaml` に定義を置きます。保存・ファイル変更後は再起動せず読み直します。外部定義がない場合は同梱例、存在する場合はその定義全体を使います。同梱例と混在マージしません。ワークスペース外のNotebookには同梱例を使います。
+
+`version: 1` の入力支援用形式です。最小の親子候補例：
+
+```yaml
+version: 1
+magics:
+  ziz.connector.action.selector:
+    fields:
+      connector.name:
+        label: C
+        choices: [csv, excel]
+      connector.action.name:
+        label: A
+        dependsOn: connector.name
+        choicesByValue:
+          csv: [import, export]
+          excel: [export]
+```
+
+対応するセルの雛形（snippetの作成・登録は利用者担当）：
+
+```text
+%%ziz.connector.action.selector
+connector.name = ""
+connector.action.name = ""
+```
+
+親の値は同じセルから読み、別セルの隠れた状態には依存しません。メニューでcsv→excelへ変更したとき、子がexportなら保持、importなら空文字へ戻します。親子を1回のUndoで戻せます。手入力しただけでは子を消去せず、次に候補を開くと現在の親に応じた一覧を出します。親が未入力・不明・同じ項目が重複して特定できない場合は子の候補を出しません。親子の循環定義は受け付けません。
+
+パス項目は同じfieldsへ `file_path: {label: P, kind: file}`／`folder_path: {label: P, kind: folder}` を記載します。labelは1〜16文字、choices／choicesByValueの値は文字列配列です。パス項目に候補やdependsOnは指定できません。
+
+YAMLは1MiB以下のデータのみを読みます。独自タグ・alias・重複キー・形式違反は拒否し、コード・任意コマンド・外部参照を実行しません。不正な定義では通知して当該workspaceの支援を止め、Notebook本文を保持します。定義を直して保存すれば再開します。Python実行・生成用schemaではありません。
 
 ## ファイル／フォルダー選択
 
@@ -70,7 +104,7 @@ folder_path = "" # フォルダーの選択例
 
 ## CLI確認
 
-リポジトリ直下から実行します。追加依存は不要です。
+先にapps/extensionでnpm ciを実行し、その後リポジトリ直下から実行します。
 
 ```shell
 node --test tests/unit/extension/*.test.cjs
@@ -82,4 +116,4 @@ node --test tests/unit/extension/*.test.cjs
 
 固定runnerは`tests/e2e/inline-choice.cjs`です。既存の[Playwright調査用依存](https://github.com/tomohiro-ono-works/vscode-extension-zizai/blob/codex/task-009-notebook-input/docs/research/notebook-host/playwright-probe/package.json)を利用します。通常の利用者プロファイルは変更せず、自動確認の終了後は専用ウィンドウと検証用ポートを整理します。`--manual`は`[C]`を表示したところで自動操作を止め、終了合図または利用者による終了まで開いたままにします。待機時間で勝手に閉じません。
 
-VSIX生成と専用環境への導入を整備しています。外部定義の読込・親子候補、正式対応版・他環境の対応は未完了です。[要件仕様書](https://github.com/tomohiro-ono-works/vscode-extension-zizai/blob/codex/task-009-notebook-input/docs/features/requirements.md)の未決事項と、拡張限定の開発範囲を参照してください。
+VSIX生成と専用環境への導入を整備しています。YAML外部定義・親子候補を実装しています。ホバー消失の未解決事項、正式対応版・他環境の確認は残っています。[要件仕様書](https://github.com/tomohiro-ono-works/vscode-extension-zizai/blob/codex/task-009-notebook-input/docs/features/requirements.md)の未決事項と、拡張限定の開発範囲を参照してください。

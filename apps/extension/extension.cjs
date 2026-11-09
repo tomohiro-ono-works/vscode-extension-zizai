@@ -1,6 +1,6 @@
 "use strict";
 const path = require("node:path");
-const { findSelections, replaceChoice, replacePath } = require("./selection.cjs");
+const { findSelections, planChoiceEdits, replacePath } = require("./selection.cjs");
 const SET = "zizai.setValue";
 const PICK_PATH = "zizai.pickPath";
 
@@ -9,6 +9,7 @@ function supported(document) {
 }
 
 function register(vscode, context, definitions) {
+  const resolve = typeof definitions === 'function' ? definitions : () => definitions;
   async function setValue(request) {
     if (!request) return false;
     // Markdown command links normalize URI-looking strings. Carry the exact identity as data.
@@ -17,13 +18,15 @@ function register(vscode, context, definitions) {
     const document = vscode.workspace.textDocuments.find(doc => doc.uri.toString() === uri);
     if (!document || !supported(document) || document.version !== request.version) return false;
     const source = document.getText();
-    const field = findSelections(source, definitions).find(item => item.start === request.start && item.field === request.field);
-    if (!field || replaceChoice(source, field, request.value) === source) return false;
+    const currentDefinitions = resolve(document);
+    const field = findSelections(source, currentDefinitions).find(item => item.start === request.start && item.field === request.field);
+    if (!field) return false;
+    const changes = planChoiceEdits(source, field, request.value, currentDefinitions);
+    if (!changes.length) return false;
     try {
       const edit = new vscode.WorkspaceEdit();
-      edit.replace(document.uri,
-        new vscode.Range(document.positionAt(field.start), document.positionAt(field.end)),
-        JSON.stringify(request.value));
+      for (const change of changes) edit.replace(document.uri,
+        new vscode.Range(document.positionAt(change.start), document.positionAt(change.end)), change.text);
       const applied = await vscode.workspace.applyEdit(edit);
       if (!applied) vscode.window.showWarningMessage("選択値を反映できませんでした。");
       if (applied) await vscode.commands.executeCommand("editor.action.hideHover");
@@ -41,7 +44,7 @@ function register(vscode, context, definitions) {
     const document = vscode.workspace.textDocuments.find(doc => doc.uri.toString() === uri);
     if (!document || !supported(document) || document.version !== request.version) return false;
     const source = document.getText();
-    const field = findSelections(source, definitions).find(item => item.start === request.start && item.field === request.field);
+    const field = findSelections(source, resolve(document)).find(item => item.start === request.start && item.field === request.field);
     if (!field || !["file", "folder"].includes(field.kind)) return false;
     try {
       await vscode.commands.executeCommand("editor.action.hideHover");
@@ -52,6 +55,8 @@ function register(vscode, context, definitions) {
       });
       if (!selected?.length) return false;
       if (selected[0].scheme !== "file" || !supported(document) || document.version !== request.version) return false;
+      const currentField = findSelections(source, resolve(document)).find(item => item.start === field.start && item.field === field.field);
+      if (currentField?.kind !== field.kind) return false;
       if (replacePath(source, field, selected[0].fsPath) === source) return false;
       const edit = new vscode.WorkspaceEdit();
       edit.replace(document.uri,
@@ -77,7 +82,7 @@ function register(vscode, context, definitions) {
       const args = encodeURIComponent(JSON.stringify([{ ...target, value }]));
       return "[" + text + "](command:" + SET + "?" + args + ")";
     });
-    const tooltip = new vscode.MarkdownString("値を選択\n\n" + links.join("\n\n"));
+    const tooltip = new vscode.MarkdownString(links.length ? "値を選択\n\n" + links.join("\n\n") : "候補がありません。親項目の値と定義を確認してください。");
     tooltip.isTrusted = { enabledCommands: [command] };
     tooltip.supportHtml = false;
     return tooltip;
@@ -86,7 +91,7 @@ function register(vscode, context, definitions) {
     { language: "python", scheme: "vscode-notebook-cell" }, {
       provideHover(document, position) {
         if (!supported(document)) return undefined;
-        const field = findSelections(document.getText(), definitions).find(item => item.line === position.line);
+        const field = findSelections(document.getText(), resolve(document)).find(item => item.line === position.line);
         if (!field) return undefined;
         return new vscode.Hover(tooltipFor(document, field),
           new vscode.Range(document.positionAt(field.start), document.positionAt(field.end)));
@@ -102,7 +107,7 @@ function register(vscode, context, definitions) {
   function refresh() {
     for (const editor of vscode.window.visibleTextEditors) {
       const document = editor.document;
-      const fields = supported(document) ? findSelections(document.getText(), definitions) : [];
+      const fields = supported(document) ? findSelections(document.getText(), resolve(document)) : [];
       editor.setDecorations(decoration, fields.map(field => {
           const position = document.positionAt(field.start);
           return {
@@ -115,10 +120,16 @@ function register(vscode, context, definitions) {
   context.subscriptions.push(vscode.window.onDidChangeVisibleTextEditors(refresh));
   context.subscriptions.push(vscode.workspace.onDidChangeTextDocument(refresh));
   refresh();
+  return refresh;
 }
 
-function activate(context) {
-  register(require("vscode"), context, require("./definitions.json"));
+async function activate(context) {
+  const vscode = require('vscode');
+  const { parseDefinitions, createDefinitionStore } = require('./definitions.cjs');
+  const fallback = parseDefinitions(require('node:fs').readFileSync(path.join(__dirname, 'definitions.yaml'), 'utf8'));
+  let refresh = () => {};
+  const store = await createDefinitionStore(vscode, context, fallback, () => refresh());
+  refresh = register(vscode, context, document => store.get(document));
 }
 
 module.exports = { activate, register };
