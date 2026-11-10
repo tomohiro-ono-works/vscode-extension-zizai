@@ -4,7 +4,7 @@ const assert = require('node:assert/strict');
 // Bounded diagnosis of the previously failed continuous pointer transition.
 // No retry after disappearance, delay before movement, synthetic events, or product patch.
 async function runHoverProbe({ page, editor, report, stage, automaticScroll = false }) {
-  report.hoverProbe = { attempts: [], limit: 8, stepDelayMs: 8, clickPerformed: false, automaticScroll };
+  report.hoverProbe = { attempts: [], limit: 8, stepDelayMs: report.pointerStepDelayMs||8, clickPerformed: false, automaticScroll };
   const layout = async marker => ({ marker: await marker.boundingBox(), viewLines: await editor.locator('.view-lines').boundingBox(),
     scroll: await editor.evaluate(e => [...e.querySelectorAll('*')].filter(x => x.scrollLeft).map(x => ({ class:x.className, left:x.scrollLeft }))) });
   for (let index = 0; index < 8; index++) {
@@ -33,7 +33,7 @@ async function runHoverProbe({ page, editor, report, stage, automaticScroll = fa
     for (let step=1; step<=steps; step++) {
       const point = { x:from.x+(to.x-from.x)*step/steps, y:from.y+(to.y-from.y)*step/steps };
       await page.mouse.move(point.x,point.y);
-      await new Promise(resolve => setTimeout(resolve,8));
+      await new Promise(resolve => setTimeout(resolve,report.pointerStepDelayMs||8));
       if (!await link.isVisible()) {
         attempt.disappearedAtStep = step;
         attempt.point = point;

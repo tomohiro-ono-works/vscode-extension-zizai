@@ -20,10 +20,13 @@ async function main() {
       return [...root.querySelectorAll("span")].filter(element => getComputedStyle(element, "::before").content === JSON.stringify(text));
     }
   }));
-  const { values } = parseArgs({ options: { vscode: { type: "string" }, out: { type: "string" }, vsix: { type: "string" }, undo: { type: "boolean" }, dependent: { type: "boolean" }, 'hover-probe': { type: "boolean" }, 'hover-probe-auto-scroll': { type: "boolean" }, manual: { type: "boolean" }, hover: { type: "boolean", default: true }, human: { type: "boolean" }, paths: { type: "boolean" } } });
+  const { values } = parseArgs({ options: { vscode: { type: "string" }, out: { type: "string" }, vsix: { type: "string" }, undo: { type: "boolean" }, dependent: { type: "boolean" }, 'pointer-step-ms': {type:'string'}, 'hover-probe': { type: "boolean" }, 'hover-events': { type: "boolean" }, 'hover-lifecycle': {type:'boolean'}, 'extension-events': {type:'boolean'}, 'hover-hide-trace': {type:'boolean'}, 'hover-probe-auto-scroll': { type: "boolean" }, manual: { type: "boolean" }, hover: { type: "boolean", default: true }, human: { type: "boolean" }, paths: { type: "boolean" } } });
   assert(values.vscode && values.out, "--vscode and --out are required");
   if (values['hover-probe']) assert(!values.manual && !values.undo, 'Use hover diagnostics separately from manual/Undo runs');
   if (values['hover-probe-auto-scroll']) assert(values['hover-probe'] && values.paths, 'Automatic-scroll control requires the path hover probe');
+  if (values['extension-events']) assert(values.vsix,'Extension logging requires an isolated installed VSIX');
+  const pointerStepDelayMs=Number(values['pointer-step-ms']||8);
+  assert(Number.isInteger(pointerStepDelayMs)&&pointerStepDelayMs>=1&&pointerStepDelayMs<=100,'Pointer step must be 1..100ms');
   const out = path.resolve(root, values.out);
   const relative = path.relative(path.join(root, "results"), out);
   assert(relative && !relative.startsWith("..") && !path.isAbsolute(relative), "Use a new results subfolder");
@@ -52,7 +55,7 @@ async function main() {
   await fs.mkdir(path.join(profile, "User"), { recursive: true });
   await fs.writeFile(path.join(profile, "User/settings.json"), JSON.stringify({
     "window.title": values.manual
-      ? (path.basename(values.vscode).includes("Insiders") ? "ZizAI Insiders Hands-on ${activeEditorShort}" : "ZizAI Hover Hands-on ${activeEditorShort}")
+      ? (values.dependent ? "ZizAI Hover Investigation ${activeEditorShort}" : (path.basename(values.vscode).includes("Insiders") ? "ZizAI Insiders Hands-on ${activeEditorShort}" : "ZizAI Hover Hands-on ${activeEditorShort}"))
       : "ZizAI Hover Trial ${activeEditorShort}",
     "window.restoreWindows": "none", "workbench.startupEditor": "none",
     "files.autoSave": "off", "extensions.autoUpdate": false, "extensions.autoCheckUpdates": false,
@@ -69,6 +72,7 @@ async function main() {
   if (values.dependent) {
     await fs.mkdir(path.join(workspace, '.vscode'));
     externalYaml = 'version: 1\nmagics:\n  ziz.connector.action.selector:\n    fields:\n      connector.name: {label: C, choices: [csv, excel]}\n      connector.action.name:\n        label: A\n        dependsOn: connector.name\n        choicesByValue: {csv: [shared, csv_only], excel: [shared, excel_only]}\n';
+    if(values.manual) externalYaml=await fs.readFile(path.join(root,'apps/extension/definitions.yaml'),'utf8');
     await fs.writeFile(path.join(workspace, '.vscode/zizai-definitions.yaml'), externalYaml, { flag: 'wx' });
   }
   const fixture = { cells: [{ cell_type: "code", execution_count: null, id: "inline-choice-cell",
@@ -84,9 +88,10 @@ async function main() {
     continuousPointerMovement: !!(values.human || values.paths || values.dependent), savesBetweenChoices: !(values.human || values.paths || values.dependent),
     deployment: values.vsix ? "installed-vsix" : "extensionDevelopmentPath" };
   report.diagnosePointer = !!(values['hover-probe'] && values.dependent);
+  report.pointerStepDelayMs=pointerStepDelayMs;
   const save = () => fs.writeFile(path.join(out, "result.local.json"), JSON.stringify(report, null, 2));
   async function stage(name) { report.stages.push(name); await save(); console.log(name); }
-  let app, page;
+  let app, page, stopHoverEvents, stopHoverHide, stopHoverLifecycle;
   try {
     const env = { ...process.env };
     delete env.ELECTRON_RUN_AS_NODE; delete env.VSCODE_DEV; delete env.VSCODE_PORTABLE;
@@ -106,6 +111,7 @@ async function main() {
       const version = JSON.parse(await fs.readFile(path.join(root, 'apps/extension/package.json'), 'utf8')).version;
       assert(report.installedExtensions.includes("zizai-lab.zizai-notebook-input@" + version));
       await stage("vsix_installed_in_isolated_profile");
+      if(values['extension-events']) report.extensionEvents=await require('./extension-event-trace.cjs').instrumentInstalledExtension(extensions,out);
     }
     app = await electron.launch({ executablePath: path.resolve(values.vscode), env, timeout: 45000,
       args: ["--new-window", "--skip-welcome", "--skip-release-notes", "--disable-telemetry", "--disable-updates",
@@ -159,6 +165,9 @@ async function main() {
     await hint.waitFor({ state: "visible", timeout: 20000 });
     await page.screenshot({ path: path.join(out, "inline-hint.png") });
     await stage(values.paths ? "inline_P_visible" : "inline_C_visible");
+    if (values['hover-probe'] || values['hover-events']) stopHoverEvents = await require('./hover-events.cjs').recordHoverEvents(page,out);
+    if (values['hover-hide-trace']) stopHoverHide=await require('./hover-hide-trace.cjs').recordHoverHide(page,out);
+    if (values['extension-events'] || values['hover-lifecycle']) stopHoverLifecycle=await require('./extension-event-trace.cjs').recordHoverLifecycle(page,out);
     async function verifyUndo(previous, current) {
       if (!values.undo) return;
       const normalize = text => {
@@ -243,10 +252,10 @@ async function main() {
           const from = { x: hintBox.x + hintBox.width / 2, y: hintBox.y + hintBox.height / 2 };
           const to = { x: box.x + box.width / 2, y: box.y + box.height / 2 };
           const steps = Math.ceil(Math.hypot(to.x - from.x, to.y - from.y));
-          report.pointer = { value, from, to, steps, stepDelayMs: 8 };
+          report.pointer = { value, from, to, steps, stepDelayMs: pointerStepDelayMs };
           for (let step = 1; step <= steps; step += 1) {
             await page.mouse.move(from.x + (to.x - from.x) * step / steps, from.y + (to.y - from.y) * step / steps);
-            await new Promise(resolve => setTimeout(resolve, 8));
+            await new Promise(resolve => setTimeout(resolve, pointerStepDelayMs));
             if (!await link.isVisible()) {
               report.pointer.disappearedAtStep = step;
               throw Error("Hover disappeared while moving from [C] to " + value);
@@ -309,6 +318,18 @@ async function main() {
     }
     process.exitCode = 1;
   } finally {
+    if(stopHoverLifecycle) {
+      try {report.hoverLifecycle=await stopHoverLifecycle();}
+      catch(error) {report.hoverLifecycleError=error.message;}
+    }
+    if (stopHoverHide) {
+      try { report.hoverHide=await stopHoverHide(); }
+      catch(error) { report.hoverHideError=error.message; }
+    }
+    if (stopHoverEvents) {
+      try { report.passiveEvents=await stopHoverEvents(); }
+      catch(error) { report.passiveEventError=error.message; }
+    }
     await save();
     if (app) {
       try { if (!report.closedAt) await app.close(); report.closedAt ||= new Date().toISOString(); }

@@ -26,7 +26,7 @@ async function runDependentFlow({ page, editor, workspace, notebookFile, fixture
     const from = { x: start.x + start.width/2, y: start.y + start.height/2 };
     const to = { x: end.x + end.width/2, y: end.y + end.height/2 };
     const steps = Math.ceil(Math.hypot(to.x-from.x, to.y-from.y));
-    const movement = { markerLabel, value, from, to, steps, menu: await menu.boundingBox() };
+    const movement = { markerLabel, value, from, to, steps, startedAt:Date.now(), menu: await menu.boundingBox() };
     (report.dependentMovements ||= []).push(movement);
     for (let step=1; step<=steps; step++) {
       const point = { x:from.x + (to.x-from.x)*step/steps, y:from.y + (to.y-from.y)*step/steps };
@@ -42,8 +42,8 @@ async function runDependentFlow({ page, editor, workspace, notebookFile, fixture
         (movement.hitTargets ||= []).push({step,point,hit});
       }
       await page.mouse.move(point.x,point.y);
-      await new Promise(resolve => setTimeout(resolve, 8));
-      if (!await link.isVisible()) { movement.disappearedAtStep = step; throw Error('Dependent hover disappeared during continuous movement'); }
+      await new Promise(resolve => setTimeout(resolve, report.pointerStepDelayMs||8));
+      if (!await link.isVisible()) { movement.disappearedAtStep = step; movement.disappearedAt=Date.now(); throw Error('Dependent hover disappeared during continuous movement'); }
     }
     await page.mouse.down(); await page.mouse.up();
     await menu.waitFor({ state: 'hidden', timeout: 5000 });

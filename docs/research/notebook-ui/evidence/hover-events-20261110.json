@@ -1,0 +1,391 @@
+{
+  "issue": 80,
+  "date": "2026-11-10",
+  "status": "Unresolved; not reproduced in this bounded investigation; no product fix adopted",
+  "decision": {
+    "source": "This chat, user original text",
+    "text": "１でおねがいします。",
+    "meaning": "Keep the existing hover-start approach. Do not implement the click-start completion proposal."
+  },
+  "environment": {
+    "vscode": "1.146.0-insider",
+    "commit": "29ce94ad8d36c62affc08484e262d5c4fbdd0b3d",
+    "playwright": "1.64.1",
+    "node": "24.14.1",
+    "os": "Windows x64",
+    "devicePixelRatio": 1.0499999523162842
+  },
+  "observations": [
+    "All seven runs passed the same dependent-choice flow, keep/clear policy, save, single Undo/Redo and YAML reload. One run added logging only to an owned installed test copy; six used the unchanged VSIX.",
+    "Passive browser traces captured real trusted pointer/mouse entry into the hover frame; no synthetic events or product UI state mutation were used.",
+    "Non-pausing debugger logpoints captured close and result-clear decisions in the owned renderer. Observed close calls came from editor commands after selection; recorded boundary entry was retained.",
+    "The inspected runtime hover settings were enabled:on, sticky:true, hidingDelay:300. Settings were read, not modified.",
+    "Extension-side logging run measured apply acknowledgements 17..28ms and close-command acknowledgements 1..18ms. The next menu observation was 424ms or more after the previous close returned. No late close was observed in that run; unrecorded prior failures remain unexplained.",
+    "The extension-logging run recorded document focus true and no window blur/visibility transition. Do not infer that prior unrecorded runs had the same focus state.",
+    "Slower 40ms-per-step motion passed with debugger tracing and without any extra event/debugger/source instrumentation. The normal 8ms cases also passed.",
+    "Instrumentation can affect timing; passing instrumented runs is not a fix. The uninstrumented control was therefore retained separately."
+  ],
+  "runs": [
+    {
+      "localArtifact": "results/task009-hover-events-20261110-01/result.local.json",
+      "outcome": "observed",
+      "mode": "installed VSIX unchanged",
+      "stages": [
+        "vsix_installed_in_isolated_profile",
+        "dedicated_workbench_ready",
+        "inline_C_visible",
+        "external_yaml_candidate_and_valid_child_preserved_without_save",
+        "invalid_child_cleared_with_parent_without_save",
+        "single_undo_restored_parent_and_child_redo_and_unrelated_cell_preserved",
+        "external_yaml_change_reloaded_without_restart"
+      ],
+      "passiveEvents": {
+        "localFile": "hover-events.local.json",
+        "events": 640,
+        "environment": {
+          "devicePixelRatio": 1.0499999523162842,
+          "innerWidth": 1447,
+          "innerHeight": 906,
+          "visualViewport": {
+            "scale": 1,
+            "offsetLeft": 0,
+            "offsetTop": 0
+          }
+        }
+      },
+      "dependent": {
+        "externalYamlUsed": true,
+        "validChildPreserved": true,
+        "invalidChildCleared": true,
+        "singleUndoRestoredBoth": true,
+        "redo": true,
+        "unrelatedCellAndMetadataPreserved": true,
+        "reloadedOnChange": true
+      },
+      "closed": true,
+      "ports": [
+        {
+          "port": 51176,
+          "listeners": 0
+        },
+        {
+          "port": 51178,
+          "listeners": 0
+        }
+      ]
+    },
+    {
+      "localArtifact": "results/task009-hover-events-20261110-02/result.local.json",
+      "outcome": "observed",
+      "mode": "installed VSIX unchanged",
+      "stages": [
+        "vsix_installed_in_isolated_profile",
+        "dedicated_workbench_ready",
+        "inline_C_visible",
+        "external_yaml_candidate_and_valid_child_preserved_without_save",
+        "invalid_child_cleared_with_parent_without_save",
+        "single_undo_restored_parent_and_child_redo_and_unrelated_cell_preserved",
+        "external_yaml_change_reloaded_without_restart"
+      ],
+      "passiveEvents": {
+        "localFile": "hover-events.local.json",
+        "events": 640,
+        "environment": {
+          "devicePixelRatio": 1.0499999523162842,
+          "innerWidth": 1447,
+          "innerHeight": 906,
+          "visualViewport": {
+            "scale": 1,
+            "offsetLeft": 0,
+            "offsetTop": 0
+          }
+        }
+      },
+      "dependent": {
+        "externalYamlUsed": true,
+        "validChildPreserved": true,
+        "invalidChildCleared": true,
+        "singleUndoRestoredBoth": true,
+        "redo": true,
+        "unrelatedCellAndMetadataPreserved": true,
+        "reloadedOnChange": true
+      },
+      "closed": true,
+      "ports": [
+        {
+          "port": 63632,
+          "listeners": 0
+        },
+        {
+          "port": 63634,
+          "listeners": 0
+        }
+      ]
+    },
+    {
+      "localArtifact": "results/task009-hover-hide-20261110-01/result.local.json",
+      "outcome": "observed",
+      "mode": "installed VSIX unchanged",
+      "stages": [
+        "vsix_installed_in_isolated_profile",
+        "dedicated_workbench_ready",
+        "inline_C_visible",
+        "external_yaml_candidate_and_valid_child_preserved_without_save",
+        "invalid_child_cleared_with_parent_without_save",
+        "single_undo_restored_parent_and_child_redo_and_unrelated_cell_preserved",
+        "external_yaml_change_reloaded_without_restart"
+      ],
+      "hoverHide": {
+        "localFile": "hover-hide.local.json",
+        "events": 12,
+        "scriptSha256": "9aea5004794cc6075e0c51aeacaefd160b1bf8ed599a53175c3acc517d7b3986"
+      },
+      "closing": {
+        "hideCalls": 6,
+        "editorCommandCalls": 6,
+        "nativeMouseLeaveCalls": 0,
+        "settings": {
+          "enabled": "on",
+          "sticky": true,
+          "hidingDelay": 300
+        },
+        "unexpectedPauses": 0,
+        "scriptSha256": "9aea5004794cc6075e0c51aeacaefd160b1bf8ed599a53175c3acc517d7b3986"
+      },
+      "dependent": {
+        "externalYamlUsed": true,
+        "validChildPreserved": true,
+        "invalidChildCleared": true,
+        "singleUndoRestoredBoth": true,
+        "redo": true,
+        "unrelatedCellAndMetadataPreserved": true,
+        "reloadedOnChange": true
+      },
+      "closed": true,
+      "ports": [
+        {
+          "port": 60655,
+          "listeners": 0
+        },
+        {
+          "port": 60657,
+          "listeners": 0
+        }
+      ]
+    },
+    {
+      "localArtifact": "results/task009-hover-hide-20261110-02/result.local.json",
+      "outcome": "observed",
+      "mode": "installed VSIX unchanged",
+      "stages": [
+        "vsix_installed_in_isolated_profile",
+        "dedicated_workbench_ready",
+        "inline_C_visible",
+        "external_yaml_candidate_and_valid_child_preserved_without_save",
+        "invalid_child_cleared_with_parent_without_save",
+        "single_undo_restored_parent_and_child_redo_and_unrelated_cell_preserved",
+        "external_yaml_change_reloaded_without_restart"
+      ],
+      "hoverHide": {
+        "localFile": "hover-hide.local.json",
+        "events": 18,
+        "scriptSha256": "9aea5004794cc6075e0c51aeacaefd160b1bf8ed599a53175c3acc517d7b3986"
+      },
+      "closing": {
+        "hideCalls": 6,
+        "editorCommandCalls": 6,
+        "nativeMouseLeaveCalls": 0,
+        "settings": {
+          "enabled": "on",
+          "sticky": true,
+          "hidingDelay": 300
+        },
+        "unexpectedPauses": 0,
+        "scriptSha256": "9aea5004794cc6075e0c51aeacaefd160b1bf8ed599a53175c3acc517d7b3986"
+      },
+      "dependent": {
+        "externalYamlUsed": true,
+        "validChildPreserved": true,
+        "invalidChildCleared": true,
+        "singleUndoRestoredBoth": true,
+        "redo": true,
+        "unrelatedCellAndMetadataPreserved": true,
+        "reloadedOnChange": true
+      },
+      "closed": true,
+      "ports": [
+        {
+          "port": 50746,
+          "listeners": 0
+        },
+        {
+          "port": 50748,
+          "listeners": 0
+        }
+      ]
+    },
+    {
+      "localArtifact": "results/task009-extension-events-20261110-01/result.local.json",
+      "outcome": "observed",
+      "mode": "logging-only test copy",
+      "stages": [
+        "vsix_installed_in_isolated_profile",
+        "dedicated_workbench_ready",
+        "inline_C_visible",
+        "external_yaml_candidate_and_valid_child_preserved_without_save",
+        "invalid_child_cleared_with_parent_without_save",
+        "single_undo_restored_parent_and_child_redo_and_unrelated_cell_preserved",
+        "external_yaml_change_reloaded_without_restart"
+      ],
+      "extensionEvents": {
+        "instrumentedCopy": true,
+        "originalSha256": "472e4185af5333fefe79fe1a8ee8d53ac89490313d39c80dfe0ca3ac9dafaec4",
+        "instrumentedSha256": "15dad397859266d5ed5aa60e9ebf92626c0ff30e70a76427c310b24e8d310628",
+        "localFile": "extension-events.local.jsonl"
+      },
+      "hoverLifecycle": {
+        "events": 99,
+        "localFile": "hover-lifecycle.local.json"
+      },
+      "dependent": {
+        "externalYamlUsed": true,
+        "validChildPreserved": true,
+        "invalidChildCleared": true,
+        "singleUndoRestoredBoth": true,
+        "redo": true,
+        "unrelatedCellAndMetadataPreserved": true,
+        "reloadedOnChange": true
+      },
+      "closed": true,
+      "ports": [
+        {
+          "port": 62790,
+          "listeners": 0
+        },
+        {
+          "port": 62792,
+          "listeners": 0
+        }
+      ]
+    },
+    {
+      "localArtifact": "results/task009-hover-hide-slow-20261110-01/result.local.json",
+      "outcome": "observed",
+      "mode": "installed VSIX unchanged",
+      "stepDelayMs": 40,
+      "stages": [
+        "vsix_installed_in_isolated_profile",
+        "dedicated_workbench_ready",
+        "inline_C_visible",
+        "external_yaml_candidate_and_valid_child_preserved_without_save",
+        "invalid_child_cleared_with_parent_without_save",
+        "single_undo_restored_parent_and_child_redo_and_unrelated_cell_preserved",
+        "external_yaml_change_reloaded_without_restart"
+      ],
+      "hoverHide": {
+        "localFile": "hover-hide.local.json",
+        "events": 18,
+        "scriptSha256": "9aea5004794cc6075e0c51aeacaefd160b1bf8ed599a53175c3acc517d7b3986"
+      },
+      "closing": {
+        "hideCalls": 6,
+        "editorCommandCalls": 6,
+        "nativeMouseLeaveCalls": 0,
+        "settings": {
+          "enabled": "on",
+          "sticky": true,
+          "hidingDelay": 300
+        },
+        "unexpectedPauses": 0,
+        "scriptSha256": "9aea5004794cc6075e0c51aeacaefd160b1bf8ed599a53175c3acc517d7b3986"
+      },
+      "dependent": {
+        "externalYamlUsed": true,
+        "validChildPreserved": true,
+        "invalidChildCleared": true,
+        "singleUndoRestoredBoth": true,
+        "redo": true,
+        "unrelatedCellAndMetadataPreserved": true,
+        "reloadedOnChange": true
+      },
+      "closed": true,
+      "ports": [
+        {
+          "port": 58380,
+          "listeners": 0
+        },
+        {
+          "port": 58382,
+          "listeners": 0
+        }
+      ]
+    },
+    {
+      "localArtifact": "results/task009-hover-baseline-slow-20261110-01/result.local.json",
+      "outcome": "observed",
+      "mode": "installed VSIX unchanged",
+      "stepDelayMs": 40,
+      "stages": [
+        "vsix_installed_in_isolated_profile",
+        "dedicated_workbench_ready",
+        "inline_C_visible",
+        "external_yaml_candidate_and_valid_child_preserved_without_save",
+        "invalid_child_cleared_with_parent_without_save",
+        "single_undo_restored_parent_and_child_redo_and_unrelated_cell_preserved",
+        "external_yaml_change_reloaded_without_restart"
+      ],
+      "dependent": {
+        "externalYamlUsed": true,
+        "validChildPreserved": true,
+        "invalidChildCleared": true,
+        "singleUndoRestoredBoth": true,
+        "redo": true,
+        "unrelatedCellAndMetadataPreserved": true,
+        "reloadedOnChange": true
+      },
+      "closed": true,
+      "ports": [
+        {
+          "port": 58027,
+          "listeners": 0
+        },
+        {
+          "port": 58029,
+          "listeners": 0
+        }
+      ]
+    }
+  ],
+  "product": {
+    "version": "0.0.2",
+    "sourceCommit": "0f2ae6a",
+    "vsixSha256": "fefc893786a951551ac5cc361afebd10836a22648d036a15c3bfe20dd7857adb",
+    "sourceChanged": false,
+    "mainMerged": false
+  },
+  "checks": {
+    "unitCommand": "npm test --prefix apps/extension",
+    "unitPass": 27,
+    "unitFail": 0,
+    "note": "Fresh retained-code unit check and script syntax checks recorded in logs/task009-hover-nov10-unit.txt."
+  },
+  "manualPreparation": {
+    "notStarted": true,
+    "title": "ZizAI Hover Investigation",
+    "scope": "Owned synthetic notebook with [C]/[A], csv/import/export/excel examples, no kernel execution.",
+    "procedure": [
+      "Choose csv and import, then choose excel: action becomes empty.",
+      "Choose export, then csv: export is retained.",
+      "Report any menu disappearance during movement; do not execute cells."
+    ],
+    "logging": "Optional hover-lifecycle records native focus and hover style/link changes without modifying the extension copy or forcing layout.",
+    "handoff": "Open one dedicated window only after user readiness; keep it open until the user end signal. Manual acceptance is separate from automation."
+  },
+  "limits": [
+    "Original 2026-11-09 failures remain valid evidence; no conclusive root cause or repaired-state claim.",
+    "Stable API still returned 1.145.2; formal support version remains undecided.",
+    "No new UI requirements, task scope or completion conditions adopted. No private UI functions invoked to simulate selections.",
+    "Raw traces contain synthetic paths and stack locations and remain local. Summary does not imply they are hosted.",
+    "All seven automated windows closed and recorded debug ports have zero listeners. No user profiles/files or earlier logs were changed or removed."
+  ]
+}

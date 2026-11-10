@@ -45,7 +45,7 @@ async function runPathFlow({ page, editor, workspace, notebookFile, originalSour
     (report.pathPointerMovements ||= []).push(movement);
     for (let step = 1; step <= steps; step += 1) {
       await page.mouse.move(from.x + (to.x - from.x) * step / steps, from.y + (to.y - from.y) * step / steps);
-      await new Promise(resolve => setTimeout(resolve, 8));
+      await new Promise(resolve => setTimeout(resolve, report.pointerStepDelayMs||8));
       if (!await link.isVisible()) {
         movement.disappearedAtStep = step;
         throw Error("Path menu must remain visible while moving into it");
