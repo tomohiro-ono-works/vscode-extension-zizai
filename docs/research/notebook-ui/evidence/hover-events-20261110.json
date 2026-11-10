@@ -2,6 +2,23 @@
   "issue": 80,
   "date": "2026-11-10",
   "status": "Unresolved; not reproduced in this bounded investigation; no product fix adopted",
+  "cliInstallFollowUp": {
+    "date": "2026-11-10",
+    "archiveSha256": "99cedc6e6f4ccd9e23b22102a0ea1081cd50940cf4aba5861446b9749bfd4a5a",
+    "out": "results/task009-cli-install-review-20261110-01",
+    "result": "VSIX installed via isolated VS Code CLI; installed version 0.0.2; all 82 extension payload entries matched packaged bytes, excluding installer-added package.json __metadata",
+    "runtimePackages": ["yaml"],
+    "guiStarted": false,
+    "initialComparison": "Source-to-installed README comparison failed because vsce expands GitHub issue references. Original failed result retained. Corrected archive-to-installed comparison passed without reinstalling.",
+    "localEvidence": ["result.local.json", "archive-verification.local.json", "../../logs/task009-cli-install-review-20261110.txt"],
+    "warning": "VS Code CLI emitted Node DEP0169 url.parse deprecation warning with general security wording. Observed during CLI installation; no extension exploit or security incident established. Warning retained and reported, not declared fixed.",
+    "stableVersionCheck": {
+      "source": "https://update.code.visualstudio.com/api/update/win32-x64-user/stable/latest",
+      "productVersion": "1.145.2",
+      "commit": "c4453f8ea430795f941c1b2ff6c9321135a74a02"
+    },
+    "limits": "This supersedes the earlier uninstalled-archive state for CLI installation only. No new full VS Code GUI/runner-shutdown session or formal supported-version approval."
+  },
   "finishAndPackageReview": {
     "scope": "Issue/body corrections, manual runner finish control, documentation-only VSIX rebuild; no product UI change",
     "manualControl": "Fresh owned results folder finish.request must contain finish; stdin EOF and elapsed time do not end the wait; app close removes the watcher",
