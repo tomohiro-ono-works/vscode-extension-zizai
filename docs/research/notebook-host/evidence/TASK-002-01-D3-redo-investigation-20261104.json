@@ -1,0 +1,507 @@
+{
+  "localDate": "2026-11-04",
+  "case": "D3-metadata-first-failure existing-evidence investigation",
+  "method": "Read-only CLI audit of existing raw events, pinned diagnostic source and pinned VS Code source; no GUI, kernel, Notebook edit or diagnostic rerun",
+  "previousVerdictUnchanged": "不合格（この手動Redo条件の期待不一致）",
+  "rootCause": "undetermined; key/command routing and internal history are not captured",
+  "rawLog": {
+    "file": "logs/task-002-01/2026-10-25T12-26-17-146Z-13484/events.jsonl",
+    "fullSha256": "eff6b2c3c20fd64f84477972ffcfb0e42b07a3230094cff581272a0b42177873",
+    "totalEvents": 120,
+    "throughSeq": 51,
+    "prefixSha256": "a2483216db20a5f4df22cae702c6c3556bf2b16d68ab0dae670de817ecec8788",
+    "prefixMatchesOriginalEvidence": true,
+    "subsequentNotebook13Changes": []
+  },
+  "diagnostic": {
+    "evidenceHead": "fbaf341959ab22ef14ad21f91a3105a039de3a2b",
+    "sourceContentCommit": "957aa60",
+    "extensionSha256": "988b0e70e4e7d2cad1e0227d21c567d49450063f9e5b18fa6bf2bdfe2206a009",
+    "matchesRecordedBuild": true,
+    "atRun": "uncommitted working content recorded in build; subsequently committed in 957aa60",
+    "markerWritesNotebook": false,
+    "loopOrAutomaticRetryInMixedCommand": false
+  },
+  "auditPreparationFailure": {
+    "command": "node logs/d3-redo-audit-20261104.cjs",
+    "exitCode": 1,
+    "reason": "Initial audit incorrectly equated evidence head with executed working content. fbaf341 blob hash 22f8a0c... differs from recorded build hash. Matching later checkpoint 957aa60 blob located; D3 mixed/apply/snapshot logic unchanged in that diff. Initial failure retained; no original diagnostic rerun."
+  },
+  "timeline": [
+    {
+      "seq": 35,
+      "at": "2026-10-25T15:31:52.030Z",
+      "kind": "notebook.open",
+      "object": 13,
+      "version": 0,
+      "dirty": false,
+      "source": "# D3 baseline\nfictional_value = 10\n",
+      "metadata": {
+        "execution_count": null,
+        "metadata": {
+          "outsideDiagnosticOwner": {
+            "sentinel": "keep-D3"
+          },
+          "task00201Diagnostic": {
+            "label": "D3",
+            "draft": 0,
+            "committed": 0,
+            "burst": 0,
+            "probeOnly": true
+          }
+        },
+        "id": "task00201-D3-mixed-0"
+      }
+    },
+    {
+      "seq": 36,
+      "at": "2026-10-25T15:31:52.307Z",
+      "kind": "snapshot",
+      "label": "new-case",
+      "object": 13,
+      "version": 0,
+      "dirty": false,
+      "source": "# D3 baseline\nfictional_value = 10\n",
+      "metadata": {
+        "execution_count": null,
+        "metadata": {
+          "outsideDiagnosticOwner": {
+            "sentinel": "keep-D3"
+          },
+          "task00201Diagnostic": {
+            "label": "D3",
+            "draft": 0,
+            "committed": 0,
+            "burst": 0,
+            "probeOnly": true
+          }
+        },
+        "id": "task00201-D3-mixed-0"
+      }
+    },
+    {
+      "seq": 37,
+      "at": "2026-10-25T15:32:17.399Z",
+      "kind": "snapshot",
+      "label": "D3-metadata-first-failure:before",
+      "object": 13,
+      "version": 0,
+      "dirty": false,
+      "source": "# D3 baseline\nfictional_value = 10\n",
+      "metadata": {
+        "execution_count": null,
+        "metadata": {
+          "outsideDiagnosticOwner": {
+            "sentinel": "keep-D3"
+          },
+          "task00201Diagnostic": {
+            "label": "D3",
+            "draft": 0,
+            "committed": 0,
+            "burst": 0,
+            "probeOnly": true
+          }
+        },
+        "id": "task00201-D3-mixed-0"
+      }
+    },
+    {
+      "seq": 38,
+      "at": "2026-10-25T15:32:17.400Z",
+      "kind": "apply.request",
+      "label": "D3-metadata-first-failure"
+    },
+    {
+      "seq": 39,
+      "at": "2026-10-25T15:32:17.410Z",
+      "kind": "notebook.change",
+      "object": 13,
+      "version": 1,
+      "dirty": false,
+      "source": "# D3 baseline\nfictional_value = 10\n",
+      "metadata": {
+        "execution_count": null,
+        "metadata": {
+          "outsideDiagnosticOwner": {
+            "sentinel": "keep-D3"
+          },
+          "task00201Diagnostic": {
+            "label": "D3",
+            "draft": 0,
+            "committed": 0,
+            "burst": 0,
+            "probeOnly": true,
+            "mixed": "metadata-first-failure"
+          }
+        },
+        "id": "task00201-D3-mixed-0"
+      }
+    },
+    {
+      "seq": 40,
+      "at": "2026-10-25T15:32:17.430Z",
+      "kind": "apply.return",
+      "label": "D3-metadata-first-failure",
+      "result": false
+    },
+    {
+      "seq": 41,
+      "at": "2026-10-25T15:32:17.431Z",
+      "kind": "snapshot",
+      "label": "D3-metadata-first-failure:after",
+      "object": 13,
+      "version": 1,
+      "dirty": true,
+      "source": "# D3 baseline\nfictional_value = 10\n",
+      "metadata": {
+        "execution_count": null,
+        "metadata": {
+          "outsideDiagnosticOwner": {
+            "sentinel": "keep-D3"
+          },
+          "task00201Diagnostic": {
+            "label": "D3",
+            "draft": 0,
+            "committed": 0,
+            "burst": 0,
+            "probeOnly": true,
+            "mixed": "metadata-first-failure"
+          }
+        },
+        "id": "task00201-D3-mixed-0"
+      }
+    },
+    {
+      "seq": 42,
+      "at": "2026-10-25T15:37:01.118Z",
+      "kind": "snapshot",
+      "label": "D3-metadata-first-failure:before",
+      "object": 13,
+      "version": 1,
+      "dirty": true,
+      "source": "# D3 baseline\nfictional_value = 10\n",
+      "metadata": {
+        "execution_count": null,
+        "metadata": {
+          "outsideDiagnosticOwner": {
+            "sentinel": "keep-D3"
+          },
+          "task00201Diagnostic": {
+            "label": "D3",
+            "draft": 0,
+            "committed": 0,
+            "burst": 0,
+            "probeOnly": true,
+            "mixed": "metadata-first-failure"
+          }
+        },
+        "id": "task00201-D3-mixed-0"
+      }
+    },
+    {
+      "seq": 43,
+      "at": "2026-10-25T15:37:01.119Z",
+      "kind": "apply.request",
+      "label": "D3-metadata-first-failure"
+    },
+    {
+      "seq": 44,
+      "at": "2026-10-25T15:37:01.128Z",
+      "kind": "notebook.change",
+      "object": 13,
+      "version": 2,
+      "dirty": true,
+      "source": "# D3 baseline\nfictional_value = 10\n",
+      "metadata": {
+        "execution_count": null,
+        "metadata": {
+          "outsideDiagnosticOwner": {
+            "sentinel": "keep-D3"
+          },
+          "task00201Diagnostic": {
+            "label": "D3",
+            "draft": 0,
+            "committed": 0,
+            "burst": 0,
+            "probeOnly": true,
+            "mixed": "metadata-first-failure"
+          }
+        },
+        "id": "task00201-D3-mixed-0"
+      }
+    },
+    {
+      "seq": 45,
+      "at": "2026-10-25T15:37:01.141Z",
+      "kind": "apply.return",
+      "label": "D3-metadata-first-failure",
+      "result": false
+    },
+    {
+      "seq": 46,
+      "at": "2026-10-25T15:37:01.142Z",
+      "kind": "snapshot",
+      "label": "D3-metadata-first-failure:after",
+      "object": 13,
+      "version": 2,
+      "dirty": true,
+      "source": "# D3 baseline\nfictional_value = 10\n",
+      "metadata": {
+        "execution_count": null,
+        "metadata": {
+          "outsideDiagnosticOwner": {
+            "sentinel": "keep-D3"
+          },
+          "task00201Diagnostic": {
+            "label": "D3",
+            "draft": 0,
+            "committed": 0,
+            "burst": 0,
+            "probeOnly": true,
+            "mixed": "metadata-first-failure"
+          }
+        },
+        "id": "task00201-D3-mixed-0"
+      }
+    },
+    {
+      "seq": 47,
+      "at": "2026-10-25T15:39:05.020Z",
+      "kind": "notebook.change",
+      "object": 13,
+      "version": 3,
+      "dirty": true,
+      "source": "# D3 baseline\nfictional_value = 10\n",
+      "metadata": {
+        "execution_count": null,
+        "metadata": {
+          "outsideDiagnosticOwner": {
+            "sentinel": "keep-D3"
+          },
+          "task00201Diagnostic": {
+            "label": "D3",
+            "draft": 0,
+            "committed": 0,
+            "burst": 0,
+            "probeOnly": true,
+            "mixed": "metadata-first-failure"
+          }
+        },
+        "id": "task00201-D3-mixed-0"
+      }
+    },
+    {
+      "seq": 48,
+      "at": "2026-10-25T15:39:29.409Z",
+      "kind": "snapshot",
+      "label": "undo",
+      "object": 13,
+      "version": 3,
+      "dirty": true,
+      "source": "# D3 baseline\nfictional_value = 10\n",
+      "metadata": {
+        "execution_count": null,
+        "metadata": {
+          "outsideDiagnosticOwner": {
+            "sentinel": "keep-D3"
+          },
+          "task00201Diagnostic": {
+            "label": "D3",
+            "draft": 0,
+            "committed": 0,
+            "burst": 0,
+            "probeOnly": true,
+            "mixed": "metadata-first-failure"
+          }
+        },
+        "id": "task00201-D3-mixed-0"
+      }
+    },
+    {
+      "seq": 49,
+      "at": "2026-10-25T15:43:01.422Z",
+      "kind": "notebook.change",
+      "object": 13,
+      "version": 4,
+      "dirty": true,
+      "source": "# D3 baseline\nfictional_value = 10\n",
+      "metadata": {
+        "execution_count": null,
+        "metadata": {
+          "outsideDiagnosticOwner": {
+            "sentinel": "keep-D3"
+          },
+          "task00201Diagnostic": {
+            "label": "D3",
+            "draft": 0,
+            "committed": 0,
+            "burst": 0,
+            "probeOnly": true
+          }
+        },
+        "id": "task00201-D3-mixed-0"
+      }
+    },
+    {
+      "seq": 50,
+      "at": "2026-10-25T15:43:22.664Z",
+      "kind": "snapshot",
+      "label": "undo",
+      "object": 13,
+      "version": 4,
+      "dirty": false,
+      "source": "# D3 baseline\nfictional_value = 10\n",
+      "metadata": {
+        "execution_count": null,
+        "metadata": {
+          "outsideDiagnosticOwner": {
+            "sentinel": "keep-D3"
+          },
+          "task00201Diagnostic": {
+            "label": "D3",
+            "draft": 0,
+            "committed": 0,
+            "burst": 0,
+            "probeOnly": true
+          }
+        },
+        "id": "task00201-D3-mixed-0"
+      }
+    },
+    {
+      "seq": 51,
+      "at": "2026-10-25T15:45:03.482Z",
+      "kind": "snapshot",
+      "label": "redo",
+      "object": 13,
+      "version": 4,
+      "dirty": false,
+      "source": "# D3 baseline\nfictional_value = 10\n",
+      "metadata": {
+        "execution_count": null,
+        "metadata": {
+          "outsideDiagnosticOwner": {
+            "sentinel": "keep-D3"
+          },
+          "task00201Diagnostic": {
+            "label": "D3",
+            "draft": 0,
+            "committed": 0,
+            "burst": 0,
+            "probeOnly": true
+          }
+        },
+        "id": "task00201-D3-mixed-0"
+      }
+    }
+  ],
+  "comparison": {
+    "earlierApi": {
+      "vscode": "1.143.0",
+      "updateAttempts": 1,
+      "route": "public commands undo/redo; quitEdit; 30ms wait",
+      "initialStandardId": null,
+      "after": {
+        "version": 1,
+        "dirty": true,
+        "source": "# D3 baseline\nfictional_value = 10\n",
+        "mixed": "metadata-first-failure",
+        "standardId": null
+      },
+      "undo": {
+        "version": 2,
+        "dirty": false,
+        "source": "# D3 baseline\nfictional_value = 10\n",
+        "mixed": null,
+        "standardId": null
+      },
+      "redo": {
+        "version": 3,
+        "dirty": true,
+        "source": "# D3 baseline\nfictional_value = 10\n",
+        "mixed": "metadata-first-failure",
+        "standardId": null
+      }
+    },
+    "manual": {
+      "vscode": "1.143.1",
+      "updateAttempts": 2,
+      "route": "User instructed code click, Esc, Ctrl+Z once for each of two Undo steps and Ctrl+Y once; snapshots tagged undo/redo",
+      "initialStandardId": "task00201-D3-mixed-0"
+    }
+  },
+  "sourceReferences": [
+    {
+      "repository": "microsoft/vscode",
+      "commit": "e646868227c3e3a9e3f24277c8c7220be42c0be7",
+      "path": "src/vs/workbench/contrib/notebook/common/model/notebookTextModel.ts",
+      "start": 1064,
+      "end": 1077,
+      "excerpt": "\tprivate _isCellMetadataChanged(a: NotebookCellMetadata, b: NotebookCellMetadata) {\n\t\tconst keys = new Set([...Object.keys(a || {}), ...Object.keys(b || {})]);\n\t\tfor (const key of keys) {\n\t\t\tif (\n\t\t\t\t(a[key as keyof NotebookCellMetadata] !== b[key as keyof NotebookCellMetadata])\n\t\t\t\t&&\n\t\t\t\t!(this.transientOptions.transientCellMetadata[key as keyof NotebookCellMetadata])\n\t\t\t) {\n\t\t\t\treturn true;\n\t\t\t}\n\t\t}\n\n\t\treturn false;\n\t}"
+    },
+    {
+      "repository": "microsoft/vscode",
+      "commit": "e646868227c3e3a9e3f24277c8c7220be42c0be7",
+      "path": "src/vs/workbench/contrib/notebook/common/model/notebookTextModel.ts",
+      "start": 1119,
+      "end": 1146,
+      "excerpt": "\tprivate _changeCellMetadata(cell: NotebookCellTextModel, metadata: NotebookCellMetadata, computeUndoRedo: boolean, beginSelectionState: ISelectionState | undefined, undoRedoGroup: UndoRedoGroup | undefined) {\n\t\tconst triggerDirtyChange = this._isCellMetadataChanged(cell.metadata, metadata);\n\n\t\tif (triggerDirtyChange) {\n\t\t\tif (computeUndoRedo) {\n\t\t\t\tconst index = this._cells.indexOf(cell);\n\t\t\t\tthis._operationManager.pushEditOperation(new CellMetadataEdit(this.uri, index, Object.freeze(cell.metadata), Object.freeze(metadata), {\n\t\t\t\t\tupdateCellMetadata: (index, newMetadata) => {\n\t\t\t\t\t\tconst cell = this._cells[index];\n\t\t\t\t\t\tif (!cell) {\n\t\t\t\t\t\t\treturn;\n\t\t\t\t\t\t}\n\t\t\t\t\t\tthis._changeCellMetadata(cell, newMetadata, false, beginSelectionState, undoRedoGroup);\n\t\t\t\t\t}\n\t\t\t\t}), beginSelectionState, undefined, this._alternativeVersionId, undoRedoGroup);\n\t\t\t}\n\t\t}\n\n\t\t// should be deferred\n\t\tcell.metadata = metadata;\n\t\tthis._pauseableEmitter.fire({\n\t\t\trawEvents: [{ kind: NotebookCellsChangeType.ChangeCellMetadata, index: this._cells.indexOf(cell), metadata: cell.metadata, transient: !triggerDirtyChange }],\n\t\t\tversionId: this.versionId,\n\t\t\tsynchronous: true,\n\t\t\tendSelectionState: undefined\n\t\t});\n\t}\n"
+    },
+    {
+      "repository": "microsoft/vscode",
+      "commit": "e646868227c3e3a9e3f24277c8c7220be42c0be7",
+      "path": "src/vs/workbench/contrib/notebook/common/model/cellEdit.ts",
+      "start": 101,
+      "end": 130,
+      "excerpt": "export class CellMetadataEdit implements IResourceUndoRedoElement {\n\ttype: UndoRedoElementType.Resource = UndoRedoElementType.Resource;\n\tlabel: string = 'Update Cell Metadata';\n\tcode: string = 'undoredo.textBufferEdit';\n\tconstructor(\n\t\tpublic resource: URI,\n\t\treadonly index: number,\n\t\treadonly oldMetadata: NotebookCellMetadata,\n\t\treadonly newMetadata: NotebookCellMetadata,\n\t\tprivate editingDelegate: ITextCellEditingDelegate,\n\t) {\n\n\t}\n\n\tundo(): void {\n\t\tif (!this.editingDelegate.updateCellMetadata) {\n\t\t\treturn;\n\t\t}\n\n\t\tthis.editingDelegate.updateCellMetadata(this.index, this.oldMetadata);\n\t}\n\n\tredo(): void | Promise<void> {\n\t\tif (!this.editingDelegate.updateCellMetadata) {\n\t\t\treturn;\n\t\t}\n\n\t\tthis.editingDelegate.updateCellMetadata(this.index, this.newMetadata);\n\t}\n}"
+    },
+    {
+      "repository": "microsoft/vscode",
+      "commit": "e646868227c3e3a9e3f24277c8c7220be42c0be7",
+      "path": "src/vs/workbench/contrib/notebook/browser/contrib/undoRedo/notebookUndoRedo.ts",
+      "start": 43,
+      "end": 65,
+      "excerpt": "\t\tthis._register(RedoCommand.addImplementation(PRIORITY, 'notebook-undo-redo', () => {\n\t\t\tconst editor = getNotebookEditorFromEditorPane(this._editorService.activeEditorPane);\n\t\t\tconst viewModel = editor?.getViewModel() as NotebookViewModel | undefined;\n\n\t\t\tif (editor && editor.hasEditorFocus() && editor.hasModel() && viewModel) {\n\t\t\t\treturn viewModel.redo().then(cellResources => {\n\t\t\t\t\tif (cellResources?.length) {\n\t\t\t\t\t\tfor (let i = 0; i < editor.getLength(); i++) {\n\t\t\t\t\t\t\tconst cell = editor.cellAt(i);\n\t\t\t\t\t\t\tif (cell.cellKind === CellKind.Markup && cellResources.find(resource => resource.fragment === cell.model.uri.fragment)) {\n\t\t\t\t\t\t\t\tcell.updateEditState(CellEditState.Editing, 'redo');\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t}\n\n\t\t\t\t\t\teditor?.setOptions({ cellOptions: { resource: cellResources[0] }, preserveFocus: true });\n\t\t\t\t\t}\n\t\t\t\t});\n\t\t\t}\n\n\t\t\treturn false;\n\t\t}));\n\t}\n}"
+    },
+    {
+      "repository": "microsoft/vscode",
+      "commit": "e646868227c3e3a9e3f24277c8c7220be42c0be7",
+      "path": "src/vs/workbench/contrib/notebook/browser/viewModel/notebookViewModelImpl.ts",
+      "start": 1047,
+      "end": 1063,
+      "excerpt": "\tasync redo() {\n\n\t\tconst editStack = this._undoService.getElements(this.uri);\n\t\tconst element = editStack.future[0];\n\n\t\tif (element && element instanceof SingleModelEditStackElement || element instanceof MultiModelEditStackElement) {\n\t\t\tawait this._withElement(element, async () => {\n\t\t\t\tawait this._undoService.redo(this.uri);\n\t\t\t});\n\n\t\t\treturn (element instanceof SingleModelEditStackElement) ? [element.resource] : element.resources;\n\t\t}\n\n\t\tawait this._undoService.redo(this.uri);\n\n\t\treturn [];\n\t}"
+    },
+    {
+      "repository": "microsoft/vscode",
+      "commit": "e646868227c3e3a9e3f24277c8c7220be42c0be7",
+      "path": "src/vs/workbench/contrib/bulkEdit/browser/bulkEditService.ts",
+      "start": 99,
+      "end": 141,
+      "excerpt": "\tasync perform(reason?: TextModelEditSource): Promise<readonly URI[]> {\n\n\t\tif (this._edits.length === 0) {\n\t\t\treturn [];\n\t\t}\n\n\t\tconst ranges: number[] = [1];\n\t\tfor (let i = 1; i < this._edits.length; i++) {\n\t\t\tif (Object.getPrototypeOf(this._edits[i - 1]) === Object.getPrototypeOf(this._edits[i])) {\n\t\t\t\tranges[ranges.length - 1]++;\n\t\t\t} else {\n\t\t\t\tranges.push(1);\n\t\t\t}\n\t\t}\n\n\t\t// Show infinte progress when there is only 1 item since we do not know how long it takes\n\t\tconst increment = this._edits.length > 1 ? 0 : undefined;\n\t\tthis._progress.report({ increment, total: 100 });\n\t\t// Increment by percentage points since progress API expects that\n\t\tconst progress: IProgress<void> = { report: _ => this._progress.report({ increment: 100 / this._edits.length }) };\n\n\t\tconst resources: (readonly URI[])[] = [];\n\t\tlet index = 0;\n\t\tfor (const range of ranges) {\n\t\t\tif (this._token.isCancellationRequested) {\n\t\t\t\tbreak;\n\t\t\t}\n\t\t\tconst group = this._edits.slice(index, index + range);\n\t\t\tif (group[0] instanceof ResourceFileEdit) {\n\t\t\t\tresources.push(await this._performFileEdits(<ResourceFileEdit[]>group, this._undoRedoGroup, this._undoRedoSource, this._confirmBeforeUndo, progress));\n\t\t\t} else if (group[0] instanceof ResourceTextEdit) {\n\t\t\t\tresources.push(await this._performTextEdits(<ResourceTextEdit[]>group, this._undoRedoGroup, this._undoRedoSource, progress, reason));\n\t\t\t} else if (group[0] instanceof ResourceNotebookCellEdit) {\n\t\t\t\tresources.push(await this._performCellEdits(<ResourceNotebookCellEdit[]>group, this._undoRedoGroup, this._undoRedoSource, progress));\n\t\t\t} else if (group[0] instanceof ResourceAttachmentEdit) {\n\t\t\t\tresources.push(await this._performOpaqueEdits(<ResourceAttachmentEdit[]>group, this._undoRedoGroup, this._undoRedoSource, progress));\n\t\t\t} else {\n\t\t\t\tconsole.log('UNKNOWN EDIT');\n\t\t\t}\n\t\t\tindex = index + range;\n\t\t}\n\n\t\treturn resources.flat();"
+    }
+  ],
+  "findings": [
+    "Two apply.request and false returns are distinct diagnostic command attempts, 283719ms apart; mixed command contains no retry loop.",
+    "Both updates preserved identical serialized metadata; values equal does not imply one history operation.",
+    "Pinned VS Code compares top-level metadata properties by !==; diagnostic patch constructs nested objects anew. Static explanation for another metadata history entry, not a runtime trace of the internal stack.",
+    "Record Step snapshot command only reads Notebook state and shows a message; it does not call applyEdit, undo or redo. Its focus effects are not logged.",
+    "Pinned Notebook redo handler requires editor focus; CellMetadataEdit.redo delegates new metadata. Existing public logs cannot show whether this handler ran or which stack element was selected.",
+    "The first Redo after two Undos should restore the first changed metadata, not merely replay a same-value second update. Equal second update alone does not explain the missing restoration.",
+    "Earlier API success has different IDE version, fixture ID and update count plus different input route. It is not a controlled comparison of keyboard versus API.",
+    "Full log differs from historical throughSeq51 hash because it contains subsequent records; exact first51-line prefix matches. No log loss or rewrite inferred."
+  ],
+  "nextProposed": {
+    "status": "not agreed; not implemented or run",
+    "scope": "Dedicated fictional Notebook, no kernel; fixed Playwright two identical metadata-first-failure attempts, Undo twice, Redo once, explicit Notebook focus and trusted key timestamp; compare separately with public command redo under same current environment",
+    "neededEvidence": [
+      "Notebook DOM focus before shortcut",
+      "trusted Ctrl+Y key timestamp",
+      "snapshot after Undo2 and after shortcut",
+      "separate public redo command result/state"
+    ],
+    "limit": "Current IDE differs from 1.143.1; no retroactive proof of original routing, no internal IDE API, old failure remains"
+  },
+  "taskComplete": false,
+  "hostDesignStartPrerequisiteSatisfied": false,
+  "mainReflected": false
+}

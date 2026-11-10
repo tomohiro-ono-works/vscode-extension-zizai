@@ -1,18 +1,14 @@
-# 検証コードと手順
+# 残した調査用の確認資産
 
-| フォルダー | 配置するもの |
-| --- | --- |
-| `unit/` | コード生成、入力検証、Python 共通処理などの単体テスト |
-| `integration/` | UI と Extension Host の通信、Python ライブラリとコネクタなどの結合テスト |
-| `e2e/` | VS Code / Jupyter を使った実際の操作経路の自動テスト |
-| `manual/` | デスクトップでの UI・OS 固有処理・外部サービス接続の確認手順 |
+新方式の[候補選択の文字列編集確認](unit/extension/selection.test.cjs)を追加しています。実行方法と現在の対象は[拡張ソースの案内](../apps/extension/README.md)を参照してください。これはCLIでのロジック確認であり、実画面の操作確認ではありません。
 
-[TASK-001-01の検証専用試作](notebook-ui-gate/README.md) と [言語選択の隣の選択UI・手動手順](manual/TASK-001-01-statusbar.md) を追加しています。製品のテストコード・テストランナーは未実装です。実装時に Task の完了条件を確認し、必要なテストと実行手順を追加します。
+旧フォーム・サイドバーの試験資料と試作は、2026-11-08の設計作り直しで撤去しました。残した資産は過去の観測を追跡するもので、新方式の製品受入条件ではありません。
 
-[サイドバーUIの単体確認ケース](unit/sidebar-cases.md)と[製品サイドバーの実機手順](manual/TASK-001-sidebar.md)は、承認済み動作から作成したテスト準備資料です。製品のrunner・Host・起動入口が成立した部分から実行し、定義の検査と製品の動作確認を区別します。
+- [Notebook API診断](notebook-host-api/README.md)：セル編集・識別・保存・標準実行の観測。
+- [パス選択試作](notebook-ui-gate/path-completion/extension.cjs)：補完選択後のダイアログ接続。
+- [Python import調査](python-import-research/README.md)と[Python確認](unit/python/README.md)：独立したPython基盤の参照・配布確認。
+- [選択カーネルでの過去の手順](manual/TASK-003-05-python.md)と[Notebook APIの過去の手順](manual/TASK-002-01-notebook-host.md)。
 
-[サイドバーのAPI・結合ケース](integration/sidebar-cases.md)はHost・Notebook API・標準コマンドと保存結果の確認です。分類は[開発ルール](../docs/development.md)に従い実際の操作経路で決めます。単体／API・結合はエージェント、手動UIはユーザー操作とエージェントによる準備・証跡採取・分析・記録に分担します。UI自動化はPlaywrightで、範囲・開始方法・担当を事前合意してから行います。
+既存の[契約検証コード](contracts/README.md)はコード保護のため変更していません。旧フォーム契約の検証であり、新方式の必須条件にしません。
 
-手動確認では、前提条件、対象バージョン、操作、期待結果を記載します。実施結果は対象 Task に残し、クラウドで実行できなかった検証を成功扱いにしません。
-
-テスト用 Notebook やデータには架空値を使用し、認証情報や実データをコミットしません。
+実行は[許可する操作方法](../docs/development.md#allowed-test-operations)に従います。今回の資料整理ではUI・kernel起動も過去の試験の再実行も行いません。

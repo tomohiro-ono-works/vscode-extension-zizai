@@ -1,0 +1,541 @@
+{
+  "issue": "https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/14",
+  "branch": "codex/research-vscode-playwright-20261102",
+  "mainAdopted": false,
+  "observedUIConditions": 4,
+  "manualPass": false,
+  "cases": [
+    {
+      "case": "D5-queued-delete",
+      "run": 9,
+      "status": "UI mutation, guard rejection and saved state observed",
+      "formalAcceptance": "not claimed",
+      "route": "fixed Playwright UI automation",
+      "runnerSha256": "f0ad507b51abe47cf3ce026f55dc770c7edc1316ea76db453316dde4ff1ba905",
+      "kernelEnvironment": {
+        "python": "3.14.3 (tags/v3.14.3:323c59a, Feb  3 2026, 16:04:56) [MSC v.1944 64 bit (AMD64)]",
+        "ipykernel": "7.4.0",
+        "jupyter_client": "8.10.0"
+      },
+      "dialogStyle": "native default; no running-delete confirmation involved",
+      "deleteConfirmation": null,
+      "closeCondition": null,
+      "guard": {
+        "valid": false,
+        "invalidated": false,
+        "kernelStopped": "not-observed"
+      },
+      "tabEvents": [],
+      "openedNotebookObjects": [
+        5
+      ],
+      "saved": {
+        "sha256": "60df92376511b17925eae5c1a623dff1861ec6810d1e3236c32fe52c23273d2c",
+        "cellCount": 1,
+        "sourceIdsAndUnownedMetadataPreserved": true,
+        "oldTokenAbsent": true,
+        "executionCounts": [
+          1
+        ],
+        "outputs": [
+          [
+            {
+              "name": "stdout",
+              "output_type": "stream",
+              "text": [
+                "D5 blocker started\n",
+                "D5 blocker finished\n"
+              ]
+            }
+          ]
+        ]
+      },
+      "executionCompletion": "terminal execution summary observed",
+      "stages": [
+        {
+          "name": "trust_granted_for_new_fixture_folder_only",
+          "at": "2026-11-02T01:36:31.769Z"
+        },
+        {
+          "name": "notebook_rendered",
+          "at": "2026-11-02T01:36:33.069Z"
+        },
+        {
+          "name": "standard_python_kernel_selected",
+          "at": "2026-11-02T01:36:36.171Z"
+        },
+        {
+          "name": "run_all_kernel_prompt_completed",
+          "at": "2026-11-02T01:36:37.183Z"
+        },
+        {
+          "name": "kernel_preflight_saved_output_verified",
+          "at": "2026-11-02T01:36:41.100Z"
+        },
+        {
+          "name": "blocker_started_output_observed_in_public_event",
+          "at": "2026-11-02T01:36:46.189Z"
+        },
+        {
+          "name": "queued_cell_delete_button_clicked",
+          "at": "2026-11-02T01:36:47.634Z"
+        },
+        {
+          "name": "saved_one_cell_and_guard_rejected_old_target",
+          "at": "2026-11-02T01:38:15.063Z"
+        }
+      ],
+      "localResult": "results/20261102-d5-09/result.local.json",
+      "localEvents": "results/20261102-d5-09/events.jsonl",
+      "window": "retained awaiting user end signal"
+    },
+    {
+      "case": "D5-running-delete",
+      "run": 12,
+      "status": "UI mutation, guard rejection and saved state observed",
+      "formalAcceptance": "not claimed",
+      "route": "fixed Playwright UI automation",
+      "runnerSha256": "4a66b58cc569bfbf8e14428e90bf77e82723bdb7f361bf40822bc656a32a869a",
+      "kernelEnvironment": {
+        "python": "3.14.3 (tags/v3.14.3:323c59a, Feb  3 2026, 16:04:56) [MSC v.1944 64 bit (AMD64)]",
+        "ipykernel": "7.4.0",
+        "jupyter_client": "8.10.0"
+      },
+      "dialogStyle": "custom; real VS Code dialogs, no mocks",
+      "deleteConfirmation": "Delete\nCancel\nThis cell is running, are you sure you want to delete it?\nDo not ask me again",
+      "closeCondition": null,
+      "guard": {
+        "valid": false,
+        "invalidated": false,
+        "kernelStopped": "not-observed"
+      },
+      "tabEvents": [],
+      "openedNotebookObjects": [
+        5
+      ],
+      "saved": {
+        "sha256": "fabafbb465fd96dab23ac375104b74ed87d71616042d0ff830fefaaf06cb4713",
+        "cellCount": 1,
+        "sourceIdsAndUnownedMetadataPreserved": true,
+        "oldTokenAbsent": true,
+        "executionCounts": [
+          null
+        ],
+        "outputs": [
+          []
+        ]
+      },
+      "executionCompletion": "not observed within 100 seconds after arm",
+      "stages": [
+        {
+          "name": "trust_granted_for_new_fixture_folder_only",
+          "at": "2026-11-02T02:11:55.466Z"
+        },
+        {
+          "name": "notebook_rendered",
+          "at": "2026-11-02T02:11:56.773Z"
+        },
+        {
+          "name": "standard_python_kernel_selected",
+          "at": "2026-11-02T02:12:00.511Z"
+        },
+        {
+          "name": "run_all_kernel_prompt_completed",
+          "at": "2026-11-02T02:12:01.516Z"
+        },
+        {
+          "name": "kernel_preflight_saved_output_verified",
+          "at": "2026-11-02T02:12:08.595Z"
+        },
+        {
+          "name": "blocker_started_output_observed_in_public_event",
+          "at": "2026-11-02T02:12:14.313Z"
+        },
+        {
+          "name": "target_cell_delete_button_clicked",
+          "at": "2026-11-02T02:12:16.067Z"
+        },
+        {
+          "name": "saved_expected_cells_and_guard_rejected_old_target",
+          "at": "2026-11-02T02:13:56.148Z"
+        }
+      ],
+      "localResult": "results/20261102-d5-12/result.local.json",
+      "localEvents": "results/20261102-d5-12/events.jsonl",
+      "window": "retained awaiting user end signal"
+    },
+    {
+      "case": "D5-queued-close",
+      "run": 13,
+      "status": "UI mutation, guard rejection and saved state observed",
+      "formalAcceptance": "not claimed",
+      "route": "fixed Playwright UI automation",
+      "runnerSha256": "4a66b58cc569bfbf8e14428e90bf77e82723bdb7f361bf40822bc656a32a869a",
+      "kernelEnvironment": {
+        "python": "3.14.3 (tags/v3.14.3:323c59a, Feb  3 2026, 16:04:56) [MSC v.1944 64 bit (AMD64)]",
+        "ipykernel": "7.4.0",
+        "jupyter_client": "8.10.0"
+      },
+      "dialogStyle": "custom; real VS Code dialogs, no mocks",
+      "deleteConfirmation": null,
+      "closeCondition": "saved before closing; no unsaved-close dialog acceptance inferred",
+      "guard": {
+        "valid": false,
+        "invalidated": true,
+        "kernelStopped": "not-observed"
+      },
+      "tabEvents": [
+        {
+          "at": "2026-11-02T02:14:49.647Z",
+          "stillVisible": false,
+          "documents": [
+            {
+              "object": 5,
+              "closed": false
+            }
+          ]
+        }
+      ],
+      "openedNotebookObjects": [
+        5,
+        11
+      ],
+      "saved": {
+        "sha256": "18e5eb7de1a306fd8dc541f112300840c39060ef03c42950dc91b3313bb7a873",
+        "cellCount": 2,
+        "sourceIdsAndUnownedMetadataPreserved": true,
+        "oldTokenAbsent": true,
+        "executionCounts": [
+          null,
+          null
+        ],
+        "outputs": [
+          [
+            {
+              "name": "stdout",
+              "output_type": "stream",
+              "text": [
+                "D5 blocker started\n"
+              ]
+            }
+          ],
+          []
+        ]
+      },
+      "executionCompletion": "not observed within 100 seconds after arm",
+      "stages": [
+        {
+          "name": "trust_granted_for_new_fixture_folder_only",
+          "at": "2026-11-02T02:14:30.012Z"
+        },
+        {
+          "name": "notebook_rendered",
+          "at": "2026-11-02T02:14:32.026Z"
+        },
+        {
+          "name": "standard_python_kernel_selected",
+          "at": "2026-11-02T02:14:35.904Z"
+        },
+        {
+          "name": "run_all_kernel_prompt_completed",
+          "at": "2026-11-02T02:14:36.925Z"
+        },
+        {
+          "name": "kernel_preflight_saved_output_verified",
+          "at": "2026-11-02T02:14:42.864Z"
+        },
+        {
+          "name": "blocker_started_output_observed_in_public_event",
+          "at": "2026-11-02T02:14:48.060Z"
+        },
+        {
+          "name": "tab_closed_and_same_path_reopened_through_UI",
+          "at": "2026-11-02T02:14:50.851Z"
+        },
+        {
+          "name": "saved_expected_cells_and_guard_rejected_old_target",
+          "at": "2026-11-02T02:16:29.810Z"
+        }
+      ],
+      "localResult": "results/20261102-d5-13/result.local.json",
+      "localEvents": "results/20261102-d5-13/events.jsonl",
+      "window": "retained awaiting user end signal"
+    },
+    {
+      "case": "D5-running-close",
+      "run": 14,
+      "status": "UI mutation, guard rejection and saved state observed",
+      "formalAcceptance": "not claimed",
+      "route": "fixed Playwright UI automation",
+      "runnerSha256": "4a66b58cc569bfbf8e14428e90bf77e82723bdb7f361bf40822bc656a32a869a",
+      "kernelEnvironment": {
+        "python": "3.14.3 (tags/v3.14.3:323c59a, Feb  3 2026, 16:04:56) [MSC v.1944 64 bit (AMD64)]",
+        "ipykernel": "7.4.0",
+        "jupyter_client": "8.10.0"
+      },
+      "dialogStyle": "custom; real VS Code dialogs, no mocks",
+      "deleteConfirmation": null,
+      "closeCondition": "saved before closing; no unsaved-close dialog acceptance inferred",
+      "guard": {
+        "valid": false,
+        "invalidated": true,
+        "kernelStopped": "not-observed"
+      },
+      "tabEvents": [
+        {
+          "at": "2026-11-02T02:17:59.619Z",
+          "stillVisible": false,
+          "documents": [
+            {
+              "object": 5,
+              "closed": false
+            }
+          ]
+        }
+      ],
+      "openedNotebookObjects": [
+        5,
+        9
+      ],
+      "saved": {
+        "sha256": "15590981684884322c03411bc369261e51185885ec1d2bf355deed22900ac8b0",
+        "cellCount": 1,
+        "sourceIdsAndUnownedMetadataPreserved": true,
+        "oldTokenAbsent": true,
+        "executionCounts": [
+          null
+        ],
+        "outputs": [
+          [
+            {
+              "name": "stdout",
+              "output_type": "stream",
+              "text": [
+                "D5 running started\n"
+              ]
+            }
+          ]
+        ]
+      },
+      "executionCompletion": "not observed within 100 seconds after arm",
+      "stages": [
+        {
+          "name": "trust_granted_for_new_fixture_folder_only",
+          "at": "2026-11-02T02:17:31.243Z"
+        },
+        {
+          "name": "notebook_rendered",
+          "at": "2026-11-02T02:17:33.094Z"
+        },
+        {
+          "name": "standard_python_kernel_selected",
+          "at": "2026-11-02T02:17:37.341Z"
+        },
+        {
+          "name": "run_all_kernel_prompt_completed",
+          "at": "2026-11-02T02:17:38.297Z"
+        },
+        {
+          "name": "kernel_preflight_saved_output_verified",
+          "at": "2026-11-02T02:17:51.596Z"
+        },
+        {
+          "name": "blocker_started_output_observed_in_public_event",
+          "at": "2026-11-02T02:17:57.808Z"
+        },
+        {
+          "name": "tab_closed_and_same_path_reopened_through_UI",
+          "at": "2026-11-02T02:18:01.132Z"
+        },
+        {
+          "name": "saved_expected_cells_and_guard_rejected_old_target",
+          "at": "2026-11-02T02:19:39.777Z"
+        }
+      ],
+      "localResult": "results/20261102-d5-14/result.local.json",
+      "localEvents": "results/20261102-d5-14/events.jsonl",
+      "window": "retained awaiting user end signal"
+    }
+  ],
+  "retainedFailedAttempts": [
+    {
+      "run": 1,
+      "status": "not_observed",
+      "error": {
+        "name": "TimeoutError",
+        "message": "locator.waitFor: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('.code-cell-row').first() to be visible\u001b[22m\n"
+      },
+      "confirmation": null,
+      "closedAt": "2026-11-02T01:07:35.670Z",
+      "localResult": "results/20261102-d5-01/result.local.json"
+    },
+    {
+      "run": 2,
+      "status": "not_observed",
+      "error": {
+        "name": "TimeoutError",
+        "message": "locator.waitFor: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('.monaco-dialog-box') to be visible\u001b[22m\n"
+      },
+      "confirmation": null,
+      "closedAt": "2026-11-02T01:10:07.683Z",
+      "localResult": "results/20261102-d5-02/result.local.json"
+    },
+    {
+      "run": 3,
+      "status": "not_observed",
+      "error": {
+        "name": "TimeoutError",
+        "message": "locator.waitFor: Timeout 10000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('.quick-input-list .monaco-list-row').filter({ hasText: 'Manage Workspace Trust' }).first() to be visible\u001b[22m\n"
+      },
+      "confirmation": null,
+      "closedAt": "2026-11-02T01:16:31.703Z",
+      "localResult": "results/20261102-d5-03/result.local.json"
+    },
+    {
+      "run": 4,
+      "status": "not_observed",
+      "error": {
+        "name": "Error",
+        "message": "Diagnostic observation timeout (60000ms)"
+      },
+      "confirmation": null,
+      "closedAt": "2026-11-02T01:20:57.751Z",
+      "localResult": "results/20261102-d5-04/result.local.json"
+    },
+    {
+      "run": 5,
+      "status": "not_observed",
+      "error": {
+        "name": "Error",
+        "message": "Diagnostic observation timeout (60000ms)"
+      },
+      "confirmation": null,
+      "closedAt": "2026-11-02T01:23:43.636Z",
+      "localResult": "results/20261102-d5-05/result.local.json"
+    },
+    {
+      "run": 6,
+      "status": "not_observed",
+      "error": {
+        "name": "TimeoutError",
+        "message": "locator.waitFor: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('.quick-input-list .monaco-list-row').filter({ hasText: 'Python Environments' }).first() to be visible\u001b[22m\n"
+      },
+      "confirmation": null,
+      "closedAt": "2026-11-02T01:26:46.297Z",
+      "localResult": "results/20261102-d5-06/result.local.json"
+    },
+    {
+      "run": 7,
+      "status": "not_observed",
+      "error": {
+        "name": "TimeoutError",
+        "message": "locator.waitFor: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('.quick-input-list .monaco-list-row').filter({ hasText: 'Python Environments' }).first() to be visible\u001b[22m\n"
+      },
+      "confirmation": null,
+      "closedAt": "2026-11-02T01:31:56.631Z",
+      "localResult": "results/20261102-d5-07/result.local.json"
+    },
+    {
+      "run": 8,
+      "status": "not_observed",
+      "error": {
+        "name": "Error",
+        "message": "Arm target is not the queued cell"
+      },
+      "confirmation": null,
+      "closedAt": "2026-11-02T01:35:38.742Z",
+      "localResult": "results/20261102-d5-08/result.local.json"
+    },
+    {
+      "run": 10,
+      "status": "not_observed",
+      "error": {
+        "name": "Error",
+        "message": "Old diagnostic target remained valid"
+      },
+      "guard": {
+        "valid": true,
+        "invalidated": false
+      },
+      "confirmation": null,
+      "closedAt": "2026-11-02T02:06:49.089Z",
+      "localResult": "results/20261102-d5-10/result.local.json"
+    },
+    {
+      "run": 11,
+      "status": "not_observed",
+      "error": {
+        "name": "Error",
+        "message": "Unexpected deletion confirmation"
+      },
+      "confirmation": "Delete\nCancel\nThis cell is running, are you sure you want to delete it?\nDo not ask me again",
+      "closedAt": "2026-11-02T02:08:59.244Z",
+      "localResult": "results/20261102-d5-11/result.local.json"
+    }
+  ],
+  "limits": [
+    "UI automation only, not user-manual acceptance or TASK-002-01 completion",
+    "Three conditions have no terminal execution summary within 100 seconds after arm; kernel stop is not proved",
+    "Tab-close cases saved before closing; unsaved-close dialogs not tested",
+    "Running-cell deletion confirmed in real custom dialog; native dialog automation not verified",
+    "Background and minimized behavior, internal execution identity, atomic editing and product Host feasibility not proved",
+    "Raw profiles, screenshots and full runtime logs remain local; only selected evidence is pushed"
+  ],
+  "savedNotebookSchema": {
+    "validator": "tests/notebook-host-api/validate-notebooks.py",
+    "nbformat": "5.11.1",
+    "passed": 4,
+    "failed": 0,
+    "conversionOrNormalizationRequested": false,
+    "results": [
+      {
+        "file": "PW-20261102-d5-09-D5-queued-delete.ipynb",
+        "status": "PASS",
+        "warnings": [],
+        "data_unchanged": true,
+        "file_unchanged": true,
+        "sha256": "60df92376511b17925eae5c1a623dff1861ec6810d1e3236c32fe52c23273d2c",
+        "nbformat": [
+          4,
+          5
+        ]
+      },
+      {
+        "file": "PW-20261102-d5-12-D5-running-delete.ipynb",
+        "status": "PASS",
+        "warnings": [],
+        "data_unchanged": true,
+        "file_unchanged": true,
+        "sha256": "fabafbb465fd96dab23ac375104b74ed87d71616042d0ff830fefaaf06cb4713",
+        "nbformat": [
+          4,
+          5
+        ]
+      },
+      {
+        "file": "PW-20261102-d5-13-D5-queued-close.ipynb",
+        "status": "PASS",
+        "warnings": [],
+        "data_unchanged": true,
+        "file_unchanged": true,
+        "sha256": "18e5eb7de1a306fd8dc541f112300840c39060ef03c42950dc91b3313bb7a873",
+        "nbformat": [
+          4,
+          5
+        ]
+      },
+      {
+        "file": "PW-20261102-d5-14-D5-running-close.ipynb",
+        "status": "PASS",
+        "warnings": [],
+        "data_unchanged": true,
+        "file_unchanged": true,
+        "sha256": "15590981684884322c03411bc369261e51185885ec1d2bf355deed22900ac8b0",
+        "nbformat": [
+          4,
+          5
+        ]
+      }
+    ]
+  }
+}

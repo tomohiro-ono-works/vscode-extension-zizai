@@ -1,0 +1,40 @@
+{
+  "issue": "https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/14",
+  "status": "preflight_failed_before_D5",
+  "branch": "codex/research-vscode-playwright-20261102",
+  "main_adopted": false,
+  "command": "node docs/research/notebook-host/playwright-probe/d5-queued-delete.cjs --vscode 'C:/Users/tomoh/AppData/Local/Programs/Microsoft VS Code/Code.exe' --out results/20261102-d5-01",
+  "started_at": "2026-11-02T00:39:23.966Z",
+  "route": "fixed Playwright script launched from CLI",
+  "playwright": "1.64.1",
+  "result": "not_observed",
+  "error": "TimeoutError: locator('.code-cell-row').first() did not become visible within 30000ms",
+  "process_state": "retained awaiting user end signal; exitCode set to 1 but process has not exited",
+  "observations": [
+    "Saved DOM contains Restricted Mode is intended for safe code browsing. Trust this window to enable all features.",
+    "Saved DOM shows the synthetic ipynb JSON source; Notebook cell UI was not observed",
+    "No sole root cause inferred from the mode banner"
+  ],
+  "not_reached": [
+    "standard kernel selection",
+    "kernel environment execution",
+    "D5 Run All",
+    "local-delay arm",
+    "cell deletion",
+    "Notebook save"
+  ],
+  "security_changes": "none; no trust bypass, copied authentication, or disabled security features",
+  "retry": "none",
+  "manual_pass": false,
+  "D5_completed_cases": 0,
+  "local_artifacts": [
+    "results/20261102-d5-01/result.local.json",
+    "results/20261102-d5-01/stopped-dom.txt",
+    "results/20261102-d5-01/stopped.png"
+  ],
+  "previous_empty_window_research": {
+    "end_signal_received": true,
+    "closed_at": "2026-11-02T00:32:02.019Z",
+    "separate_from_current_D5_window": true
+  }
+}

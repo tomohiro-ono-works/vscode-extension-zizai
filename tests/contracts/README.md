@@ -58,7 +58,7 @@ node --test --test-name-pattern='^(git_fixture_preserves_line_endings_under_inhe
 
 基準は [開発手順](../../docs/development.md#テスト計画実行時のルール) と [依存関係の区分](../../docs/tasks/task-rules.md#dependency-classification)。進捗・対象commit・実施環境・合否・未確認は [005-05 #40](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/40) が正本。この文書は繰り返し使う定義・操作経路・期待結果を置く。
 
-要件の参照元は [005-03 §C](../../docs/research/contracts/TASK-005-03.md#c-draftvaluesとboundvalues)・[§I](../../docs/research/contracts/TASK-005-03.md#i-005-04に渡す生成収集の受入条件)、[最初の実装計画](../../docs/superpowers/plans/2026-10-24-task-005-contract-assets.md)。C03の要件全体に対して、ここで検証する値構造・生成の部分だけを対応付ける。
+要件の参照元は [005-03 §C](https://github.com/tomohiro-ono-works/vscode-extension-zizai/blob/65631504f146a4dfa2ab52d557e58db53c2e6a00/docs/research/contracts/TASK-005-03.md#c-draftvaluesとboundvalues)・[§I](https://github.com/tomohiro-ono-works/vscode-extension-zizai/blob/65631504f146a4dfa2ab52d557e58db53c2e6a00/docs/research/contracts/TASK-005-03.md#i-005-04に渡す生成収集の受入条件)、[最初の実装計画](https://github.com/tomohiro-ono-works/vscode-extension-zizai/blob/65631504f146a4dfa2ab52d557e58db53c2e6a00/docs/superpowers/plans/2026-10-24-task-005-contract-assets.md)。C03の要件全体に対して、ここで検証する値構造・生成の部分だけを対応付ける。
 
 ### 今回の対象と共通条件
 

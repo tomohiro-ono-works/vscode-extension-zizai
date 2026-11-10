@@ -1,5 +1,7 @@
 # TASK-002-01 Windows Notebook管理API検証
 
+> 2026-11-08：旧設計撤去後も関係する技術調査として保持。本文の旧Task条件・設計案・承認は当時の記録で、新方式の現行仕様ではありません。過去の結果・未実施を変更していません。
+
 このファイルは再利用する操作手順。結果・進捗・判定・残作業は [Issue #14](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/14) を正本とし、親 [#2](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/2) に要点を反映する。全ケースを一度にユーザーへ依頼しない。
 
 ## 分担と前提

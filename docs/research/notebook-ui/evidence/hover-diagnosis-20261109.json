@@ -1,0 +1,518 @@
+{
+  "issue": 80,
+  "date": "2026-11-09",
+  "status": "Unresolved: boundary dismissal still reproduces without automatic scrolling; no product fix adopted.",
+  "environment": {
+    "vscode": "1.146.0-insider",
+    "commit": "29ce94ad8d36c62affc08484e262d5c4fbdd0b3d",
+    "node": "24.14.1",
+    "playwright": "1.64.1",
+    "os": "Windows x64"
+  },
+  "confirmed": [
+    "Automatic scrolling in locator.hover moved the cell scrollLeft by 92.3809585571289px; before marker x524.2262, after x431.8453. Same VSIX with scroll:none reached all 8 file/folder menu targets.",
+    "The no-scroll path functional run passed all 6 operations, save and Undo/Redo. This does not prove all hover disappearance was test-caused.",
+    "No-scroll dependent flow still disappeared. DOM sampling immediately before one disappearance hit monaco-resizable-hover at the outer boundary.",
+    "Dedicated workspace trust banner can appear after initial readiness; marker polling now handles it through the existing Trust UI. Two failed preparations did not reach hover comparison.",
+    "No product-source or package changes remain relative to 0f2ae6a. Failed/trial variants were rejected rather than committed as fixes."
+  ],
+  "rejectedTrials": [
+    "Hover range extended to preceding position: unit assertion could be made green, but full interaction still failed; trial test and source removed.",
+    "Automatic native hover range: development copy passed full flow, then installed VSIX 0.0.3 failed; not adopted. 0.0.3 is a retained rejected trial, not a release.",
+    "Native Inlay Hint tooltip copy: first menu reached, later menu absent; not adopted.",
+    "Stock JavaScript notebook control: hover did not appear, so no valid control comparison and no conclusion that VS Code alone is responsible."
+  ],
+  "runs": [
+    {
+      "localArtifact": "results/task009-hover-probe-20261109-01/result.local.json",
+      "outcome": "not_observed",
+      "stages": [
+        "vsix_installed_in_isolated_profile",
+        "dedicated_workbench_ready",
+        "inline_P_visible",
+        "hover_probe_0_file_reached",
+        "hover_probe_1_folder_reached",
+        "hover_probe_disappeared_without_retry"
+      ],
+      "error": {
+        "name": "Error",
+        "message": "Path hover disappeared at attempt 2, step 74/167"
+      },
+      "reached": 2,
+      "planned": 8,
+      "closed": true,
+      "ports": [
+        {
+          "port": 56150,
+          "listeners": 0
+        },
+        {
+          "port": 56152,
+          "listeners": 0
+        }
+      ],
+      "portsUnavailable": false
+    },
+    {
+      "localArtifact": "results/task009-hover-probe-20261109-02/result.local.json",
+      "outcome": "not_observed",
+      "stages": [
+        "vsix_installed_in_isolated_profile",
+        "dedicated_workbench_ready",
+        "inline_P_visible",
+        "hover_probe_disappeared_without_retry"
+      ],
+      "error": {
+        "name": "Error",
+        "message": "Path hover disappeared at attempt 0, step 16/44"
+      },
+      "reached": 0,
+      "planned": 8,
+      "closed": true,
+      "ports": [
+        {
+          "port": 57696,
+          "listeners": 0
+        },
+        {
+          "port": 57698,
+          "listeners": 0
+        }
+      ],
+      "portsUnavailable": false
+    },
+    {
+      "localArtifact": "results/task009-hover-provider-trace-20261109-01/result.local.json",
+      "outcome": "not_observed",
+      "stages": [
+        "dedicated_workbench_ready",
+        "inline_P_visible",
+        "hover_probe_0_file_reached",
+        "hover_probe_disappeared_without_retry"
+      ],
+      "error": {
+        "name": "Error",
+        "message": "Path hover disappeared at attempt 1, step 35/50"
+      },
+      "reached": 1,
+      "planned": 8,
+      "closed": true,
+      "ports": [
+        {
+          "port": 61038,
+          "listeners": 0
+        },
+        {
+          "port": 61040,
+          "listeners": 0
+        }
+      ],
+      "portsUnavailable": false
+    },
+    {
+      "localArtifact": "results/task009-hover-range-fix-20261109-01/result.local.json",
+      "outcome": "not_observed",
+      "stages": [
+        "dedicated_workbench_ready",
+        "inline_P_visible",
+        "hover_probe_0_file_reached",
+        "hover_probe_1_folder_reached"
+      ],
+      "error": {
+        "name": "TimeoutError",
+        "message": "locator.waitFor: Timeout 10000ms exceeded.\nCall log:\n  - waiting for locator('.monaco-hover').filter({ has: getByRole('link', { name: 'ファイルを選択', exact: true }) }).getByRole('link', { name: 'ファイルを選択', exact: true }) to be visible\n"
+      },
+      "reached": 2,
+      "planned": 8,
+      "closed": true,
+      "ports": [
+        {
+          "port": 56357,
+          "listeners": 0
+        },
+        {
+          "port": 56359,
+          "listeners": 0
+        }
+      ],
+      "portsUnavailable": false
+    },
+    {
+      "localArtifact": "results/task009-hover-noscroll-before-20261109-01/result.local.json",
+      "outcome": "not_observed",
+      "stages": [
+        "vsix_installed_in_isolated_profile",
+        "dedicated_workbench_ready"
+      ],
+      "error": {
+        "name": "AssertionError",
+        "message": "[C] decoration must be rendered"
+      },
+      "closed": true,
+      "ports": [
+        {
+          "port": 52092,
+          "listeners": 0
+        },
+        {
+          "port": 52094,
+          "listeners": 0
+        }
+      ],
+      "portsUnavailable": false
+    },
+    {
+      "localArtifact": "results/task009-hover-noscroll-before-20261109-02/result.local.json",
+      "outcome": "not_observed",
+      "stages": [
+        "vsix_installed_in_isolated_profile",
+        "dedicated_workbench_ready"
+      ],
+      "error": {
+        "name": "AssertionError",
+        "message": "[C] decoration must be rendered"
+      },
+      "closed": true,
+      "ports": [
+        {
+          "port": 57813,
+          "listeners": 0
+        },
+        {
+          "port": 57815,
+          "listeners": 0
+        }
+      ],
+      "portsUnavailable": false
+    },
+    {
+      "localArtifact": "results/task009-hover-noscroll-before-20261109-03/result.local.json",
+      "outcome": "observed",
+      "stages": [
+        "vsix_installed_in_isolated_profile",
+        "dedicated_workbench_ready",
+        "inline_P_visible",
+        "hover_probe_0_file_reached",
+        "hover_probe_1_folder_reached",
+        "hover_probe_2_file_reached",
+        "hover_probe_3_folder_reached",
+        "hover_probe_4_file_reached",
+        "hover_probe_5_folder_reached",
+        "hover_probe_6_file_reached",
+        "hover_probe_7_folder_reached"
+      ],
+      "reached": 8,
+      "planned": 8,
+      "automaticScroll": false,
+      "closed": true,
+      "ports": [
+        {
+          "port": 58577,
+          "listeners": 0
+        },
+        {
+          "port": 58579,
+          "listeners": 0
+        }
+      ],
+      "portsUnavailable": false
+    },
+    {
+      "localArtifact": "results/task009-hover-auto-control-20261109-01/result.local.json",
+      "outcome": "not_observed",
+      "stages": [
+        "vsix_installed_in_isolated_profile",
+        "dedicated_workbench_ready",
+        "inline_P_visible",
+        "hover_probe_0_file_reached",
+        "hover_probe_1_folder_reached"
+      ],
+      "error": {
+        "name": "TimeoutError",
+        "message": "locator.waitFor: Timeout 10000ms exceeded.\nCall log:\n  - waiting for locator('.monaco-hover').filter({ has: getByRole('link', { name: 'ファイルを選択', exact: true }) }).getByRole('link', { name: 'ファイルを選択', exact: true }) to be visible\n"
+      },
+      "reached": 2,
+      "planned": 8,
+      "automaticScroll": true,
+      "closed": true,
+      "ports": [
+        {
+          "port": 60900,
+          "listeners": 0
+        },
+        {
+          "port": 60902,
+          "listeners": 0
+        }
+      ],
+      "portsUnavailable": false
+    },
+    {
+      "localArtifact": "results/task009-hover-input-paths-final-20261109-01/result.local.json",
+      "outcome": "observed",
+      "stages": [
+        "vsix_installed_in_isolated_profile",
+        "dedicated_workbench_ready",
+        "inline_P_visible",
+        "file_selected_without_save",
+        "file_reselected_without_save",
+        "file_cancel_kept_previous_value",
+        "folder_selected_without_save",
+        "folder_reselected_without_save",
+        "folder_cancel_kept_previous_value",
+        "all_path_operations_saved_and_preserved",
+        "undo_saved_and_unrelated_cell_preserved",
+        "redo_saved_and_unrelated_cell_preserved"
+      ],
+      "closed": true,
+      "ports": [
+        {
+          "port": 52462,
+          "listeners": 0
+        },
+        {
+          "port": 52464,
+          "listeners": 0
+        }
+      ],
+      "portsUnavailable": false
+    },
+    {
+      "localArtifact": "results/task009-hover-input-dependent-final-20261109-01/result.local.json",
+      "outcome": "not_observed",
+      "stages": [
+        "vsix_installed_in_isolated_profile",
+        "dedicated_workbench_ready",
+        "inline_C_visible"
+      ],
+      "error": {
+        "name": "Error",
+        "message": "Dependent hover disappeared during continuous movement"
+      },
+      "failedMovement": {
+        "markerLabel": "A",
+        "value": "shared",
+        "disappearedAtStep": 9,
+        "steps": 52
+      },
+      "closed": true,
+      "ports": [
+        {
+          "port": 58434,
+          "listeners": 0
+        },
+        {
+          "port": 58436,
+          "listeners": 0
+        }
+      ],
+      "portsUnavailable": false
+    },
+    {
+      "localArtifact": "results/task009-hover-boundary-target-20261109-01/result.local.json",
+      "outcome": "not_observed",
+      "stages": [
+        "vsix_installed_in_isolated_profile",
+        "dedicated_workbench_ready",
+        "inline_C_visible",
+        "external_yaml_candidate_and_valid_child_preserved_without_save"
+      ],
+      "error": {
+        "name": "Error",
+        "message": "Dependent hover disappeared during continuous movement"
+      },
+      "failedMovement": {
+        "markerLabel": "C",
+        "value": "csv",
+        "disappearedAtStep": 10,
+        "steps": 52
+      },
+      "closed": true,
+      "ports": [
+        {
+          "port": 62535,
+          "listeners": 0
+        },
+        {
+          "port": 62537,
+          "listeners": 0
+        }
+      ],
+      "portsUnavailable": false
+    },
+    {
+      "localArtifact": "results/task009-hover-combined-dependent-20261109-01/result.local.json",
+      "outcome": "not_observed",
+      "stages": [
+        "dedicated_workbench_ready",
+        "inline_C_visible"
+      ],
+      "error": {
+        "name": "Error",
+        "message": "Dependent hover disappeared during continuous movement"
+      },
+      "failedMovement": {
+        "markerLabel": "C",
+        "value": "excel",
+        "disappearedAtStep": 9,
+        "steps": 25
+      },
+      "closed": true,
+      "ports": [
+        {
+          "port": 63067,
+          "listeners": 0
+        },
+        {
+          "port": 63069,
+          "listeners": 0
+        }
+      ],
+      "portsUnavailable": false
+    },
+    {
+      "localArtifact": "results/task009-native-hint-probe-20261109-01/result.local.json",
+      "outcome": "not_observed",
+      "stages": [],
+      "error": {
+        "name": "Error",
+        "message": "electronApplication.evaluate: Resulting promise was garbage collected."
+      },
+      "closed": true,
+      "ports": [],
+      "portsUnavailable": true
+    },
+    {
+      "localArtifact": "results/task009-native-hint-probe-20261109-02/result.local.json",
+      "outcome": "not_observed",
+      "stages": [
+        "dedicated_workbench_ready",
+        "inline_P_visible",
+        "hover_probe_0_file_reached"
+      ],
+      "error": {
+        "name": "TimeoutError",
+        "message": "locator.waitFor: Timeout 10000ms exceeded.\nCall log:\n  - waiting for locator('.monaco-hover').filter({ has: getByRole('link', { name: 'フォルダーを選択', exact: true }) }).getByRole('link', { name: 'フォルダーを選択', exact: true }) to be visible\n"
+      },
+      "reached": 1,
+      "planned": 8,
+      "automaticScroll": false,
+      "closed": true,
+      "ports": [
+        {
+          "port": 55519,
+          "listeners": 0
+        },
+        {
+          "port": 55521,
+          "listeners": 0
+        }
+      ],
+      "portsUnavailable": false
+    },
+    {
+      "localArtifact": "results/task009-default-hover-dependent-20261109-01/result.local.json",
+      "outcome": "observed",
+      "stages": [
+        "dedicated_workbench_ready",
+        "inline_C_visible",
+        "external_yaml_candidate_and_valid_child_preserved_without_save",
+        "invalid_child_cleared_with_parent_without_save",
+        "single_undo_restored_parent_and_child_redo_and_unrelated_cell_preserved",
+        "external_yaml_change_reloaded_without_restart"
+      ],
+      "closed": true,
+      "ports": [
+        {
+          "port": 55025,
+          "listeners": 0
+        },
+        {
+          "port": 55027,
+          "listeners": 0
+        }
+      ],
+      "portsUnavailable": false
+    },
+    {
+      "localArtifact": "results/task009-native-anchor-installed-dependent-20261109-01/result.local.json",
+      "outcome": "not_observed",
+      "stages": [
+        "vsix_installed_in_isolated_profile",
+        "dedicated_workbench_ready",
+        "inline_C_visible",
+        "external_yaml_candidate_and_valid_child_preserved_without_save"
+      ],
+      "error": {
+        "name": "Error",
+        "message": "Dependent hover disappeared during continuous movement"
+      },
+      "failedMovement": {
+        "markerLabel": "A",
+        "value": "excel_only",
+        "disappearedAtStep": 11,
+        "steps": 31
+      },
+      "closed": true,
+      "ports": [
+        {
+          "port": 51056,
+          "listeners": 0
+        },
+        {
+          "port": 51058,
+          "listeners": 0
+        }
+      ],
+      "portsUnavailable": false
+    },
+    {
+      "localArtifact": "results/task009-stock-js-hover-20261109-01/result.local.json",
+      "outcome": "not_observed",
+      "stages": [
+        "dedicated_workbench_ready"
+      ],
+      "error": {
+        "name": "TimeoutError",
+        "message": "locator.waitFor: Timeout 15000ms exceeded.\nCall log:\n  - waiting for locator('.monaco-hover:visible').first() to be visible\n"
+      },
+      "closed": true,
+      "ports": [
+        {
+          "port": 57339,
+          "listeners": 0
+        },
+        {
+          "port": 57341,
+          "listeners": 0
+        }
+      ],
+      "portsUnavailable": false
+    }
+  ],
+  "unit": {
+    "command": "npm test --prefix apps/extension",
+    "pass": 27,
+    "fail": 0,
+    "note": "Last retained-code check; experimental 28th tests removed with rejected fixes. Logs preserve trial RED/GREEN, not product acceptance."
+  },
+  "product": {
+    "commit": "0f2ae6a",
+    "version": "0.0.2",
+    "vsixSha256": "fefc893786a951551ac5cc361afebd10836a22648d036a15c3bfe20dd7857adb",
+    "rejectedTrialVsix": "apps/extension/zizai-notebook-input-0.0.3.vsix",
+    "rejectedTrialSha256": "aebdb0ab17f1cc458f614d50d33200601923fb7bc9848eca762608f754fa3eff"
+  },
+  "references": [
+    "https://github.com/microsoft/vscode/pull/345887",
+    "https://github.com/microsoft/vscode/blob/29ce94ad8d36c62affc08484e262d5c4fbdd0b3d/src/vs/editor/contrib/hover/browser/contentHoverController.ts",
+    "https://update.code.visualstudio.com/api/update/win32-x64/stable/latest"
+  ],
+  "limits": [
+    "Source of the remaining disappearance is not conclusively identified. Do not call it fixed or exclusively upstream.",
+    "Stable update API still returned 1.145.2 during investigation; previous stable hover limitation and support-version decision remain.",
+    "No new UI requirement or completion condition was adopted. Hover-above/below requirement remains unchanged.",
+    "All raw failures, synthetic notebooks, profiles and diagnostic snapshots remain local. No data was deleted; no user profile or Python/kernel used.",
+    "All recorded windows closed. First native-probe startup failed before collecting ports; its recorded PID was separately confirmed absent."
+  ]
+}

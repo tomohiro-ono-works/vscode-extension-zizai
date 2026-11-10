@@ -1,5 +1,7 @@
 # ZizAI Python最小基盤
 
+> 2026-11-08：本書は保持した既存Python最小基盤の説明です。旧設計へのリンクは履歴参照であり、新方式への採用・完成を意味しません。
+
 distributionは`zizai-runtime`、importは`zizai`です。現在の`0.0.0.dev0`はパッケージ入口を確認する開発版で、個別コネクタ・業務処理・契約生成器はまだ含みません。
 
 ## 正本から配布物への経路
@@ -36,4 +38,4 @@ python -c 'from setuptools.build_meta import build_wheel; build_wheel("dist")'
 
 この最小基盤のPython要件は3.12以降です。製品全体の正式な最低版・対応範囲とは区別します。初回検証基準候補のWindows／Python3.14、選択Jupyterカーネル、VSIX／ZIP全体、個別処理・SDK・認証の適合は別途確認します。
 
-[設計](../../docs/research/python-import/TASK-003-02.md)と[最小実装計画](../../docs/research/python-import/TASK-003-03-plan.md)を参照してください。
+[設計](https://github.com/tomohiro-ono-works/vscode-extension-zizai/blob/65631504f146a4dfa2ab52d557e58db53c2e6a00/docs/research/python-import/TASK-003-02.md)と[最小実装計画](https://github.com/tomohiro-ono-works/vscode-extension-zizai/blob/65631504f146a4dfa2ab52d557e58db53c2e6a00/docs/research/python-import/TASK-003-03-plan.md)を参照してください。

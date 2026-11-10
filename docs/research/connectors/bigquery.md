@@ -1,4 +1,6 @@
 > **注意：別アプリの参考資料です。**
+
+> 2026-11-08：旧設計撤去後も関係する技術調査として保持。本文の旧Task条件・設計案・承認は当時の記録で、新方式の現行仕様ではありません。過去の結果・未実施を変更していません。
 > 本資料は別アプリの仕様・実装に基づいており、今回開発する VS Code 拡張機能の仕様・実装を示すものではありません。
 > 記載されたコネクタの動作、入出力、実行方式、Task・承認情報は、本プロジェクトへの適用が未確定です。採用する内容は、本プロジェクト用に設計・検証してから反映します。
 
@@ -7,7 +9,7 @@
 - ラベル: #領域/コネクタ
 - 確認日: 2026-10-17（作業ツリーの静的読取り）
 - 位置づけ: 現行実装の調査資料。Current Specificationではない。
-- [索引・共通の読み方](README.md)／[新結果形式と承認状態](README.md#new-result-format)
+- [索引・共通の読み方](README.md)／[新結果形式と承認状態](https://github.com/tomohiro-ono-works/vscode-extension-zizai/blob/65631504f146a4dfa2ab52d557e58db53c2e6a00/docs/research/connectors/README.md#new-result-format)
 
 ## 概要
 
@@ -218,7 +220,7 @@ UIはschema_add_descriptionを宣言するが、Connectorはparams.schemaを読�
 
 SQL2件はSELECT時df／それ以外json、load_dataはjsonの割当案。SQL返却方針・配置の承認と、Action別の詳細schemaを区別。
 
-共通のresultType／result／meta、status・時刻・error等は[索引の新結果形式](README.md#new-result-format)と[最新のAction型割当](../../designs/TASK-048-action-result-design.md#result-type-allocation)を参照。新形式は製品未実装であり、本書の現在の戻り値へ既に付いているという意味ではない。
+共通のresultType／result／meta、status・時刻・error等は[索引の新結果形式](https://github.com/tomohiro-ono-works/vscode-extension-zizai/blob/65631504f146a4dfa2ab52d557e58db53c2e6a00/docs/research/connectors/README.md#new-result-format)と[最新のAction型割当](../../designs/TASK-048-action-result-design.md#result-type-allocation)を参照。新形式は製品未実装であり、本書の現在の戻り値へ既に付いているという意味ではない。
 
 ## 根拠・未確認事項
 

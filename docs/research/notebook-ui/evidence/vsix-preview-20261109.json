@@ -1,0 +1,261 @@
+{
+  "issue": 80,
+  "status": "partial; Issue remains open",
+  "environment": {
+    "vscode": "1.146.0-insider",
+    "commit": "29ce94ad8d36c62affc08484e262d5c4fbdd0b3d",
+    "os": "Windows x64",
+    "formalSupportVersion": "unresolved"
+  },
+  "package": {
+    "path": "apps/extension/zizai-notebook-input-0.0.1.vsix",
+    "sha256": "3db8bf0b3fa3ddd7fc00bc844e67bd5873706338da9fd75b49879fafd75ca2c1",
+    "size": 9804,
+    "tool": "@vscode/vsce@4.1.0",
+    "command": "npm ci --ignore-scripts; npm run package:vsix",
+    "files": [
+      "[Content_Types].xml",
+      "extension.vsixmanifest",
+      "extension/definitions.json",
+      "extension/extension.cjs",
+      "extension/package.json",
+      "extension/readme.md",
+      "extension/selection.cjs"
+    ],
+    "payloadSha256": {
+      "extension.cjs": "d3a5c73e35a42555d20dd63e81705e0b7cc527ce26da2e63dfb967e21d1077f7",
+      "selection.cjs": "ff8787e2d42d6c54249bd949ff5198ab043b9d50b18f037b571dc7aa030693ae",
+      "definitions.json": "059d40cf94312e836514c4479ce8c69b44eb97a472361992518e00b56a42d570",
+      "package.json": "5d93c007b6174ead5799ecf97d5d3c3b4f56e94c8dde614c852857701912184c"
+    }
+  },
+  "unit": {
+    "command": "npm test --prefix apps/extension",
+    "pass": 18,
+    "fail": 0
+  },
+  "runs": [
+    {
+      "localArtifact": "results/task009-vsix-choice-20261109-01/result.local.json",
+      "outcome": "observed",
+      "stages": [
+        "vsix_installed_in_isolated_profile",
+        "dedicated_workbench_ready",
+        "inline_C_visible",
+        "csv_reflected_without_save",
+        "excel_chosen_and_saved",
+        "undo_saved_and_unrelated_cell_preserved",
+        "redo_saved_and_unrelated_cell_preserved"
+      ],
+      "deployment": "installed-vsix",
+      "installedExtensions": "zizai-lab.zizai-notebook-input@0.0.1",
+      "closed": true,
+      "ports": [
+        {
+          "port": 51179,
+          "listeners": 0
+        },
+        {
+          "port": 51181,
+          "listeners": 0
+        }
+      ],
+      "undoRedo": true,
+      "playwright": "1.64.1",
+      "node": "v24.14.1"
+    },
+    {
+      "localArtifact": "results/task009-vsix-paths-20261109-01/result.local.json",
+      "outcome": "not_observed",
+      "stages": [
+        "vsix_installed_in_isolated_profile",
+        "dedicated_workbench_ready",
+        "inline_C_visible"
+      ],
+      "error": {
+        "name": "AssertionError",
+        "message": "Path menu must remain visible while moving into it"
+      },
+      "deployment": "installed-vsix",
+      "installedExtensions": "zizai-lab.zizai-notebook-input@0.0.1",
+      "closed": true,
+      "ports": [
+        {
+          "port": 49681,
+          "listeners": 0
+        },
+        {
+          "port": 64985,
+          "listeners": 0
+        }
+      ],
+      "undoRedo": false,
+      "playwright": "1.64.1",
+      "node": "v24.14.1"
+    },
+    {
+      "localArtifact": "results/task009-vsix-paths-20261109-02/result.local.json",
+      "outcome": "not_observed",
+      "stages": [
+        "vsix_installed_in_isolated_profile",
+        "dedicated_workbench_ready",
+        "inline_C_visible",
+        "file_selected_without_save",
+        "file_reselected_without_save",
+        "file_cancel_kept_previous_value",
+        "folder_selected_without_save",
+        "folder_reselected_without_save",
+        "folder_cancel_kept_previous_value",
+        "all_path_operations_saved_and_preserved"
+      ],
+      "error": {
+        "name": "AssertionError",
+        "message": "Undo expected C: but VS Code file URI returned c:; full original assertion is preserved in localArtifact."
+      },
+      "deployment": "installed-vsix",
+      "installedExtensions": "zizai-lab.zizai-notebook-input@0.0.1",
+      "closed": true,
+      "ports": [
+        {
+          "port": 54413,
+          "listeners": 0
+        },
+        {
+          "port": 54415,
+          "listeners": 0
+        }
+      ],
+      "undoRedo": false,
+      "paths": {
+        "fileSelection": true,
+        "fileReselection": true,
+        "fileCancelPreserved": true,
+        "folderSelection": true,
+        "folderReselection": true,
+        "folderCancelPreserved": true,
+        "sourceAndMetadataPreserved": true,
+        "absolutePaths": true,
+        "saveOnlyAfterAllSixOperations": true,
+        "dialog": "VS Code standard simple file dialog; OS native dialog not exercised"
+      },
+      "playwright": "1.64.1",
+      "node": "v24.14.1"
+    },
+    {
+      "localArtifact": "results/task009-vsix-paths-20261109-03/result.local.json",
+      "outcome": "observed",
+      "stages": [
+        "vsix_installed_in_isolated_profile",
+        "dedicated_workbench_ready",
+        "inline_C_visible",
+        "file_selected_without_save",
+        "file_reselected_without_save",
+        "file_cancel_kept_previous_value",
+        "folder_selected_without_save",
+        "folder_reselected_without_save",
+        "folder_cancel_kept_previous_value",
+        "all_path_operations_saved_and_preserved",
+        "undo_saved_and_unrelated_cell_preserved",
+        "redo_saved_and_unrelated_cell_preserved"
+      ],
+      "deployment": "installed-vsix",
+      "installedExtensions": "zizai-lab.zizai-notebook-input@0.0.1",
+      "closed": true,
+      "ports": [
+        {
+          "port": 55439,
+          "listeners": 0
+        },
+        {
+          "port": 55441,
+          "listeners": 0
+        }
+      ],
+      "undoRedo": true,
+      "paths": {
+        "fileSelection": true,
+        "fileReselection": true,
+        "fileCancelPreserved": true,
+        "folderSelection": true,
+        "folderReselection": true,
+        "folderCancelPreserved": true,
+        "sourceAndMetadataPreserved": true,
+        "absolutePaths": true,
+        "saveOnlyAfterAllSixOperations": true,
+        "dialog": "VS Code standard simple file dialog; OS native dialog not exercised"
+      },
+      "playwright": "1.64.1",
+      "node": "v24.14.1"
+    },
+    {
+      "localArtifact": "results/task009-vsix-paths-20261109-04/result.local.json",
+      "outcome": "observed",
+      "stages": [
+        "vsix_installed_in_isolated_profile",
+        "dedicated_workbench_ready",
+        "inline_C_visible",
+        "file_selected_without_save",
+        "file_reselected_without_save",
+        "file_cancel_kept_previous_value",
+        "folder_selected_without_save",
+        "folder_reselected_without_save",
+        "folder_cancel_kept_previous_value",
+        "all_path_operations_saved_and_preserved",
+        "undo_saved_and_unrelated_cell_preserved",
+        "redo_saved_and_unrelated_cell_preserved"
+      ],
+      "deployment": "installed-vsix",
+      "installedExtensions": "zizai-lab.zizai-notebook-input@0.0.1",
+      "closed": true,
+      "ports": [
+        {
+          "port": 63243,
+          "listeners": 0
+        },
+        {
+          "port": 63245,
+          "listeners": 0
+        }
+      ],
+      "undoRedo": true,
+      "paths": {
+        "fileSelection": true,
+        "fileReselection": true,
+        "fileCancelPreserved": true,
+        "folderSelection": true,
+        "folderReselection": true,
+        "folderCancelPreserved": true,
+        "sourceAndMetadataPreserved": true,
+        "absolutePaths": true,
+        "saveOnlyAfterAllSixOperations": true,
+        "dialog": "VS Code standard simple file dialog; OS native dialog not exercised"
+      },
+      "playwright": "1.64.1",
+      "node": "v24.14.1"
+    }
+  ],
+  "observations": [
+    "Choice installed-VSIX run passed selection/reselection, save, Undo/Redo and exact unrelated-cell preservation.",
+    "Path attempt 01 lost hover during pointer movement; cause unresolved. No product-code fix or stability completion claimed.",
+    "Path attempt 02 passed all six operations, then Undo assertion failed only on Windows drive-letter case. Test comparison corrected, product source unchanged.",
+    "Path attempts 03 and 04 passed six normal operations, save and Undo/Redo; 04 installed final README-link-corrected VSIX.",
+    "Choice run used the same runtime payload; final package changed README links only.",
+    "Path raw-report continuousPointerMovement/savesBetweenChoices flags refer to the choice branch; path-flow stages explicitly prove six continuous movements with save only after six operations."
+  ],
+  "limitations": [
+    "Hover intermittency remains unresolved.",
+    "External definition loading, dependent choices and formal schema in #78 are incomplete.",
+    "Formal supported VS Code version is undecided; stable 1.145.2 has known hover regression.",
+    "Only standard VS Code simple dialog tested; OS native dialog, Remote/WSL and other OS untested.",
+    "No Python or magic execution/program generation; no Marketplace publication; no main merge.",
+    "npm audit retains 2 moderate build-dependency findings via minimatch GHSA-g3hv-75wg-m249; no runtime dependencies bundled."
+  ],
+  "protection": {
+    "userProfileModified": false,
+    "kernelExecuted": false,
+    "commandPaletteUsed": false,
+    "allRecordedWindowsClosed": true,
+    "allRecordedPortsClosed": true,
+    "originalLocalArtifactsPreserved": true
+  }
+}

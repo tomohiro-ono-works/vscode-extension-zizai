@@ -1,0 +1,217 @@
+{
+  "issue": "https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/14",
+  "case": "D5-queued-delete",
+  "route": "fixed Playwright UI automation",
+  "manualPass": false,
+  "mainAdopted": false,
+  "result": "observed",
+  "runnerSha256": "f0ad507b51abe47cf3ce026f55dc770c7edc1316ea76db453316dde4ff1ba905",
+  "kernelEnvironment": {
+    "python": "3.14.3 (tags/v3.14.3:323c59a, Feb  3 2026, 16:04:56) [MSC v.1944 64 bit (AMD64)]",
+    "ipykernel": "7.4.0",
+    "jupyter_client": "8.10.0"
+  },
+  "stages": [
+    {
+      "name": "trust_granted_for_new_fixture_folder_only",
+      "at": "2026-11-02T01:36:31.769Z"
+    },
+    {
+      "name": "notebook_rendered",
+      "at": "2026-11-02T01:36:33.069Z"
+    },
+    {
+      "name": "standard_python_kernel_selected",
+      "at": "2026-11-02T01:36:36.171Z"
+    },
+    {
+      "name": "run_all_kernel_prompt_completed",
+      "at": "2026-11-02T01:36:37.183Z"
+    },
+    {
+      "name": "kernel_preflight_saved_output_verified",
+      "at": "2026-11-02T01:36:41.100Z"
+    },
+    {
+      "name": "blocker_started_output_observed_in_public_event",
+      "at": "2026-11-02T01:36:46.189Z"
+    },
+    {
+      "name": "queued_cell_delete_button_clicked",
+      "at": "2026-11-02T01:36:47.634Z"
+    },
+    {
+      "name": "saved_one_cell_and_guard_rejected_old_target",
+      "at": "2026-11-02T01:38:15.063Z"
+    }
+  ],
+  "arm": {
+    "seq": 30,
+    "at": "2026-11-02T01:36:46.441Z",
+    "elapsedMs": 12057.005,
+    "step": "D5-arm-local-only",
+    "kind": "local-delay.arm",
+    "token": "2f54b6ca-65eb-46f1-8261-9ff534bfdb05",
+    "notebookObject": 5,
+    "cellObject": 8,
+    "delayMs": 15000,
+    "kernelRequest": false
+  },
+  "guard": {
+    "valid": false,
+    "invalidated": false,
+    "kernelStopped": "not-observed",
+    "token": "2f54b6ca-65eb-46f1-8261-9ff534bfdb05"
+  },
+  "saved": {
+    "sha256": "60df92376511b17925eae5c1a623dff1861ec6810d1e3236c32fe52c23273d2c",
+    "cells": 1,
+    "executionSummary": {
+      "timing": {
+        "startTime": 1793583403770,
+        "endTime": 1793583493770
+      },
+      "executionOrder": 1,
+      "success": true
+    },
+    "sourcePreserved": true,
+    "standardIdPreserved": true,
+    "unownedMetadataPreserved": true,
+    "oldDelayedTokenAbsent": true,
+    "outputs": [
+      {
+        "name": "stdout",
+        "output_type": "stream",
+        "text": [
+          "D5 blocker started\n",
+          "D5 blocker finished\n"
+        ]
+      }
+    ]
+  },
+  "priorAttempts": [
+    {
+      "run": 1,
+      "status": "not_observed",
+      "error": {
+        "name": "TimeoutError",
+        "message": "locator.waitFor: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('.code-cell-row').first() to be visible\u001b[22m\n"
+      },
+      "stages": [],
+      "closedAt": "2026-11-02T01:07:35.670Z",
+      "runnerSha256": null
+    },
+    {
+      "run": 2,
+      "status": "not_observed",
+      "error": {
+        "name": "TimeoutError",
+        "message": "locator.waitFor: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('.monaco-dialog-box') to be visible\u001b[22m\n"
+      },
+      "stages": [],
+      "closedAt": "2026-11-02T01:10:07.683Z",
+      "runnerSha256": null
+    },
+    {
+      "run": 3,
+      "status": "not_observed",
+      "error": {
+        "name": "TimeoutError",
+        "message": "locator.waitFor: Timeout 10000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('.quick-input-list .monaco-list-row').filter({ hasText: 'Manage Workspace Trust' }).first() to be visible\u001b[22m\n"
+      },
+      "stages": [],
+      "closedAt": "2026-11-02T01:16:31.703Z",
+      "runnerSha256": null
+    },
+    {
+      "run": 4,
+      "status": "not_observed",
+      "error": {
+        "name": "Error",
+        "message": "Diagnostic observation timeout (60000ms)"
+      },
+      "stages": [
+        "trust_granted_for_new_fixture_folder_only",
+        "notebook_rendered",
+        "standard_python_kernel_selected"
+      ],
+      "closedAt": "2026-11-02T01:20:57.751Z",
+      "runnerSha256": null
+    },
+    {
+      "run": 5,
+      "status": "not_observed",
+      "error": {
+        "name": "Error",
+        "message": "Diagnostic observation timeout (60000ms)"
+      },
+      "stages": [
+        "trust_granted_for_new_fixture_folder_only",
+        "notebook_rendered",
+        "standard_python_kernel_selected"
+      ],
+      "closedAt": "2026-11-02T01:23:43.636Z",
+      "runnerSha256": "c3c0024d350a041aa1ff15fa9a23dd22e02b8b4fbfeeb137cdf66b7493b1c260"
+    },
+    {
+      "run": 6,
+      "status": "not_observed",
+      "error": {
+        "name": "TimeoutError",
+        "message": "locator.waitFor: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('.quick-input-list .monaco-list-row').filter({ hasText: 'Python Environments' }).first() to be visible\u001b[22m\n"
+      },
+      "stages": [
+        "trust_granted_for_new_fixture_folder_only",
+        "notebook_rendered",
+        "standard_python_kernel_selected",
+        "run_all_kernel_prompt_completed",
+        "kernel_preflight_saved_output_verified"
+      ],
+      "closedAt": "2026-11-02T01:26:46.297Z",
+      "runnerSha256": "bd4f605e52d25ef31bc9173d90472f1ac35a3c4fa470c8a996b85f209be9fbdc"
+    },
+    {
+      "run": 7,
+      "status": "not_observed",
+      "error": {
+        "name": "TimeoutError",
+        "message": "locator.waitFor: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('.quick-input-list .monaco-list-row').filter({ hasText: 'Python Environments' }).first() to be visible\u001b[22m\n"
+      },
+      "stages": [
+        "trust_granted_for_new_fixture_folder_only",
+        "notebook_rendered",
+        "standard_python_kernel_selected",
+        "run_all_kernel_prompt_completed",
+        "kernel_preflight_saved_output_verified"
+      ],
+      "closedAt": "2026-11-02T01:31:56.631Z",
+      "runnerSha256": "28f8cf6fe9a13452740116d4ac034de87c8c93f0977275faa530fbc9df4f3c2a"
+    },
+    {
+      "run": 8,
+      "status": "not_observed",
+      "error": {
+        "name": "Error",
+        "message": "Arm target is not the queued cell"
+      },
+      "stages": [
+        "trust_granted_for_new_fixture_folder_only",
+        "notebook_rendered",
+        "standard_python_kernel_selected",
+        "run_all_kernel_prompt_completed",
+        "kernel_preflight_saved_output_verified",
+        "blocker_started_output_observed_in_public_event"
+      ],
+      "closedAt": "2026-11-02T01:35:38.742Z",
+      "runnerSha256": "63c240d1abf573fa6478b77de01d76249c0d623386b604ac8bd1e4fb123b4340"
+    }
+  ],
+  "localResult": "results/20261102-d5-09/result.local.json",
+  "localEvents": "results/20261102-d5-09/events.jsonl",
+  "window": "retained awaiting user end signal",
+  "limits": [
+    "One UI automation case only; other three D5 cases pending",
+    "Not user-manual acceptance",
+    "Local diagnostic guard rejection does not prove kernel stop, internal execution identity, atomic edits, or product feasibility"
+  ]
+}

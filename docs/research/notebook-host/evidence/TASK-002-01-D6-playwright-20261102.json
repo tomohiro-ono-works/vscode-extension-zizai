@@ -1,0 +1,404 @@
+{
+  "issue": "https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/14",
+  "branch": "codex/research-vscode-playwright-20261102",
+  "mainAdopted": false,
+  "scope": "One existing cell, existing-change-20, pointer click and ArrowRight during updates",
+  "approval": {
+    "proposal": "Agent launches fixed Playwright from CLI in a dedicated notebook; compare real input and cursor change with unchanged 20-update interval",
+    "userReply": "では次に進んでください。"
+  },
+  "result": "observed_during_updates",
+  "manualPass": false,
+  "formalAcceptance": "not claimed",
+  "runnerSha256": "af455c0e050a7365ecf1f6e42c35df899e12bfe61c85591fee2b6e71c8a9a380",
+  "diagnosticHashes": {
+    "extension.cjs": "0eda3f81faca4fe08b3ac27a756dac47a9e922fe27aa46fb880393b62559a5a3",
+    "model.cjs": "b3b7fbc4a801088846e66e6adfd768b54d71b8d23f6dda43a8aae4b7f95d22f8",
+    "fixtures.cjs": "d0511c1dde2bde2dd0edc06f1be3a114dac93ec8669a7de26b15ce1e680e365c",
+    "package.json": "ac666b8b731db226f53cb4d605ac9cebfcfb3493bed94b45ce6aa9b5f3a951b2"
+  },
+  "playwright": "1.64.1",
+  "artificialUpdateDelay": false,
+  "actualBurstRuns": 1,
+  "preparationFailures": [
+    {
+      "run": 1,
+      "result": "not_observed",
+      "error": {
+        "name": "TimeoutError",
+        "message": "locator.waitFor: Timeout 15000ms exceeded."
+      },
+      "runnerSha256": "70572147a81fbf3d42e3669327e567127b81c30b114a8007da3d2c9d733ff7e7",
+      "resultSha256": "0ccffa255556eb5bb3fd7ee028d5b84bc8573a5cfdc7d7492a650de52b6c1d5f",
+      "stages": [
+        {
+          "name": "approved_fixture_folder_trusted",
+          "at": "2026-11-02T03:28:35.362Z"
+        }
+      ],
+      "D6StimulusReached": false,
+      "fixtureUnchanged": true,
+      "localResult": "results/20261102-d6-01/result.local.json",
+      "localSourceSnapshot": "results/20261102-d6-01/runner.cjs",
+      "window": "retained awaiting user end signal"
+    },
+    {
+      "run": 2,
+      "result": "not_observed",
+      "error": {
+        "name": "TimeoutError",
+        "message": "locator.dblclick: Timeout 30000ms exceeded."
+      },
+      "runnerSha256": "51d5d777032a3ded6f69fd1b2037e4b2786574b360bdc5cb1a6dbaf1ef33e898",
+      "resultSha256": "536b4c71bbbbd55e9f6da37d7ee3b954d97b6580f4ee9ef9f41e9d847ea8ee13",
+      "stages": [
+        {
+          "name": "approved_fixture_folder_trusted",
+          "at": "2026-11-02T03:32:15.129Z"
+        }
+      ],
+      "D6StimulusReached": false,
+      "fixtureUnchanged": true,
+      "localResult": "results/20261102-d6-02/result.local.json",
+      "localSourceSnapshot": "results/20261102-d6-02/runner.cjs",
+      "window": "retained awaiting user end signal"
+    },
+    {
+      "run": 3,
+      "result": "not_observed",
+      "error": {
+        "name": "TimeoutError",
+        "message": "locator.waitFor: Timeout 10000ms exceeded."
+      },
+      "runnerSha256": "30cf0b1effa6096128c718672c6c8f8e86738046bc979984f83561570e7aff07",
+      "resultSha256": "41e82aa9239974902897233e7ba3d2d31acf76a694f95253e98f353c747357a7",
+      "stages": [],
+      "D6StimulusReached": false,
+      "fixtureUnchanged": true,
+      "localResult": "results/20261102-d6-03/result.local.json",
+      "localSourceSnapshot": "results/20261102-d6-03/runner.cjs",
+      "window": "retained awaiting user end signal"
+    }
+  ],
+  "burst": {
+    "seq": 103,
+    "at": "2026-11-02T03:40:37.259Z",
+    "elapsedMs": 1487.3387999999995,
+    "step": "D6-existing-change-20",
+    "kind": "burst.summary",
+    "mode": "existing-change-20",
+    "sent": 20,
+    "returns": [
+      {
+        "result": true,
+        "error": {
+          "$undefined": true
+        }
+      },
+      {
+        "result": true,
+        "error": {
+          "$undefined": true
+        }
+      },
+      {
+        "result": true,
+        "error": {
+          "$undefined": true
+        }
+      },
+      {
+        "result": true,
+        "error": {
+          "$undefined": true
+        }
+      },
+      {
+        "result": true,
+        "error": {
+          "$undefined": true
+        }
+      },
+      {
+        "result": true,
+        "error": {
+          "$undefined": true
+        }
+      },
+      {
+        "result": true,
+        "error": {
+          "$undefined": true
+        }
+      },
+      {
+        "result": true,
+        "error": {
+          "$undefined": true
+        }
+      },
+      {
+        "result": true,
+        "error": {
+          "$undefined": true
+        }
+      },
+      {
+        "result": true,
+        "error": {
+          "$undefined": true
+        }
+      },
+      {
+        "result": true,
+        "error": {
+          "$undefined": true
+        }
+      },
+      {
+        "result": true,
+        "error": {
+          "$undefined": true
+        }
+      },
+      {
+        "result": true,
+        "error": {
+          "$undefined": true
+        }
+      },
+      {
+        "result": true,
+        "error": {
+          "$undefined": true
+        }
+      },
+      {
+        "result": true,
+        "error": {
+          "$undefined": true
+        }
+      },
+      {
+        "result": true,
+        "error": {
+          "$undefined": true
+        }
+      },
+      {
+        "result": true,
+        "error": {
+          "$undefined": true
+        }
+      },
+      {
+        "result": true,
+        "error": {
+          "$undefined": true
+        }
+      },
+      {
+        "result": true,
+        "error": {
+          "$undefined": true
+        }
+      },
+      {
+        "result": true,
+        "error": {
+          "$undefined": true
+        }
+      }
+    ],
+    "before": {
+      "notebookEvents": 0,
+      "textEvents": 0,
+      "version": 0,
+      "dirty": false
+    },
+    "after": {
+      "notebookEvents": 20,
+      "textEvents": 0,
+      "version": 20,
+      "dirty": true
+    },
+    "ticks": 21,
+    "maxTickGapMs": 186.35310000000027,
+    "finalUnobservedTickGapMs": 28.705400000000736,
+    "loggingOverheadIncluded": true,
+    "performanceThreshold": "not-defined"
+  },
+  "overlap": {
+    "firstRequestAt": "2026-11-02T03:40:35.773Z",
+    "lastReturnAt": "2026-11-02T03:40:37.257Z",
+    "pointerDuring": true,
+    "arrowDuring": true,
+    "cursorMovedDuring": true,
+    "cursorChange": {
+      "reason": "cursor_mutation",
+      "at": 1793590835873,
+      "positions": [
+        {
+          "left": "54px",
+          "top": "12px"
+        }
+      ]
+    },
+    "updateWindowMs": 1484,
+    "firstRequestUnixMs": 1793590835773,
+    "lastReturnUnixMs": 1793590837257,
+    "timestampResolutionMs": 1,
+    "strictBoundaryMarginMs": 1,
+    "performanceThreshold": "not defined"
+  },
+  "inputEvents": [
+    {
+      "kind": "pointerdown",
+      "at": 1793590835817,
+      "trusted": true,
+      "x": 481.919677734375,
+      "y": 161.90476989746094,
+      "offsetFromFirstRequestMs": 44,
+      "pendingDiagnosticRequests": [
+        "D6-send-1"
+      ]
+    },
+    {
+      "kind": "ArrowRight",
+      "at": 1793590835850,
+      "trusted": true,
+      "offsetFromFirstRequestMs": 77,
+      "pendingDiagnosticRequests": [
+        "D6-send-1"
+      ]
+    }
+  ],
+  "cursorSamples": [
+    {
+      "reason": "baseline",
+      "at": 1793590834503,
+      "positions": [
+        {
+          "left": "0px",
+          "top": "31px"
+        }
+      ]
+    },
+    {
+      "reason": "cursor_mutation",
+      "at": 1793590835827,
+      "positions": [
+        {
+          "left": "46px",
+          "top": "12px"
+        }
+      ]
+    },
+    {
+      "reason": "after_click",
+      "at": 1793590835846,
+      "positions": [
+        {
+          "left": "46px",
+          "top": "12px"
+        }
+      ]
+    },
+    {
+      "reason": "cursor_mutation",
+      "at": 1793590835873,
+      "positions": [
+        {
+          "left": "54px",
+          "top": "12px"
+        }
+      ]
+    },
+    {
+      "reason": "after_arrow_frame",
+      "at": 1793590835873,
+      "positions": [
+        {
+          "left": "54px",
+          "top": "12px"
+        }
+      ]
+    }
+  ],
+  "saved": {
+    "sha256": "2ac75e450554a635bbf2a47611009cb4bca34b7d258c1db3e2b226c37bd05450",
+    "cellCount": 1,
+    "metadataBurst": 20,
+    "sourcePreserved": true,
+    "standardIdPreserved": true,
+    "unownedMetadataPreserved": true,
+    "executionCount": null,
+    "outputs": [],
+    "snapshotAt": "2026-11-02T03:40:38.514Z",
+    "dirty": false
+  },
+  "schema": {
+    "passed": 1,
+    "failed": 0,
+    "nbformat": "5.11.1",
+    "conversionOrNormalizationRequested": false,
+    "results": [
+      {
+        "file": "PW-20261102-d6-04-D6.ipynb",
+        "status": "PASS",
+        "warnings": [],
+        "data_unchanged": true,
+        "file_unchanged": true,
+        "sha256": "2ac75e450554a635bbf2a47611009cb4bca34b7d258c1db3e2b226c37bd05450",
+        "nbformat": [
+          4,
+          5
+        ]
+      }
+    ]
+  },
+  "localResult": "results/20261102-d6-04/result.local.json",
+  "localEvents": "results/20261102-d6-04/events.jsonl",
+  "localSourceSnapshot": "results/20261102-d6-04/runner.cjs",
+  "window": "retained awaiting user end signal",
+  "limits": [
+    "One diagnostic condition only; other D6 mode combinations and UI Undo/Redo not covered",
+    "Trusted DOM input and rendered cursor movement observed; no internal IDE calls or synthetic DOM event dispatch",
+    "Synchronous diagnostic logging and DOM observation overhead included; no product latency or responsiveness threshold inferred",
+    "No Notebook code execution requested; source remained unchanged with execution_count null and empty outputs",
+    "Background or minimized behavior, user-manual acceptance and formal Host feasibility not proved",
+    "Three failed preparation windows plus this observation window retained until user end signal",
+    "Full profiles, screenshots and runtime logs remain local; selected evidence and source are shared"
+  ],
+  "environment": {
+    "vscode": "1.144.0",
+    "appName": "Visual Studio Code",
+    "platform": "win32",
+    "arch": "x64",
+    "extensionHostNode": "v24.22.1",
+    "electron": "43.8.3",
+    "extensions": [
+      {
+        "id": "ms-toolsai.jupyter",
+        "version": "2025.9.1",
+        "active": true
+      },
+      {
+        "id": "ms-python.python",
+        "version": "2026.10.0",
+        "active": false
+      },
+      {
+        "id": "ms-python.vscode-python-envs",
+        "version": "1.41.2026102301",
+        "active": true
+      },
+      {
+        "id": "vscode.ipynb",
+        "version": "10.0.0",
+        "active": true
+      }
+    ],
+    "runnerNode": "v24.14.1"
+  }
+}

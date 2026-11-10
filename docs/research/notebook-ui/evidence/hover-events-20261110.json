@@ -1,0 +1,494 @@
+{
+  "issue": 80,
+  "date": "2026-11-10",
+  "status": "Latest seven automated flows and user-operated review succeeded; previous disappearance not reproduced, cause unconfirmed; root-cause investigation alone is not a merge blocker",
+  "mainIntegrationReview": {
+    "source": "This chat, explicit user instruction to correct the record, make authorized fixes and safely merge to main",
+    "baseMain": "2f31bd5",
+    "ancestry": "Fetched origin/main is an ancestor of the feature branch; no divergent main changes or conflict at preflight",
+    "scope": "Previously approved retained research, obsolete-design reset, extension-only implementation, tests and documentation; no new Python behavior or formal support-version adoption",
+    "testCommand": "node --test tests/unit/manual-session.test.cjs tests/unit/extension/*.test.cjs",
+    "tests": {"pass": 29, "fail": 0},
+    "documentReview": {
+      "changedMarkdownFiles": 29,
+      "localReferencesExamined": 255,
+      "validLocalReferences": 174,
+      "changedJsonFilesParsed": 28,
+      "newBrokenReferences": 0,
+      "historicalUnresolvedReferences": 81,
+      "historicalReason": "Seven retained other-application connector documents; each target was already referenced and already missing in origin/main. Original text retained, not treated as confirmed or Current Specification.",
+      "initialFailure": "Unfiltered link preflight failed on these historical references. Initial failure and reviewed classification kept separately in local results."
+    },
+    "vsix": {
+      "version": "0.0.2",
+      "sha256": "5a3d22b1b58f1470255a43eb93fc5c0b56753721cdc47d1ea1f31a3e72e44ca3",
+      "entries": 84,
+      "changedFromCliInstalledArchive": ["extension/readme.md"],
+      "runtimeIdentical": true,
+      "newArchiveInstalled": false,
+      "previousArchivePreserved": true
+    },
+    "localEvidence": [
+      "logs/task009-main-integration-tests-20261110.txt",
+      "logs/task009-main-integration-package-20261110.txt",
+      "results/task009-main-integration-20261110-01/document-preflight.local.json",
+      "results/task009-main-integration-20261110-01/document-preflight.reviewed.local.json",
+      "results/task009-main-integration-20261110-01/package-review.local.json"
+    ],
+    "limits": "No new GUI session. Formal support-version decision, untested environments and past root-cause uncertainty remain explicit; integration alone does not adopt drafts or release a formal product."
+  },
+  "acceptanceCorrection": {
+    "source": "This chat: user asked whether hover loss had already been resolved for now, then explicitly requested correcting the record and safely merging authorized changes to main",
+    "currentBehavior": "Normal operation succeeded within the recorded Insiders test scope",
+    "historicalEvidence": "Preserve previous failures and do not claim their root cause or a new product fix",
+    "integration": "May integrate the internal preview without requiring further root-cause investigation; not approval of a formally supported VS Code version, Marketplace release, Python implementation or untested environments"
+  },
+  "cliInstallFollowUp": {
+    "date": "2026-11-10",
+    "archiveSha256": "99cedc6e6f4ccd9e23b22102a0ea1081cd50940cf4aba5861446b9749bfd4a5a",
+    "out": "results/task009-cli-install-review-20261110-01",
+    "result": "VSIX installed via isolated VS Code CLI; installed version 0.0.2; all 82 extension payload entries matched packaged bytes, excluding installer-added package.json __metadata",
+    "runtimePackages": ["yaml"],
+    "guiStarted": false,
+    "initialComparison": "Source-to-installed README comparison failed because vsce expands GitHub issue references. Original failed result retained. Corrected archive-to-installed comparison passed without reinstalling.",
+    "localEvidence": ["result.local.json", "archive-verification.local.json", "../../logs/task009-cli-install-review-20261110.txt"],
+    "warning": "VS Code CLI emitted Node DEP0169 url.parse deprecation warning with general security wording. Observed during CLI installation; no extension exploit or security incident established. Warning retained and reported, not declared fixed.",
+    "stableVersionCheck": {
+      "source": "https://update.code.visualstudio.com/api/update/win32-x64-user/stable/latest",
+      "productVersion": "1.145.2",
+      "commit": "c4453f8ea430795f941c1b2ff6c9321135a74a02"
+    },
+    "limits": "This supersedes the earlier uninstalled-archive state for CLI installation only. No new full VS Code GUI/runner-shutdown session or formal supported-version approval."
+  },
+  "finishAndPackageReview": {
+    "scope": "Issue/body corrections, manual runner finish control, documentation-only VSIX rebuild; no product UI change",
+    "manualControl": "Fresh owned results folder finish.request must contain finish; stdin EOF and elapsed time do not end the wait; app close removes the watcher",
+    "processIdentity": "runnerPid, launcherPid and electronMainPid are recorded separately; cleanup checks both launcher/main and LISTENING/ESTABLISHED ports",
+    "cliCommand": "node --test tests/unit/manual-session.test.cjs tests/unit/extension/*.test.cjs",
+    "cliResult": {"pass": 29, "fail": 0, "manualControlTests": 2, "existingExtensionTests": 27},
+    "redLimit": "Initial missing helper failed test-file loading, not two individual behavior assertions; actual legacy closed-stdin failure was observed during the preceding manual shutdown",
+    "package": {
+      "command": "npm run package:vsix --prefix apps/extension -- --out ../../results/task009-packaging-review-20261110-01/zizai-notebook-input-0.0.2.vsix",
+      "previousSha256": "fefc893786a951551ac5cc361afebd10836a22648d036a15c3bfe20dd7857adb",
+      "rebuiltSha256": "99cedc6e6f4ccd9e23b22102a0ea1081cd50940cf4aba5861446b9749bfd4a5a",
+      "entries": 84,
+      "changedEntries": ["extension/readme.md"],
+      "addedOrRemovedEntries": [],
+      "runtimeAndManifestIdentical": true,
+      "installedRebuiltArchive": false,
+      "preservedPreviousArtifact": "results/task009-packaging-review-20261110-01/previous-0.0.2.vsix"
+    },
+    "localEvidence": [
+      "logs/task009-manual-finish-red-20261110.txt",
+      "logs/task009-manual-finish-green-20261110.txt",
+      "logs/task009-finish-checks-20261110.txt",
+      "logs/task009-package-review-20261110.txt",
+      "results/task009-packaging-review-20261110-01/package-review.local.json"
+    ],
+    "limits": "No new GUI session started. Finish helper verified with closed-stdin child and EventEmitter close, not a new full VS Code manual session. New archive differs only in README, not installed. Previous hover failure and formal supported-version decision remain open."
+  },
+  "manualReview": {
+    "source": "This chat, user original text; recorded in Issue 80 comments 6756064114 and 6757519954",
+    "userReport": "問題なく操作できました！",
+    "closeApproval": "OKです。 (reply to the dedicated-window close question)",
+    "out": "results/task009-hover-hands-on-20261110-01",
+    "deployment": "Unmodified installed VSIX 0.0.2, same Insiders build as environment below",
+    "flow": "C/A parent-child example; preparation only by Playwright, subsequent choices by user; no kernel execution",
+    "instrumentation": "Passive hover-lifecycle only during user operation; 99 events saved before app.close",
+    "preservation": "Original VS Code notebook backup and recovered ipynb kept under out/recovered; original files not deleted",
+    "shutdown": {
+      "closedAt": "2026-11-10T02:28:21.584Z",
+      "verifiedAbsentPids": [3848, 22832, 24012, 31964],
+      "verifiedNoListeningOrEstablishedPorts": [60221, 60222, 60223, 60224, 9229],
+      "limitation": "Original runner stdin was closed; a temporary owned Node Inspector delivered the existing finish signal. Inspector was then terminated. Legacy pid was launcher cmd, not Code main."
+    },
+    "artifactStatus": "Raw local logs, profile and recovered notebook are ignored and unpushed; this summary is tracked",
+    "limits": "Success covers user-reported operations only. Does not establish all unreported cases, root cause/fix of previous hover failures, or formally supported VS Code version."
+  },
+  "decision": {
+    "source": "This chat, user original text",
+    "text": "１でおねがいします。",
+    "meaning": "Keep the existing hover-start approach. Do not implement the click-start completion proposal."
+  },
+  "environment": {
+    "vscode": "1.146.0-insider",
+    "commit": "29ce94ad8d36c62affc08484e262d5c4fbdd0b3d",
+    "playwright": "1.64.1",
+    "node": "24.14.1",
+    "os": "Windows x64",
+    "devicePixelRatio": 1.0499999523162842
+  },
+  "observations": [
+    "All seven runs passed the same dependent-choice flow, keep/clear policy, save, single Undo/Redo and YAML reload. One run added logging only to an owned installed test copy; six used the unchanged VSIX.",
+    "Passive browser traces captured real trusted pointer/mouse entry into the hover frame; no synthetic events or product UI state mutation were used.",
+    "Non-pausing debugger logpoints captured close and result-clear decisions in the owned renderer. Observed close calls came from editor commands after selection; recorded boundary entry was retained.",
+    "The inspected runtime hover settings were enabled:on, sticky:true, hidingDelay:300. Settings were read, not modified.",
+    "Extension-side logging run measured apply acknowledgements 17..28ms and close-command acknowledgements 1..18ms. The next menu observation was 424ms or more after the previous close returned. No late close was observed in that run; unrecorded prior failures remain unexplained.",
+    "The extension-logging run recorded document focus true and no window blur/visibility transition. Do not infer that prior unrecorded runs had the same focus state.",
+    "Slower 40ms-per-step motion passed with debugger tracing and without any extra event/debugger/source instrumentation. The normal 8ms cases also passed.",
+    "Instrumentation can affect timing; passing instrumented runs is not a fix. The uninstrumented control was therefore retained separately."
+  ],
+  "runs": [
+    {
+      "localArtifact": "results/task009-hover-events-20261110-01/result.local.json",
+      "outcome": "observed",
+      "mode": "installed VSIX unchanged",
+      "stages": [
+        "vsix_installed_in_isolated_profile",
+        "dedicated_workbench_ready",
+        "inline_C_visible",
+        "external_yaml_candidate_and_valid_child_preserved_without_save",
+        "invalid_child_cleared_with_parent_without_save",
+        "single_undo_restored_parent_and_child_redo_and_unrelated_cell_preserved",
+        "external_yaml_change_reloaded_without_restart"
+      ],
+      "passiveEvents": {
+        "localFile": "hover-events.local.json",
+        "events": 640,
+        "environment": {
+          "devicePixelRatio": 1.0499999523162842,
+          "innerWidth": 1447,
+          "innerHeight": 906,
+          "visualViewport": {
+            "scale": 1,
+            "offsetLeft": 0,
+            "offsetTop": 0
+          }
+        }
+      },
+      "dependent": {
+        "externalYamlUsed": true,
+        "validChildPreserved": true,
+        "invalidChildCleared": true,
+        "singleUndoRestoredBoth": true,
+        "redo": true,
+        "unrelatedCellAndMetadataPreserved": true,
+        "reloadedOnChange": true
+      },
+      "closed": true,
+      "ports": [
+        {
+          "port": 51176,
+          "listeners": 0
+        },
+        {
+          "port": 51178,
+          "listeners": 0
+        }
+      ]
+    },
+    {
+      "localArtifact": "results/task009-hover-events-20261110-02/result.local.json",
+      "outcome": "observed",
+      "mode": "installed VSIX unchanged",
+      "stages": [
+        "vsix_installed_in_isolated_profile",
+        "dedicated_workbench_ready",
+        "inline_C_visible",
+        "external_yaml_candidate_and_valid_child_preserved_without_save",
+        "invalid_child_cleared_with_parent_without_save",
+        "single_undo_restored_parent_and_child_redo_and_unrelated_cell_preserved",
+        "external_yaml_change_reloaded_without_restart"
+      ],
+      "passiveEvents": {
+        "localFile": "hover-events.local.json",
+        "events": 640,
+        "environment": {
+          "devicePixelRatio": 1.0499999523162842,
+          "innerWidth": 1447,
+          "innerHeight": 906,
+          "visualViewport": {
+            "scale": 1,
+            "offsetLeft": 0,
+            "offsetTop": 0
+          }
+        }
+      },
+      "dependent": {
+        "externalYamlUsed": true,
+        "validChildPreserved": true,
+        "invalidChildCleared": true,
+        "singleUndoRestoredBoth": true,
+        "redo": true,
+        "unrelatedCellAndMetadataPreserved": true,
+        "reloadedOnChange": true
+      },
+      "closed": true,
+      "ports": [
+        {
+          "port": 63632,
+          "listeners": 0
+        },
+        {
+          "port": 63634,
+          "listeners": 0
+        }
+      ]
+    },
+    {
+      "localArtifact": "results/task009-hover-hide-20261110-01/result.local.json",
+      "outcome": "observed",
+      "mode": "installed VSIX unchanged",
+      "stages": [
+        "vsix_installed_in_isolated_profile",
+        "dedicated_workbench_ready",
+        "inline_C_visible",
+        "external_yaml_candidate_and_valid_child_preserved_without_save",
+        "invalid_child_cleared_with_parent_without_save",
+        "single_undo_restored_parent_and_child_redo_and_unrelated_cell_preserved",
+        "external_yaml_change_reloaded_without_restart"
+      ],
+      "hoverHide": {
+        "localFile": "hover-hide.local.json",
+        "events": 12,
+        "scriptSha256": "9aea5004794cc6075e0c51aeacaefd160b1bf8ed599a53175c3acc517d7b3986"
+      },
+      "closing": {
+        "hideCalls": 6,
+        "editorCommandCalls": 6,
+        "nativeMouseLeaveCalls": 0,
+        "settings": {
+          "enabled": "on",
+          "sticky": true,
+          "hidingDelay": 300
+        },
+        "unexpectedPauses": 0,
+        "scriptSha256": "9aea5004794cc6075e0c51aeacaefd160b1bf8ed599a53175c3acc517d7b3986"
+      },
+      "dependent": {
+        "externalYamlUsed": true,
+        "validChildPreserved": true,
+        "invalidChildCleared": true,
+        "singleUndoRestoredBoth": true,
+        "redo": true,
+        "unrelatedCellAndMetadataPreserved": true,
+        "reloadedOnChange": true
+      },
+      "closed": true,
+      "ports": [
+        {
+          "port": 60655,
+          "listeners": 0
+        },
+        {
+          "port": 60657,
+          "listeners": 0
+        }
+      ]
+    },
+    {
+      "localArtifact": "results/task009-hover-hide-20261110-02/result.local.json",
+      "outcome": "observed",
+      "mode": "installed VSIX unchanged",
+      "stages": [
+        "vsix_installed_in_isolated_profile",
+        "dedicated_workbench_ready",
+        "inline_C_visible",
+        "external_yaml_candidate_and_valid_child_preserved_without_save",
+        "invalid_child_cleared_with_parent_without_save",
+        "single_undo_restored_parent_and_child_redo_and_unrelated_cell_preserved",
+        "external_yaml_change_reloaded_without_restart"
+      ],
+      "hoverHide": {
+        "localFile": "hover-hide.local.json",
+        "events": 18,
+        "scriptSha256": "9aea5004794cc6075e0c51aeacaefd160b1bf8ed599a53175c3acc517d7b3986"
+      },
+      "closing": {
+        "hideCalls": 6,
+        "editorCommandCalls": 6,
+        "nativeMouseLeaveCalls": 0,
+        "settings": {
+          "enabled": "on",
+          "sticky": true,
+          "hidingDelay": 300
+        },
+        "unexpectedPauses": 0,
+        "scriptSha256": "9aea5004794cc6075e0c51aeacaefd160b1bf8ed599a53175c3acc517d7b3986"
+      },
+      "dependent": {
+        "externalYamlUsed": true,
+        "validChildPreserved": true,
+        "invalidChildCleared": true,
+        "singleUndoRestoredBoth": true,
+        "redo": true,
+        "unrelatedCellAndMetadataPreserved": true,
+        "reloadedOnChange": true
+      },
+      "closed": true,
+      "ports": [
+        {
+          "port": 50746,
+          "listeners": 0
+        },
+        {
+          "port": 50748,
+          "listeners": 0
+        }
+      ]
+    },
+    {
+      "localArtifact": "results/task009-extension-events-20261110-01/result.local.json",
+      "outcome": "observed",
+      "mode": "logging-only test copy",
+      "stages": [
+        "vsix_installed_in_isolated_profile",
+        "dedicated_workbench_ready",
+        "inline_C_visible",
+        "external_yaml_candidate_and_valid_child_preserved_without_save",
+        "invalid_child_cleared_with_parent_without_save",
+        "single_undo_restored_parent_and_child_redo_and_unrelated_cell_preserved",
+        "external_yaml_change_reloaded_without_restart"
+      ],
+      "extensionEvents": {
+        "instrumentedCopy": true,
+        "originalSha256": "472e4185af5333fefe79fe1a8ee8d53ac89490313d39c80dfe0ca3ac9dafaec4",
+        "instrumentedSha256": "15dad397859266d5ed5aa60e9ebf92626c0ff30e70a76427c310b24e8d310628",
+        "localFile": "extension-events.local.jsonl"
+      },
+      "hoverLifecycle": {
+        "events": 99,
+        "localFile": "hover-lifecycle.local.json"
+      },
+      "dependent": {
+        "externalYamlUsed": true,
+        "validChildPreserved": true,
+        "invalidChildCleared": true,
+        "singleUndoRestoredBoth": true,
+        "redo": true,
+        "unrelatedCellAndMetadataPreserved": true,
+        "reloadedOnChange": true
+      },
+      "closed": true,
+      "ports": [
+        {
+          "port": 62790,
+          "listeners": 0
+        },
+        {
+          "port": 62792,
+          "listeners": 0
+        }
+      ]
+    },
+    {
+      "localArtifact": "results/task009-hover-hide-slow-20261110-01/result.local.json",
+      "outcome": "observed",
+      "mode": "installed VSIX unchanged",
+      "stepDelayMs": 40,
+      "stages": [
+        "vsix_installed_in_isolated_profile",
+        "dedicated_workbench_ready",
+        "inline_C_visible",
+        "external_yaml_candidate_and_valid_child_preserved_without_save",
+        "invalid_child_cleared_with_parent_without_save",
+        "single_undo_restored_parent_and_child_redo_and_unrelated_cell_preserved",
+        "external_yaml_change_reloaded_without_restart"
+      ],
+      "hoverHide": {
+        "localFile": "hover-hide.local.json",
+        "events": 18,
+        "scriptSha256": "9aea5004794cc6075e0c51aeacaefd160b1bf8ed599a53175c3acc517d7b3986"
+      },
+      "closing": {
+        "hideCalls": 6,
+        "editorCommandCalls": 6,
+        "nativeMouseLeaveCalls": 0,
+        "settings": {
+          "enabled": "on",
+          "sticky": true,
+          "hidingDelay": 300
+        },
+        "unexpectedPauses": 0,
+        "scriptSha256": "9aea5004794cc6075e0c51aeacaefd160b1bf8ed599a53175c3acc517d7b3986"
+      },
+      "dependent": {
+        "externalYamlUsed": true,
+        "validChildPreserved": true,
+        "invalidChildCleared": true,
+        "singleUndoRestoredBoth": true,
+        "redo": true,
+        "unrelatedCellAndMetadataPreserved": true,
+        "reloadedOnChange": true
+      },
+      "closed": true,
+      "ports": [
+        {
+          "port": 58380,
+          "listeners": 0
+        },
+        {
+          "port": 58382,
+          "listeners": 0
+        }
+      ]
+    },
+    {
+      "localArtifact": "results/task009-hover-baseline-slow-20261110-01/result.local.json",
+      "outcome": "observed",
+      "mode": "installed VSIX unchanged",
+      "stepDelayMs": 40,
+      "stages": [
+        "vsix_installed_in_isolated_profile",
+        "dedicated_workbench_ready",
+        "inline_C_visible",
+        "external_yaml_candidate_and_valid_child_preserved_without_save",
+        "invalid_child_cleared_with_parent_without_save",
+        "single_undo_restored_parent_and_child_redo_and_unrelated_cell_preserved",
+        "external_yaml_change_reloaded_without_restart"
+      ],
+      "dependent": {
+        "externalYamlUsed": true,
+        "validChildPreserved": true,
+        "invalidChildCleared": true,
+        "singleUndoRestoredBoth": true,
+        "redo": true,
+        "unrelatedCellAndMetadataPreserved": true,
+        "reloadedOnChange": true
+      },
+      "closed": true,
+      "ports": [
+        {
+          "port": 58027,
+          "listeners": 0
+        },
+        {
+          "port": 58029,
+          "listeners": 0
+        }
+      ]
+    }
+  ],
+  "product": {
+    "version": "0.0.2",
+    "sourceCommit": "0f2ae6a",
+    "vsixSha256": "fefc893786a951551ac5cc361afebd10836a22648d036a15c3bfe20dd7857adb",
+    "sourceChanged": false,
+    "mainMerged": false
+  },
+  "checks": {
+    "unitCommand": "npm test --prefix apps/extension",
+    "unitPass": 27,
+    "unitFail": 0,
+    "note": "Fresh retained-code unit check and script syntax checks recorded in logs/task009-hover-nov10-unit.txt."
+  },
+  "manualPreparation": {
+    "status": "Historical preparation; subsequently performed and closed as recorded in manualReview",
+    "title": "ZizAI Hover Investigation",
+    "scope": "Owned synthetic notebook with [C]/[A], csv/import/export/excel examples, no kernel execution.",
+    "procedure": [
+      "Choose csv and import, then choose excel: action becomes empty.",
+      "Choose export, then csv: export is retained.",
+      "Report any menu disappearance during movement; do not execute cells."
+    ],
+    "logging": "Optional hover-lifecycle records native focus and hover style/link changes without modifying the extension copy or forcing layout.",
+    "handoff": "Open one dedicated window only after user readiness; keep it open until the user end signal. Manual acceptance is separate from automation."
+  },
+  "limits": [
+    "Original 2026-11-09 failures remain valid evidence; no conclusive root cause or repaired-state claim.",
+    "Stable API still returned 1.145.2; formal support version remains undecided.",
+    "No new UI requirements, task scope or completion conditions adopted. No private UI functions invoked to simulate selections.",
+    "Raw traces contain synthetic paths and stack locations and remain local. Summary does not imply they are hosted.",
+    "All seven automated windows closed and recorded debug ports have zero listeners. No user profiles/files or earlier logs were changed or removed."
+  ]
+}

@@ -1,0 +1,46 @@
+{
+  "case": "Single inline choice: CSV selection and Excel reselection",
+  "dateJST": "2026-11-08",
+  "vscode": "1.145.2 (local executable file version)",
+  "playwright": "1.64.1",
+  "node": "v24.14.1",
+  "outcome": "observed",
+  "route": "Fixed Playwright, actual Notebook editor, Ctrl+click Inlay Hint label, standard QuickPick, standard save",
+  "stages": [
+    "dedicated_workbench_ready",
+    "inline_C_visible",
+    "csv_chosen_and_saved",
+    "excel_chosen_and_saved"
+  ],
+  "csv": {
+    "sourceMatches": true,
+    "metadataPreserved": true,
+    "executionCount": null,
+    "outputsEmpty": true
+  },
+  "excel": {
+    "sourceMatches": true,
+    "metadataPreserved": true,
+    "executionCount": null,
+    "outputsEmpty": true
+  },
+  "commandPaletteUsed": false,
+  "kernelExecuted": false,
+  "userProfileModified": false,
+  "dedicatedWindowClosed": true,
+  "debugListenersAfterClose": 0,
+  "localArtifacts": "results/task009-inline-20261108-01/ (ignored, preserved locally)",
+  "sourceSha256": {
+    "apps/extension/extension.cjs": "047d0d238b862cc562de867bf46ccc79601e604f7d1bedf32f3cd93ffed4cbde",
+    "apps/extension/selection.cjs": "7ab761527da4e7f1ff5a4fe58974510708e845bc97c728aa91f9bcf6fab28ef9",
+    "apps/extension/definitions.json": "3e65197ecfcb2dc4b075861a0bf0b08ed1d8deae8f529035ec6a7b23e318cecf",
+    "apps/extension/package.json": "c9c0da7012261be361628542422b76456a72270fc3d94cbdace40fbbd980739d",
+    "tests/e2e/inline-choice.cjs": "05e030ee2a9cfb9921eec63f7bff4feb7ea42e98b576fd6f9481c8a4a17f4a4f"
+  },
+  "limitations": [
+    "one bundled example field; not external definition loading or dependent actions",
+    "no file/folder dialog integration in this run",
+    "not VSIX installation, final UI adoption, Python magic, or program generation verification",
+    "CLI adapter checks use a VS Code API fake; actual UI result is the separate Playwright run"
+  ]
+}

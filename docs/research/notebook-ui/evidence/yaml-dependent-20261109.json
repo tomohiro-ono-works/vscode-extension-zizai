@@ -1,0 +1,196 @@
+{
+  "issue": 78,
+  "date": "2026-11-09",
+  "status": "YAML and dependent choices implemented; broader hover/support-version conditions remain open",
+  "approvals": {
+    "source": "This chat, user original text",
+    "yaml": "定義ファイルは、yamlにしようか",
+    "placementAndChildPolicy": "After .vscode/zizai-definitions.yaml and keep-valid/clear-invalid child proposal, user replied OKです",
+    "scope": "VS Code extension input assistance only; user snippets/Python implementation excluded"
+  },
+  "design": {
+    "version": 1,
+    "path": ".vscode/zizai-definitions.yaml",
+    "resolution": "Notebook workspace folder, full replacement, bundled fallback only if absent",
+    "dependencies": "Same-cell dependsOn and choicesByValue; empty/unlisted/missing/ambiguous parents offer no child choices",
+    "edits": "Menu parent change preserves valid child; clears invalid child in one WorkspaceEdit; manual typing does not clear other fields",
+    "invalidYaml": "Notify once until repaired; disable workspace assistance; preserve Notebook; reload on file change",
+    "yaml": "yaml@2.9.1, data only, aliases/custom tags rejected, 1MiB limit"
+  },
+  "environment": {
+    "vscode": "1.146.0-insider",
+    "commit": "29ce94ad8d36c62affc08484e262d5c4fbdd0b3d",
+    "node": "24.14.1",
+    "playwright": "1.64.1",
+    "os": "Windows x64"
+  },
+  "unit": {
+    "command": "npm test --prefix apps/extension",
+    "pass": 27,
+    "fail": 0,
+    "redEvidence": [
+      "logs/task009-dependency-red-20261109.txt",
+      "logs/task009-yaml-red-20261109.txt",
+      "logs/task009-parent-validation-red-20261109.txt"
+    ],
+    "greenEvidence": "logs/task009-yaml-final-unit-20261109.txt",
+    "note": "Initial YAML test file failed module loading before implementation, not four independent assertion failures; dependency behavior and invalid-parent mapping failures were actual assertions."
+  },
+  "package": {
+    "version": "0.0.2",
+    "path": "apps/extension/zizai-notebook-input-0.0.2.vsix",
+    "sha256": "fefc893786a951551ac5cc361afebd10836a22648d036a15c3bfe20dd7857adb",
+    "files": 84,
+    "size": 112885,
+    "command": "npm run package:vsix",
+    "runtime": "yaml JS/manifest/LICENSE included; vsce/minimatch/test data/logs excluded",
+    "payloadSha256": {
+      "extension.cjs": "472e4185af5333fefe79fe1a8ee8d53ac89490313d39c80dfe0ca3ac9dafaec4",
+      "selection.cjs": "0053beda9270b80e3a6565fac56ca8e791264c30450427a907c4d9c59a41d982",
+      "definitions.cjs": "54636fdfd2ad405977da8ce1901fc7b29091f324b312f04a72bb75332b43336b",
+      "definitions.yaml": "e9bafbed456f3dc02ab3f25ce124c3dc0fc6229de6332b3a11ffe4d359e1f23d"
+    }
+  },
+  "runs": [
+    {
+      "localArtifact": "results/task009-yaml-dependent-20261109-01/result.local.json",
+      "outcome": "observed",
+      "stages": [
+        "vsix_installed_in_isolated_profile",
+        "dedicated_workbench_ready",
+        "inline_C_visible",
+        "external_yaml_candidate_and_valid_child_preserved_without_save",
+        "invalid_child_cleared_with_parent_without_save",
+        "single_undo_restored_parent_and_child_redo_and_unrelated_cell_preserved",
+        "external_yaml_change_reloaded_without_restart"
+      ],
+      "deployment": "installed-vsix",
+      "installedExtensions": "zizai-lab.zizai-notebook-input@0.0.2",
+      "dependent": {
+        "externalYamlUsed": true,
+        "validChildPreserved": true,
+        "invalidChildCleared": true,
+        "singleUndoRestoredBoth": true,
+        "redo": true,
+        "unrelatedCellAndMetadataPreserved": true,
+        "reloadedOnChange": true
+      },
+      "ports": [
+        {
+          "port": 55563,
+          "listeners": 0
+        },
+        {
+          "port": 55565,
+          "listeners": 0
+        }
+      ],
+      "closed": true
+    },
+    {
+      "localArtifact": "results/task009-yaml-paths-20261109-01/result.local.json",
+      "outcome": "observed",
+      "stages": [
+        "vsix_installed_in_isolated_profile",
+        "dedicated_workbench_ready",
+        "inline_P_visible",
+        "file_selected_without_save",
+        "file_reselected_without_save",
+        "file_cancel_kept_previous_value",
+        "folder_selected_without_save",
+        "folder_reselected_without_save",
+        "folder_cancel_kept_previous_value",
+        "all_path_operations_saved_and_preserved",
+        "undo_saved_and_unrelated_cell_preserved",
+        "redo_saved_and_unrelated_cell_preserved"
+      ],
+      "deployment": "installed-vsix",
+      "installedExtensions": "zizai-lab.zizai-notebook-input@0.0.2",
+      "paths": {
+        "fileSelection": true,
+        "fileReselection": true,
+        "fileCancelPreserved": true,
+        "folderSelection": true,
+        "folderReselection": true,
+        "folderCancelPreserved": true,
+        "sourceAndMetadataPreserved": true,
+        "absolutePaths": true,
+        "saveOnlyAfterAllSixOperations": true,
+        "dialog": "VS Code standard simple file dialog; OS native dialog not exercised"
+      },
+      "undoRedo": true,
+      "ports": [
+        {
+          "port": 50710,
+          "listeners": 0
+        },
+        {
+          "port": 50712,
+          "listeners": 0
+        }
+      ],
+      "closed": true
+    },
+    {
+      "localArtifact": "results/task009-yaml-dependent-20261109-02/result.local.json",
+      "outcome": "observed",
+      "stages": [
+        "vsix_installed_in_isolated_profile",
+        "dedicated_workbench_ready",
+        "inline_C_visible",
+        "external_yaml_candidate_and_valid_child_preserved_without_save",
+        "invalid_child_cleared_with_parent_without_save",
+        "single_undo_restored_parent_and_child_redo_and_unrelated_cell_preserved",
+        "external_yaml_change_reloaded_without_restart"
+      ],
+      "deployment": "installed-vsix",
+      "installedExtensions": "zizai-lab.zizai-notebook-input@0.0.2",
+      "dependent": {
+        "externalYamlUsed": true,
+        "validChildPreserved": true,
+        "invalidChildCleared": true,
+        "singleUndoRestoredBoth": true,
+        "redo": true,
+        "unrelatedCellAndMetadataPreserved": true,
+        "reloadedOnChange": true
+      },
+      "ports": [
+        {
+          "port": 49859,
+          "listeners": 0
+        },
+        {
+          "port": 49861,
+          "listeners": 0
+        }
+      ],
+      "closed": true
+    }
+  ],
+  "security": {
+    "productionAudit": {
+      "command": "npm audit --omit=dev --json",
+      "findings": 0
+    },
+    "existingBuildWarning": "minimatch warning remains; user agreed to reconsider when threat/exposure changes; no forced override",
+    "cliDeprecation": "VS Code bundled CLI emitted DEP0169 url.parse deprecation; not a newly detected product vulnerability"
+  },
+  "observations": [
+    "First dependent/path runs preceded the final invalid-parent eligibility tightening; final dependent run02 used the final source and VSIX.",
+    "Path selection behavior stayed unchanged; regression run verified 6 operations, save, Undo/Redo and unaffected cell protection.",
+    "Final run proved external YAML candidates rather than bundled examples, preserve/clear policy, one Undo restoring both parent and child, redo, and file-change reload.",
+    "All local raw results/screenshots/Notebooks/profile snapshots retained; they are not hosted by committing this summary."
+  ],
+  "limitations": [
+    "Earlier intermittent path-hover disappearance remains unresolved; later passes do not erase it.",
+    "Stable 1.145.2 hover limitation and formal support version unresolved.",
+    "OS native picker, Remote/WSL, multi-root real UI and other OS not tested.",
+    "No Python/kernel execution, no program generation, no snippet creation/registration, no Marketplace publication or main merge."
+  ],
+  "protection": {
+    "userProfileModified": false,
+    "commandPaletteUsed": false,
+    "kernelExecuted": false,
+    "allRecordedWindowsAndPortsClosed": true
+  }
+}

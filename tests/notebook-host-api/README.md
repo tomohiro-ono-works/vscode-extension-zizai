@@ -1,5 +1,7 @@
 # TASK-002-01 Notebook管理APIの診断
 
+> 2026-11-08：旧設計撤去後も関係する技術調査として保持。本文の旧Task条件・設計案・承認は当時の記録で、新方式の現行仕様ではありません。過去の結果・未実施を変更していません。
+
 製品から分離したWindows実機用プローブ。開始基準は `85358a0147fb49221c807f3acc6b78fc8f555c95`。
 操作手順は [手動確認](../manual/TASK-002-01-notebook-host.md)、結果・残作業の正本は [Issue #14](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/14)、親は [#2](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/2)。TASK-001のF1〜F6とは別の検証。
 

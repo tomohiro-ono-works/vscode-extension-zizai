@@ -1,0 +1,449 @@
+{
+  "localDate": "2026-11-05",
+  "method": "Existing raw logs and pinned VS Code source only; no GUI/kernel/diagnostic rerun",
+  "originalManual": {
+    "status": "不合格（初期IDなし・ユーザーCtrl+Y経路の期待不一致）",
+    "initialId": "absent, same as original automated D1 condition",
+    "actual": "A/C -> A/B/C -> A/B/C saved",
+    "events": [
+      {
+        "seq": 3,
+        "at": "2026-10-24T14:29:07.694Z",
+        "kind": "notebook.change",
+        "version": 1,
+        "cellCount": 2,
+        "added": [],
+        "removed": [
+          {
+            "object": 4,
+            "source": "# D1-B\nvalue_b = 202\n",
+            "metadata": {
+              "execution_count": null,
+              "metadata": {
+                "outsideDiagnosticOwner": {
+                  "sentinel": "keep-B"
+                },
+                "task00201Diagnostic": {
+                  "label": "B",
+                  "draft": 0,
+                  "committed": 0,
+                  "burst": 0,
+                  "probeOnly": true
+                }
+              }
+            }
+          }
+        ],
+        "metadata": []
+      },
+      {
+        "seq": 5,
+        "at": "2026-10-24T14:29:12.049Z",
+        "kind": "notebook.change",
+        "version": 2,
+        "cellCount": 3,
+        "added": [
+          {
+            "object": 8,
+            "source": "# D1-B\nvalue_b = 202\n",
+            "metadata": {
+              "execution_count": null,
+              "metadata": {
+                "outsideDiagnosticOwner": {
+                  "sentinel": "keep-B"
+                },
+                "task00201Diagnostic": {
+                  "label": "B",
+                  "draft": 0,
+                  "committed": 0,
+                  "burst": 0,
+                  "probeOnly": true
+                }
+              }
+            }
+          }
+        ],
+        "removed": [],
+        "metadata": []
+      },
+      {
+        "seq": 6,
+        "at": "2026-10-24T14:29:12.168Z",
+        "kind": "notebook.change",
+        "version": 3,
+        "cellCount": 3,
+        "added": [],
+        "removed": [],
+        "metadata": [
+          {
+            "object": 8,
+            "index": 1,
+            "metadata": {
+              "execution_count": null,
+              "id": "b4275a8c",
+              "metadata": {
+                "outsideDiagnosticOwner": {
+                  "sentinel": "keep-B"
+                },
+                "task00201Diagnostic": {
+                  "burst": 0,
+                  "committed": 0,
+                  "draft": 0,
+                  "label": "B",
+                  "probeOnly": true
+                }
+              }
+            }
+          }
+        ]
+      },
+      {
+        "seq": 7,
+        "at": "2026-10-24T14:29:33.298Z",
+        "kind": "notebook.save",
+        "version": 3,
+        "cellCount": 3
+      }
+    ],
+    "undoToIdPatchMs": 119,
+    "rawLogSha256": "a15882104bb3e06240865c6b96c5334068b74e4c4fef0cafce1b68d924b9b47a"
+  },
+  "sameFocusApiComparison": {
+    "conditions": "first-cell selection; notebook.focusTop + quitEdit before each command; 300ms settling; installed extensions disabled by CLI",
+    "vscode": "1.143.1",
+    "results": [
+      {
+        "cellIds": false,
+        "counts": [
+          3,
+          2,
+          3,
+          3
+        ],
+        "matches": false
+      },
+      {
+        "cellIds": true,
+        "counts": [
+          3,
+          2,
+          3,
+          2
+        ],
+        "matches": true
+      }
+    ],
+    "events": [
+      {
+        "seq": 4,
+        "at": "2026-10-24T16:17:59.272Z",
+        "kind": "notebook.change",
+        "version": 1,
+        "cellCount": 2,
+        "added": [],
+        "removed": [
+          {
+            "object": 2,
+            "source": "# D1-A: move this cell\nvalue_a = 101\n",
+            "metadata": {
+              "execution_count": null,
+              "metadata": {
+                "outsideDiagnosticOwner": {
+                  "sentinel": "keep-A"
+                },
+                "task00201Diagnostic": {
+                  "label": "A",
+                  "draft": 0,
+                  "committed": 0,
+                  "burst": 0,
+                  "probeOnly": true
+                }
+              }
+            }
+          }
+        ],
+        "metadata": []
+      },
+      {
+        "seq": 6,
+        "at": "2026-10-24T16:17:59.898Z",
+        "kind": "notebook.change",
+        "version": 2,
+        "cellCount": 3,
+        "added": [
+          {
+            "object": 8,
+            "source": "# D1-A: move this cell\nvalue_a = 101\n",
+            "metadata": {
+              "execution_count": null,
+              "metadata": {
+                "outsideDiagnosticOwner": {
+                  "sentinel": "keep-A"
+                },
+                "task00201Diagnostic": {
+                  "label": "A",
+                  "draft": 0,
+                  "committed": 0,
+                  "burst": 0,
+                  "probeOnly": true
+                }
+              }
+            }
+          }
+        ],
+        "removed": [],
+        "metadata": []
+      },
+      {
+        "seq": 7,
+        "at": "2026-10-24T16:17:59.934Z",
+        "kind": "notebook.change",
+        "version": 3,
+        "cellCount": 3,
+        "added": [],
+        "removed": [],
+        "metadata": [
+          {
+            "object": 8,
+            "index": 0,
+            "metadata": {
+              "execution_count": null,
+              "id": "491eb0c4",
+              "metadata": {
+                "outsideDiagnosticOwner": {
+                  "sentinel": "keep-A"
+                },
+                "task00201Diagnostic": {
+                  "burst": 0,
+                  "committed": 0,
+                  "draft": 0,
+                  "label": "A",
+                  "probeOnly": true
+                }
+              }
+            }
+          }
+        ]
+      },
+      {
+        "seq": 10,
+        "at": "2026-10-24T16:18:01.718Z",
+        "kind": "notebook.change",
+        "version": 1,
+        "cellCount": 2,
+        "added": [],
+        "removed": [
+          {
+            "object": 11,
+            "source": "# D1-A: move this cell\nvalue_a = 101\n",
+            "metadata": {
+              "execution_count": null,
+              "metadata": {
+                "outsideDiagnosticOwner": {
+                  "sentinel": "keep-A"
+                },
+                "task00201Diagnostic": {
+                  "label": "A",
+                  "draft": 0,
+                  "committed": 0,
+                  "burst": 0,
+                  "probeOnly": true
+                }
+              },
+              "id": "task00201-control-0"
+            }
+          }
+        ],
+        "metadata": []
+      },
+      {
+        "seq": 12,
+        "at": "2026-10-24T16:18:02.352Z",
+        "kind": "notebook.change",
+        "version": 2,
+        "cellCount": 3,
+        "added": [
+          {
+            "object": 17,
+            "source": "# D1-A: move this cell\nvalue_a = 101\n",
+            "metadata": {
+              "execution_count": null,
+              "metadata": {
+                "outsideDiagnosticOwner": {
+                  "sentinel": "keep-A"
+                },
+                "task00201Diagnostic": {
+                  "label": "A",
+                  "draft": 0,
+                  "committed": 0,
+                  "burst": 0,
+                  "probeOnly": true
+                }
+              },
+              "id": "task00201-control-0"
+            }
+          }
+        ],
+        "removed": [],
+        "metadata": []
+      },
+      {
+        "seq": 13,
+        "at": "2026-10-24T16:18:02.987Z",
+        "kind": "notebook.change",
+        "version": 3,
+        "cellCount": 2,
+        "added": [],
+        "removed": [
+          {
+            "object": 17,
+            "source": "# D1-A: move this cell\nvalue_a = 101\n",
+            "metadata": {
+              "execution_count": null,
+              "metadata": {
+                "outsideDiagnosticOwner": {
+                  "sentinel": "keep-A"
+                },
+                "task00201Diagnostic": {
+                  "label": "A",
+                  "draft": 0,
+                  "committed": 0,
+                  "burst": 0,
+                  "probeOnly": true
+                }
+              },
+              "id": "task00201-control-0"
+            }
+          }
+        ],
+        "metadata": []
+      }
+    ],
+    "rawLogSha256": "a3ea8817a7908f39061f792f762eba5083e7105dcb9d57f2a64db8919e97157c"
+  },
+  "earlyIdPresentUndoFailure": {
+    "status": "failed; Undo did not restore count3; Redo not executed",
+    "runner": "structure.cjs via structure-ids.cjs",
+    "events": [
+      {
+        "seq": 1,
+        "at": "2026-10-23T15:45:40.985Z",
+        "kind": "environment"
+      },
+      {
+        "seq": 2,
+        "at": "2026-10-23T15:45:40.987Z",
+        "kind": "snapshot"
+      },
+      {
+        "seq": 3,
+        "at": "2026-10-23T15:45:41.327Z",
+        "kind": "notebook.open",
+        "version": 0,
+        "cellCount": 3
+      },
+      {
+        "seq": 4,
+        "at": "2026-10-23T15:45:41.748Z",
+        "kind": "notebook.change",
+        "version": 1,
+        "cellCount": 2,
+        "added": [],
+        "removed": [
+          {
+            "object": 4,
+            "source": "# D1-B\nvalue_b = 202\n",
+            "metadata": {
+              "execution_count": null,
+              "metadata": {
+                "outsideDiagnosticOwner": {
+                  "sentinel": "keep-B"
+                },
+                "task00201Diagnostic": {
+                  "label": "B",
+                  "draft": 0,
+                  "committed": 0,
+                  "burst": 0,
+                  "probeOnly": true
+                }
+              },
+              "id": "task00201-cell-1"
+            }
+          }
+        ],
+        "metadata": []
+      },
+      {
+        "seq": 5,
+        "at": "2026-10-23T15:45:41.759Z",
+        "kind": "text.close"
+      }
+    ],
+    "rawLogSha256": "6d9a27dcd85033e03c5a8cf1e6aa293aa4aaba6ec8b2ce730d3574aeda601c41",
+    "reportError": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n2 !== 3\n",
+    "difference": "B selection,40ms settling,quitEdit without focusTop before each command; later comparison first-cell focusTop+quitEdit+300ms. Several variables differ, no single cause established."
+  },
+  "sourceReferences": [
+    {
+      "path": "extensions/ipynb/src/ipynbMain.ts",
+      "commit": "e646868227c3e3a9e3f24277c8c7220be42c0be7",
+      "start": 34,
+      "end": 47,
+      "excerpt": "\nexport function activate(context: vscode.ExtensionContext, serializer: vscode.NotebookSerializer) {\n\tkeepNotebookModelStoreInSync(context);\n\tconst notebookSerializerOptions: OptionsWithCellContentMetadata = {\n\t\ttransientOutputs: false,\n\t\ttransientDocumentMetadata: {\n\t\t\tcells: true,\n\t\t\tindentAmount: true\n\t\t},\n\t\ttransientCellMetadata: {\n\t\t\tbreakpointMargin: true,\n\t\t\tid: false,\n\t\t\tmetadata: false,\n\t\t\tattachments: false"
+    },
+    {
+      "path": "extensions/ipynb/src/notebookModelStoreSync.ts",
+      "commit": "e646868227c3e3a9e3f24277c8c7220be42c0be7",
+      "start": 106,
+      "end": 125,
+      "excerpt": "function trackAndUpdateCellMetadata(notebook: NotebookDocument, updates: { cell: NotebookCell; metadata: CellMetadata & { vscode?: { languageId: string } } }[]) {\n\tconst pendingUpdates = pendingNotebookCellModelUpdates.get(notebook) ?? new Set<Thenable<void>>();\n\tpendingNotebookCellModelUpdates.set(notebook, pendingUpdates);\n\tconst edit = new WorkspaceEdit();\n\tupdates.forEach(({ cell, metadata }) => {\n\t\tconst newMetadata = { ...cell.metadata, ...metadata };\n\t\tif (!metadata.execution_count && newMetadata.execution_count) {\n\t\t\tnewMetadata.execution_count = null;\n\t\t}\n\t\tif (!metadata.attachments && newMetadata.attachments) {\n\t\t\tdelete newMetadata.attachments;\n\t\t}\n\t\tedit.set(cell.notebook.uri, [NotebookEdit.updateCellMetadata(cell.index, sortObjectPropertiesRecursively(newMetadata))]);\n\t});\n\tconst promise = workspace.applyEdit(edit).then(noop, noop);\n\tpendingUpdates.add(promise);\n\tconst clean = () => cleanup(notebook, promise);\n\tpromise.then(clean, clean);\n}\n"
+    },
+    {
+      "path": "extensions/ipynb/src/notebookModelStoreSync.ts",
+      "commit": "e646868227c3e3a9e3f24277c8c7220be42c0be7",
+      "start": 193,
+      "end": 225,
+      "excerpt": "\t// Ensure all new cells in notebooks with nbformat >= 4.5 have an id.\n\t// Details of the spec can be found here https://jupyter.org/enhancement-proposals/62-cell-id/cell-id.html#\n\te.contentChanges.forEach(change => {\n\t\tchange.addedCells.forEach(cell => {\n\t\t\t// When ever a cell is added, always update the metadata\n\t\t\t// as metadata is always an empty `{}` in ipynb JSON file\n\t\t\tconst cellMetadata = getCellMetadata({ cell });\n\n\t\t\t// Avoid updating the metadata if it's not required.\n\t\t\tif (cellMetadata.metadata) {\n\t\t\t\tif (!isCellIdRequired(notebookMetadata)) {\n\t\t\t\t\treturn;\n\t\t\t\t}\n\t\t\t\tif (isCellIdRequired(notebookMetadata) && cellMetadata?.id) {\n\t\t\t\t\treturn;\n\t\t\t\t}\n\t\t\t}\n\n\t\t\t// Don't edit the metadata directly, always get a clone (prevents accidental singletons and directly editing the objects).\n\t\t\tconst metadata: CellMetadata = { ...JSON.parse(JSON.stringify(cellMetadata || {})) };\n\t\t\tmetadata.metadata = metadata.metadata || {};\n\n\t\t\tif (isCellIdRequired(notebookMetadata) && !cellMetadata?.id) {\n\t\t\t\tmetadata.id = generateCellId(e.notebook);\n\t\t\t}\n\t\t\tupdates.push({ cell, metadata });\n\t\t});\n\t});\n\n\tif (updates.length) {\n\t\ttrackAndUpdateCellMetadata(notebook, updates);\n\t}\n}"
+    },
+    {
+      "path": "src/vs/platform/undoRedo/common/undoRedoService.ts",
+      "commit": "e646868227c3e3a9e3f24277c8c7220be42c0be7",
+      "start": 284,
+      "end": 294,
+      "excerpt": "\tpublic pushElement(element: StackElement): void {\n\t\t// remove the future\n\t\tfor (const futureElement of this._future) {\n\t\t\tif (futureElement.type === UndoRedoElementType.Workspace) {\n\t\t\t\tfutureElement.removeResource(this.resourceLabel, this.strResource, RemovedResourceReason.NoParallelUniverses);\n\t\t\t}\n\t\t}\n\t\tthis._future = [];\n\t\tthis._past.push(element);\n\t\tthis.versionId++;\n\t}"
+    },
+    {
+      "path": "src/vs/workbench/contrib/notebook/common/model/notebookTextModel.ts",
+      "commit": "e646868227c3e3a9e3f24277c8c7220be42c0be7",
+      "start": 1119,
+      "end": 1146,
+      "excerpt": "\tprivate _changeCellMetadata(cell: NotebookCellTextModel, metadata: NotebookCellMetadata, computeUndoRedo: boolean, beginSelectionState: ISelectionState | undefined, undoRedoGroup: UndoRedoGroup | undefined) {\n\t\tconst triggerDirtyChange = this._isCellMetadataChanged(cell.metadata, metadata);\n\n\t\tif (triggerDirtyChange) {\n\t\t\tif (computeUndoRedo) {\n\t\t\t\tconst index = this._cells.indexOf(cell);\n\t\t\t\tthis._operationManager.pushEditOperation(new CellMetadataEdit(this.uri, index, Object.freeze(cell.metadata), Object.freeze(metadata), {\n\t\t\t\t\tupdateCellMetadata: (index, newMetadata) => {\n\t\t\t\t\t\tconst cell = this._cells[index];\n\t\t\t\t\t\tif (!cell) {\n\t\t\t\t\t\t\treturn;\n\t\t\t\t\t\t}\n\t\t\t\t\t\tthis._changeCellMetadata(cell, newMetadata, false, beginSelectionState, undoRedoGroup);\n\t\t\t\t\t}\n\t\t\t\t}), beginSelectionState, undefined, this._alternativeVersionId, undoRedoGroup);\n\t\t\t}\n\t\t}\n\n\t\t// should be deferred\n\t\tcell.metadata = metadata;\n\t\tthis._pauseableEmitter.fire({\n\t\t\trawEvents: [{ kind: NotebookCellsChangeType.ChangeCellMetadata, index: this._cells.indexOf(cell), metadata: cell.metadata, transient: !triggerDirtyChange }],\n\t\t\tversionId: this.versionId,\n\t\t\tsynchronous: true,\n\t\t\tendSelectionState: undefined\n\t\t});\n\t}\n"
+    }
+  ],
+  "interpretation": {
+    "established": [
+      "Old manual and same-focus ID-missing control both restore a cell then receive a separate metadata.id update; ID-present controlled comparison has no such patch and matches counts.",
+      "Pinned ipynb onDidChangeNotebook handler creates missing IDs for added cells and calls a normal WorkspaceEdit.",
+      "Pinned ipynb options make id non-transient. Notebook metadata edits can create undo entries. UndoRedoService pushElement clears future history.",
+      "This provides a source-grounded mechanism consistent with the observed ID-missing Redo result, stronger than event ordering alone."
+    ],
+    "auditPreparationFailure": {
+      "command": "node logs/d1-history-audit-20261105.cjs",
+      "exitCode": 1,
+      "reason": "Initial audit read addedCells instead of recorded contentChanges.added; original raw log field names verified and audit reader corrected, no diagnostic rerun."
+    },
+    "inference": "If the observed automatic ID metadata edit pushed a new history element after Undo, it cleared the Redo future. The raw log does not capture that internal stack transition or manual key dispatch, so this remains a well-supported mechanism, not proven runtime root cause.",
+    "limits": [
+      "Do not apply the ID-missing explanation to the separate ID-present Undo failure.",
+      "No UI/key rerun requested merely to reproduce unchanged observations.",
+      "Fixing future diagnostic fixture IDs was already completed; no new fixture or product edit needed here.",
+      "Standard cell.id fixture correctness is separate from formal product binding/identity choice.",
+      "Original failure stays failed; old invalid fixtures/raw evidence kept, no migration/repair performed."
+    ]
+  },
+  "newUiTests": 0,
+  "sourceChanged": false,
+  "taskComplete": false,
+  "hostDesignStartPrerequisiteSatisfied": false,
+  "mainReflected": false
+}
