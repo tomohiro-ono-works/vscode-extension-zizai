@@ -1,7 +1,48 @@
 {
   "issue": 80,
   "date": "2026-11-10",
-  "status": "Unresolved; not reproduced in this bounded investigation; no product fix adopted",
+  "status": "Latest seven automated flows and user-operated review succeeded; previous disappearance not reproduced, cause unconfirmed; root-cause investigation alone is not a merge blocker",
+  "mainIntegrationReview": {
+    "source": "This chat, explicit user instruction to correct the record, make authorized fixes and safely merge to main",
+    "baseMain": "2f31bd5",
+    "ancestry": "Fetched origin/main is an ancestor of the feature branch; no divergent main changes or conflict at preflight",
+    "scope": "Previously approved retained research, obsolete-design reset, extension-only implementation, tests and documentation; no new Python behavior or formal support-version adoption",
+    "testCommand": "node --test tests/unit/manual-session.test.cjs tests/unit/extension/*.test.cjs",
+    "tests": {"pass": 29, "fail": 0},
+    "documentReview": {
+      "changedMarkdownFiles": 29,
+      "localReferencesExamined": 255,
+      "validLocalReferences": 174,
+      "changedJsonFilesParsed": 28,
+      "newBrokenReferences": 0,
+      "historicalUnresolvedReferences": 81,
+      "historicalReason": "Seven retained other-application connector documents; each target was already referenced and already missing in origin/main. Original text retained, not treated as confirmed or Current Specification.",
+      "initialFailure": "Unfiltered link preflight failed on these historical references. Initial failure and reviewed classification kept separately in local results."
+    },
+    "vsix": {
+      "version": "0.0.2",
+      "sha256": "5a3d22b1b58f1470255a43eb93fc5c0b56753721cdc47d1ea1f31a3e72e44ca3",
+      "entries": 84,
+      "changedFromCliInstalledArchive": ["extension/readme.md"],
+      "runtimeIdentical": true,
+      "newArchiveInstalled": false,
+      "previousArchivePreserved": true
+    },
+    "localEvidence": [
+      "logs/task009-main-integration-tests-20261110.txt",
+      "logs/task009-main-integration-package-20261110.txt",
+      "results/task009-main-integration-20261110-01/document-preflight.local.json",
+      "results/task009-main-integration-20261110-01/document-preflight.reviewed.local.json",
+      "results/task009-main-integration-20261110-01/package-review.local.json"
+    ],
+    "limits": "No new GUI session. Formal support-version decision, untested environments and past root-cause uncertainty remain explicit; integration alone does not adopt drafts or release a formal product."
+  },
+  "acceptanceCorrection": {
+    "source": "This chat: user asked whether hover loss had already been resolved for now, then explicitly requested correcting the record and safely merging authorized changes to main",
+    "currentBehavior": "Normal operation succeeded within the recorded Insiders test scope",
+    "historicalEvidence": "Preserve previous failures and do not claim their root cause or a new product fix",
+    "integration": "May integrate the internal preview without requiring further root-cause investigation; not approval of a formally supported VS Code version, Marketplace release, Python implementation or untested environments"
+  },
   "cliInstallFollowUp": {
     "date": "2026-11-10",
     "archiveSha256": "99cedc6e6f4ccd9e23b22102a0ea1081cd50940cf4aba5861446b9749bfd4a5a",
@@ -432,7 +473,7 @@
     "note": "Fresh retained-code unit check and script syntax checks recorded in logs/task009-hover-nov10-unit.txt."
   },
   "manualPreparation": {
-    "notStarted": true,
+    "status": "Historical preparation; subsequently performed and closed as recorded in manualReview",
     "title": "ZizAI Hover Investigation",
     "scope": "Owned synthetic notebook with [C]/[A], csv/import/export/excel examples, no kernel execution.",
     "procedure": [
