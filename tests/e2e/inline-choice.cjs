@@ -118,9 +118,12 @@ async function main() {
         "--locale=en", "--remote-debugging-address=127.0.0.1", "--user-data-dir=" + profile,
         "--shared-data-dir=" + path.join(out, "shared-data"), "--extensions-dir=" + extensions,
         ...(values.vsix ? [] : ["--extensionDevelopmentPath=" + extension]), workspace] });
-    report.pid = app.process().pid;
+    report.pid = app.process().pid; // Compatibility: this may be the cmd launcher on Windows.
+    report.launcherPid = report.pid;
+    report.runnerPid = process.pid;
     page = await app.firstWindow();
     await page.locator(".monaco-workbench").waitFor({ state: "visible", timeout: 30000 });
+    report.electronMainPid = await app.evaluate(() => process.pid);
     report.ports.push(await app.evaluate(() => process.debugPort));
     report.ports.push(Number((await fs.readFile(path.join(profile, "DevToolsActivePort"), "utf8")).split("\n")[0]));
     const trust = page.getByRole("button", { name: /Yes, I trust the authors/ });
@@ -195,23 +198,12 @@ async function main() {
     }
     if (values.manual) {
       report.outcome = "awaiting_user";
+      report.finishSignalFile = path.join(out, 'finish.request');
       await stage("ready_for_user_no_automatic_selection");
-      console.log("READY: Hands-on window stays open until user closes it or an approved finish signal arrives.");
-      await new Promise(resolve => {
-        const onInput = input => {
-          if (input.trim() !== "finish") return;
-          report.endSignalReceived = true;
-          process.stdin.off("data", onInput);
-          resolve();
-        };
-        process.stdin.setEncoding("utf8");
-        process.stdin.on("data", onInput);
-        app.once("close", () => {
-          report.closedAt = new Date().toISOString();
-          process.stdin.off("data", onInput);
-          resolve();
-        });
-      });
+      console.log("READY: Await approved finish token at " + report.finishSignalFile + " or user window close; no timeout.");
+      report.endReason = await require('./manual-session.cjs').waitForManualFinish(app, report.finishSignalFile);
+      report.endSignalReceived = report.endReason === 'finish_file';
+      if (report.endReason === 'window_closed') report.closedAt = new Date().toISOString();
       report.outcome = "manual_handoff_finished_not_automatically_graded";
       return;
     }
@@ -341,11 +333,19 @@ async function main() {
           listeners: listing.split(/\r?\n/).filter(line => {
             const columns = line.trim().split(/\s+/);
             return columns[0] === "TCP" && Number(columns[1]?.split(":").at(-1)) === port && columns[3] === "LISTENING";
+          }).length,
+          established: listing.split(/\r?\n/).filter(line => {
+            const columns = line.trim().split(/\s+/);
+            return columns[0] === "TCP" && Number(columns[1]?.split(":").at(-1)) === port && columns[3] === "ESTABLISHED";
           }).length }));
-        if (report.portCheck.every(item => item.listeners === 0)) break;
+        report.processCheck = [...new Set([report.launcherPid, report.electronMainPid].filter(Number.isInteger))].map(pid => {
+          try { process.kill(pid, 0); return { pid, exited: false }; }
+          catch (error) { return { pid, exited: error.code === 'ESRCH', ...(error.code === 'ESRCH' ? {} : { error: error.code }) }; }
+        });
+        if (report.portCheck.every(item => item.listeners === 0 && item.established === 0) && report.processCheck.every(item => item.exited)) break;
         await new Promise(resolve => setTimeout(resolve, 200));
       }
-      if (report.portCheck.some(item => item.listeners)) process.exitCode = 1;
+      if (report.portCheck.some(item => item.listeners || item.established) || report.processCheck.some(item => !item.exited)) process.exitCode = 1;
     }
     await save();
     console.log(JSON.stringify({ outcome: report.outcome, error: report.error, closed: !!report.closedAt, ports: report.portCheck }));

@@ -31,7 +31,9 @@ npm run package:vsix
 
 **対応環境の制限：VS Code安定版1.145.2では、候補へ移動する途中でホバーが消えることを再現しています。** 通常のインストールを変更せず、専用フォルダの1.146.0-insider（commit `29ce94ad8d36c62affc08484e262d5c4fbdd0b3d`）で比較し、連続したマウス移動と保存を挟まない選び直しを確認しました。[比較結果](https://github.com/tomohiro-ono-works/vscode-extension-zizai/blob/codex/task-009-notebook-input/docs/research/notebook-ui/evidence/hover-insiders-20261108.json)を参照してください。これはプレビュー版での限定確認であり、正式な対応版の採用を決定した意味ではありません。
 
-消失はVS Code側の[修正PR](https://github.com/microsoft/vscode/pull/345887)に対応する症状です。選び直しには別の問題があり、最初の確定後も古い版のメニューが残っていました。拡張側で確定後にメニューを閉じ、次のマウスオーバーで現在の状態から開き直すよう修正しました。古いメニューや編集前の要求を拒否する保護は維持しています。
+消失はVS Code側の[修正PR](https://github.com/microsoft/vscode/pull/345887)に似た症状ですが、修正を含むInsidersでも過去に消失しており、原因は未確定です。選び直しでは最初の確定後も古い版のメニューが残る問題を修正し、次のマウスオーバーで現在の状態から開き直します。古いメニューや編集前の要求を拒否する保護は維持しています。
+
+2026-11-10の同じVSIX 0.0.2による追加自動確認7試行は、親子候補・保持／消去・保存・単一Undo／Redo・YAML再読込を通過しました。専用Insidersでの利用者評価は「問題なく操作できました！」です。[追加観測・実機確認の証跡](https://github.com/tomohiro-ono-works/vscode-extension-zizai/blob/codex/task-009-notebook-input/docs/research/notebook-ui/evidence/hover-events-20261110.json)を参照してください。今回未再現という結果であり、過去の失敗の解消や正式対応版の決定ではありません。
 
 Pythonコードセルの次の雛形で、文字列の左に表示される`[C]`へマウスを置くと、近くのホバーに候補が表示されます。`csv`／`excel`を通常クリックすると対象の文字列だけを書き換えます。同じ場所から選び直せます。Ctrlキーは不要です。
 
@@ -114,6 +116,10 @@ node --test tests/unit/extension/*.test.cjs
 
 [ホバー試作の観測証跡](https://github.com/tomohiro-ono-works/vscode-extension-zizai/blob/codex/task-009-notebook-input/docs/research/notebook-ui/evidence/hover-choice-20261108.json)は、専用プロファイル・架空Notebookでの通常クリック、CSV選択、Excelへの選び直し、標準保存と配置の実測です。初期の失敗・原因切分けと、[以前のCtrl＋クリックの観測](https://github.com/tomohiro-ono-works/vscode-extension-zizai/blob/codex/task-009-notebook-input/docs/research/notebook-ui/evidence/inline-choice-20261108.json)を履歴として保持します。
 
-固定runnerは`tests/e2e/inline-choice.cjs`です。既存の[Playwright調査用依存](https://github.com/tomohiro-ono-works/vscode-extension-zizai/blob/codex/task-009-notebook-input/docs/research/notebook-host/playwright-probe/package.json)を利用します。通常の利用者プロファイルは変更せず、自動確認の終了後は専用ウィンドウと検証用ポートを整理します。`--manual`は`[C]`を表示したところで自動操作を止め、終了合図または利用者による終了まで開いたままにします。待機時間で勝手に閉じません。
+固定runnerは`tests/e2e/inline-choice.cjs`です。既存の[Playwright調査用依存](https://github.com/tomohiro-ono-works/vscode-extension-zizai/blob/codex/task-009-notebook-input/docs/research/notebook-host/playwright-probe/package.json)を利用します。通常の利用者プロファイルは変更せず、自動確認の終了後は専用ウィンドウと検証用ポートを整理します。`--manual`は`[C]`を表示したところで自動操作を止め、終了合図または利用者による終了まで開いたままにします。待機時間や標準入力の切断では閉じません。
+
+終了担当は利用者の終了承認を受けてから、`result.local.json`の`finishSignalFile`で示す専用成果フォルダーの`finish.request`へ`finish`を書き込みます。PowerShell例：`Set-Content -LiteralPath 'C:\専用検証\今回の成果\finish.request' -Value 'finish'`。runnerはその合図で計測ログを保存してから`app.close()`を呼びます。利用者は終了前にNotebookを標準保存してください。ウィンドウを直接閉じた場合、メモリー上の計測ログを取得できないことがあります。終了後は`launcherPid`と`electronMainPid`の終了、関連ポートのLISTENING／ESTABLISHED消失を確認します。従来の`pid`はWindowsでは起動用cmdの場合があり、それだけで本体終了を判断しません。
+
+終了合図のCLI回帰確認：`node --test tests/unit/manual-session.test.cjs`。これは標準入力を閉じた子プロセスでの終了待ち・合図・終了を確認するもので、VS Code実画面の再確認ではありません。
 
 VSIX生成と専用環境への導入を整備しています。YAML外部定義・親子候補を実装しています。ホバー消失の未解決事項、正式対応版・他環境の確認は残っています。[要件仕様書](https://github.com/tomohiro-ono-works/vscode-extension-zizai/blob/codex/task-009-notebook-input/docs/features/requirements.md)の未決事項と、拡張限定の開発範囲を参照してください。

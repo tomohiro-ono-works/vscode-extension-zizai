@@ -2,6 +2,51 @@
   "issue": 80,
   "date": "2026-11-10",
   "status": "Unresolved; not reproduced in this bounded investigation; no product fix adopted",
+  "finishAndPackageReview": {
+    "scope": "Issue/body corrections, manual runner finish control, documentation-only VSIX rebuild; no product UI change",
+    "manualControl": "Fresh owned results folder finish.request must contain finish; stdin EOF and elapsed time do not end the wait; app close removes the watcher",
+    "processIdentity": "runnerPid, launcherPid and electronMainPid are recorded separately; cleanup checks both launcher/main and LISTENING/ESTABLISHED ports",
+    "cliCommand": "node --test tests/unit/manual-session.test.cjs tests/unit/extension/*.test.cjs",
+    "cliResult": {"pass": 29, "fail": 0, "manualControlTests": 2, "existingExtensionTests": 27},
+    "redLimit": "Initial missing helper failed test-file loading, not two individual behavior assertions; actual legacy closed-stdin failure was observed during the preceding manual shutdown",
+    "package": {
+      "command": "npm run package:vsix --prefix apps/extension -- --out ../../results/task009-packaging-review-20261110-01/zizai-notebook-input-0.0.2.vsix",
+      "previousSha256": "fefc893786a951551ac5cc361afebd10836a22648d036a15c3bfe20dd7857adb",
+      "rebuiltSha256": "99cedc6e6f4ccd9e23b22102a0ea1081cd50940cf4aba5861446b9749bfd4a5a",
+      "entries": 84,
+      "changedEntries": ["extension/readme.md"],
+      "addedOrRemovedEntries": [],
+      "runtimeAndManifestIdentical": true,
+      "installedRebuiltArchive": false,
+      "preservedPreviousArtifact": "results/task009-packaging-review-20261110-01/previous-0.0.2.vsix"
+    },
+    "localEvidence": [
+      "logs/task009-manual-finish-red-20261110.txt",
+      "logs/task009-manual-finish-green-20261110.txt",
+      "logs/task009-finish-checks-20261110.txt",
+      "logs/task009-package-review-20261110.txt",
+      "results/task009-packaging-review-20261110-01/package-review.local.json"
+    ],
+    "limits": "No new GUI session started. Finish helper verified with closed-stdin child and EventEmitter close, not a new full VS Code manual session. New archive differs only in README, not installed. Previous hover failure and formal supported-version decision remain open."
+  },
+  "manualReview": {
+    "source": "This chat, user original text; recorded in Issue 80 comments 6756064114 and 6757519954",
+    "userReport": "問題なく操作できました！",
+    "closeApproval": "OKです。 (reply to the dedicated-window close question)",
+    "out": "results/task009-hover-hands-on-20261110-01",
+    "deployment": "Unmodified installed VSIX 0.0.2, same Insiders build as environment below",
+    "flow": "C/A parent-child example; preparation only by Playwright, subsequent choices by user; no kernel execution",
+    "instrumentation": "Passive hover-lifecycle only during user operation; 99 events saved before app.close",
+    "preservation": "Original VS Code notebook backup and recovered ipynb kept under out/recovered; original files not deleted",
+    "shutdown": {
+      "closedAt": "2026-11-10T02:28:21.584Z",
+      "verifiedAbsentPids": [3848, 22832, 24012, 31964],
+      "verifiedNoListeningOrEstablishedPorts": [60221, 60222, 60223, 60224, 9229],
+      "limitation": "Original runner stdin was closed; a temporary owned Node Inspector delivered the existing finish signal. Inspector was then terminated. Legacy pid was launcher cmd, not Code main."
+    },
+    "artifactStatus": "Raw local logs, profile and recovered notebook are ignored and unpushed; this summary is tracked",
+    "limits": "Success covers user-reported operations only. Does not establish all unreported cases, root cause/fix of previous hover failures, or formally supported VS Code version."
+  },
   "decision": {
     "source": "This chat, user original text",
     "text": "１でおねがいします。",
