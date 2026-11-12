@@ -2,11 +2,29 @@
 
 import tarfile
 import unittest
+import zipfile
+from email.parser import Parser
 
 from package_test_support import PackageArtifactTestCase
 
 
 class PackageDistributionTests(PackageArtifactTestCase):
+    def test_form_dependencies_are_optional_and_default_install_does_not_load_ui(self):
+        with zipfile.ZipFile(self.wheel()) as archive:
+            name = next(n for n in archive.namelist() if n.endswith('.dist-info/METADATA'))
+            metadata = Parser().parsestr(archive.read(name).decode('utf-8'))
+        requirements = metadata.get_all('Requires-Dist')
+        self.assertEqual(len(requirements), 2)
+        self.assertTrue(all('extra == "forms"' in item for item in requirements))
+        python = self.fresh_python()
+        self.install(python, self.wheel())
+        result = self.probe(python, '''
+import json, sys
+import zizai, zizai.forms
+print(json.dumps({'loaded': sorted(set(sys.modules) & {'ipywidgets', 'yaml', 'tkinter'})}))
+''')
+        self.assertEqual(result, {'loaded': []})
+
     def test_wheel_contains_both_source_roots_without_unrelated_assets(self):
         # A missing connectors mapping or broad package discovery breaks this boundary.
         self.assert_package_contents(self.wheel())

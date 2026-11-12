@@ -1,0 +1,26 @@
+version: 1
+output_template: "{connector}.{action}のコードを生成"
+connectors:
+  csv:
+    label: CSV
+    actions:
+      import:
+        label: 読み込み
+        fields:
+          folder: {label: 入力フォルダー, type: folder, required: true}
+          encoding: {label: 文字コード, type: choice, choices: [utf-8, cp932], default: utf-8}
+          start_row: {label: 開始行, type: integer, default: 1, minimum: 1}
+      export:
+        label: 書き出し
+        fields:
+          folder: {label: 保存先, type: folder, required: true}
+          filename: {label: ファイル名, type: text, default: output.csv}
+  excel:
+    label: Excel
+    actions:
+      export:
+        label: 書き出し
+        fields:
+          folder: {label: 保存先, type: folder, required: true}
+          filename: {label: ファイル名, type: text, default: output.xlsx}
+          sheet: {label: シート名, type: text, default: Sheet1}

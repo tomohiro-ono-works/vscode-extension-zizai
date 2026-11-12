@@ -2,6 +2,10 @@
 
 VS CodeのNotebook入力支援と、VS Codeに依存しないPythonコネクタ／アクションを検討するプロジェクトです。
 
+## 現在の開発：Python Notebookフォーム
+
+[TASK-010 / #82](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/82)で、`%form`から横並びの連動フォームをセル出力欄へ表示する方式へ改修中です。生成結果は現在`{csv.importのコードを生成}`等の仮表示です。[導入・YAML設定・現在の確認範囲](apps/core/README.md)と[未実行サンプル](examples/python-form.ipynb)を参照してください。独自VS Code拡張は必須とせず、従来の成果は以下の履歴として保持します。
+
 ## 設計の作り直し（2026-11-08）
 
 利用者の依頼により、旧要件・設計・フォーム／サイドバーの試験資料を削除し、新方式に関係する調査を残しています。[新方式の要件仕様書](docs/features/requirements.md)に、確定した前提・利用者の要求案・担当者の構成案・未決事項をまとめました。製品全体の仕様確定・実装完了とは区別します。

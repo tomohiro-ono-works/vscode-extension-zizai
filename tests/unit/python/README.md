@@ -1,5 +1,19 @@
 # Pythonパッケージの独立確認
 
+## TASK-010フォームのCLI確認
+
+フォーム用extraを導入した専用Python環境から、次を実行します。
+
+```shell
+python -m unittest discover -s tests/unit/python -p 'test_*.py' -v
+```
+
+`test_form_model.py`はYAML・親子候補・入力保持・不正値・仮表示を確認します。`test_form_widgets.py`は実際のipywidgetsのPython部品・変更イベント・生成イベントとIPythonマジック登録を確認します。フォルダーダイアログだけは選択／取消を返す関数で代用し、OSの画面を開きません。これらはCLI／API結合であり、ブラウザー描画・マウス操作・ネイティブダイアログの実機確認ではありません。
+
+既存の配布テストは同梱YAML・フォームmoduleのwheel／sdist収録と、追加依存がforms extraに限定されることを確認します。フォームなしの最小基盤importも引き続き隔離環境で確認します。保持した旧Notebook診断の`runtime_dependency_count`はextra付きも含む宣言数で、現在は2です。通常importの必須依存が2になったという意味ではありません。旧Notebookのsource・当時の結果は変更していません。
+
+## 保持した旧調査の手順
+
 > 2026-11-08：旧設計撤去後も関係する技術調査として保持。本文の旧Task条件・設計案・承認は当時の記録で、新方式の現行仕様ではありません。過去の結果・未実施を変更していません。
 
 対象は003-03の最小パッケージと003-04の先行確認です。コネクタの業務処理やJupyterの実機確認ではありません。
