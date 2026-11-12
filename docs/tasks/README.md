@@ -10,6 +10,7 @@
 
 ## 新方式のTask
 
+- [TASK-010 / #82：独自拡張を必要としないPython Notebookフォームへ移行する](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/82)
 - [TASK-008 / #76：新方式の要件仕様書と参照入口の整備](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/76)
 - [TASK-009 / #77：Notebook入力支援のVS Code拡張を作る](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/77)
 
