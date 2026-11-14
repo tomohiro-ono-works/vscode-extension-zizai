@@ -70,6 +70,32 @@ class FormWidgetTests(unittest.TestCase):
         self.assertEqual(form.generated.value, '')
         self.assertEqual(form.result, '')
 
+    def test_delayed_old_action_selection_cannot_error_or_select_new_action(self):
+        from comm import get_comm_manager
+        # A frontend selection can already be queued when the connector changes
+        # (for example while the native folder chooser blocks the kernel).
+        # CSV index 1 means import; Excel index 1 means export. CSV index 2
+        # is export and does not exist in the shorter Excel option list.
+        for old_index in (1, 2):
+            with self.subTest(old_index=old_index):
+                form = self.make_form()
+                form.connector.value = 'csv'
+                old_comm_id = form.action.comm.comm_id
+                form.connector.value = 'excel'
+                with self.assertNoLogs(form.action.log, level='WARNING'):
+                    get_comm_manager().comm_msg(None, None, {
+                        'content': {'comm_id': old_comm_id, 'data': {
+                            'method': 'update', 'state': {'index': old_index},
+                            'buffer_paths': []}}, 'buffers': []})
+                self.assertIsNone(form.model.action)
+                self.assertTrue(form.generate_button.disabled)
+                # A fresh selection on the current form still works.
+                get_comm_manager().comm_msg(None, None, {
+                    'content': {'comm_id': form.action.comm.comm_id, 'data': {
+                        'method': 'update', 'state': {'index': 1},
+                        'buffer_paths': []}}, 'buffers': []})
+                self.assertEqual(form.model.action, 'export')
+
     def test_output_is_escaped_text_not_executable_html(self):
         from zizai.form_definition import load_definition
         from zizai.forms import NotebookForm

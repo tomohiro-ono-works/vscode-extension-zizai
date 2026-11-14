@@ -72,8 +72,16 @@ class NotebookForm:
         widgets = self._widgets
         self._syncing = True
         try:
-            self.action.options = [('選択してください', None)] + [
+            options = [('選択してください', None)] + [
                 (entry['label'], key) for key, entry in self.model.actions.items()]
+            if self.action.options != tuple(options):
+                # A queued frontend index belongs to the old candidate list.
+                # Give the new list its own comm rather than reinterpreting it.
+                previous = self.action
+                self.action = widgets.Dropdown(description='アクション', options=options,
+                                               value=self.model.action, layout=previous.layout)
+                self.action.observe(self._action_changed, names='value')
+                previous.close()
             self.action.value = self.model.action
             self.action.disabled = not bool(self.model.actions)
             for widget in self._dynamic:

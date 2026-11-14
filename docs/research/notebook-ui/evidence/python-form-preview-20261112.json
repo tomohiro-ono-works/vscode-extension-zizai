@@ -1,7 +1,7 @@
 {
   "issue": 82,
   "date": "2026-11-12",
-  "status": "Implemented and CLI/API verified; VS Code rendering and native folder dialog not yet verified",
+  "status": "Delayed-selection bug fixed; CLI/API 24 tests and post-fix Playwright smoke passed; native folder return/cancel still awaits confirmation",
   "approval": {
     "source": "This chat, user original text",
     "placeholder": "こちらは{コネクタ.アクションのコードを生成}と表示してくれれば一旦OKです。",
@@ -96,11 +96,107 @@
   ],
   "preservation": "Legacy extension, logs, artifacts and notebook diagnostic source preserved. Legacy metadata expectation updated for version 0.0.1.dev0 and two optional Requires-Dist declarations; no base runtime dependency added.",
   "limits": [
-    "No VS Code GUI session opened; no browser rendering acceptance yet",
-    "Native Tk folder dialog and existing VS Code widget renderer require actual environment verification",
+    "Native Tk folder choice/cancel and manual clipboard copy remain unverified; dedicated sample window kept open for user",
     "Example CSV/Excel actions are selectors, not implemented business connectors",
     "Output is the explicitly approved placeholder; no real Python code generation, automatic execution or cell insertion",
     "No Remote/WSL/other-OS support claim, no automatic form-state restore",
     "Task remains open; raw environment/wheel/logs are local ignored assets, not uploaded"
-  ]
+  ],
+  "vscodeUi": {
+    "date": "2026-11-14",
+    "classification": "Playwright UI automation, not manual acceptance",
+    "authorization": "User requested form display/operation and actual folder selection checks; native OS dialog remains manual under agreed operation restriction",
+    "vscode": "1.146.0-insider (29ce94ad8d36c62affc08484e262d5c4fbdd0b3d)",
+    "python": "3.14.3",
+    "ipykernel": "7.4.0",
+    "tk": "8.6",
+    "playwright": "1.64.1",
+    "extensions": [
+      "ms-python.python@2026.10.0",
+      "ms-toolsai.jupyter@2025.9.1",
+      "ms-toolsai.jupyter-renderers@1.3.0"
+    ],
+    "checked": [
+      "Displayed %form controls; four top-level controls share a row at tested width",
+      "Empty required folder disables generation",
+      "Generate CSV placeholder, clear stale result on change, regenerate while retaining form",
+      "CSV export to Excel retains valid action, path and filename; adds sheet field",
+      "Invalid import action cleared when changing to Excel",
+      "Saved dedicated Notebook retains original cell sources/count; no custom extension installed"
+    ],
+    "passed": 6,
+    "failed": 0,
+    "consoleFinding": "unpkg.com access failed in widget renderer; form subsequently rendered and operated successfully. Initial empty output was not treated as success.",
+    "nativeFolderSelection": "Not automated; user confirmation still required",
+    "copy": "Selectable <pre> text observed; actual clipboard copy/paste not yet checked",
+    "sourceUnchanged": true,
+    "customExtensionInstalled": false,
+    "userProfileModified": false,
+    "localSession": "results/task010-form-hands-on-20261113-01/session.local.json",
+    "screenshots": [
+      {
+        "file": "screen-21.png",
+        "sha256": "da1a1d17860bdea78010919f47ea2719fa826a5ce7eb42698d14a622f58a7ad1"
+      },
+      {
+        "file": "screen-27.png",
+        "sha256": "b4c31b0d26a80fa083483cee4f496e68c7ad1e5e839e6c99c39de13530842541"
+      }
+    ]
+  },
+  "regression20261114": {
+    "report": "User reported error after native folder choice and later reported shifted Notebook layout",
+    "observedError": "TraitError: Invalid selection: index out of bounds",
+    "reproduced": "Real comm message dispatch in backend tests: old CSV action indices arriving after switching to Excel; both an out-of-range error and unintended export selection reproduced before fix",
+    "fix": "Replace the dependent dropdown and close its old comm when its candidate list changes; preserve approved model values. Do not reinterpret queued old indices against a new list.",
+    "red": "1 test, 2 failing subcases before fix",
+    "green": "1 test, 2 passing subcases after fix",
+    "suite": {
+      "passed": 24,
+      "failed": 0,
+      "log": "logs/task010-python-suite-20261114.txt"
+    },
+    "installedWheel": {
+      "installedModule": true,
+      "bundledYaml": true,
+      "placeholder": "{csv.importのコードを生成}",
+      "magicWidgetMimeOutput": true,
+      "guiStarted": false,
+      "versions": {
+        "zizai-runtime": "0.0.1.dev0",
+        "ipywidgets": "8.1.9",
+        "PyYAML": "6.0.3",
+        "IPython": "9.18.1"
+      },
+      "wheel": "zizai_runtime-0.0.1.dev0-py3-none-any.whl",
+      "wheelSha256": "4a748d6e89c4cda38e9379e556b656d6af57fb4678d83d7c95a4173b65e3a142"
+    },
+    "postFixUi": {
+      "classification": "Playwright UI automation",
+      "actions": [
+        38,
+        39
+      ],
+      "checked": [
+        "Generate CSV placeholder",
+        "Clear invalid import action when switching to Excel",
+        "Choose Excel export and generate placeholder"
+      ],
+      "setupLimit": "Earlier attempts encountered kernel-selection and viewport setup timeouts; these are retained in local session evidence, not counted as passed assertions"
+    },
+    "viewport": {
+      "observedNativeScrollLeft": 912.3809814453125,
+      "repairedTo": 0,
+      "cause": "Native horizontal scrolling in VS Code host container during Playwright iframe interaction; entire Notebook content shifted, not just form CSS",
+      "repair": "Reset only host scrollLeft through Playwright as viewport preparation; no input values/events changed",
+      "screenshot": "results/task010-form-hands-on-20261113-01/form-after-horizontal-repair.png"
+    },
+    "nativeFolder": {
+      "opened": "User confirmed that the folder dialog appeared",
+      "pathReturned": "User reported error at step 2; not passed",
+      "cancel": "Not yet checked",
+      "relation": "The captured selection error was reproduced; the exact interleaving of the user's folder/dialog and selection events was not recorded"
+    },
+    "records": "Prior Notebook, session and console data copied before resume; original logs and generated wheels preserved; no main merge or Task closure"
+  }
 }
