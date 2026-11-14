@@ -48,10 +48,10 @@ class NotebookHandoffTests(PackageArtifactTestCase):
         self.assertEqual(report["scope"], "minimal_package_import")
         self.assertEqual(report["phase"], "before_restart")
         self.assertEqual(report["distribution"]["name"], "zizai-runtime")
-        self.assertEqual(report["distribution"]["version"], "0.0.1.dev0")
+        self.assertEqual(report["distribution"]["version"], "0.0.2.dev0")
         # Legacy diagnostic counts all declared Requires-Dist, including extras.
         # Base import remains dependency-free; the optional marker is checked separately.
-        self.assertEqual(report["distribution"]["runtime_dependency_count"], 2)
+        self.assertEqual(report["distribution"]["runtime_dependency_count"], 4)
         self.assertTrue(report["checks"]["imports_match_distribution"])
         self.assertTrue(report["checks"]["import_preserved_process_state"])
         with zipfile.ZipFile(wheel) as archive:

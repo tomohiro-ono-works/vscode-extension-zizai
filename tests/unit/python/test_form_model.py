@@ -19,9 +19,9 @@ class FormModelTests(unittest.TestCase):
         self.model.set_action(action)
 
     def test_placeholder_uses_ids_and_does_not_execute_business_code(self):
-        self.choose()
+        self.choose('excel')
         self.model.set_value('folder', 'C:/データ/保存先')
-        self.assertEqual(self.model.generate(), '{csv.exportのコードを生成}')
+        self.assertEqual(self.model.generate(), '{excel.exportのコードを生成}')
         self.assertEqual(self.model.values['folder'], 'C:/データ/保存先')
 
     def test_required_input_and_unselected_action_prevent_generation(self):
@@ -55,7 +55,7 @@ class FormModelTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.model.set_value('encoding', 'not-a-choice')
         with self.assertRaises(ValueError):
-            self.model.set_value('start_row', 0)
+            self.model.set_value('data_start_row', 0)
         self.assertEqual(self.model.values, before)
 
     def test_custom_yaml_changes_candidates_fields_and_message(self):

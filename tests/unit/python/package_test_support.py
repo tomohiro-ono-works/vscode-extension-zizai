@@ -21,6 +21,10 @@ PACKAGE_FILES = {
     "zizai/form_model.py",
     "zizai/forms.py",
     "zizai/forms.yaml",
+    "zizai/csv_codegen.py",
+    "zizai/core/tabular.py",
+    "zizai/core/type_registry.py",
+    "zizai/connectors/csv.py",
 }
 
 

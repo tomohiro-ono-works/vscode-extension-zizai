@@ -1,6 +1,7 @@
 """Selection and placeholder generation; no GUI, kernel or business execution."""
 from copy import deepcopy
 from .form_definition import valid_value
+from .csv_codegen import generate_csv
 
 
 class FormModel:
@@ -48,10 +49,16 @@ class FormModel:
             raise ValueError('入力値が項目の条件を満たしません。')
         self.values[name] = value
 
+    @property
+    def is_placeholder(self):
+        return not (self.action and self.actions[self.action].get('generation'))
+
     def generate(self):
         if self.connector is None or self.action is None:
             raise ValueError('コネクタとアクションを選んでください。')
         for name, field in self.fields.items():
             if not valid_value(field, self.values[name], require=True):
                 raise ValueError(f'{field["label"]}を確認してください。')
+        if not self.is_placeholder:
+            return generate_csv(self.actions[self.action]['generation'], self.values)
         return '{' + self.definition['output_template'].format(connector=self.connector, action=self.action) + '}'

@@ -130,6 +130,10 @@ class NotebookForm:
             self.message.value = '入力値を確認してください。フォルダーは絶対パスを指定します。'
         else:
             self.message.value = ''
+            try:
+                self.model.generate()
+            except ValueError as error:
+                self.message.value = escape(str(error))
         self._refresh_generate()
 
     def _pick_folder(self, name):
@@ -150,7 +154,8 @@ class NotebookForm:
             self.message.value = escape(str(error))
             return
         self.message.value = ''
-        self.generated.value = '<p><b>生成結果（仮表示・実行可能なPythonコードではありません）</b></p><pre style="white-space:pre-wrap;user-select:text">' + escape(self.result) + '</pre>'
+        label = '生成結果（仮表示・実行可能なPythonコードではありません）' if self.model.is_placeholder else '生成コード'
+        self.generated.value = '<p><b>' + label + '</b></p><pre style="white-space:pre-wrap;user-select:text">' + escape(self.result) + '</pre>'
 
     def close(self):
         for widget in [*self._dynamic, self.connector, self.action, self.generate_button,

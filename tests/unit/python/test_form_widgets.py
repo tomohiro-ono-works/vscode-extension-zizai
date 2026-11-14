@@ -27,8 +27,9 @@ class FormWidgetTests(unittest.TestCase):
         form.folder_buttons['folder'].click()
         form.generate_button.click()
         self.assertEqual(form.model.values['folder'], 'C:/選択先')
-        self.assertEqual(form.result, '{csv.importのコードを生成}')
-        self.assertIn('csv.import', form.generated.value)
+        self.assertIn('from zizai.connectors.csv import read_csv', form.result)
+        self.assertIn('生成コード', form.generated.value)
+        self.assertNotIn('仮表示', form.generated.value)
         self.assertEqual(form.field_widgets['encoding'].value, 'utf-8')
 
     def test_regeneration_preserves_form_and_replaces_only_output(self):
@@ -42,7 +43,8 @@ class FormWidgetTests(unittest.TestCase):
         form.generate_button.click()
         self.assertIs(form.root, root)
         self.assertEqual(form.details.children, controls)
-        self.assertEqual(form.result, '{csv.exportのコードを生成}')
+        self.assertIn('変更.csv', form.result)
+        self.assertIn('write_csv(data=df', form.result)
 
     def test_cancel_keeps_folder_and_parent_changes_keep_or_clear_action(self):
         form = self.make_form(lambda current: '')
@@ -103,11 +105,25 @@ class FormWidgetTests(unittest.TestCase):
         config['output_template'] = '<img src=x onerror=bad()> {connector}.{action}'
         form = NotebookForm(config)
         self.addCleanup(form.close)
-        self.select(form)
+        form.connector.value = 'excel'
+        form.action.value = 'export'
         form.field_widgets['folder'].value = 'C:/valid'
         form.generate_button.click()
         self.assertNotIn('<img', form.generated.value)
         self.assertIn('&lt;img', form.generated.value)
+
+    def test_real_csv_code_escapes_html_in_path_and_blocks_bad_variable(self):
+        form = self.make_form()
+        self.select(form)
+        form.field_widgets['folder'].value = 'C:/valid'
+        form.field_widgets['filename'].value = '<img src=x onerror=bad()>.csv'
+        form.generate_button.click()
+        self.assertNotIn('<img', form.generated.value)
+        self.assertIn('&lt;img', form.generated.value)
+        form.field_widgets['input_variable'].value = 'df; injected()'
+        self.assertTrue(form.generate_button.disabled)
+        self.assertEqual(form.generated.value, '')
+        self.assertIn('変数名', form.message.value)
 
     def test_magic_registers_explicitly_and_does_not_replace_foreign_magic(self):
         from IPython.core.interactiveshell import InteractiveShell

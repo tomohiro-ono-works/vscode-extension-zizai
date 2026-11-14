@@ -3,6 +3,7 @@ from importlib.resources import files
 from pathlib import Path
 import re
 from string import Formatter
+from .csv_codegen import GENERATION_KINDS
 
 MAX_BYTES = 1024 * 1024
 ID = re.compile(r'[A-Za-z_][A-Za-z0-9_]*\Z')
@@ -86,11 +87,19 @@ def parse_definition(text):
                 raise ValueError('アクションIDが不正です。')
             _mapping(action, 'アクション')
             _label(action.get('label'))
-            if set(action) - {'label', 'fields'}:
+            if set(action) - {'label', 'fields', 'generation'}:
                 raise ValueError('アクション定義に未対応の項目があります。')
+            if 'generation' in action and (not isinstance(action['generation'], str) or action['generation'] not in GENERATION_KINDS):
+                raise ValueError('generationはcsv.read_csv／csv.write_csvだけ指定できます。')
             fields = action.get('fields', {})
             if not isinstance(fields, dict):
                 raise ValueError('fieldsは項目一覧にしてください。')
+            if 'generation' in action:
+                needed = {'folder', 'filename', 'encoding', 'delimiter', 'schema'}
+                needed |= ({'output_variable', 'header_row', 'data_start_row', 'chunk_size', 'date_cleansing'}
+                           if action['generation'] == 'csv.read_csv' else {'input_variable'})
+                if not needed <= fields.keys():
+                    raise ValueError('CSV生成に必要な入力項目が不足しています。')
             for name, field in fields.items():
                 if not isinstance(name, str) or not ID.fullmatch(name) or not isinstance(field, dict):
                     raise ValueError('入力項目の定義が不正です。')

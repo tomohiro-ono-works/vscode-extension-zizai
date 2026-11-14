@@ -6,15 +6,28 @@ connectors:
     actions:
       import:
         label: 読み込み
+        generation: csv.read_csv
         fields:
           folder: {label: 入力フォルダー, type: folder, required: true}
-          encoding: {label: 文字コード, type: choice, choices: [utf-8, cp932], default: utf-8}
-          start_row: {label: 開始行, type: integer, default: 1, minimum: 1}
+          filename: {label: ファイル名, type: text, default: input.csv, required: true}
+          output_variable: {label: 出力変数, type: text, default: df, required: true}
+          encoding: {label: 文字コード, type: choice, choices: [utf-8, utf-8-sig, cp932], default: utf-8}
+          delimiter: {label: 区切り文字, type: text, default: ','}
+          header_row: {label: ヘッダー行, type: integer, default: 1, minimum: 1}
+          data_start_row: {label: データ開始行, type: integer, default: 2, minimum: 1}
+          chunk_size: {label: 読込分割行数（0は一括）, type: integer, default: 50000, minimum: 0}
+          schema: {label: schema（JSON・省略可）, type: text}
+          date_cleansing: {label: 日付処理, type: choice, choices: [有効, 無効], default: 有効, required: true}
       export:
         label: 書き出し
+        generation: csv.write_csv
         fields:
           folder: {label: 保存先, type: folder, required: true}
-          filename: {label: ファイル名, type: text, default: output.csv}
+          filename: {label: ファイル名, type: text, default: output.csv, required: true}
+          input_variable: {label: 入力変数, type: text, default: df, required: true}
+          encoding: {label: 文字コード, type: choice, choices: [utf-8-sig, utf-8, cp932], default: utf-8-sig}
+          delimiter: {label: 区切り文字, type: text, default: ','}
+          schema: {label: schema（JSON・省略可）, type: text}
   excel:
     label: Excel
     actions:
