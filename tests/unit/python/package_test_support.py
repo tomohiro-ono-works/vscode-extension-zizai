@@ -17,6 +17,10 @@ PACKAGE_FILES = {
     "zizai/__init__.py",
     "zizai/core/__init__.py",
     "zizai/connectors/__init__.py",
+    "zizai/form_definition.py",
+    "zizai/form_model.py",
+    "zizai/forms.py",
+    "zizai/forms.yaml",
 }
 
 
@@ -59,7 +63,7 @@ class PackageArtifactTestCase(unittest.TestCase):
             shutil.copy2(REPO / "README.md", self.source)
             shutil.copytree(
                 REPO / "apps", self.source / "apps",
-                ignore=shutil.ignore_patterns("__pycache__", "*.egg-info"),
+                ignore=shutil.ignore_patterns("__pycache__", "*.egg-info", "node_modules", "*.vsix"),
             )
             unrelated = self.source / "apps" / "extension" / "unrelated.py"
             unrelated.parent.mkdir(parents=True, exist_ok=True)

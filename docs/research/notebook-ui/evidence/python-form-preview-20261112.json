@@ -1,0 +1,226 @@
+{
+  "issue": 82,
+  "date": "2026-11-12",
+  "status": "Implementation, CLI/API, Playwright and agreed native-dialog/copy manual checks passed; ready for main integration",
+  "approval": {
+    "source": "This chat, user original text",
+    "placeholder": "こちらは{コネクタ.アクションのコードを生成}と表示してくれれば一旦OKです。",
+    "config": "こちらの設定ファイルも考えてください。",
+    "dependencyPolicy": "jupyterほどのライブラリが公認ならOKとしたいです"
+  },
+  "definition": {
+    "file": "apps/core/src/zizai/forms.yaml",
+    "version": 1,
+    "hierarchy": "connectors -> actions -> fields",
+    "types": [
+      "text",
+      "choice",
+      "folder",
+      "integer"
+    ],
+    "output": "Wrap output_template in braces; substitute connector/action IDs only; not executable business code",
+    "load": "Bundled default or explicit whole-file replacement; relative paths use kernel cwd",
+    "safety": "1MiB limit, safe YAML tags, reject aliases and duplicate keys, validate types/template tokens, HTML-escape output; no eval/exec"
+  },
+  "runtime": {
+    "python": "3.14.3",
+    "os": "Windows",
+    "installedVersions": {
+      "asttokens": "3.0.2",
+      "colorama": "0.4.6",
+      "comm": "0.2.3",
+      "executing": "2.3.0",
+      "ipython": "9.18.1",
+      "ipython_pygments_lexers": "1.1.1",
+      "ipywidgets": "8.1.9",
+      "jedi": "0.20.1",
+      "jupyterlab_widgets": "3.0.17",
+      "matplotlib-inline": "0.2.2",
+      "parso": "0.8.7",
+      "pip": "25.3",
+      "prompt_toolkit": "3.0.53",
+      "psutil": "7.2.2",
+      "pure_eval": "0.2.4",
+      "Pygments": "2.21.0",
+      "PyYAML": "6.0.3",
+      "setuptools": "81.0.0",
+      "stack-data": "0.6.3",
+      "traitlets": "5.16.1",
+      "wcwidth": "0.9.4",
+      "widgetsnbextension": "4.0.16"
+    }
+  },
+  "dependencySources": [
+    "https://jupyter.org/governance/list-of-subprojects/",
+    "https://github.com/jupyter-widgets/ipywidgets/blob/main/python/ipywidgets/setup.cfg",
+    "https://github.com/jupyter/jupyter_events/blob/main/pyproject.toml",
+    "https://pypi.org/project/ipywidgets/8.1.9/",
+    "https://pypi.org/project/PyYAML/6.0.3/"
+  ],
+  "unitAndApi": {
+    "command": "python -m unittest discover -s tests/unit/python -p test_*.py -v",
+    "passed": 23,
+    "failed": 0,
+    "model": 7,
+    "widgetAndMagicBackend": 6,
+    "packageAndLegacyDiagnostics": 10,
+    "classification": "CLI/unit/API, not browser UI or native OS-dialog execution",
+    "redLimit": "Initial model/widgets tests each failed at missing-module import before implementation; not 13 independently failing behavior assertions",
+    "folderDialog": "Injected picker functions for choice/cancel; Tk not opened",
+    "pipCheck": "No broken requirements found"
+  },
+  "installedWheel": {
+    "installedModule": true,
+    "bundledYaml": true,
+    "placeholder": "{csv.importのコードを生成}",
+    "magicWidgetMimeOutput": true,
+    "guiStarted": false,
+    "versions": {
+      "zizai-runtime": "0.0.1.dev0",
+      "ipywidgets": "8.1.9",
+      "PyYAML": "6.0.3",
+      "IPython": "9.18.1"
+    },
+    "wheel": "zizai_runtime-0.0.1.dev0-py3-none-any.whl",
+    "wheelSha256": "1fb146cec58b1979c4411bedc3b01f4bdfdfa2bb7269358320fe322bd2faef80"
+  },
+  "localEvidence": [
+    "logs/task010-model-red-20261112.txt",
+    "logs/task010-model-green-20261112.txt",
+    "logs/task010-widgets-red-20261112.txt",
+    "logs/task010-widgets-green-20261112.txt",
+    "logs/task010-python-suite-20261112.txt",
+    "logs/task010-forms-install-20261112.txt",
+    "results/task010-form-build-20261112",
+    "results/task010-forms-env-20261112/install-report.json"
+  ],
+  "preservation": "Legacy extension, logs, artifacts and notebook diagnostic source preserved. Legacy metadata expectation updated for version 0.0.1.dev0 and two optional Requires-Dist declarations; no base runtime dependency added.",
+  "limits": [
+    "Example CSV/Excel actions are selectors, not implemented business connectors",
+    "Output is the explicitly approved placeholder; no real Python code generation, automatic execution or cell insertion",
+    "No Remote/WSL/other-OS support claim, no automatic form-state restore",
+    "Results are specific to the verified local Windows/VS Code/Python environment; raw logs/wheels remain protected local ignored assets"
+  ],
+  "vscodeUi": {
+    "date": "2026-11-14",
+    "classification": "Playwright UI automation, not manual acceptance",
+    "authorization": "User requested form display/operation and actual folder selection checks; native OS dialog remains manual under agreed operation restriction",
+    "vscode": "1.146.0-insider (29ce94ad8d36c62affc08484e262d5c4fbdd0b3d)",
+    "python": "3.14.3",
+    "ipykernel": "7.4.0",
+    "tk": "8.6",
+    "playwright": "1.64.1",
+    "extensions": [
+      "ms-python.python@2026.10.0",
+      "ms-toolsai.jupyter@2025.9.1",
+      "ms-toolsai.jupyter-renderers@1.3.0"
+    ],
+    "checked": [
+      "Displayed %form controls; four top-level controls share a row at tested width",
+      "Empty required folder disables generation",
+      "Generate CSV placeholder, clear stale result on change, regenerate while retaining form",
+      "CSV export to Excel retains valid action, path and filename; adds sheet field",
+      "Invalid import action cleared when changing to Excel",
+      "Saved dedicated Notebook retains original cell sources/count; no custom extension installed"
+    ],
+    "passed": 6,
+    "failed": 0,
+    "consoleFinding": "unpkg.com access failed in widget renderer; form subsequently rendered and operated successfully. Initial empty output was not treated as success.",
+    "nativeFolderSelection": "Subsequently manually confirmed; see manualAcceptance20261114, with same-path selection limit",
+    "copy": "Subsequently confirmed manually; see manualAcceptance20261114",
+    "sourceUnchanged": true,
+    "customExtensionInstalled": false,
+    "userProfileModified": false,
+    "localSession": "results/task010-form-hands-on-20261113-01/session.local.json",
+    "screenshots": [
+      {
+        "file": "screen-21.png",
+        "sha256": "da1a1d17860bdea78010919f47ea2719fa826a5ce7eb42698d14a622f58a7ad1"
+      },
+      {
+        "file": "screen-27.png",
+        "sha256": "b4c31b0d26a80fa083483cee4f496e68c7ad1e5e839e6c99c39de13530842541"
+      }
+    ]
+  },
+  "regression20261114": {
+    "report": "User reported error after native folder choice and later reported shifted Notebook layout",
+    "observedError": "TraitError: Invalid selection: index out of bounds",
+    "reproduced": "Real comm message dispatch in backend tests: old CSV action indices arriving after switching to Excel; both an out-of-range error and unintended export selection reproduced before fix",
+    "fix": "Replace the dependent dropdown and close its old comm when its candidate list changes; preserve approved model values. Do not reinterpret queued old indices against a new list.",
+    "red": "1 test, 2 failing subcases before fix",
+    "green": "1 test, 2 passing subcases after fix",
+    "suite": {
+      "passed": 24,
+      "failed": 0,
+      "log": "logs/task010-python-suite-20261114.txt"
+    },
+    "installedWheel": {
+      "installedModule": true,
+      "bundledYaml": true,
+      "placeholder": "{csv.importのコードを生成}",
+      "magicWidgetMimeOutput": true,
+      "guiStarted": false,
+      "versions": {
+        "zizai-runtime": "0.0.1.dev0",
+        "ipywidgets": "8.1.9",
+        "PyYAML": "6.0.3",
+        "IPython": "9.18.1"
+      },
+      "wheel": "zizai_runtime-0.0.1.dev0-py3-none-any.whl",
+      "wheelSha256": "4a748d6e89c4cda38e9379e556b656d6af57fb4678d83d7c95a4173b65e3a142"
+    },
+    "postFixUi": {
+      "classification": "Playwright UI automation",
+      "actions": [
+        38,
+        39
+      ],
+      "checked": [
+        "Generate CSV placeholder",
+        "Clear invalid import action when switching to Excel",
+        "Choose Excel export and generate placeholder"
+      ],
+      "setupLimit": "Earlier attempts encountered kernel-selection and viewport setup timeouts; these are retained in local session evidence, not counted as passed assertions"
+    },
+    "viewport": {
+      "observedNativeScrollLeft": 912.3809814453125,
+      "repairedTo": 0,
+      "cause": "Native horizontal scrolling in VS Code host container during Playwright iframe interaction; entire Notebook content shifted, not just form CSS",
+      "repair": "Reset only host scrollLeft through Playwright as viewport preparation; no input values/events changed",
+      "screenshot": "results/task010-form-hands-on-20261113-01/form-after-horizontal-repair.png"
+    },
+    "nativeFolder": {
+      "opened": "User confirmed that the folder dialog appeared",
+      "pathReturned": "User reported error at step 2; not passed",
+      "cancel": "Not yet checked",
+      "relation": "The captured selection error was reproduced; the exact interleaving of the user's folder/dialog and selection events was not recorded",
+      "checkpointBeforeFinalManualAcceptance": true,
+      "subsequentResult": "See manualAcceptance20261114; retain earlier error and unverified checkpoint as history"
+    },
+    "records": "Prior Notebook, session and console data copied before resume; original logs and generated wheels preserved; no main merge or Task closure"
+  },
+  "manualAcceptance20261114": {
+    "source": "This chat; user replies to the specific test instructions",
+    "folderChoice": {
+      "userReply": "えらびました",
+      "observed": "Playwright read-only action40 showed the expected absolute workspace/sample-folder path in the Excel export destination and no folder-selection error message",
+      "limit": "The selected folder equalled the prior value; no different-path transition claim"
+    },
+    "cancel": {
+      "userReply": "キャンセル後、きえませんでした。",
+      "result": "Existing destination retained after actual native dialog cancellation"
+    },
+    "copy": {
+      "userReply": "できました。",
+      "context": "Reply to the explicit request to select and copy the existing generated placeholder text",
+      "result": "Text selection/copy confirmed manually"
+    },
+    "generation": {
+      "classification": "Playwright, separate from manual clipboard check",
+      "result": "Post-fix CSV and Excel placeholder generation passed in actions38/39; the pre-existing output was correctly identified as an earlier automated result"
+    },
+    "window": "Dedicated sample kept open; user has not authorized closing",
+    "taskBoundary": "Placeholder output only; no real connector/action business code, cell insertion or automatic execution"
+  }
+}
