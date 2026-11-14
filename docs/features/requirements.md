@@ -1,8 +1,8 @@
 # ZizAI 要件仕様書
 
-## TASK-011：CSVとコネクタ共通の呼出し規約（2026-11-14、設計案・未承認）
+## TASK-011：CSVとコネクタ共通の呼出し規約（2026-11-15、Jupyter確定・CSV詳細案は確認前）
 
-利用者が「優先度高いものから」「まずは、csvから」と指示し、その後「コネクタ共通部分や、エンジンとの接続の協約」を検討するよう依頼した。[TASK-011 / #84](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/84)で、CSVの2アクションから、フォームの実コード生成までを扱う。CSV着手は承認済みだが、以下の具体的API・共通化・「エンジン」の意味は確認中であり、確定済みのTASK-010仕様を上書きしない。
+利用者が「優先度高いものから」「まずは、csvから」と指示し、その後「コネクタ共通部分や、エンジンとの接続の協約」を検討するよう依頼した。[TASK-011 / #84](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/84)で、CSVの2アクションから、フォームの実コード生成までを扱う。2026-11-15の利用者原文「jupyterカーネルでOkdesu」により、実行側はJupyter標準カーネルで確定した。以下の具体的API・共通部品の分け方・CSV挙動は担当者の設計案であり、確定済みのTASK-010仕様を未承認で上書きしない。
 
 ### 推奨する最小の取り決め
 
@@ -11,7 +11,7 @@
 | ファイル構成 | 1コネクタ1ファイル。`apps/connectors/src/zizai/connectors/csv.py`へ読込・書出を集約する。全コネクタの1ファイル化は未承認 |
 | 呼出し | 通常のPython関数。生成コードからCSVの関数を直接呼ぶ。新たな共通`execute(action, params, context)`入口や継承を必須にしない |
 | 入力の受渡し | パス・設定は明示的な引数。書出対象はDataFrameそのものを渡す。フォーム上の変数名は生成コードの識別子として扱い、生成時にデータ取得・処理実行しない |
-| 戻り値 | 読込はDataFrame。書出は保存先パスを案とする。元コードの書出は完了メッセージ文字列を返すため、この変更は実装前に確定する |
+| 戻り値 | 読込はDataFrame。書出は元コードと同じ`CSV保存完了: <保存先>`という文字列を維持する案とする。前の保存先パス案は未採用で、利用者承認済みの仕様変更ではない |
 | エラー | 通常のPython例外を呼出し元へ返し、Jupyter標準表示で確認する。独自の結果ラッパー・状態同期を必須にしない |
 | 実行 | フォームは設定からコードを生成・表示する。利用者がコピーし、通常のPythonセルを実行したときにCSV処理が動く。起動時や生成時には実行しない |
 | 入力確認 | 生成前は必須未入力・形式・識別子等を確認する。パス文字列を安全にコード化し、ファイル存在・権限等はPythonの実行側で確認する |
@@ -23,14 +23,26 @@
 from zizai.connectors.csv import read_csv, write_csv
 
 df = read_csv(file_path="C:/data/input.csv", encoding="utf-8")
-output_path = write_csv(data=df, output_path="C:/data/output.csv", encoding="utf-8-sig")
+write_csv(data=df, output_path="C:/data/output.csv", encoding="utf-8-sig")
 ```
 
 ### 現行方式とエンジンの確認点
 
-現行方式ではJupyter標準カーネルがPythonコードを実行する。元`zizai`のWorkflowEngineはコネクタを遅延ロードし、`execute(action, params, context)`とcontext内の名前を介して処理を呼び出す。上記はJupyterから通常のPython関数を呼ぶ案であり、旧WorkflowEngineへの接続・再導入や新しい実行エンジンの採用を許可したものではない。利用者の「エンジン」がどの実行側を指すかを確認する。将来別の実行側を接続する場合も、同じPython関数の呼出しを基準にできる構成を提案する。
+Jupyter標準カーネルがPythonコードを実行することを確認済み。元`zizai`のWorkflowEngineはコネクタを遅延ロードし、`execute(action, params, context)`とcontext内の名前を介して処理を呼び出すが、今回は再導入しない。生成した通常PythonコードからCSV関数を呼ぶ。将来別の実行側を接続する場合も、同じPython関数の呼出しを基準にできる構成を提案する。
 
-元CSVの文字コード・区切り・行指定・chunk読込・schema／型変換・日付処理の移管範囲、および書出対象・戻り値・上書き条件は、本Task内で出典と現行要求を照合して確定する。相談中の共通規約を理由に元機能を黙って省略せず、元のBaseConnector・独自context・型体系の存在を一括採用の根拠にもしない。依存ライブラリの版・正式採用も未確定で、実装前に既存の採用条件を確認する。
+### CSVの実装案と元コードとの差
+
+元コードの固定版は`tomohiro-ono-works/zizai@64a1be160c06f4a6924b2fcdb6d007f22b1fce78`。CSVの業務機能は次のとおり維持する案とする。旧contextやログcallbackを再導入する代わりに、Pythonの引数・戻り値・例外で受け渡す。
+
+- `read_csv(file_path, *, encoding="utf-8", delimiter=",", header_row=1, data_start_row=2, chunk_size=50000, schema=None, date_cleansing=True)`：DataFrameを返す。行番号は1始まり。chunk_size=0で一括読込。区切りの`\\t`／`tab`／`TAB`、列選択・列名と型のschema適用、日付変換、空ファイル時の空DataFrameを維持する。
+- `write_csv(data, output_path, *, encoding="utf-8-sig", delimiter=",", schema=None)`：DataFrame（元コードが扱えるlist／dictも含む）を受け、indexなしで書き出す。空の表は既存どおりエラー。既存ファイルは元コードと同様に上書きする。保存完了の文字列を返す。
+- 関数へ直接渡す相対パスはカーネルcwd基準。フォームのフォルダーは既存どおり絶対パス。旧workspace／flowディレクトリーの暗黙探索は使わない。フォームはフォルダーとファイル名からパスを組み立て、書出の拡張子省略時の`.csv`補完を維持する。
+- 読込・書出を`zizai.connectors.csv`の1ファイルへ置く。型／schema／日付処理は`zizai.core.tabular`と`zizai.core.type_registry`へ出所付きで移管する案。旧BaseConnectorの継承・抽象execute・Engineのlogger/contextを新しい公開契約にしない。
+- 生成コードは必要なCSV関数のimportと呼出し。読込の出力変数・書出の入力変数は単一の有効なPython識別子とし、フォームで評価しない。パス・文字列・設定値は安全にコード化する。フォームへ読込ファイル名、行指定、chunk_size、schema、日付処理等を追加し、旧CSVが持つ機能を未説明のまま削らない。
+- YAMLは既存の候補・項目定義を維持し、CSVの生成種別を識別する任意設定を追加する案。既存のCSV選択ID`import`／`export`は維持し、実装するPython関数`read_csv`／`write_csv`へ対応させる。生成種別のないアクションは従来どおり仮表示とし、CSV実装だけでExcel等まで対応済みにしない。
+- 既存パッケージの基本importにpandasを必須とせず、CSV用extraへ分離する。元宣言と同じpandas 3.0.1／NumPy 2.4.2を候補とする。公式の運営体制とPython 3.14向けの配布宣言は[公式pandas](https://pandas.pydata.org/about/)・[公式NumPy](https://numpy.org/about/)・[pandasの版情報](https://pypi.org/project/pandas/3.0.1/)・[NumPyの版情報](https://pypi.org/project/numpy/2.4.2/)で確認済み。依存の採用と導入結果は区別し、現時点では新規導入・実装未着手。
+
+上記の上書き・機能維持・受渡しを含むCSV詳細案の確認後に実装する。元の型体系や共通部品は出所・差分・検証を伴って移管し、未確認を採用・合格へ読み替えない。
 
 ## 現在の改修方針（2026-11-12、TASK-010）
 
