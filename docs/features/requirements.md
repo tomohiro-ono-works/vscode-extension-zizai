@@ -1,5 +1,37 @@
 # ZizAI 要件仕様書
 
+## TASK-011：CSVとコネクタ共通の呼出し規約（2026-11-14、設計案・未承認）
+
+利用者が「優先度高いものから」「まずは、csvから」と指示し、その後「コネクタ共通部分や、エンジンとの接続の協約」を検討するよう依頼した。[TASK-011 / #84](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/84)で、CSVの2アクションから、フォームの実コード生成までを扱う。CSV着手は承認済みだが、以下の具体的API・共通化・「エンジン」の意味は確認中であり、確定済みのTASK-010仕様を上書きしない。
+
+### 推奨する最小の取り決め
+
+| 項目 | 担当者案 |
+| --- | --- |
+| ファイル構成 | 1コネクタ1ファイル。`apps/connectors/src/zizai/connectors/csv.py`へ読込・書出を集約する。全コネクタの1ファイル化は未承認 |
+| 呼出し | 通常のPython関数。生成コードからCSVの関数を直接呼ぶ。新たな共通`execute(action, params, context)`入口や継承を必須にしない |
+| 入力の受渡し | パス・設定は明示的な引数。書出対象はDataFrameそのものを渡す。フォーム上の変数名は生成コードの識別子として扱い、生成時にデータ取得・処理実行しない |
+| 戻り値 | 読込はDataFrame。書出は保存先パスを案とする。元コードの書出は完了メッセージ文字列を返すため、この変更は実装前に確定する |
+| エラー | 通常のPython例外を呼出し元へ返し、Jupyter標準表示で確認する。独自の結果ラッパー・状態同期を必須にしない |
+| 実行 | フォームは設定からコードを生成・表示する。利用者がコピーし、通常のPythonセルを実行したときにCSV処理が動く。起動時や生成時には実行しない |
+| 入力確認 | 生成前は必須未入力・形式・識別子等を確認する。パス文字列を安全にコード化し、ファイル存在・権限等はPythonの実行側で確認する |
+| 共通部品 | 元CSVが依存するパス処理・型/schema・日付処理を確認し、複数コネクタで必要な処理を共通側へ置く。CSV固有の読込・書出はCSV側へ置き、フォーム・YAMLは既存の担当箇所で管理する |
+
+生成コードのイメージ（API名・引数・戻り値は設計案で、実装済みの例ではない）：
+
+```python
+from zizai.connectors.csv import read_csv, write_csv
+
+df = read_csv(file_path="C:/data/input.csv", encoding="utf-8")
+output_path = write_csv(data=df, output_path="C:/data/output.csv", encoding="utf-8-sig")
+```
+
+### 現行方式とエンジンの確認点
+
+現行方式ではJupyter標準カーネルがPythonコードを実行する。元`zizai`のWorkflowEngineはコネクタを遅延ロードし、`execute(action, params, context)`とcontext内の名前を介して処理を呼び出す。上記はJupyterから通常のPython関数を呼ぶ案であり、旧WorkflowEngineへの接続・再導入や新しい実行エンジンの採用を許可したものではない。利用者の「エンジン」がどの実行側を指すかを確認する。将来別の実行側を接続する場合も、同じPython関数の呼出しを基準にできる構成を提案する。
+
+元CSVの文字コード・区切り・行指定・chunk読込・schema／型変換・日付処理の移管範囲、および書出対象・戻り値・上書き条件は、本Task内で出典と現行要求を照合して確定する。相談中の共通規約を理由に元機能を黙って省略せず、元のBaseConnector・独自context・型体系の存在を一括採用の根拠にもしない。依存ライブラリの版・正式採用も未確定で、実装前に既存の採用条件を確認する。
+
 ## 現在の改修方針（2026-11-12、TASK-010）
 
 利用者がNotebook内の簡単なPythonフォーム案と「生成コードを出力欄へ表示し、利用者がコピーする方式」を確認し、その方針での改修を依頼した。[TASK-010 / #82](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/82)で実装・検証する。
