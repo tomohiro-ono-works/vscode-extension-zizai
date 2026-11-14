@@ -4,7 +4,7 @@ VS CodeのNotebook入力支援と、VS Codeに依存しないPythonコネクタ�
 
 ## 現在の開発：Python Notebookフォーム
 
-[TASK-010 / #82](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/82)で、`%form`から横並びの連動フォームをセル出力欄へ表示する方式へ改修中です。生成結果は現在`{csv.importのコードを生成}`等の仮表示です。[導入・YAML設定・現在の確認範囲](apps/core/README.md)と[未実行サンプル](examples/python-form.ipynb)を参照してください。独自VS Code拡張は必須とせず、従来の成果は以下の履歴として保持します。
+[TASK-010 / #82](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/82)で、`%form`から横並びの連動フォームをセル出力欄へ表示する方式を実装しました。生成結果は現在`{csv.importのコードを生成}`等の仮表示です。[導入・YAML設定・現在の確認範囲](apps/core/README.md)と[未実行サンプル](examples/python-form.ipynb)を参照してください。独自VS Code拡張は必須とせず、従来の成果は以下の履歴として保持します。
 
 ## 設計の作り直し（2026-11-08）
 
@@ -19,4 +19,4 @@ Notebookのセル内候補選択・親子候補・ファイル／フォルダー
 - [コーディングルール](coding-rules.md)
 - [Taskの入口](docs/tasks/README.md)
 
-既存のPython最小基盤・契約検証コードは今回変更していません。残存コードを新方式の正式仕様・完成した製品と扱わないでください。旧資料の原文と承認履歴はGit履歴で追跡できます。
+2026-11-08の資料撤去時点では、既存のPython最小基盤・契約検証コードを変更していません。後のTASK-010によるPythonフォーム追加は冒頭に区別しています。残存コードを新方式の正式仕様・完成した製品と扱わないでください。旧資料の原文と承認履歴はGit履歴で追跡できます。

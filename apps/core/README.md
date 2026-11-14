@@ -2,7 +2,7 @@
 
 ## Notebookフォーム（TASK-010、開発版0.0.1.dev0）
 
-独自VS Code拡張を使わず、Pythonコードセルの`%form`から出力欄へフォームを表示する実装を追加しています。**現在の生成結果は`{csv.importのコードを生成}`等の仮表示です。実際のCSV／Excel処理コードを生成・実行する機能はありません。** CLIで部品と配布経路を確認済み、VS Code上の表示とOSのフォルダー選択は実機未確認です。
+独自VS Code拡張を使わず、Pythonコードセルの`%form`から出力欄へフォームを表示する実装を追加しています。**現在の生成結果は`{csv.importのコードを生成}`等の仮表示です。実際のCSV／Excel処理コードを生成・実行する機能はありません。** Python関連24テストと配布確認、専用Windows／VS Code InsidersでのPlaywright操作確認を実施済みです。利用者が実際のフォルダー選択・取消時の保持・仮表示の選択とコピーを確認しました。[検証範囲と制限](../../docs/research/notebook-ui/evidence/python-form-preview-20261112.json)を参照してください。
 
 ### 導入と表示
 
