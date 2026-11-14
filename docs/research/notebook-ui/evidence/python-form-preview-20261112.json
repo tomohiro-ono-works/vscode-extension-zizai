@@ -1,7 +1,7 @@
 {
   "issue": 82,
   "date": "2026-11-12",
-  "status": "Delayed-selection bug fixed; CLI/API 24 tests and post-fix Playwright smoke passed; native folder return/cancel still awaits confirmation",
+  "status": "Implementation, CLI/API, Playwright and agreed native-dialog/copy manual checks passed; ready for main integration",
   "approval": {
     "source": "This chat, user original text",
     "placeholder": "こちらは{コネクタ.アクションのコードを生成}と表示してくれれば一旦OKです。",
@@ -96,11 +96,10 @@
   ],
   "preservation": "Legacy extension, logs, artifacts and notebook diagnostic source preserved. Legacy metadata expectation updated for version 0.0.1.dev0 and two optional Requires-Dist declarations; no base runtime dependency added.",
   "limits": [
-    "Native Tk folder choice/cancel and manual clipboard copy remain unverified; dedicated sample window kept open for user",
     "Example CSV/Excel actions are selectors, not implemented business connectors",
     "Output is the explicitly approved placeholder; no real Python code generation, automatic execution or cell insertion",
     "No Remote/WSL/other-OS support claim, no automatic form-state restore",
-    "Task remains open; raw environment/wheel/logs are local ignored assets, not uploaded"
+    "Results are specific to the verified local Windows/VS Code/Python environment; raw logs/wheels remain protected local ignored assets"
   ],
   "vscodeUi": {
     "date": "2026-11-14",
@@ -127,8 +126,8 @@
     "passed": 6,
     "failed": 0,
     "consoleFinding": "unpkg.com access failed in widget renderer; form subsequently rendered and operated successfully. Initial empty output was not treated as success.",
-    "nativeFolderSelection": "Not automated; user confirmation still required",
-    "copy": "Selectable <pre> text observed; actual clipboard copy/paste not yet checked",
+    "nativeFolderSelection": "Subsequently manually confirmed; see manualAcceptance20261114, with same-path selection limit",
+    "copy": "Subsequently confirmed manually; see manualAcceptance20261114",
     "sourceUnchanged": true,
     "customExtensionInstalled": false,
     "userProfileModified": false,
@@ -195,8 +194,33 @@
       "opened": "User confirmed that the folder dialog appeared",
       "pathReturned": "User reported error at step 2; not passed",
       "cancel": "Not yet checked",
-      "relation": "The captured selection error was reproduced; the exact interleaving of the user's folder/dialog and selection events was not recorded"
+      "relation": "The captured selection error was reproduced; the exact interleaving of the user's folder/dialog and selection events was not recorded",
+      "checkpointBeforeFinalManualAcceptance": true,
+      "subsequentResult": "See manualAcceptance20261114; retain earlier error and unverified checkpoint as history"
     },
     "records": "Prior Notebook, session and console data copied before resume; original logs and generated wheels preserved; no main merge or Task closure"
+  },
+  "manualAcceptance20261114": {
+    "source": "This chat; user replies to the specific test instructions",
+    "folderChoice": {
+      "userReply": "えらびました",
+      "observed": "Playwright read-only action40 showed the expected absolute workspace/sample-folder path in the Excel export destination and no folder-selection error message",
+      "limit": "The selected folder equalled the prior value; no different-path transition claim"
+    },
+    "cancel": {
+      "userReply": "キャンセル後、きえませんでした。",
+      "result": "Existing destination retained after actual native dialog cancellation"
+    },
+    "copy": {
+      "userReply": "できました。",
+      "context": "Reply to the explicit request to select and copy the existing generated placeholder text",
+      "result": "Text selection/copy confirmed manually"
+    },
+    "generation": {
+      "classification": "Playwright, separate from manual clipboard check",
+      "result": "Post-fix CSV and Excel placeholder generation passed in actions38/39; the pre-existing output was correctly identified as an earlier automated result"
+    },
+    "window": "Dedicated sample kept open; user has not authorized closing",
+    "taskBoundary": "Placeholder output only; no real connector/action business code, cell insertion or automatic execution"
   }
 }
