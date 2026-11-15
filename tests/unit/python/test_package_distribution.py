@@ -19,8 +19,8 @@ class PackageDistributionTests(PackageArtifactTestCase):
         csv = [item for item in requirements if 'extra == "csv"' in item]
         self.assertEqual(len(forms), 2)
         self.assertEqual(len(csv), 2)
-        self.assertTrue(any(item.startswith('pandas==3.0.1') for item in csv))
-        self.assertTrue(any(item.startswith('numpy==2.4.2') for item in csv))
+        self.assertTrue(any(item.startswith('pandas==3.1.1') for item in csv))
+        self.assertTrue(any(item.startswith('numpy==2.5.4') for item in csv))
         python = self.fresh_python()
         self.install(python, self.wheel())
         result = self.probe(python, '''

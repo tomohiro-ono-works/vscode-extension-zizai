@@ -6,7 +6,6 @@ connectors:
     actions:
       import:
         label: 読み込み
-        generation: csv.read_csv
         fields:
           folder: {label: 入力フォルダー, type: folder, required: true}
           filename: {label: ファイル名, type: text, default: input.csv, required: true}
@@ -20,7 +19,6 @@ connectors:
           date_cleansing: {label: 日付処理, type: choice, choices: [有効, 無効], default: 有効, required: true}
       export:
         label: 書き出し
-        generation: csv.write_csv
         fields:
           folder: {label: 保存先, type: folder, required: true}
           filename: {label: ファイル名, type: text, default: output.csv, required: true}

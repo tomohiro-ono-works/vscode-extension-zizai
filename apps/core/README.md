@@ -1,6 +1,34 @@
 # ZizAI Python最小基盤
 
-## Notebookフォーム（TASK-010、開発版0.0.1.dev0）
+## CSVフォーム（TASK-011、開発版0.0.2.dev0）
+
+CSVの読込・書出と、外部コネクタを呼ぶPythonコード生成を追加しています。作業ブランチで関連44テストと実wheelからの読み書きを確認済みです。main反映・利用者のCSV操作確認は未完了です。
+
+CSV依存は2026-11-15に公開情報・PyPI／OSVで既知脆弱性を確認した最新安定版のpandas 3.1.1／NumPy 2.5.4へ更新しました。動作確認済みのVS Codeで、フォームの生成コードをセルへ入力・実行するCSV読込→書出のPlaywright確認も合格しています。これを利用者の手動確認や他環境の合格へ振り替えません。
+
+選択するPython環境へ`zizai_runtime-0.0.2.dev0-py3-none-any.whl[forms,csv]`を導入します。[CSV資産の正本](../../connectors/csv/)の`csv_connector.py`・`csv_definition.yaml`を任意の共通フォルダーの`csv/`へ一度配置します。CSV本体はwheelへ同梱せず、各分析プロジェクトへの複製も不要です。
+
+```python
+from zizai.connectors import configure_connectors
+configure_connectors("D:/shared/connectors")  # 実際の共通フォルダーを一度保存
+```
+
+通常Windowsの`%APPDATA%/ZizAI/settings.json`へ保存します。明示パス、環境変数`ZIZAI_CONNECTORS_DIR`、保存設定の順に参照します。`ZIZAI_CONFIG_FILE`で専用設定ファイルへ分離できます。`%form "D:/shared/connectors"`なら保存せず直接指定でき、従来のYAMLファイル指定も維持します。
+
+```python
+%load_ext zizai.forms
+%form
+```
+
+CSV・読み込みを選んで設定し、生成コードを通常のPythonセルへコピーして実行するとDataFrameを返します。書き出しでは入力変数・保存先・ファイル名を確認して実行します。既存ファイルは上書きされます。同じフォームでアクションを切り替えると有効な値を保持するため、ファイル名も確認してください。生成だけではモジュールimportやファイルの読み書きはしません。存在・権限等は実行時にPythonが確認します。
+
+外部YAMLは`module_file: csv_connector.py`で同じフォルダーのPythonモジュールを指定します。利用者が生成コードを実行したときだけ読み込みます。信頼するPythonファイルを配置し、更新後はカーネルを再起動してください。共通フォルダー未設定なら同梱定義の仮表示です。Excel等も仮表示を維持します。[CSVの未実行サンプル](../../examples/csv-form.ipynb)を参照してください。
+
+### キャッシュ
+
+`PYTHONPYCACHEPREFIX`をカーネル起動前に設定すると、キャッシュを指定先へ集約できます。未設定の場合はコネクタの初回読込時に`sys.pycache_prefix`を利用者PC側の`%LOCALAPPDATA%/ZizAI/pycache`へ設定します。既存の保存先指定は尊重します。Pythonプロセス全体へ適用され、共通フォルダーへのキャッシュ生成を避けます。CSV処理本体を高速化する機能ではありません。[採用方針・根拠](../../docs/features/requirements.md)を参照してください。
+
+## Notebookフォーム（TASK-010当時の記録、開発版0.0.1.dev0）
 
 独自VS Code拡張を使わず、Pythonコードセルの`%form`から出力欄へフォームを表示する実装を追加しています。**現在の生成結果は`{csv.importのコードを生成}`等の仮表示です。実際のCSV／Excel処理コードを生成・実行する機能はありません。** Python関連24テストと配布確認、専用Windows／VS Code InsidersでのPlaywright操作確認を実施済みです。利用者が実際のフォルダー選択・取消時の保持・仮表示の選択とコピーを確認しました。[検証範囲と制限](../../docs/research/notebook-ui/evidence/python-form-preview-20261112.json)を参照してください。
 

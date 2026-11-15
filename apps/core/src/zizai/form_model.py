@@ -60,5 +60,6 @@ class FormModel:
             if not valid_value(field, self.values[name], require=True):
                 raise ValueError(f'{field["label"]}を確認してください。')
         if not self.is_placeholder:
-            return generate_csv(self.actions[self.action]['generation'], self.values)
+            connector = self.definition['connectors'][self.connector]
+            return generate_csv(self.actions[self.action]['generation'], self.values, connector.get('module_path'))
         return '{' + self.definition['output_template'].format(connector=self.connector, action=self.action) + '}'

@@ -27,10 +27,12 @@ def _integer(values, name, minimum):
     return value
 
 
-def generate_csv(kind, values):
+def generate_csv(kind, values, module_path):
     """Return ordinary Python code; filesystem checks belong to execution."""
     if not isinstance(kind, str) or kind not in GENERATION_KINDS:
         raise ValueError('未対応のCSV生成種別です。')
+    if not isinstance(module_path, str) or not Path(module_path).is_absolute() or Path(module_path).suffix.lower() != '.py':
+        raise ValueError('コネクタモジュールの絶対パスが必要です。')
     folder = _text(values, 'folder', required=True)
     if not Path(folder).is_absolute():
         raise ValueError('フォルダーは絶対パスで指定してください。')
@@ -64,10 +66,15 @@ def generate_csv(kind, values):
     # Omit unchanged defaults to keep generated Notebook cells short.
     arguments.extend(ast.keyword(arg=name, value=ast.Constant(value))
                      for name, value in options.items() if value != defaults[name])
-    imported = '_zizai_' + function if variable == function else function
-    call = ast.Call(func=ast.Name(id=imported, ctx=ast.Load()), args=[], keywords=arguments)
-    body = [ast.ImportFrom(module='zizai.connectors.csv',
-            names=[ast.alias(name=function, asname=imported if imported != function else None)], level=0)]
+    loader = '_zizai_load_connector' if variable == 'load_connector' else 'load_connector'
+    handle = '_zizai_csv' if variable == 'csv' else 'csv'
+    call = ast.Call(func=ast.Attribute(value=ast.Name(id=handle, ctx=ast.Load()), attr=function, ctx=ast.Load()),
+                    args=[], keywords=arguments)
+    body = [ast.ImportFrom(module='zizai.connectors',
+            names=[ast.alias(name='load_connector', asname=loader if loader != 'load_connector' else None)], level=0),
+            ast.Assign(targets=[ast.Name(id=handle, ctx=ast.Store())],
+                       value=ast.Call(func=ast.Name(id=loader, ctx=ast.Load()),
+                                      args=[ast.Constant(module_path)], keywords=[]))]
     if reading:
         body.extend([ast.Assign(targets=[ast.Name(id=variable, ctx=ast.Store())], value=call),
                      ast.Expr(value=ast.Name(id=variable, ctx=ast.Load()))])

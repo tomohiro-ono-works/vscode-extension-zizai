@@ -24,7 +24,8 @@ PACKAGE_FILES = {
     "zizai/csv_codegen.py",
     "zizai/core/tabular.py",
     "zizai/core/type_registry.py",
-    "zizai/connectors/csv.py",
+    "zizai/core/connector_config.py",
+    "zizai/core/connector_loader.py",
 }
 
 

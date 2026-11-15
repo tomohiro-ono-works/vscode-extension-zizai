@@ -2,6 +2,7 @@
 import json
 from pathlib import Path
 import tempfile
+import sys
 import unittest
 
 import source_test_support
@@ -9,11 +10,14 @@ import source_test_support
 
 class CsvConnectorTests(unittest.TestCase):
     def setUp(self):
-        from zizai.connectors.csv import read_csv, write_csv
-        self.read_csv, self.write_csv = read_csv, write_csv
         self.temp = tempfile.TemporaryDirectory(prefix='zizai-csv-')
         self.addCleanup(self.temp.cleanup)
         self.directory = Path(self.temp.name)
+        self.addCleanup(setattr, sys, 'pycache_prefix', sys.pycache_prefix)
+        sys.pycache_prefix = str(self.directory / 'cache')
+        from zizai.connectors import load_connector
+        csv = load_connector(source_test_support.REPO / 'connectors/csv/csv_connector.py')
+        self.read_csv, self.write_csv = csv.read_csv, csv.write_csv
 
     def fixture(self, text, name='入力.csv', encoding='utf-8'):
         path = self.directory / name

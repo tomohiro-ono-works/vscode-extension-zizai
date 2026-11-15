@@ -4,6 +4,10 @@ VS CodeのNotebook入力支援と、VS Codeに依存しないPythonコネクタ�
 
 ## 現在の開発：Python Notebookフォーム
 
+[TASK-011 / #84](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/84)でCSVの読み書きと実コード生成を追加しています。外部共通フォルダーのコネクタを参照し、キャッシュは利用者PC側へ置きます。[導入手順](apps/core/README.md)と[CSVサンプル](examples/csv-form.ipynb)を参照してください。現在は作業ブランチでの確認段階で、main反映・利用者のCSV操作確認は未完了です。
+
+以下はTASK-010時点の成果です。
+
 [TASK-010 / #82](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/82)で、`%form`から横並びの連動フォームをセル出力欄へ表示する方式を実装しました。生成結果は現在`{csv.importのコードを生成}`等の仮表示です。[導入・YAML設定・現在の確認範囲](apps/core/README.md)と[未実行サンプル](examples/python-form.ipynb)を参照してください。独自VS Code拡張は必須とせず、従来の成果は以下の履歴として保持します。
 
 ## 設計の作り直し（2026-11-08）

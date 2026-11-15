@@ -15,12 +15,19 @@ assert(relative && !relative.startsWith("..") && !path.isAbsolute(relative), "Us
 
 async function main() {
   const resume = process.argv.includes("--resume");
+  const csvMode = process.argv.includes("--csv");
+  const stable = process.argv.includes("--stable");
+  const seedArgument = process.argv.find(value => value.startsWith("--extension-seed="));
+  const extensionSeed = seedArgument ? path.resolve(seedArgument.slice("--extension-seed=".length))
+    : path.join(process.env.USERPROFILE, ".vscode/extensions");
   if (!resume) await fs.mkdir(out);
   const workspace = path.join(out, "workspace");
   const profile = path.join(out, "profile");
   const extensions = path.join(out, "extensions");
-  const python = path.join(root, "results/task010-forms-env-20261112/Scripts/python.exe");
-  const vscode = path.join(root, "results/vscode-insiders-compare-20261108/app/Code - Insiders.exe");
+  const python = path.join(root, csvMode ? "results/task011-csv-env-20261115/Scripts/python.exe"
+    : "results/task010-forms-env-20261112/Scripts/python.exe");
+  const vscode = stable ? path.join(process.env.USERPROFILE, "AppData/Local/Programs/Microsoft VS Code/Code.exe")
+    : path.join(root, "results/vscode-insiders-compare-20261108/app/Code - Insiders.exe");
   if (!resume) {
     await fs.mkdir(workspace);
     await fs.mkdir(path.join(workspace, "sample-folder"));
@@ -29,7 +36,7 @@ async function main() {
     for (const name of ["ms-python.python-2026.10.0-win32-x64", "ms-python.debugpy-2026.6.0-win32-x64",
       "ms-python.vscode-python-envs-1.43.2026111101-win32-x64", "ms-toolsai.jupyter-2025.9.1-win32-x64",
       "ms-toolsai.jupyter-renderers-1.3.0"]) {
-      await fs.cp(path.join(process.env.USERPROFILE, ".vscode/extensions", name), path.join(extensions, name), { recursive: true });
+      await fs.cp(path.join(extensionSeed, name), path.join(extensions, name), { recursive: true });
     }
     const kernelDir = path.join(out, "jupyter/kernels/zizai-form-preview");
     await fs.mkdir(kernelDir, { recursive: true });
@@ -38,14 +45,25 @@ async function main() {
       display_name: "ZizAI Form Preview (isolated)", language: "python"
     }));
     await fs.writeFile(path.join(profile, "User/settings.json"), JSON.stringify({
-      "window.title": "ZizAI Python Form Sample ${activeEditorShort}",
+      "window.title": (csvMode ? (stable ? "ZizAI CSV Trial " : "ZizAI CSV Sample ") : "ZizAI Python Form Sample ") + "${activeEditorShort}",
       "window.restoreWindows": "none", "workbench.startupEditor": "none", "files.autoSave": "off",
       "extensions.autoUpdate": false, "extensions.autoCheckUpdates": false, "update.mode": "none",
       "telemetry.telemetryLevel": "off", "python.defaultInterpreterPath": python,
       "python.experiments.enabled": false, "jupyter.experiments.enabled": false,
       "workbench.editorAssociations": { "*.ipynb": "jupyter-notebook" }
     }, null, 2));
-    const sample = JSON.parse(await fs.readFile(path.join(root, "examples/python-form.ipynb"), "utf8"));
+    const sample = JSON.parse(await fs.readFile(path.join(root, csvMode ? "examples/csv-form.ipynb" : "examples/python-form.ipynb"), "utf8"));
+    if (csvMode) {
+      const data = path.join(workspace, "sample-folder");
+      await fs.writeFile(path.join(data, "input.csv"), "名前,個数\nりんご,1\nみかん,2\n", "utf8");
+      const shared = path.join(out, "shared-connectors");
+      await fs.cp(path.join(root, "connectors"), shared, { recursive: true,
+        filter: source => !source.includes("__pycache__") });
+      const definition = path.join(shared, "csv/csv_definition.yaml");
+      const text = await fs.readFile(definition, "utf8");
+      await fs.writeFile(definition, text.replaceAll("type: folder, required: true}",
+        "type: folder, required: true, default: " + JSON.stringify(data) + "}"));
+    }
     sample.metadata.kernelspec = { display_name: "ZizAI Form Preview (isolated)", language: "python", name: "zizai-form-preview" };
     const notebook = path.join(workspace, "python-form.ipynb");
     await fs.writeFile(notebook, JSON.stringify(sample, null, 2));
@@ -59,7 +77,7 @@ async function main() {
     }
     await fs.copyFile(notebook, path.join(backup, "python-form.ipynb"));
   }
-  const report = { startedAt: new Date().toISOString(), runnerPid: process.pid, out, notebook, python,
+  const report = { startedAt: new Date().toISOString(), mode: csvMode ? "csv" : "preview", stable, runnerPid: process.pid, out, notebook, python,
     playwright: requireProbe("playwright/package.json").version, nativeFolderSelection: "not_automated",
     userProfileModified: false, customExtensionInstalled: false, actions: [] };
   async function writeJson(file, value) {
@@ -71,6 +89,8 @@ async function main() {
   const env = { ...process.env, JUPYTER_PATH: path.join(out, "jupyter"),
     JUPYTER_CONFIG_DIR: path.join(out, "jupyter-config"), JUPYTER_RUNTIME_DIR: path.join(out, "jupyter-runtime"),
     JUPYTER_DATA_DIR: path.join(out, "jupyter-data"), IPYTHONDIR: path.join(out, "ipython") };
+  if (csvMode) Object.assign(env, { ZIZAI_CONNECTORS_DIR: path.join(out, "shared-connectors"),
+    ZIZAI_CONFIG_FILE: path.join(out, "settings.local.json"), PYTHONPYCACHEPREFIX: path.join(out, "pycache") });
   delete env.ELECTRON_RUN_AS_NODE; delete env.VSCODE_DEV; delete env.VSCODE_PORTABLE;
   const app = await electron.launch({ executablePath: vscode, env, timeout: 60000, args: [
     "--new-window", "--skip-welcome", "--skip-release-notes", "--disable-telemetry", "--disable-updates",
@@ -122,6 +142,7 @@ async function main() {
         else if (action.op === "click") await target.click({ timeout: 15000 });
         else if (action.op === "fill") await target.fill(action.value, { timeout: 15000 });
         else if (action.op === "press") await target.press(action.value, { timeout: 15000 });
+        else if (action.op === "insertText") { await target.click({ timeout: 15000 }); await page.keyboard.insertText(action.value); }
         else if (action.op === "select") await target.selectOption(action.value, { timeout: 15000 });
         else if (action.op === "text") response.results.push(await target.allTextContents());
         else if (action.op === "count") response.results.push(await target.count());

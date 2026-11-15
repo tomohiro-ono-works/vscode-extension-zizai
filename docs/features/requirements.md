@@ -1,48 +1,77 @@
 # ZizAI 要件仕様書
 
-## TASK-011：CSVとコネクタ共通の呼出し規約（2026-11-15、Jupyter確定・CSV詳細案は確認前）
+## TASK-011：CSVとコネクタ共通の呼出し規約（2026-11-15、承認済み・外部共通フォルダーへ配置）
 
-利用者が「優先度高いものから」「まずは、csvから」と指示し、その後「コネクタ共通部分や、エンジンとの接続の協約」を検討するよう依頼した。[TASK-011 / #84](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/84)で、CSVの2アクションから、フォームの実コード生成までを扱う。2026-11-15の利用者原文「jupyterカーネルでOkdesu」により、実行側はJupyter標準カーネルで確定した。以下の具体的API・共通部品の分け方・CSV挙動は担当者の設計案であり、確定済みのTASK-010仕様を未承認で上書きしない。
+利用者が「優先度高いものから」「まずは、csvから」と指示し、その後「コネクタ共通部分や、エンジンとの接続の協約」を検討するよう依頼した。[TASK-011 / #84](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/84)で、CSVの2アクションから、フォームの実コード生成までを扱う。2026-11-15の「jupyterカーネルでOkdesu」、続く詳細案・上書き動作の確認への「OKです。」により、Jupyter標準実行とCSVの機能維持案を承認済みとする。追加の配置指示は下記へ記録し、各分析プロジェクトへの同梱を前提にしない。
+
+### 外部共通フォルダー（利用者の追加指示）
+
+利用者原文「任意の外部フォルダの予定でした」「これはツールです。そもそもプロジェクトフォルダが、色々な場所で作られます。毎回、同梱するのは現実的ではないです。」に従い、コネクタはNotebook／分析プロジェクトから独立した共通フォルダーへ置く。ツールのPython環境へフォーム・共通処理・読込機能を導入し、共通フォルダーの場所を利用者設定へ一度保存して各Notebookから参照する。別のPython環境ではツール本体の導入が必要だが、分析プロジェクトごとにコネクタ一式を複製しない。
+
+```text
+任意の共通フォルダー/
+  csv/
+    csv_connector.py
+    csv_definition.yaml
+```
+
+`csv_connector.py`は読込・書出の実処理、`csv_definition.yaml`は表示名・入力欄・候補・生成種別と読込対象のモジュールファイル名を持つ。名称は利用者の「それでおねがいします」で確認済み。YAMLからコードや入力式を評価せず、フォーム表示・生成時は定義だけを読む。Pythonモジュールをimportするのは、利用者が生成コードを実行したときだけとする。全モジュールの自動import・新しいWorkflowEngineを追加しない。
+
+実装上の保存先案は、利用者別のツール設定JSONに共通フォルダーの絶対パスを保存し、明示した定義ファイル／フォルダーや環境変数で上書きできる形とする。自動で実利用者の設定や外部フォルダーを作成・変更せず、CLI/API検証では専用の設定・2つの架空分析プロジェクトから同じ共通フォルダーを参照する。外部CSV資産のリポジトリ内正本は`connectors/csv/`、共通ローダーの正本は既存`zizai.connectors`／`zizai.core`とする。配布wheelへ外部CSV本体を埋め込む方式にはせず、ツール設置時に共通フォルダーを一度用意する。
+
+### Pythonのキャッシュ保存先（利用者承認済み）
+
+利用者の「共通フォルダを汚したくないので、取得側のほうにキャッシュをおくのはできる？」に対し、利用者PC側へ集約する方式を説明し、「OKです。では、mdにそれも書いておいて」と承認を受けた。外部コネクタの`.py`は共通フォルダーから読み込み、Pythonが生成するバイトコードキャッシュ（`.pyc`）は利用者PC側へ保存する。共通フォルダーや各分析プロジェクトへ`__pycache__`を作る運用を前提にしない。
+
+- Python標準の`PYTHONPYCACHEPREFIX`を使用する。保存先はWindowsの`%LOCALAPPDATA%/ZizAI/pycache`を推奨し、実際のユーザーディレクトリーへ展開した絶対パスを設定する。利用者PC側で共用し、分析プロジェクトごとの設定・複製を不要にする。
+- 環境変数はJupyterカーネル起動前に適用し、既存カーネルには再起動後に反映する。この設定はコネクタだけでなく、そのPythonプロセスで標準の仕組みにより扱うバイトコードキャッシュ全体へ適用される。実利用者の環境設定は無断変更しない。
+- 目的は共通フォルダーへのキャッシュ書き込みを避けること。キャッシュの再利用で次回以降のimport時のコンパイルを省けるが、小さなコネクタでの速度改善は限定的で、CSV読込・集計等の処理本体を高速化するものではない。
+- 起動時の設定がない場合は、外部コネクタの初回読込前に`sys.pycache_prefix`を利用者PC側の標準保存先へ設定する。既存の保存先指定は尊重し、実利用者の環境変数や設定ファイルを自動変更しない。
+- 作業ブランチでローダー・生成処理を実装し、専用環境の実wheelから2つの架空分析プロジェクトを使って読み書きを確認した。キャッシュが指定した利用者側領域に生成され、外部共通フォルダーへ生成されないことを確認済み。関連テスト44件合格。利用者のCSV操作確認・main反映は未完了とする。
+
+根拠：[Python公式・キャッシュ保存先](https://docs.python.org/3.14/library/sys.html#sys.pycache_prefix)、[Python公式・コンパイル済みPythonファイルの効果](https://docs.python.org/3.14/tutorial/modules.html#compiled-python-files)。
 
 ### 推奨する最小の取り決め
 
 | 項目 | 担当者案 |
 | --- | --- |
-| ファイル構成 | 1コネクタ1ファイル。`apps/connectors/src/zizai/connectors/csv.py`へ読込・書出を集約する。全コネクタの1ファイル化は未承認 |
+| ファイル構成 | 外部共通フォルダーの`csv/csv_connector.py`へ読込・書出を集約し、同じ場所へ`csv_definition.yaml`を置く。共通の型・日付処理はツール側の共通部品へ分離する |
 | 呼出し | 通常のPython関数。生成コードからCSVの関数を直接呼ぶ。新たな共通`execute(action, params, context)`入口や継承を必須にしない |
 | 入力の受渡し | パス・設定は明示的な引数。書出対象はDataFrameそのものを渡す。フォーム上の変数名は生成コードの識別子として扱い、生成時にデータ取得・処理実行しない |
-| 戻り値 | 読込はDataFrame。書出は元コードと同じ`CSV保存完了: <保存先>`という文字列を維持する案とする。前の保存先パス案は未採用で、利用者承認済みの仕様変更ではない |
+| 戻り値 | 読込はDataFrame。書出は元コードと同じ`CSV保存完了: <保存先>`という文字列を維持する。前の保存先パス案は未採用 |
 | エラー | 通常のPython例外を呼出し元へ返し、Jupyter標準表示で確認する。独自の結果ラッパー・状態同期を必須にしない |
 | 実行 | フォームは設定からコードを生成・表示する。利用者がコピーし、通常のPythonセルを実行したときにCSV処理が動く。起動時や生成時には実行しない |
 | 入力確認 | 生成前は必須未入力・形式・識別子等を確認する。パス文字列を安全にコード化し、ファイル存在・権限等はPythonの実行側で確認する |
 | 共通部品 | 元CSVが依存するパス処理・型/schema・日付処理を確認し、複数コネクタで必要な処理を共通側へ置く。CSV固有の読込・書出はCSV側へ置き、フォーム・YAMLは既存の担当箇所で管理する |
 
-生成コードのイメージ（API名・引数・戻り値は設計案で、実装済みの例ではない）：
+外部モジュールを明示的に読み込む生成コードのイメージ（共有フォルダーのパスは設定値を使う）：
 
 ```python
-from zizai.connectors.csv import read_csv, write_csv
+from zizai.connectors import load_connector
 
-df = read_csv(file_path="C:/data/input.csv", encoding="utf-8")
-write_csv(data=df, output_path="C:/data/output.csv", encoding="utf-8-sig")
+csv = load_connector("D:/shared/connectors/csv/csv_connector.py")
+df = csv.read_csv(file_path="C:/data/input.csv", encoding="utf-8")
+csv.write_csv(data=df, output_path="C:/data/output.csv", encoding="utf-8-sig")
 ```
 
 ### 現行方式とエンジンの確認点
 
 Jupyter標準カーネルがPythonコードを実行することを確認済み。元`zizai`のWorkflowEngineはコネクタを遅延ロードし、`execute(action, params, context)`とcontext内の名前を介して処理を呼び出すが、今回は再導入しない。生成した通常PythonコードからCSV関数を呼ぶ。将来別の実行側を接続する場合も、同じPython関数の呼出しを基準にできる構成を提案する。
 
-### CSVの実装案と元コードとの差
+### CSVの実装と元コードとの差
 
-元コードの固定版は`tomohiro-ono-works/zizai@64a1be160c06f4a6924b2fcdb6d007f22b1fce78`。CSVの業務機能は次のとおり維持する案とする。旧contextやログcallbackを再導入する代わりに、Pythonの引数・戻り値・例外で受け渡す。
+元コードの固定版は`tomohiro-ono-works/zizai@64a1be160c06f4a6924b2fcdb6d007f22b1fce78`。承認済みのCSV機能を次のとおり移管した。旧contextやログcallbackを再導入する代わりに、Pythonの引数・戻り値・例外で受け渡す。作業ブランチでの成果であり、main反映・利用者操作確認は未完了。
 
 - `read_csv(file_path, *, encoding="utf-8", delimiter=",", header_row=1, data_start_row=2, chunk_size=50000, schema=None, date_cleansing=True)`：DataFrameを返す。行番号は1始まり。chunk_size=0で一括読込。区切りの`\\t`／`tab`／`TAB`、列選択・列名と型のschema適用、日付変換、空ファイル時の空DataFrameを維持する。
 - `write_csv(data, output_path, *, encoding="utf-8-sig", delimiter=",", schema=None)`：DataFrame（元コードが扱えるlist／dictも含む）を受け、indexなしで書き出す。空の表は既存どおりエラー。既存ファイルは元コードと同様に上書きする。保存完了の文字列を返す。
 - 関数へ直接渡す相対パスはカーネルcwd基準。フォームのフォルダーは既存どおり絶対パス。旧workspace／flowディレクトリーの暗黙探索は使わない。フォームはフォルダーとファイル名からパスを組み立て、書出の拡張子省略時の`.csv`補完を維持する。
-- 読込・書出を`zizai.connectors.csv`の1ファイルへ置く。型／schema／日付処理は`zizai.core.tabular`と`zizai.core.type_registry`へ出所付きで移管する案。旧BaseConnectorの継承・抽象execute・Engineのlogger/contextを新しい公開契約にしない。
+- 読込・書出を外部の`csv_connector.py`へ置く。型／schema／日付処理は`zizai.core.tabular`と`zizai.core.type_registry`へ出所付きで移管する。旧BaseConnectorの継承・抽象execute・Engineのlogger/contextを新しい公開契約にしない。
 - 生成コードは必要なCSV関数のimportと呼出し。読込の出力変数・書出の入力変数は単一の有効なPython識別子とし、フォームで評価しない。パス・文字列・設定値は安全にコード化する。フォームへ読込ファイル名、行指定、chunk_size、schema、日付処理等を追加し、旧CSVが持つ機能を未説明のまま削らない。
 - YAMLは既存の候補・項目定義を維持し、CSVの生成種別を識別する任意設定を追加する案。既存のCSV選択ID`import`／`export`は維持し、実装するPython関数`read_csv`／`write_csv`へ対応させる。生成種別のないアクションは従来どおり仮表示とし、CSV実装だけでExcel等まで対応済みにしない。
-- 既存パッケージの基本importにpandasを必須とせず、CSV用extraへ分離する。元宣言と同じpandas 3.0.1／NumPy 2.4.2を候補とする。公式の運営体制とPython 3.14向けの配布宣言は[公式pandas](https://pandas.pydata.org/about/)・[公式NumPy](https://numpy.org/about/)・[pandasの版情報](https://pypi.org/project/pandas/3.0.1/)・[NumPyの版情報](https://pypi.org/project/numpy/2.4.2/)で確認済み。依存の採用と導入結果は区別し、現時点では新規導入・実装未着手。
+- 既存パッケージの基本importにpandasを必須とせず、CSV用extraへ分離する。初回は元宣言と同じpandas 3.0.1／NumPy 2.4.2で専用環境の互換確認を行った。その後、利用者原文「OKです。ライブラリのバージョンは安全なもののなかで最新でおねがい」により、動作確認済みのPython環境へのCSV依存追加と最新版の選定を承認。2026-11-15時点の最新安定版[pandas 3.1.1](https://pypi.org/project/pandas/3.1.1/)・[NumPy 2.5.4](https://pypi.org/project/numpy/2.5.4/)をCSV extraへ固定した。Python 3.14／Windows向けの非撤回wheelと公式の配布元を照合し、PyPI・OSV APIで両版に該当する既知脆弱性が返らないことを確認した。絶対的な安全保証とは扱わない。
+- 利用者が以前操作したTASK-010専用Python環境へ上記2ライブラリだけを追加し、既存パッケージの版変更がないこととpip checkを確認した。最新版で関連44テストが合格。以前動いたVS Codeの比較用Notebookで、新CSVフォームから生成したコードをPlaywrightでコードセルへ入力・実行し、架空CSVの読込と書出、2行の値の一致・入力ファイルの保持を確認した。書出はフォーム設定反映後に当該段階だけを再開して合格した。利用者のCSV操作確認とmain反映は未完了。詳細は[TASK-011](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/84)へ記録する。
 
-上記の上書き・機能維持・受渡しを含むCSV詳細案の確認後に実装する。元の型体系や共通部品は出所・差分・検証を伴って移管し、未確認を採用・合格へ読み替えない。
+上記の上書き・機能維持・受渡しは承認済み。元の型体系や共通部品は出所・差分・検証を伴って移管し、外部共通フォルダーへの変更後も再確認する。未確認を採用・合格へ読み替えない。
 
 ## 現在の改修方針（2026-11-12、TASK-010）
 

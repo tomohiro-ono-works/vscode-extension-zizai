@@ -4,6 +4,7 @@ from pathlib import Path
 import re
 from string import Formatter
 from .csv_codegen import GENERATION_KINDS
+from .core.connector_config import get_connector_directory
 
 MAX_BYTES = 1024 * 1024
 ID = re.compile(r'[A-Za-z_][A-Za-z0-9_]*\Z')
@@ -80,8 +81,13 @@ def parse_definition(text):
             raise ValueError('コネクタIDが不正です。')
         _mapping(connector, 'コネクタ')
         _label(connector.get('label'))
-        if set(connector) - {'label', 'actions'}:
+        if set(connector) - {'label', 'actions', 'module_file'}:
             raise ValueError('コネクタ定義に未対応の項目があります。')
+        if 'module_file' in connector:
+            module_file = connector['module_file']
+            if (not isinstance(module_file, str) or '/' in module_file or '\\' in module_file
+                    or Path(module_file).suffix.lower() != '.py' or Path(module_file).name != module_file):
+                raise ValueError('module_fileは同じフォルダー内の.pyファイル名にしてください。')
         for action_id, action in _mapping(connector.get('actions'), 'actions').items():
             if not isinstance(action_id, str) or not ID.fullmatch(action_id):
                 raise ValueError('アクションIDが不正です。')
@@ -128,12 +134,42 @@ def parse_definition(text):
     return data
 
 
-def load_definition(path=None):
-    if path is None:
-        raw = files('zizai').joinpath('forms.yaml').read_bytes()
-    else:
-        with Path(path).expanduser().open('rb') as stream:
-            raw = stream.read(MAX_BYTES + 1)
+def _load_file(path):
+    path = Path(path).expanduser().resolve()
+    with path.open('rb') as stream:
+        raw = stream.read(MAX_BYTES + 1)
     if len(raw) > MAX_BYTES:
         raise ValueError('設定ファイルは1MiB以下にしてください。')
-    return parse_definition(raw.decode('utf-8'))
+    data = parse_definition(raw.decode('utf-8'))
+    for connector in data['connectors'].values():
+        if 'module_file' in connector:
+            module = (path.parent / connector['module_file']).resolve()
+            if module.parent != path.parent:
+                raise ValueError('モジュールは定義と同じフォルダー内に置いてください。')
+            connector['module_path'] = str(module)
+        elif any(action.get('generation') for action in connector['actions'].values()):
+            raise ValueError('実コード生成にはmodule_fileが必要です。')
+    return data
+
+
+def load_definition(path=None):
+    selected = Path(path).expanduser() if path is not None else get_connector_directory()
+    if selected is not None and not selected.is_dir():
+        return _load_file(selected)
+    data = parse_definition(files('zizai').joinpath('forms.yaml').read_text(encoding='utf-8'))
+    if selected is None:
+        return data
+    definitions = sorted(selected.glob('*/*_definition.yaml'))
+    if not definitions:
+        raise ValueError('共通フォルダーにコネクタの*_definition.yamlがありません。')
+    seen = set()
+    for definition in definitions:
+        if not definition.resolve().is_relative_to(selected.resolve()):
+            raise ValueError('定義は共通フォルダー内に置いてください。')
+        external = _load_file(definition)
+        for connector_id, connector in external['connectors'].items():
+            if connector_id in seen:
+                raise ValueError('外部定義のコネクタIDが重複しています。')
+            seen.add(connector_id)
+            data['connectors'][connector_id] = connector
+    return data

@@ -3,6 +3,7 @@ import ast
 import copy
 from pathlib import Path
 import tempfile
+import sys
 import unittest
 from unittest.mock import patch
 
@@ -14,10 +15,13 @@ from zizai.form_model import FormModel
 class CsvCodegenTests(unittest.TestCase):
     def setUp(self):
         from zizai.csv_codegen import generate_csv
-        self.generate = generate_csv
+        self.module_path = str(source_test_support.REPO / 'connectors/csv/csv_connector.py')
+        self.generate = lambda kind, values: generate_csv(kind, values, self.module_path)
         self.temp = tempfile.TemporaryDirectory(prefix='zizai-code-')
         self.addCleanup(self.temp.cleanup)
         self.directory = Path(self.temp.name)
+        self.addCleanup(setattr, sys, 'pycache_prefix', sys.pycache_prefix)
+        sys.pycache_prefix = str(self.directory / 'cache')
         self.values = dict(folder=str(self.directory), filename='入力.csv', encoding='utf-8',
             delimiter=',', header_row=1, data_start_row=2, chunk_size=50000,
             schema='', date_cleansing='有効', output_variable='df', input_variable='df')
@@ -40,7 +44,7 @@ class CsvCodegenTests(unittest.TestCase):
         output = self.directory / '出力.csv'
         self.assertFalse(output.exists())
         frame = pd.DataFrame({'名前': ['東京'], '数': [1]})
-        for variable in ('売上', 'write_csv'):
+        for variable in ('売上', 'write_csv', 'csv', 'load_connector', '_zizai_csv', '_zizai_load_connector'):
             with self.subTest(variable=variable):
                 self.values['input_variable'] = variable
                 code = self.generate('csv.write_csv', self.values)
@@ -51,7 +55,8 @@ class CsvCodegenTests(unittest.TestCase):
         self.values.update(folder=str(self.directory / "日本語'\"; injected() #"),
                            filename="値'\n.csv", schema='[]\n# not code')
         code = self.generate('csv.read_csv', self.values)
-        with patch('zizai.connectors.csv.read_csv', return_value='safe') as read:
+        from zizai.connectors import load_connector
+        with patch.object(load_connector(self.module_path), 'read_csv', return_value='safe') as read:
             namespace = {}
             exec(compile(code, '<generated-csv>', 'exec'), namespace)
         self.assertEqual(namespace['df'], 'safe')
@@ -69,13 +74,13 @@ class CsvCodegenTests(unittest.TestCase):
                 self.generate('csv.read_csv', values)
 
     def test_yaml_routes_csv_to_real_code_and_leaves_other_actions_as_placeholder(self):
-        definition = load_definition()
+        definition = load_definition(source_test_support.REPO / 'connectors')
         form = FormModel(definition)
         form.set_connector('csv')
         form.set_action('import')
         form.set_value('folder', str(self.directory))
         form.set_value('filename', '入力.csv')
-        self.assertIn('from zizai.connectors.csv import read_csv', form.generate())
+        self.assertIn('from zizai.connectors import load_connector', form.generate())
         self.assertFalse(form.is_placeholder)
         form.set_action('export')
         self.assertIn('write_csv', form.generate())
@@ -85,7 +90,8 @@ class CsvCodegenTests(unittest.TestCase):
 
     def test_yaml_cannot_choose_arbitrary_python_generator(self):
         import yaml
-        definition = copy.deepcopy(load_definition())
+        definition = copy.deepcopy(load_definition(source_test_support.REPO / 'connectors'))
+        definition['connectors']['csv'].pop('module_path')
         for invalid in ('os.system', ['csv.read_csv'], None):
             definition['connectors']['csv']['actions']['import']['generation'] = invalid
             with self.subTest(invalid=invalid), self.assertRaises(ValueError):

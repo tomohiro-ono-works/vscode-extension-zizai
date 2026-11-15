@@ -12,7 +12,7 @@ dependencies = []
 
 [project.optional-dependencies]
 forms = ["ipywidgets==8.1.9", "PyYAML==6.0.3"]
-csv = ["pandas==3.0.1", "numpy==2.4.2"]
+csv = ["pandas==3.1.1", "numpy==2.5.4"]
 
 [tool.setuptools]
 packages = ["zizai", "zizai.core", "zizai.connectors"]

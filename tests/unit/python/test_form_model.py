@@ -11,7 +11,7 @@ from zizai.form_model import FormModel
 
 class FormModelTests(unittest.TestCase):
     def setUp(self):
-        self.definition = load_definition()
+        self.definition = load_definition(Path(__file__).resolve().parents[3] / 'connectors')
         self.model = FormModel(self.definition)
 
     def choose(self, connector='csv', action='export'):

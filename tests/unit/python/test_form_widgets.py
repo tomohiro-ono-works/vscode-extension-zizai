@@ -11,7 +11,7 @@ from zizai.forms import create_form, load_ipython_extension
 
 class FormWidgetTests(unittest.TestCase):
     def make_form(self, picker=lambda current: 'C:/選択先'):
-        form = create_form(folder_picker=picker)
+        form = create_form(Path(__file__).resolve().parents[3] / 'connectors', folder_picker=picker)
         self.addCleanup(form.close)
         return form
 
@@ -27,7 +27,7 @@ class FormWidgetTests(unittest.TestCase):
         form.folder_buttons['folder'].click()
         form.generate_button.click()
         self.assertEqual(form.model.values['folder'], 'C:/選択先')
-        self.assertIn('from zizai.connectors.csv import read_csv', form.result)
+        self.assertIn('from zizai.connectors import load_connector', form.result)
         self.assertIn('生成コード', form.generated.value)
         self.assertNotIn('仮表示', form.generated.value)
         self.assertEqual(form.field_widgets['encoding'].value, 'utf-8')

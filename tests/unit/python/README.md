@@ -1,6 +1,10 @@
 # Pythonパッケージの独立確認
 
-## TASK-010フォームのCLI確認
+## TASK-011 CSV・外部コネクタとフォームのCLI確認
+
+CSV用extraも導入した専用環境で、以下の同じunittestコマンドを使います。現在44件合格です。`test_csv_connector.py`は合意したCSV処理、`test_csv_codegen.py`は安全な生成・生成コードの実行、`test_external_connectors.py`は外部YAML読込・生成時の非実行・利用者側キャッシュ・異なる2つのcwdからの共通設定参照を確認します。CSVの本体・定義は外部資産で、wheelには共通設定・ローダー等だけを収録します。依存宣言はforms extraが2件、csv extraが2件の計4件で、基本importは追加SDKを要求しません。実ブラウザー・ネイティブダイアログの確認とは区別します。
+
+## TASK-010フォームのCLI確認（当時の記録）
 
 フォーム用extraを導入した専用Python環境から、次を実行します。
 
