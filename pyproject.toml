@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "zizai-runtime"
-version = "0.0.2.dev0"
+version = "0.0.3.dev0"
 description = "Python package foundation for ZizAI notebooks"
 readme = "apps/core/README.md"
 requires-python = ">=3.12"

@@ -44,7 +44,7 @@ class CsvCodegenTests(unittest.TestCase):
         output = self.directory / '出力.csv'
         self.assertFalse(output.exists())
         frame = pd.DataFrame({'名前': ['東京'], '数': [1]})
-        for variable in ('売上', 'write_csv', 'csv', 'load_connector', '_zizai_csv', '_zizai_load_connector'):
+        for variable in ('売上', 'csv', 'csv_connector', '_zizai_csv_connector'):
             with self.subTest(variable=variable):
                 self.values['input_variable'] = variable
                 code = self.generate('csv.write_csv', self.values)
@@ -55,8 +55,8 @@ class CsvCodegenTests(unittest.TestCase):
         self.values.update(folder=str(self.directory / "日本語'\"; injected() #"),
                            filename="値'\n.csv", schema='[]\n# not code')
         code = self.generate('csv.read_csv', self.values)
-        from zizai.connectors import load_connector
-        with patch.object(load_connector(self.module_path), 'read_csv', return_value='safe') as read:
+        import csv_connector
+        with patch.object(csv_connector, 'read_csv', return_value='safe') as read:
             namespace = {}
             exec(compile(code, '<generated-csv>', 'exec'), namespace)
         self.assertEqual(namespace['df'], 'safe')
@@ -80,7 +80,7 @@ class CsvCodegenTests(unittest.TestCase):
         form.set_action('import')
         form.set_value('folder', str(self.directory))
         form.set_value('filename', '入力.csv')
-        self.assertIn('from zizai.connectors import load_connector', form.generate())
+        self.assertIn('import csv_connector', form.generate())
         self.assertFalse(form.is_placeholder)
         form.set_action('export')
         self.assertIn('write_csv', form.generate())

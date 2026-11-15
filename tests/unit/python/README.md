@@ -2,7 +2,9 @@
 
 ## TASK-011 CSV・外部コネクタとフォームのCLI確認
 
-CSV用extraも導入した専用環境で、以下の同じunittestコマンドを使います。現在44件合格です。`test_csv_connector.py`は合意したCSV処理、`test_csv_codegen.py`は安全な生成・生成コードの実行、`test_external_connectors.py`は外部YAML読込・生成時の非実行・利用者側キャッシュ・異なる2つのcwdからの共通設定参照を確認します。CSVの本体・定義は外部資産で、wheelには共通設定・ローダー等だけを収録します。依存宣言はforms extraが2件、csv extraが2件の計4件で、基本importは追加SDKを要求しません。実ブラウザー・ネイティブダイアログの確認とは区別します。
+CSV用extraも導入した専用環境で、以下の同じunittestコマンドを使います。通常importへの変更後は45件合格です。`test_csv_connector.py`は合意したCSV処理、`test_csv_codegen.py`は安全な生成・生成コードの実行、`test_external_connectors.py`は外部YAML読込・生成時の非実行、`test_connector_import_registration.py`は標準import・利用者側キャッシュ・2つのcwd・移動時の再登録・既存設定の保護を確認します。旧専用load関数の確認は新しい登録・importの確認へ置き換えています。CSVの本体・定義は外部資産で、wheelには共通設定・フォーム等を収録します。依存宣言はforms extraが2件、csv extraが2件の計4件で、基本importは追加SDKを要求しません。実ブラウザー・ネイティブダイアログの確認とは区別します。
+
+通常import版の実操作確認は`tests/e2e/csv-form-hands-on.cjs`を使用します。既存の合意済みPlaywrightセッションの記録とresults配下の証跡先を引数に渡し、`prepare`で架空CSV・専用Notebookの新規作成と表示、`run`でフォーム生成からコードのキー入力・標準セル実行までを確認します。既存Notebookや別のカーネルを推測で操作せず、対象ファイルを識別して確認します。利用者手動確認の代替ではありません。
 
 ## TASK-010フォームのCLI確認（当時の記録）
 

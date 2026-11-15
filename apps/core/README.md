@@ -1,19 +1,21 @@
 # ZizAI Python最小基盤
 
-## CSVフォーム（TASK-011、開発版0.0.2.dev0）
+## CSVフォーム（TASK-011、開発版0.0.3.dev0）
 
-CSVの読込・書出と、外部コネクタを呼ぶPythonコード生成を追加しています。作業ブランチで関連44テストと実wheelからの読み書きを確認済みです。main反映・利用者のCSV操作確認は未完了です。
+CSVの読込・書出と、通常の`import csv_connector`を使うコード生成を追加しています。関連45テスト、実wheelの導入・登録と2つのcwdからの通常import、同じVS Codeプロファイルでフォーム→生成コードの入力・実行→CSV読込・書出が合格しました。利用者の手動確認・main反映は未完了です。
 
 CSV依存は2026-11-15に公開情報・PyPI／OSVで既知脆弱性を確認した最新安定版のpandas 3.1.1／NumPy 2.5.4へ更新しました。動作確認済みのVS Codeで、フォームの生成コードをセルへ入力・実行するCSV読込→書出のPlaywright確認も合格しています。これを利用者の手動確認や他環境の合格へ振り替えません。
 
-選択するPython環境へ`zizai_runtime-0.0.2.dev0-py3-none-any.whl[forms,csv]`を導入します。[CSV資産の正本](../../connectors/csv/)の`csv_connector.py`・`csv_definition.yaml`を任意の共通フォルダーの`csv/`へ一度配置します。CSV本体はwheelへ同梱せず、各分析プロジェクトへの複製も不要です。
+選択するPython環境へ`zizai_runtime-0.0.3.dev0-py3-none-any.whl[forms,csv]`を導入します。[CSV資産の正本](../../connectors/csv/)の`csv_connector.py`・`csv_definition.yaml`を任意の共通フォルダーの`csv/`へ一度配置します。CSV本体はwheelへ同梱せず、各分析プロジェクトへの複製も不要です。
 
 ```python
 from zizai.connectors import configure_connectors
-configure_connectors("D:/shared/connectors")  # 実際の共通フォルダーを一度保存
+configure_connectors("D:/shared/connectors")  # このPython環境へ一度登録
 ```
 
-通常Windowsの`%APPDATA%/ZizAI/settings.json`へ保存します。明示パス、環境変数`ZIZAI_CONNECTORS_DIR`、保存設定の順に参照します。`ZIZAI_CONFIG_FILE`で専用設定ファイルへ分離できます。`%form "D:/shared/connectors"`なら保存せず直接指定でき、従来のYAMLファイル指定も維持します。
+選択したPython環境の`site-packages/zizai-connectors.json`と`zizai-connectors.pth`へ保存します。Notebookごとの登録ではありません。登録後に新しいカーネルを使うと、初期化コードなしで通常importできます。共有フォルダーを移動したら再登録し、Python環境を変えたらその環境でも登録します。初回設定にはPython環境への書込権限が必要です。既存の同名.pthがZizAI管理でなければ変更しません。明示パス、`ZIZAI_CONNECTORS_DIR`、保存設定の順でフォームの定義を参照し、`ZIZAI_CONFIG_FILE`による設定分離・従来のYAML直接指定も維持します。旧`%APPDATA%/ZizAI/settings.json`は環境内設定がない場合のみ参照します。
+
+定義ファイルや`ZIZAI_CONNECTORS_DIR`を切り替えても、Pythonの検索先は自動変更しません。別の共有元のコードを使うときは、そのPython環境で再登録してください。標準importの名前衝突や読み込み済みモジュールの扱いは、Pythonの通常の動作に従います。
 
 ```python
 %load_ext zizai.forms
@@ -22,11 +24,11 @@ configure_connectors("D:/shared/connectors")  # 実際の共通フォルダー�
 
 CSV・読み込みを選んで設定し、生成コードを通常のPythonセルへコピーして実行するとDataFrameを返します。書き出しでは入力変数・保存先・ファイル名を確認して実行します。既存ファイルは上書きされます。同じフォームでアクションを切り替えると有効な値を保持するため、ファイル名も確認してください。生成だけではモジュールimportやファイルの読み書きはしません。存在・権限等は実行時にPythonが確認します。
 
-外部YAMLは`module_file: csv_connector.py`で同じフォルダーのPythonモジュールを指定します。利用者が生成コードを実行したときだけ読み込みます。信頼するPythonファイルを配置し、更新後はカーネルを再起動してください。共通フォルダー未設定なら同梱定義の仮表示です。Excel等も仮表示を維持します。[CSVの未実行サンプル](../../examples/csv-form.ipynb)を参照してください。
+外部YAMLは`module_file: csv_connector.py`で同じフォルダーのPythonモジュールを指定します。生成コードは通常の`import csv_connector`です。登録・フォーム表示・生成だけでコネクタをimportせず、利用者が生成コードを実行したときに読み込みます。共有元の同名モジュールに注意し、更新後はカーネルを再起動してください。共通フォルダー未設定なら同梱定義の仮表示です。Excel等も仮表示を維持します。[CSVの未実行サンプル](../../examples/csv-form.ipynb)を参照してください。
 
 ### キャッシュ
 
-`PYTHONPYCACHEPREFIX`をカーネル起動前に設定すると、キャッシュを指定先へ集約できます。未設定の場合はコネクタの初回読込時に`sys.pycache_prefix`を利用者PC側の`%LOCALAPPDATA%/ZizAI/pycache`へ設定します。既存の保存先指定は尊重します。Pythonプロセス全体へ適用され、共通フォルダーへのキャッシュ生成を避けます。CSV処理本体を高速化する機能ではありません。[採用方針・根拠](../../docs/features/requirements.md)を参照してください。
+`PYTHONPYCACHEPREFIX`をカーネル起動前に設定すると、キャッシュを指定先へ集約できます。初回登録で作る`.pth`の最小起動設定は、未指定の`sys.pycache_prefix`だけを利用者PC側の`%LOCALAPPDATA%/ZizAI/pycache`へ設定します。既存の指定は尊重します。登録したPython環境のプロセス全体へ適用され、共通フォルダーへのキャッシュ生成を避けます。コネクタ・業務コードは起動時に実行しません。CSV処理本体を高速化する機能ではありません。[採用方針・根拠](../../docs/features/requirements.md)を参照してください。
 
 ## Notebookフォーム（TASK-010当時の記録、開発版0.0.1.dev0）
 

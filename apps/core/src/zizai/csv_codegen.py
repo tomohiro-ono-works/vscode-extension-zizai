@@ -33,6 +33,9 @@ def generate_csv(kind, values, module_path):
         raise ValueError('未対応のCSV生成種別です。')
     if not isinstance(module_path, str) or not Path(module_path).is_absolute() or Path(module_path).suffix.lower() != '.py':
         raise ValueError('コネクタモジュールの絶対パスが必要です。')
+    module_name = Path(module_path).stem
+    if not module_name.isidentifier() or keyword.iskeyword(module_name):
+        raise ValueError('コネクタのファイル名はPythonのモジュール名にしてください。')
     folder = _text(values, 'folder', required=True)
     if not Path(folder).is_absolute():
         raise ValueError('フォルダーは絶対パスで指定してください。')
@@ -66,15 +69,10 @@ def generate_csv(kind, values, module_path):
     # Omit unchanged defaults to keep generated Notebook cells short.
     arguments.extend(ast.keyword(arg=name, value=ast.Constant(value))
                      for name, value in options.items() if value != defaults[name])
-    loader = '_zizai_load_connector' if variable == 'load_connector' else 'load_connector'
-    handle = '_zizai_csv' if variable == 'csv' else 'csv'
+    handle = '_zizai_' + module_name if variable == module_name else module_name
     call = ast.Call(func=ast.Attribute(value=ast.Name(id=handle, ctx=ast.Load()), attr=function, ctx=ast.Load()),
                     args=[], keywords=arguments)
-    body = [ast.ImportFrom(module='zizai.connectors',
-            names=[ast.alias(name='load_connector', asname=loader if loader != 'load_connector' else None)], level=0),
-            ast.Assign(targets=[ast.Name(id=handle, ctx=ast.Store())],
-                       value=ast.Call(func=ast.Name(id=loader, ctx=ast.Load()),
-                                      args=[ast.Constant(module_path)], keywords=[]))]
+    body = [ast.Import(names=[ast.alias(name=module_name, asname=handle if handle != module_name else None)])]
     if reading:
         body.extend([ast.Assign(targets=[ast.Name(id=variable, ctx=ast.Store())], value=call),
                      ast.Expr(value=ast.Name(id=variable, ctx=ast.Load()))])

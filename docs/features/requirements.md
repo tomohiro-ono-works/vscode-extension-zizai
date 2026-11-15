@@ -1,6 +1,17 @@
 # ZizAI 要件仕様書
 
-## TASK-011：CSVとコネクタ共通の呼出し規約（2026-11-15、承認済み・外部共通フォルダーへ配置）
+## TASK-011：CSVとコネクタ共通の呼出し規約（2026-11-16、通常importへの変更承認済み）
+
+### 通常のimportへ変更するメモ（2026-11-16）
+
+利用者原文「一般的なようにimportでできるようにしてほしいです」と、初回登録・フォルダー移動・名前衝突・カーネル再起動について説明した後の「OKです。ではそのことをメモに記載してください。それでは、それが環境したらサンプルを見たいので表示してほしいです。」を受領。生成コードは`import csv_connector`と通常の関数呼出しへ変更する。`load_connector`やコネクタ本体の絶対パスは生成コードから外す。以前の方式の実装・検証結果は履歴であり、この変更の完了・検証済みを意味しない。
+
+- 共通フォルダーは各分析プロジェクトへ複製せず、使うPython環境ごとに一度登録する。未登録の環境では通常の`ModuleNotFoundError`になる。Notebookごとの`sys.path`操作やwheelの一時読込は、利用者向けサンプルに含めない。
+- 実装上の登録先は選択したPython環境の`site-packages`内の専用設定JSONと標準の`.pth`とする。`.pth`は共通フォルダーとコネクタのサブフォルダーをPythonの検索先へ追加する。登録・フォーム表示・コード生成ではコネクタをimportせず、業務処理を実行しない。Windows全体の環境変数や他のPython環境は変更しない。
+- `.pth`の起動設定は、未指定の`sys.pycache_prefix`を利用者PC側のキャッシュへ向ける最小限の設定も行う。これは登録したPython環境の各起動時に適用する。既存の`PYTHONPYCACHEPREFIX`指定は尊重し、共有フォルダーへ`__pycache__`を作る運用へ戻さない。
+- 絶対パスは初回の環境設定へ集約する。共有フォルダーの移動・別PCへの移行では再登録するが、生成コードは変えない。登録の反映・コネクタ更新時は必要に応じカーネルを再起動する。
+- モジュール名の衝突に注意する。標準の`csv`と区別して`csv_connector`を使う。既存の同名モジュールを確認なく上書きしない。CSVデータの入力・出力パスは、コネクタ本体の検索先と別の設定である。
+- 対象はこの切替に必要な共通登録、生成、関連確認、既存資料とサンプル。関連45テスト、wheel／sdistと実導入、異なる2つのcwdからの通常import、共有側にキャッシュが作られないことを確認した。以前動いた同じVS Codeプロファイルを開き直し、`csv-standard-import.ipynb`でフォーム表示→通常importのコード生成→読込→書出が合格。利用者の手動確認・main反映は未完了。
 
 利用者が「優先度高いものから」「まずは、csvから」と指示し、その後「コネクタ共通部分や、エンジンとの接続の協約」を検討するよう依頼した。[TASK-011 / #84](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/84)で、CSVの2アクションから、フォームの実コード生成までを扱う。2026-11-15の「jupyterカーネルでOkdesu」、続く詳細案・上書き動作の確認への「OKです。」により、Jupyter標準実行とCSVの機能維持案を承認済みとする。追加の配置指示は下記へ記録し、各分析プロジェクトへの同梱を前提にしない。
 
@@ -17,7 +28,7 @@
 
 `csv_connector.py`は読込・書出の実処理、`csv_definition.yaml`は表示名・入力欄・候補・生成種別と読込対象のモジュールファイル名を持つ。名称は利用者の「それでおねがいします」で確認済み。YAMLからコードや入力式を評価せず、フォーム表示・生成時は定義だけを読む。Pythonモジュールをimportするのは、利用者が生成コードを実行したときだけとする。全モジュールの自動import・新しいWorkflowEngineを追加しない。
 
-実装上の保存先案は、利用者別のツール設定JSONに共通フォルダーの絶対パスを保存し、明示した定義ファイル／フォルダーや環境変数で上書きできる形とする。自動で実利用者の設定や外部フォルダーを作成・変更せず、CLI/API検証では専用の設定・2つの架空分析プロジェクトから同じ共通フォルダーを参照する。外部CSV資産のリポジトリ内正本は`connectors/csv/`、共通ローダーの正本は既存`zizai.connectors`／`zizai.core`とする。配布wheelへ外部CSV本体を埋め込む方式にはせず、ツール設置時に共通フォルダーを一度用意する。
+保存先は、登録を実行したPython環境の`site-packages/zizai-connectors.json`と`zizai-connectors.pth`とする。明示した定義ファイル／フォルダー、環境変数、設定JSONの順に参照する。旧利用者別設定は新しい環境内設定がない場合に読み取る互換入口として残し、無断で書き換えない。外部CSV資産のリポジトリ内正本は`connectors/csv/`、登録処理の正本は既存`zizai.connectors`／`zizai.core.connector_config`とする。配布wheelへ外部CSV本体を埋め込まず、ツール設置時に共通フォルダーを一度用意する。
 
 ### Pythonのキャッシュ保存先（利用者承認済み）
 
@@ -26,8 +37,8 @@
 - Python標準の`PYTHONPYCACHEPREFIX`を使用する。保存先はWindowsの`%LOCALAPPDATA%/ZizAI/pycache`を推奨し、実際のユーザーディレクトリーへ展開した絶対パスを設定する。利用者PC側で共用し、分析プロジェクトごとの設定・複製を不要にする。
 - 環境変数はJupyterカーネル起動前に適用し、既存カーネルには再起動後に反映する。この設定はコネクタだけでなく、そのPythonプロセスで標準の仕組みにより扱うバイトコードキャッシュ全体へ適用される。実利用者の環境設定は無断変更しない。
 - 目的は共通フォルダーへのキャッシュ書き込みを避けること。キャッシュの再利用で次回以降のimport時のコンパイルを省けるが、小さなコネクタでの速度改善は限定的で、CSV読込・集計等の処理本体を高速化するものではない。
-- 起動時の設定がない場合は、外部コネクタの初回読込前に`sys.pycache_prefix`を利用者PC側の標準保存先へ設定する。既存の保存先指定は尊重し、実利用者の環境変数や設定ファイルを自動変更しない。
-- 作業ブランチでローダー・生成処理を実装し、専用環境の実wheelから2つの架空分析プロジェクトを使って読み書きを確認した。キャッシュが指定した利用者側領域に生成され、外部共通フォルダーへ生成されないことを確認済み。関連テスト44件合格。利用者のCSV操作確認・main反映は未完了とする。
+- 通常import方式では、明示的な初回登録で作る`.pth`がPython起動時に未指定の`sys.pycache_prefix`だけを設定する。専用load関数で設定する旧方式は置き換える。既存の保存先指定を尊重し、Windows全体の環境変数や他のPython環境は変更しない。
+- 2026-11-15の旧load方式では、専用環境の実wheelから2つの架空分析プロジェクトを使って読み書き・利用者側キャッシュを確認し、関連44テストが合格した。この履歴を通常import方式の合格へ読み替えず、新方式の確認は冒頭のメモとIssueへ記録する。
 
 根拠：[Python公式・キャッシュ保存先](https://docs.python.org/3.14/library/sys.html#sys.pycache_prefix)、[Python公式・コンパイル済みPythonファイルの効果](https://docs.python.org/3.14/tutorial/modules.html#compiled-python-files)。
 
@@ -44,14 +55,13 @@
 | 入力確認 | 生成前は必須未入力・形式・識別子等を確認する。パス文字列を安全にコード化し、ファイル存在・権限等はPythonの実行側で確認する |
 | 共通部品 | 元CSVが依存するパス処理・型/schema・日付処理を確認し、複数コネクタで必要な処理を共通側へ置く。CSV固有の読込・書出はCSV側へ置き、フォーム・YAMLは既存の担当箇所で管理する |
 
-外部モジュールを明示的に読み込む生成コードのイメージ（共有フォルダーのパスは設定値を使う）：
+初回登録後の生成コード（コネクタ本体のパスをセルへ書かない）：
 
 ```python
-from zizai.connectors import load_connector
+import csv_connector
 
-csv = load_connector("D:/shared/connectors/csv/csv_connector.py")
-df = csv.read_csv(file_path="C:/data/input.csv", encoding="utf-8")
-csv.write_csv(data=df, output_path="C:/data/output.csv", encoding="utf-8-sig")
+df = csv_connector.read_csv(file_path="C:/data/input.csv", encoding="utf-8")
+csv_connector.write_csv(data=df, output_path="C:/data/output.csv", encoding="utf-8-sig")
 ```
 
 ### 現行方式とエンジンの確認点

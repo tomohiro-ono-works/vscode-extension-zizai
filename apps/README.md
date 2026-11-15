@@ -1,6 +1,6 @@
 # 既存コードの配置
 
-TASK-011では外部CSV資産の正本をルートの`connectors/csv/`へ置き、共通設定・ローダーを`core/src/zizai/core/`、公開入口を`connectors/src/zizai/connectors/`へ追加しています。[現在の導入と状態](core/README.md)を参照してください。外部コネクタを各分析プロジェクトへ同梱する構成ではありません。以下はTASK-010時点の記録です。
+TASK-011では外部CSV資産の正本をルートの`connectors/csv/`へ置き、共通の環境登録を`core/src/zizai/core/`、初回登録の公開入口を`connectors/src/zizai/connectors/`へ追加しています。2026-11-16に専用load方式から通常importへ変更しました。[現在の導入と状態](core/README.md)を参照してください。各分析プロジェクトへの同梱は不要です。以下はTASK-010時点の記録です。
 
 TASK-010では`core/src/zizai`へPython Notebookフォームを追加しています。[フォームと配布経路](core/README.md)を参照してください。`connectors`の業務処理を実装済みとは扱いません。
 

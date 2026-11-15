@@ -15,8 +15,7 @@ class CsvConnectorTests(unittest.TestCase):
         self.directory = Path(self.temp.name)
         self.addCleanup(setattr, sys, 'pycache_prefix', sys.pycache_prefix)
         sys.pycache_prefix = str(self.directory / 'cache')
-        from zizai.connectors import load_connector
-        csv = load_connector(source_test_support.REPO / 'connectors/csv/csv_connector.py')
+        import csv_connector as csv
         self.read_csv, self.write_csv = csv.read_csv, csv.write_csv
 
     def fixture(self, text, name='入力.csv', encoding='utf-8'):

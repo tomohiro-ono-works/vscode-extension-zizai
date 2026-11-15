@@ -3,7 +3,6 @@ import json
 import os
 from pathlib import Path
 import shutil
-import subprocess
 import sys
 import tempfile
 import unittest
@@ -35,54 +34,9 @@ class ExternalConnectorTests(unittest.TestCase):
         model.set_action('import')
         model.set_value('folder', str(self.directory))
         code = model.generate()
-        self.assertIn('load_connector', code)
-        self.assertIn(str(module.resolve()).replace('\\', '\\\\'), code)
+        self.assertIn('import csv_connector', code)
+        self.assertNotIn(str(module), code)
         self.assertFalse(marker.exists())
-        self.assertFalse(list(self.catalog.rglob('__pycache__')))
-
-    def test_explicit_import_uses_local_cache_and_keeps_sys_path(self):
-        from zizai.connectors import load_connector
-        module = self.catalog / 'csv/csv_connector.py'
-        before = sys.path.copy()
-        csv = load_connector(module)
-        self.assertTrue(callable(csv.read_csv))
-        self.assertIs(csv, load_connector(module))
-        self.assertEqual(before, sys.path)
-        self.assertFalse(list(self.catalog.rglob('__pycache__')))
-        self.assertTrue(list(Path(sys.pycache_prefix).rglob('csv_connector*.pyc')))
-
-    def test_persisted_directory_is_shared_by_different_working_directories(self):
-        from zizai.connectors import configure_connectors
-        self.config.write_text('{"other": "keep"}', encoding='utf-8')
-        with patch.dict(os.environ, {'ZIZAI_CONFIG_FILE': str(self.config), 'ZIZAI_CONNECTORS_DIR': ''}):
-            configure_connectors(self.catalog)
-            self.assertEqual(json.loads(self.config.read_text(encoding='utf-8'))['other'], 'keep')
-            probe = '''import json,sys
-sys.path.insert(0, sys.argv[1])
-from zizai.form_definition import load_definition
-d=load_definition()
-print(json.dumps(d['connectors']['csv']['module_path']))
-'''
-            for name in ('analysis-a', 'analysis-b'):
-                project = self.directory / name
-                project.mkdir()
-                result = subprocess.run([sys.executable, '-c', probe,
-                    str(source_test_support.REPO / 'apps/core/src')], cwd=project,
-                    capture_output=True, text=True, encoding='utf-8', check=True)
-                self.assertEqual(Path(json.loads(result.stdout)), self.catalog / 'csv/csv_connector.py')
-                self.assertEqual(list(project.iterdir()), [])
-
-    def test_kernel_without_cache_setting_defaults_to_user_local_storage(self):
-        from zizai.connectors import load_connector
-        module = self.catalog / 'csv/csv_connector.py'
-        module.write_text('value = 7\n', encoding='utf-8')
-        sys.pycache_prefix = None
-        with patch.dict(os.environ, {'LOCALAPPDATA': str(self.directory / 'user-local')}):
-            loaded = load_connector(module)
-        self.assertEqual(loaded.value, 7)
-        expected = self.directory / 'user-local/ZizAI/pycache'
-        self.assertEqual(Path(sys.pycache_prefix), expected)
-        self.assertTrue(list(expected.rglob('csv_connector*.pyc')))
         self.assertFalse(list(self.catalog.rglob('__pycache__')))
 
     def test_environment_can_override_persisted_directory(self):

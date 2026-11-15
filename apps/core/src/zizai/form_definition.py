@@ -1,6 +1,7 @@
 """Load form data without evaluating YAML tags, aliases or templates as code."""
 from importlib.resources import files
 from pathlib import Path
+import keyword
 import re
 from string import Formatter
 from .csv_codegen import GENERATION_KINDS
@@ -86,7 +87,8 @@ def parse_definition(text):
         if 'module_file' in connector:
             module_file = connector['module_file']
             if (not isinstance(module_file, str) or '/' in module_file or '\\' in module_file
-                    or Path(module_file).suffix.lower() != '.py' or Path(module_file).name != module_file):
+                    or Path(module_file).suffix.lower() != '.py' or Path(module_file).name != module_file
+                    or not Path(module_file).stem.isidentifier() or keyword.iskeyword(Path(module_file).stem)):
                 raise ValueError('module_fileは同じフォルダー内の.pyファイル名にしてください。')
         for action_id, action in _mapping(connector.get('actions'), 'actions').items():
             if not isinstance(action_id, str) or not ID.fullmatch(action_id):

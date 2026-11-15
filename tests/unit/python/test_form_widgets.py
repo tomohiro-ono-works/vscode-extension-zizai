@@ -27,7 +27,7 @@ class FormWidgetTests(unittest.TestCase):
         form.folder_buttons['folder'].click()
         form.generate_button.click()
         self.assertEqual(form.model.values['folder'], 'C:/選択先')
-        self.assertIn('from zizai.connectors import load_connector', form.result)
+        self.assertIn('import csv_connector', form.result)
         self.assertIn('生成コード', form.generated.value)
         self.assertNotIn('仮表示', form.generated.value)
         self.assertEqual(form.field_widgets['encoding'].value, 'utf-8')

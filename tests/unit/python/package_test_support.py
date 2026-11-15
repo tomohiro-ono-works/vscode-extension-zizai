@@ -25,7 +25,6 @@ PACKAGE_FILES = {
     "zizai/core/tabular.py",
     "zizai/core/type_registry.py",
     "zizai/core/connector_config.py",
-    "zizai/core/connector_loader.py",
 }
 
 
