@@ -44,7 +44,8 @@ class FormWidgetTests(unittest.TestCase):
         self.assertIs(form.root, root)
         self.assertEqual(form.details.children, controls)
         self.assertIn('変更.csv', form.result)
-        self.assertIn('write_csv(data=df', form.result)
+        self.assertIn('data = df', form.result)
+        self.assertIn('write_csv(data=data', form.result)
 
     def test_cancel_keeps_folder_and_parent_changes_keep_or_clear_action(self):
         form = self.make_form(lambda current: '')

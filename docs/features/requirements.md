@@ -4,6 +4,10 @@
 
 ### 通常のimportへ変更するメモ（2026-11-16）
 
+利用者の追加指示「変数定義してから、引数に変数を指定してください」に従い、生成するCSVコードは、渡すパス・設定値を先に変数へ代入してから関数へ渡す。既定値の省略は維持し、書出データも既存の入力変数から代入して渡す。フォームで指定した入出力変数やimport名との衝突は、生成する補助変数名に連番を付けて避ける。生成時の非実行・安全な文字列化は維持する。
+
+この追加変更は関連47テストと更新wheelの導入・生成確認が合格。試用環境へ導入済みだが、起動中のカーネルには再起動して`%form`を実行後に反映する。変更後のNotebook操作・利用者の手動確認・main反映は未完了。
+
 利用者原文「一般的なようにimportでできるようにしてほしいです」と、初回登録・フォルダー移動・名前衝突・カーネル再起動について説明した後の「OKです。ではそのことをメモに記載してください。それでは、それが環境したらサンプルを見たいので表示してほしいです。」を受領。生成コードは`import csv_connector`と通常の関数呼出しへ変更する。`load_connector`やコネクタ本体の絶対パスは生成コードから外す。以前の方式の実装・検証結果は履歴であり、この変更の完了・検証済みを意味しない。
 
 - 共通フォルダーは各分析プロジェクトへ複製せず、使うPython環境ごとに一度登録する。未登録の環境では通常の`ModuleNotFoundError`になる。Notebookごとの`sys.path`操作やwheelの一時読込は、利用者向けサンプルに含めない。
@@ -60,8 +64,13 @@
 ```python
 import csv_connector
 
-df = csv_connector.read_csv(file_path="C:/data/input.csv", encoding="utf-8")
-csv_connector.write_csv(data=df, output_path="C:/data/output.csv", encoding="utf-8-sig")
+file_path = "C:/data/input.csv"
+df = csv_connector.read_csv(file_path=file_path)
+df
+
+data = df
+output_path = "C:/data/output.csv"
+csv_connector.write_csv(data=data, output_path=output_path)
 ```
 
 ### 現行方式とエンジンの確認点

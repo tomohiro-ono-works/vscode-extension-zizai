@@ -70,9 +70,19 @@ def generate_csv(kind, values, module_path):
     arguments.extend(ast.keyword(arg=name, value=ast.Constant(value))
                      for name, value in options.items() if value != defaults[name])
     handle = '_zizai_' + module_name if variable == module_name else module_name
+    body = [ast.Import(names=[ast.alias(name=module_name, asname=handle if handle != module_name else None)])]
+    reserved = {variable, handle}
+    for argument in arguments:
+        name = argument.arg
+        suffix = 2
+        while name in reserved:
+            name = f'{argument.arg}_{suffix}'
+            suffix += 1
+        reserved.add(name)
+        body.append(ast.Assign(targets=[ast.Name(id=name, ctx=ast.Store())], value=argument.value))
+        argument.value = ast.Name(id=name, ctx=ast.Load())
     call = ast.Call(func=ast.Attribute(value=ast.Name(id=handle, ctx=ast.Load()), attr=function, ctx=ast.Load()),
                     args=[], keywords=arguments)
-    body = [ast.Import(names=[ast.alias(name=module_name, asname=handle if handle != module_name else None)])]
     if reading:
         body.extend([ast.Assign(targets=[ast.Name(id=variable, ctx=ast.Store())], value=call),
                      ast.Expr(value=ast.Name(id=variable, ctx=ast.Load()))])

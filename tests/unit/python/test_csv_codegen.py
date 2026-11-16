@@ -44,12 +44,43 @@ class CsvCodegenTests(unittest.TestCase):
         output = self.directory / '出力.csv'
         self.assertFalse(output.exists())
         frame = pd.DataFrame({'名前': ['東京'], '数': [1]})
-        for variable in ('売上', 'csv', 'csv_connector', '_zizai_csv_connector'):
+        for variable in ('売上', 'csv', 'csv_connector', '_zizai_csv_connector',
+                         'data', 'output_path', 'encoding', 'delimiter'):
             with self.subTest(variable=variable):
                 self.values['input_variable'] = variable
                 code = self.generate('csv.write_csv', self.values)
                 exec(compile(code, '<generated-csv>', 'exec'), {variable: frame})
                 self.assertEqual(output.read_text(encoding='cp932'), '名前\t数\n東京\t1\n')
+
+    def test_arguments_use_previously_defined_variables(self):
+        self.values.update(encoding='cp932', delimiter='\\t', schema='[]',
+                           header_row=2, data_start_row=3, chunk_size=0,
+                           date_cleansing='無効')
+        for kind in ('csv.read_csv', 'csv.write_csv'):
+            with self.subTest(kind=kind):
+                tree = ast.parse(self.generate(kind, self.values))
+                call = next(node for node in ast.walk(tree) if isinstance(node, ast.Call))
+                definitions = {}
+                for statement in tree.body[1:]:
+                    if isinstance(statement, ast.Assign) and not isinstance(statement.value, ast.Call):
+                        definitions[statement.targets[0].id] = statement.value
+                    else:
+                        break
+                for argument in call.keywords:
+                    self.assertIsInstance(argument.value, ast.Name)
+                    self.assertIn(argument.value.id, definitions)
+                path_argument = 'file_path' if kind.endswith('read_csv') else 'output_path'
+                path_name = next(arg.value.id for arg in call.keywords if arg.arg == path_argument)
+                self.assertEqual(definitions[path_name].value, str(self.directory / '入力.csv'))
+
+    def test_output_variable_can_match_parameter_names(self):
+        import csv_connector
+        for variable in ('file_path', 'encoding', 'csv_connector'):
+            with self.subTest(variable=variable), patch.object(csv_connector, 'read_csv', return_value='safe'):
+                code = self.generate('csv.read_csv', {**self.values, 'output_variable': variable})
+                namespace = {}
+                exec(compile(code, '<generated-csv>', 'exec'), namespace)
+                self.assertEqual(namespace[variable], 'safe')
 
     def test_quotes_newlines_and_schema_text_stay_literals(self):
         self.values.update(folder=str(self.directory / "日本語'\"; injected() #"),
