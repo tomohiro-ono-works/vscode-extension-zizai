@@ -12,7 +12,7 @@ connectors:
           folder: {label: 入力フォルダー, type: folder, required: true}
           filename: {label: ファイル名, type: text, default: input.csv, required: true}
           output_variable: {label: 出力変数, type: text, default: df, required: true}
-          encoding: {label: 文字コード, type: choice, choices: [utf-8, utf-8-sig, cp932], default: utf-8}
+          encoding: {label: 文字コード, type: choice, choices: [utf-8, utf-8-sig, cp932, sjis], default: utf-8}
           delimiter: {label: 区切り文字, type: text, default: ','}
           header_row: {label: ヘッダー行, type: integer, default: 1, minimum: 1}
           data_start_row: {label: データ開始行, type: integer, default: 2, minimum: 1}
@@ -26,6 +26,6 @@ connectors:
           folder: {label: 保存先, type: folder, required: true}
           filename: {label: ファイル名, type: text, default: output.csv, required: true}
           input_variable: {label: 入力変数, type: text, default: df, required: true}
-          encoding: {label: 文字コード, type: choice, choices: [utf-8-sig, utf-8, cp932], default: utf-8-sig}
+          encoding: {label: 文字コード, type: choice, choices: [utf-8-sig, utf-8, cp932, sjis], default: utf-8-sig}
           delimiter: {label: 区切り文字, type: text, default: ','}
           schema: {label: schema（JSON・省略可）, type: text}

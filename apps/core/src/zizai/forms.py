@@ -19,12 +19,26 @@ def _select_folder(current):
         root.destroy()
 
 
+def _copy_to_clipboard(text):
+    # Explicit local-user action, using the same standard Tk environment as the picker.
+    import tkinter as tk
+    root = tk.Tk()
+    try:
+        root.withdraw()
+        root.clipboard_clear()
+        root.clipboard_append(text)
+        root.update()
+    finally:
+        root.destroy()
+
+
 class NotebookForm:
-    def __init__(self, definition, *, folder_picker=None):
+    def __init__(self, definition, *, folder_picker=None, clipboard_writer=None):
         import ipywidgets as widgets
         self._widgets = widgets
         self.model = FormModel(definition)
         self._folder_picker = folder_picker or _select_folder
+        self._clipboard_writer = clipboard_writer or _copy_to_clipboard
         self._syncing = False
         self._invalid_fields = set()
         self._dynamic = []
@@ -36,19 +50,22 @@ class NotebookForm:
             (entry['label'], key) for key, entry in definition['connectors'].items()], layout=layout())
         self.action = widgets.Dropdown(description='アクション', options=[('選択してください', None)], disabled=True, layout=layout())
         self.generate_button = widgets.Button(description='コード生成', disabled=True, button_style='primary')
+        self.copy_button = widgets.Button(description='コードをコピー', disabled=True, icon='copy')
         self.toolbar = widgets.HBox(layout=widgets.Layout(display='flex', flex_flow='row wrap', align_items='center'))
         self.details = widgets.VBox()
         self.message = widgets.HTML()
         self.generated = widgets.HTML()
-        self.root = widgets.VBox([self.toolbar, self.details, self.message, self.generated])
+        self.root = widgets.VBox([self.toolbar, self.details, self.message, self.generated, self.copy_button])
         self.connector.observe(self._connector_changed, names='value')
         self.action.observe(self._action_changed, names='value')
         self.generate_button.on_click(self._generate)
+        self.copy_button.on_click(self._copy_code)
         self._sync()
 
     def _clear_result(self):
         self.result = ''
         self.generated.value = ''
+        self.copy_button.disabled = True
 
     def _refresh_generate(self):
         try:
@@ -110,7 +127,20 @@ class NotebookForm:
                     self.folder_buttons[name] = button
                     self._dynamic.append(button)
             self.toolbar.children = [self.connector, self.action, *self.folder_buttons.values(), self.generate_button]
-            self.details.children = list(self.field_widgets.values())
+            rows = []
+            paired = 'encoding' in self.field_widgets and 'delimiter' in self.field_widgets
+            for name, widget in self.field_widgets.items():
+                if paired and name == 'encoding':
+                    pair = [widget, self.field_widgets['delimiter']]
+                    for item in pair:
+                        item.layout.flex = '1 1 240px'
+                        item.layout.min_width = '0'
+                    row = widgets.HBox(pair, layout=widgets.Layout(flex_flow='row wrap', width='100%'))
+                    self._dynamic.append(row)
+                    rows.append(row)
+                elif not (paired and name == 'delimiter'):
+                    rows.append(widget)
+            self.details.children = rows
             self.message.value = ''
             self._clear_result()
             self._refresh_generate()
@@ -155,17 +185,27 @@ class NotebookForm:
             return
         self.message.value = ''
         label = '生成結果（仮表示・実行可能なPythonコードではありません）' if self.model.is_placeholder else '生成コード'
-        self.generated.value = '<p><b>' + label + '</b></p><pre style="white-space:pre-wrap;user-select:text">' + escape(self.result) + '</pre>'
+        self.generated.value = '<p><b>' + label + '</b></p><pre style="white-space:pre-wrap;user-select:text;overflow:auto;max-height:320px"><code class="language-python">' + escape(self.result) + '</code></pre>'
+        self.copy_button.disabled = self.model.is_placeholder
+
+    def _copy_code(self, _):
+        if self.copy_button.disabled or not self.result:
+            return
+        try:
+            self._clipboard_writer(self.result)
+            self.message.value = 'コードをコピーしました。'
+        except Exception as error:
+            self.message.value = 'コピーできません。コード欄を選択してコピーしてください。(' + escape(type(error).__name__) + ')'
 
     def close(self):
-        for widget in [*self._dynamic, self.connector, self.action, self.generate_button,
+        for widget in [*self._dynamic, self.connector, self.action, self.generate_button, self.copy_button,
                        self.toolbar, self.details, self.message, self.generated, self.root]:
             widget.close()
 
 
-def create_form(config_path=None, *, folder_picker=None):
+def create_form(config_path=None, *, folder_picker=None, clipboard_writer=None):
     """Return a controller with .root, .model and .result for explicit Python use."""
-    return NotebookForm(load_definition(config_path), folder_picker=folder_picker)
+    return NotebookForm(load_definition(config_path), folder_picker=folder_picker, clipboard_writer=clipboard_writer)
 
 
 def show_form(config_path=None):

@@ -47,6 +47,52 @@ class FormWidgetTests(unittest.TestCase):
         self.assertIn('data = df', form.result)
         self.assertIn('write_csv(data=data', form.result)
 
+    def test_csv_encoding_and_delimiter_share_a_horizontal_row(self):
+        import ipywidgets as widgets
+        form = self.make_form()
+        for action in ('import', 'export'):
+            with self.subTest(action=action):
+                self.select(form, action)
+                row = next((child for child in form.details.children
+                            if isinstance(child, widgets.HBox)), None)
+                self.assertIsNotNone(row)
+                self.assertEqual(row.children, (form.field_widgets['encoding'], form.field_widgets['delimiter']))
+
+    def test_sjis_can_be_selected_and_passed_to_generated_csv_calls(self):
+        form = self.make_form()
+        for action in ('import', 'export'):
+            with self.subTest(action=action):
+                self.select(form, action)
+                form.folder_buttons['folder'].click()
+                form.field_widgets['encoding'].value = 'sjis'
+                form.generate_button.click()
+                self.assertIn("encoding = 'sjis'", form.result)
+                self.assertIn('encoding=encoding', form.result)
+                if action == 'import':
+                    self.assertIn('df = csv_connector.read_csv(', form.result)
+
+    def test_copy_uses_exact_code_only_after_explicit_click_and_clears_on_edit(self):
+        from unittest.mock import Mock
+        from zizai.forms import NotebookForm
+        from zizai.form_definition import load_definition
+        copy = Mock()
+        form = NotebookForm(load_definition(Path(__file__).resolve().parents[3] / 'connectors'),
+                            folder_picker=lambda current: 'C:/選択先', clipboard_writer=copy)
+        self.addCleanup(form.close)
+        self.assertTrue(form.copy_button.disabled)
+        self.select(form, 'import')
+        form.folder_buttons['folder'].click()
+        form.generate_button.click()
+        self.assertIn('<code', form.generated.value)
+        self.assertFalse(form.copy_button.disabled)
+        copy.assert_not_called()
+        form.copy_button.click()
+        copy.assert_called_once_with(form.result)
+        form.field_widgets['filename'].value = '変更.csv'
+        self.assertTrue(form.copy_button.disabled)
+        form.copy_button.click()
+        self.assertEqual(copy.call_count, 1)
+
     def test_cancel_keeps_folder_and_parent_changes_keep_or_clear_action(self):
         form = self.make_form(lambda current: '')
         self.select(form)

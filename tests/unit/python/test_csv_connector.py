@@ -30,6 +30,13 @@ class CsvConnectorTests(unittest.TestCase):
         self.assertEqual(frame['個数'].astype(str).tolist(), ['1', '2'])
         self.assertEqual(frame.attrs['ziz_schema'][0]['origin_name'], '名前')
 
+    def test_sjis_roundtrip(self):
+        path = self.fixture('名前,値\n東京,10\n', encoding='sjis')
+        frame = self.read_csv(path, encoding='sjis')
+        output = self.directory / 'sjis-output.csv'
+        self.write_csv(frame, output, encoding='sjis')
+        self.assertEqual(output.read_text(encoding='sjis'), '名前,値\n東京,10\n')
+
     def test_cp932_tsv_roundtrip_overwrites_and_keeps_input_unchanged(self):
         import pandas as pd
         path = self.fixture('名前\t値\n東京\t10\n大阪\t20\n', encoding='cp932')
