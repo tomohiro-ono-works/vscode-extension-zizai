@@ -13,6 +13,8 @@ def _select_folder(current):
     root = tk.Tk()
     try:
         root.withdraw()
+        root.attributes('-topmost', True)
+        root.update_idletasks()
         return askdirectory(parent=root, title='フォルダーを選択',
                             initialdir=current if current and Path(current).is_absolute() else None)
     finally:

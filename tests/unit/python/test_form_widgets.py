@@ -79,6 +79,24 @@ class FormWidgetTests(unittest.TestCase):
                 picker.assert_called_once_with('C:/現在')
                 self.assertEqual(field.value, 'C:/選択先')
 
+    def test_native_folder_picker_sets_parent_topmost_before_opening_and_cleans_up(self):
+        from unittest.mock import Mock, call
+        from zizai.forms import _select_folder
+        root = Mock()
+        events = Mock()
+        events.attach_mock(root, 'root')
+        with patch('tkinter.Tk', return_value=root), patch('tkinter.filedialog.askdirectory', return_value='') as choose:
+            events.attach_mock(choose, 'choose')
+            self.assertEqual(_select_folder('C:/現在'), '')
+        self.assertEqual(events.mock_calls, [call.root.withdraw(), call.root.attributes('-topmost', True),
+                         call.root.update_idletasks(), call.choose(parent=root, title='フォルダーを選択', initialdir='C:/現在'),
+                         call.root.destroy()])
+        root.reset_mock()
+        with patch('tkinter.Tk', return_value=root), patch('tkinter.filedialog.askdirectory', side_effect=RuntimeError('dialog failed')):
+            with self.assertRaises(RuntimeError):
+                _select_folder('C:/現在')
+        root.destroy.assert_called_once_with()
+
     def test_sjis_can_be_selected_and_passed_to_generated_csv_calls(self):
         form = self.make_form()
         for action in ('import', 'export'):
