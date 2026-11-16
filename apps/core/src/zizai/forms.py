@@ -122,15 +122,23 @@ class NotebookForm:
                 self.field_widgets[name] = widget
                 self._dynamic.append(widget)
                 if field['type'] == 'folder':
-                    button = widgets.Button(description=field['label'] + 'を選択')
+                    button = widgets.Button(description='参照…', tooltip=field['label'] + 'を選択',
+                                            layout=widgets.Layout(width='85px', flex='0 0 85px'))
                     button.on_click(lambda _, key=name: self._pick_folder(key))
                     self.folder_buttons[name] = button
                     self._dynamic.append(button)
-            self.toolbar.children = [self.connector, self.action, *self.folder_buttons.values(), self.generate_button]
+            self.toolbar.children = [self.connector, self.action, self.generate_button]
             rows = []
             paired = 'encoding' in self.field_widgets and 'delimiter' in self.field_widgets
             for name, widget in self.field_widgets.items():
-                if paired and name == 'encoding':
+                if name in self.folder_buttons:
+                    widget.layout.flex = '1 1 0'
+                    widget.layout.min_width = '0'
+                    row = widgets.HBox([widget, self.folder_buttons[name]],
+                                       layout=widgets.Layout(width='100%', align_items='center'))
+                    self._dynamic.append(row)
+                    rows.append(row)
+                elif paired and name == 'encoding':
                     pair = [widget, self.field_widgets['delimiter']]
                     for item in pair:
                         item.layout.flex = '1 1 240px'

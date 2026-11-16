@@ -54,9 +54,30 @@ class FormWidgetTests(unittest.TestCase):
             with self.subTest(action=action):
                 self.select(form, action)
                 row = next((child for child in form.details.children
-                            if isinstance(child, widgets.HBox)), None)
+                            if isinstance(child, widgets.HBox) and form.field_widgets['encoding'] in child.children), None)
                 self.assertIsNotNone(row)
                 self.assertEqual(row.children, (form.field_widgets['encoding'], form.field_widgets['delimiter']))
+
+    def test_browse_button_is_beside_its_folder_field_and_keeps_picker_behavior(self):
+        import ipywidgets as widgets
+        from unittest.mock import Mock
+        picker = Mock(return_value='C:/選択先')
+        form = self.make_form(picker)
+        for connector, action in (('csv', 'import'), ('csv', 'export'), ('excel', 'export')):
+            with self.subTest(connector=connector, action=action):
+                form.connector.value = connector
+                form.action.value = action
+                field = form.field_widgets['folder']
+                field.value = 'C:/現在'
+                button = form.folder_buttons['folder']
+                self.assertEqual(button.description, '参照…')
+                self.assertNotIn(button, form.toolbar.children)
+                self.assertTrue(any(isinstance(row, widgets.HBox) and row.children == (field, button)
+                                    for row in form.details.children))
+                picker.reset_mock()
+                button.click()
+                picker.assert_called_once_with('C:/現在')
+                self.assertEqual(field.value, 'C:/選択先')
 
     def test_sjis_can_be_selected_and_passed_to_generated_csv_calls(self):
         form = self.make_form()
