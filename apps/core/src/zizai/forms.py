@@ -1,5 +1,6 @@
 """Notebook output forms. Import does not register magics or open any windows."""
 from html import escape
+from importlib.resources import files
 import shlex
 from .form_definition import load_definition
 from .form_model import FormModel
@@ -52,12 +53,20 @@ class NotebookForm:
             (entry['label'], key) for key, entry in definition['connectors'].items()], layout=layout())
         self.action = widgets.Dropdown(description='アクション', options=[('選択してください', None)], disabled=True, layout=layout())
         self.generate_button = widgets.Button(description='コード生成', disabled=True, button_style='primary')
+        self.generate_button.add_class('zizai-generate')
         self.copy_button = widgets.Button(description='コードをコピー', disabled=True, icon='copy')
+        self.copy_button.add_class('zizai-copy')
         self.toolbar = widgets.HBox(layout=widgets.Layout(display='flex', flex_flow='row wrap', align_items='center'))
+        self.toolbar.add_class('zizai-toolbar')
         self.details = widgets.VBox()
+        self.details.add_class('zizai-details')
         self.message = widgets.HTML()
         self.generated = widgets.HTML()
-        self.root = widgets.VBox([self.toolbar, self.details, self.message, self.generated, self.copy_button])
+        css = files('zizai').joinpath('form.css').read_text(encoding='utf-8')
+        self.styles = widgets.HTML('<style>' + css + '</style>', layout=widgets.Layout(display='none'))
+        self.root = widgets.VBox([self.styles, self.toolbar, self.details, self.message, self.generated, self.copy_button],
+                                 layout=widgets.Layout(width='100%', max_width='880px'))
+        self.root.add_class('zizai-form')
         self.connector.observe(self._connector_changed, names='value')
         self.action.observe(self._action_changed, names='value')
         self.generate_button.on_click(self._generate)
@@ -111,7 +120,7 @@ class NotebookForm:
             self._invalid_fields.clear()
             for name, field in self.model.fields.items():
                 value = self.model.values[name]
-                label = field['label'] + (' *' if field.get('required') else '')
+                label = escape(field['label']) + (' <span class="zizai-required">*</span>' if field.get('required') else '')
                 if field['type'] == 'choice':
                     widget = widgets.Dropdown(description=label, options=[('選択してください', None)] + [(x, x) for x in field['choices']], value=value)
                 elif field['type'] == 'integer':
@@ -119,6 +128,7 @@ class NotebookForm:
                 else:
                     widget = widgets.Text(description=label, value=value, continuous_update=True)
                 widget.layout.width = 'auto'
+                widget.description_allow_html = True
                 widget.style.description_width = 'initial'
                 widget.observe(lambda change, key=name: self._value_changed(key, change['new']), names='value')
                 self.field_widgets[name] = widget
@@ -137,7 +147,8 @@ class NotebookForm:
                     widget.layout.flex = '1 1 0'
                     widget.layout.min_width = '0'
                     row = widgets.HBox([widget, self.folder_buttons[name]],
-                                       layout=widgets.Layout(width='100%', align_items='center'))
+                                       layout=widgets.Layout(width='100%', align_items='flex-end'))
+                    row.add_class('zizai-folder-row')
                     self._dynamic.append(row)
                     rows.append(row)
                 elif paired and name == 'encoding':
@@ -146,6 +157,7 @@ class NotebookForm:
                         item.layout.flex = '1 1 240px'
                         item.layout.min_width = '0'
                     row = widgets.HBox(pair, layout=widgets.Layout(flex_flow='row wrap', width='100%'))
+                    row.add_class('zizai-pair')
                     self._dynamic.append(row)
                     rows.append(row)
                 elif not (paired and name == 'delimiter'):
@@ -211,6 +223,7 @@ class NotebookForm:
         for widget in [*self._dynamic, self.connector, self.action, self.generate_button, self.copy_button,
                        self.toolbar, self.details, self.message, self.generated, self.root]:
             widget.close()
+        self.styles.close()
 
 
 def create_form(config_path=None, *, folder_picker=None, clipboard_writer=None):

@@ -23,4 +23,4 @@ zizai = "apps/core/src/zizai"
 "zizai.connectors" = "apps/connectors/src/zizai/connectors"
 
 [tool.setuptools.package-data]
-zizai = ["forms.yaml"]
+zizai = ["forms.yaml", "form.css"]
