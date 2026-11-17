@@ -118,6 +118,8 @@ class FormWidgetTests(unittest.TestCase):
         form = NotebookForm(load_definition(Path(__file__).resolve().parents[3] / 'connectors'),
                             folder_picker=lambda current: 'C:/選択先', clipboard_writer=copy)
         self.addCleanup(form.close)
+        self.assertEqual(form.code_actions.children, (form.generate_button, form.copy_button))
+        self.assertNotIn(form.generate_button, form.toolbar.children)
         self.assertTrue(form.copy_button.disabled)
         self.select(form, 'import')
         form.folder_buttons['folder'].click()
@@ -131,6 +133,25 @@ class FormWidgetTests(unittest.TestCase):
         self.assertTrue(form.copy_button.disabled)
         form.copy_button.click()
         self.assertEqual(copy.call_count, 1)
+        form.generate_button.click()
+        copy.side_effect = RuntimeError('clipboard unavailable')
+        form.copy_button.click()
+        self.assertIn('コピーできません', form.message.value)
+        self.assertNotIn('コードをコピーしました', form.message.value)
+
+    def test_windows_copy_passes_code_as_data_to_persistent_system_clipboard(self):
+        from zizai.forms import _copy_to_clipboard
+        text = '日本語 = "$(not_a_command)"\n# 引用符と改行\n'
+        with patch('sys.platform', 'win32'), patch('subprocess.run') as run, patch('tkinter.Tk') as tk:
+            _copy_to_clipboard(text)
+        run.assert_called_once()
+        arguments, options = run.call_args
+        self.assertNotIn(text, ' '.join(arguments[0]))
+        self.assertEqual(options['input'], text)
+        self.assertEqual(options['encoding'], 'utf-8')
+        self.assertTrue(options['check'])
+        self.assertFalse(options['shell'])
+        tk.assert_not_called()
 
     def test_cancel_keeps_folder_and_parent_changes_keep_or_clear_action(self):
         form = self.make_form(lambda current: '')

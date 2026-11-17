@@ -73,8 +73,9 @@
   color: #566b5e;
   opacity: 1;
 }
-.zizai-form .zizai-generate { align-self: flex-end; min-width: 138px; }
-.zizai-form .zizai-copy { align-self: flex-start; width: auto; }
+.zizai-form .zizai-code-actions { gap: 10px; align-items: center; }
+.zizai-form .zizai-generate { min-width: 138px; }
+.zizai-form .zizai-copy { width: auto; }
 .zizai-form .zizai-pair { gap: 16px; }
 .zizai-form .zizai-folder-row { gap: 10px; }
 .zizai-form .widget-html { margin: 0; color: inherit; }

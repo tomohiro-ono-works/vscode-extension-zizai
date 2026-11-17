@@ -23,7 +23,20 @@ def _select_folder(current):
 
 
 def _copy_to_clipboard(text):
-    # Explicit local-user action, using the same standard Tk environment as the picker.
+    import sys
+    if sys.platform == 'win32':
+        # Use persistent Windows text storage rather than a temporary Tk owner.
+        # The command is fixed; generated code is stdin data, never shell code.
+        import os
+        from pathlib import Path
+        import subprocess
+        powershell = Path(os.environ['SystemRoot']) / 'System32/WindowsPowerShell/v1.0/powershell.exe'
+        command = "$ErrorActionPreference='Stop';[Console]::InputEncoding=[Text.UTF8Encoding]::new($false);Set-Clipboard -Value ([Console]::In.ReadToEnd())"
+        subprocess.run([str(powershell), '-NoProfile', '-NonInteractive', '-STA', '-Command', command],
+                       input=text, encoding='utf-8', capture_output=True, check=True, shell=False,
+                       timeout=10, creationflags=subprocess.CREATE_NO_WINDOW)
+        return
+    # Preserve the existing Tk path outside the current Windows target.
     import tkinter as tk
     root = tk.Tk()
     try:
@@ -56,6 +69,9 @@ class NotebookForm:
         self.generate_button.add_class('zizai-generate')
         self.copy_button = widgets.Button(description='コードをコピー', disabled=True, icon='copy')
         self.copy_button.add_class('zizai-copy')
+        self.code_actions = widgets.HBox([self.generate_button, self.copy_button],
+                                         layout=widgets.Layout(flex_flow='row wrap'))
+        self.code_actions.add_class('zizai-code-actions')
         self.toolbar = widgets.HBox(layout=widgets.Layout(display='flex', flex_flow='row wrap', align_items='center'))
         self.toolbar.add_class('zizai-toolbar')
         self.details = widgets.VBox()
@@ -64,7 +80,7 @@ class NotebookForm:
         self.generated = widgets.HTML()
         css = files('zizai').joinpath('form.css').read_text(encoding='utf-8')
         self.styles = widgets.HTML('<style>' + css + '</style>', layout=widgets.Layout(display='none'))
-        self.root = widgets.VBox([self.styles, self.toolbar, self.details, self.message, self.generated, self.copy_button],
+        self.root = widgets.VBox([self.styles, self.toolbar, self.details, self.message, self.generated, self.code_actions],
                                  layout=widgets.Layout(width='100%', max_width='880px'))
         self.root.add_class('zizai-form')
         self.connector.observe(self._connector_changed, names='value')
@@ -139,7 +155,7 @@ class NotebookForm:
                     button.on_click(lambda _, key=name: self._pick_folder(key))
                     self.folder_buttons[name] = button
                     self._dynamic.append(button)
-            self.toolbar.children = [self.connector, self.action, self.generate_button]
+            self.toolbar.children = [self.connector, self.action]
             rows = []
             paired = 'encoding' in self.field_widgets and 'delimiter' in self.field_widgets
             for name, widget in self.field_widgets.items():
@@ -221,7 +237,7 @@ class NotebookForm:
 
     def close(self):
         for widget in [*self._dynamic, self.connector, self.action, self.generate_button, self.copy_button,
-                       self.toolbar, self.details, self.message, self.generated, self.root]:
+                       self.toolbar, self.details, self.message, self.generated, self.code_actions, self.root]:
             widget.close()
         self.styles.close()
 
