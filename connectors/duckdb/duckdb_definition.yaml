@@ -1,0 +1,14 @@
+version: 1
+output_template: "{connector}.{action}のコードを生成"
+connectors:
+  duckdb:
+    label: DuckDB
+    module_file: duckdb_connector.py
+    actions:
+      create_db_file:
+        label: DBファイル作成
+        generation: duckdb.create_db_file
+        fields:
+          db_folder: {label: DBファイルの場所, type: folder, required: true}
+          db_file_name: {label: DBファイル名, type: text, default: sample.duckdb, required: true}
+          output_variable: {label: 出力変数, type: text, default: db_info, required: true}

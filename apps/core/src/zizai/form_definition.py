@@ -5,12 +5,14 @@ import keyword
 import re
 from string import Formatter
 from .csv_codegen import GENERATION_KINDS
+from .duckdb_codegen import GENERATION_FIELDS as DUCKDB_GENERATION_FIELDS
 from .excel_codegen import GENERATION_FIELDS as EXCEL_GENERATION_FIELDS
 from .core.connector_config import get_connector_directory
 
 MAX_BYTES = 1024 * 1024
 ID = re.compile(r'[A-Za-z_][A-Za-z0-9_]*\Z')
-ALLOWED_GENERATIONS = GENERATION_KINDS.union(EXCEL_GENERATION_FIELDS)
+GENERATION_FIELDS = {**EXCEL_GENERATION_FIELDS, **DUCKDB_GENERATION_FIELDS}
+ALLOWED_GENERATIONS = GENERATION_KINDS.union(GENERATION_FIELDS)
 
 
 def valid_value(field, value, *, require=False):
@@ -102,12 +104,12 @@ def parse_definition(text):
             if 'generation' in action:
                 generation = action['generation']
                 if not isinstance(generation, str) or generation not in ALLOWED_GENERATIONS:
-                    raise ValueError('generationは許可されたCSV／Excel操作を指定してください。')
+                    raise ValueError('generationは許可されたコネクタ操作を指定してください。')
             fields = action.get('fields', {})
             if not isinstance(fields, dict):
                 raise ValueError('fieldsは項目一覧にしてください。')
             if 'generation' in action:
-                needed = EXCEL_GENERATION_FIELDS.get(generation)
+                needed = GENERATION_FIELDS.get(generation)
                 if needed is None:
                     needed = {'folder', 'filename', 'encoding', 'delimiter', 'schema'}
                     needed |= ({'output_variable', 'header_row', 'data_start_row', 'chunk_size'}

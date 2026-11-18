@@ -1,5 +1,9 @@
 # ZizAI 要件仕様書
 
+## TASK-013：DuckDBフォーム（担当ブランチ）
+
+[Issue #86](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/86)のDBファイル作成は、外部共通フォルダーの `duckdb_connector.py` と `duckdb_definition.yaml` を使う。初期ファイル名は `sample.duckdb`。拡張子省略時は `.duckdb` を補い、入力されたフォルダーがなければPythonの実行時に作成する。同じDBファイルを指定した場合は開いて閉じ、既存テーブルを保持する。出力変数 `db_info` にDBのパス・ファイル名・拡張子を除いた名前・処理時刻を1行のDataFrameで返す。依存は `duckdb` extraから導入する。SQL実行・テーブル作成の判断はIssueを参照。
+
 ## TASK-012：Excelフォームとコネクタ
 
 [Issue #85](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/85)の3アクションを、外部共通フォルダーの `excel_connector.py` と隣接する `excel_definition.yaml` で提供する。対象形式はローカルの `.xlsx`。フォームは通常の `import excel_connector` と関数呼び出しを生成する。パスは `/` 区切りとし、計算やファイル操作は生成コードの実行時に行う。

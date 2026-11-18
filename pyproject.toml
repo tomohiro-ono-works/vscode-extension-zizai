@@ -13,6 +13,7 @@ dependencies = []
 [project.optional-dependencies]
 forms = ["ipywidgets==8.1.9", "PyYAML==6.0.3"]
 csv = ["pandas==3.1.1", "numpy==2.5.4"]
+duckdb = ["duckdb==2.0.0", "pandas==3.1.1", "numpy==2.5.4"]
 excel = ["pandas==3.1.1", "numpy==2.5.4", "openpyxl==3.1.5", "defusedxml==0.7.1"]
 
 [tool.setuptools]
