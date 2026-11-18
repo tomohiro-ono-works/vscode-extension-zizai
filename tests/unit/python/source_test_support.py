@@ -5,6 +5,7 @@ import sys
 REPO = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(REPO / 'apps/core/src'))
 sys.path.insert(0, str(REPO / 'connectors/csv'))
+sys.path.insert(0, str(REPO / 'connectors/excel'))
 import zizai
 
 connector_root = str(REPO / 'apps/connectors/src/zizai')

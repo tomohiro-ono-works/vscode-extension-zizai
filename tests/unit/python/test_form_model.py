@@ -1,5 +1,6 @@
 """Normal form selection, safe data loading and placeholder generation."""
 import copy
+from importlib.resources import files
 from pathlib import Path
 import sys
 import unittest
@@ -19,6 +20,7 @@ class FormModelTests(unittest.TestCase):
         self.model.set_action(action)
 
     def test_placeholder_uses_ids_and_does_not_execute_business_code(self):
+        self.model = FormModel(parse_definition(files('zizai').joinpath('forms.yaml').read_text(encoding='utf-8')))
         self.choose('excel')
         self.model.set_value('folder', 'C:/データ/保存先')
         self.assertEqual(self.model.generate(), '{excel.exportのコードを生成}')
@@ -37,9 +39,11 @@ class FormModelTests(unittest.TestCase):
     def test_parent_change_keeps_valid_action_and_compatible_settings(self):
         self.choose()
         self.model.set_value('folder', 'C:/keep')
+        self.model.set_value('filename', 'report.csv')
         self.model.set_connector('excel')
         self.assertEqual(self.model.action, 'export')
         self.assertEqual(self.model.values['folder'], 'C:/keep')
+        self.assertEqual(self.model.values['filename'], 'output.xlsx')
 
     def test_parent_change_clears_invalid_action_and_disables_generation(self):
         self.choose(action='import')

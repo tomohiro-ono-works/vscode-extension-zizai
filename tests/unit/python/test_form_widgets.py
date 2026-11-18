@@ -209,8 +209,7 @@ class FormWidgetTests(unittest.TestCase):
         from comm import get_comm_manager
         # A frontend selection can already be queued when the connector changes
         # (for example while the native folder chooser blocks the kernel).
-        # CSV index 1 means import; Excel index 1 means export. CSV index 2
-        # is export and does not exist in the shorter Excel option list.
+        # An index from CSV can refer to an unrelated action in Excel.
         for old_index in (1, 2):
             with self.subTest(old_index=old_index):
                 form = self.make_form()
@@ -225,16 +224,18 @@ class FormWidgetTests(unittest.TestCase):
                 self.assertIsNone(form.model.action)
                 self.assertTrue(form.generate_button.disabled)
                 # A fresh selection on the current form still works.
+                export_index = next(index for index, (_, value) in enumerate(form.action.options) if value == 'export')
                 get_comm_manager().comm_msg(None, None, {
                     'content': {'comm_id': form.action.comm.comm_id, 'data': {
-                        'method': 'update', 'state': {'index': 1},
+                        'method': 'update', 'state': {'index': export_index},
                         'buffer_paths': []}}, 'buffers': []})
                 self.assertEqual(form.model.action, 'export')
 
     def test_output_is_escaped_text_not_executable_html(self):
-        from zizai.form_definition import load_definition
+        from importlib.resources import files
+        from zizai.form_definition import parse_definition
         from zizai.forms import NotebookForm
-        config = load_definition()
+        config = parse_definition(files('zizai').joinpath('forms.yaml').read_text(encoding='utf-8'))
         config['output_template'] = '<img src=x onerror=bad()> {connector}.{action}'
         form = NotebookForm(config)
         self.addCleanup(form.close)

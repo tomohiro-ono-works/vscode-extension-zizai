@@ -1,7 +1,8 @@
 """Selection and placeholder generation; no GUI, kernel or business execution."""
 from copy import deepcopy
 from .form_definition import valid_value
-from .csv_codegen import generate_csv
+from .csv_codegen import GENERATION_KINDS, generate_csv
+from .excel_codegen import generate_excel
 
 
 class FormModel:
@@ -32,6 +33,9 @@ class FormModel:
         if connector is not None and connector not in self.definition['connectors']:
             raise ValueError('候補からコネクタを選んでください。')
         fields, values = self.fields, self.values
+        if {self.connector, connector} == {'csv', 'excel'}:
+            # Keep a shared folder or variable, but give a different file format its own filename.
+            values = {key: value for key, value in values.items() if key != 'filename'}
         self.connector = connector
         if self.action not in self.actions:
             self.action = None
@@ -61,5 +65,7 @@ class FormModel:
                 raise ValueError(f'{field["label"]}を確認してください。')
         if not self.is_placeholder:
             connector = self.definition['connectors'][self.connector]
-            return generate_csv(self.actions[self.action]['generation'], self.values, connector.get('module_path'))
+            kind = self.actions[self.action]['generation']
+            generate_code = generate_csv if kind in GENERATION_KINDS else generate_excel
+            return generate_code(kind, self.values, connector.get('module_path'))
         return '{' + self.definition['output_template'].format(connector=self.connector, action=self.action) + '}'
