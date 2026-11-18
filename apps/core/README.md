@@ -6,6 +6,8 @@ Notebookのカーネルと同じPython環境に開発版のwheelを `[forms,duck
 
 「SQL実行」「SQL実行（ファイル）」では既存のDBを指定します。SQLからはそのDB内のテーブルを参照できます。SQLファイルの文字コードはUTF-8、Shift_JIS、CP932から選べます。
 
+「テーブル作成」では、CSVやExcelを取り込んだDataFrameを入力変数として指定します。初期設定の「新規作成」では同名テーブルがあるとエラーになり、既存データを保持します。「置換」を選ぶと、生成コードの実行時に指定したテーブルを上書きします。
+
 ## Excelフォーム（TASK-012、開発版）
 
 `zizai_runtime-0.0.3.dev0-py3-none-any.whl[forms,excel]`をNotebookのカーネルと同じPython環境に導入します。CSVも使う場合は`[forms,csv,excel]`を指定します。[Excel資産の正本](../../connectors/excel/)の`excel_connector.py`と`excel_definition.yaml`を共通フォルダーの`excel/`へ配置します。既にCSVを登録した環境でも、Excelを追加したら`configure_connectors`で同じ共通フォルダーを再登録し、カーネルを再起動してください。

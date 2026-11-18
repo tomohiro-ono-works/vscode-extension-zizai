@@ -45,9 +45,13 @@ def form_file_path(values, *, default_extension=None):
 
 
 def render_call(module_name, function, arguments, variable, *, reading):
-    handle = '_zizai_' + module_name if variable == module_name else module_name
+    reserved = {variable}
+    reserved.update(argument.value.id for argument in arguments if isinstance(argument.value, ast.Name))
+    handle = '_zizai_' + module_name if module_name in reserved else module_name
+    while handle in reserved:
+        handle = '_' + handle
     body = [ast.Import(names=[ast.alias(name=module_name, asname=handle if handle != module_name else None)])]
-    reserved = {variable, handle}
+    reserved.add(handle)
     for argument in arguments:
         name = argument.arg
         suffix = 2

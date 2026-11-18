@@ -11,6 +11,68 @@ from zizai.form_model import FormModel
 
 
 class DuckDBConnectorTests(unittest.TestCase):
+    def test_generated_create_table_imports_csv_and_excel_and_requires_explicit_replace(self):
+        import duckdb
+        from openpyxl import Workbook
+
+        shared = source_test_support.REPO / 'connectors'
+        model = FormModel(load_definition(shared))
+        data = {}
+
+        def generate(connector, action, **values):
+            model.set_connector(connector)
+            model.set_action(action)
+            for name, value in values.items():
+                model.set_value(name, value)
+            return model.generate()
+
+        with tempfile.TemporaryDirectory(prefix='zizai-duckdb-table-') as scratch:
+            folder = Path(scratch)
+            database = folder / 'main.duckdb'
+            (folder / '商品.csv').write_text('商品,数量\nりんご,3\n', encoding='utf-8')
+            book = Workbook()
+            book.active.title = 'シート1'
+            book.active.append(['商品', '数量'])
+            book.active.append(['りんご', 5])
+            book.save(folder / '商品.xlsx')
+            book.close()
+
+            csv_code = generate('csv', 'import', folder=str(folder), filename='商品.csv', output_variable='注文')
+            excel_code = generate('excel', 'read_excel', folder=str(folder), filename='商品.xlsx', output_variable='入荷')
+            db_code = generate('duckdb', 'create_db_file', db_folder=str(folder), db_file_name=database.name)
+            table_code = generate('duckdb', 'create_table', input_variable='注文', table_name='注文表',
+                                  output_variable='結果')
+            self.assertEqual(model.values['mode'], '新規作成')
+            self.assertIn('replace = False', table_code)
+            self.assertFalse(database.exists())
+
+            with patch.object(sys, 'path', [str(shared / 'duckdb'), *sys.path]):
+                for code in (csv_code, excel_code, db_code, table_code):
+                    exec(compile(code, '<generated-data>', 'exec'), data)
+                excel_table = generate('duckdb', 'create_table', input_variable='入荷', table_name='入荷表')
+                exec(compile(excel_table, '<generated-excel-table>', 'exec'), data)
+                sql = ('SELECT 注文表.商品, CAST(注文表.数量 AS INTEGER) AS 注文数, 入荷表.数量 AS 入荷数 '
+                       'FROM 注文表 JOIN 入荷表 USING (商品)')
+                query = generate('duckdb', 'execute_sql', sql=sql, output_variable='集計')
+                exec(compile(query, '<generated-query>', 'exec'), data)
+                self.assertEqual(data['集計'].to_dict('records'), [{'商品': 'りんご', '注文数': 3, '入荷数': 5}])
+
+                duplicate = generate('duckdb', 'create_table', input_variable='入荷', table_name='注文表', mode='新規作成')
+                with self.assertRaises(duckdb.CatalogException):
+                    exec(compile(duplicate, '<generated-duplicate>', 'exec'), data)
+                exec(compile(query, '<generated-query>', 'exec'), data)
+                self.assertEqual(data['集計']['注文数'].iat[0], 3)
+
+                data['duckdb_connector'] = data['入荷']
+                replace = generate('duckdb', 'create_table', mode='置換',
+                                   input_variable='duckdb_connector', output_variable='db_file')
+                self.assertIn('replace = True', replace)
+                exec(compile(replace, '<generated-replace>', 'exec'), data)
+                self.assertEqual(data['db_file'][['table_name', 'rows']].to_dict('records'),
+                                 [{'table_name': '注文表', 'rows': 1}])
+                exec(compile(query, '<generated-query>', 'exec'), data)
+                self.assertEqual(data['集計'].to_dict('records'), [{'商品': 'りんご', '注文数': 5, '入荷数': 5}])
+
     def test_generated_sql_and_cp932_script_run_only_against_selected_database(self):
         import duckdb
 

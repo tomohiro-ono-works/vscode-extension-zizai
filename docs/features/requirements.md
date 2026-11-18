@@ -4,7 +4,9 @@
 
 [Issue #86](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/86)のDBファイル作成は、外部共通フォルダーの `duckdb_connector.py` と `duckdb_definition.yaml` を使う。初期ファイル名は `sample.duckdb`。拡張子省略時は `.duckdb` を補い、入力されたフォルダーがなければPythonの実行時に作成する。同じDBファイルを指定した場合は開いて閉じ、既存テーブルを保持する。出力変数 `db_info` にDBのパス・ファイル名・拡張子を除いた名前・処理時刻を1行のDataFrameで返す。依存は `duckdb` extraから導入する。
 
-SQL実行は指定した既存DB内で利用する。SQLは複数行で入力するか、Pythonが指定されたSQLファイルを読み込む。SQLファイルの文字コードはUTF-8が初期値で、Shift_JIS／CP932も選べる。SQLが参照する外部ファイルへのアクセスは接続設定で無効化し、設定をロックする。入力するSQLは信頼済みのものを前提とし、結果はDataFrameとして受け取る。同名テーブルの扱いはIssueの未決事項。
+SQL実行は指定した既存DB内で利用する。SQLは複数行で入力するか、Pythonが指定されたSQLファイルを読み込む。SQLファイルの文字コードはUTF-8が初期値で、Shift_JIS／CP932も選べる。SQLが参照する外部ファイルへのアクセスは接続設定で無効化し、設定をロックする。入力するSQLは信頼済みのものを前提とし、結果はDataFrameとして受け取る。
+
+テーブル作成はNotebookの表データを指定した既存DBに保存する。フォームのテーブル名初期値は `table1`、作成モード初期値は「新規作成」。同名テーブルがあれば実行時にエラーとし、既存データを保持する。「置換」を選んだ場合は、生成コードが `replace=True` を渡して指定テーブルを置換する。新規作成・置換の結果は、DBパス、テーブル名、行数、処理時刻を含むDataFrameで返す。
 
 ## TASK-012：Excelフォームとコネクタ
 
