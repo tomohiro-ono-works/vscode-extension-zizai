@@ -10,6 +10,8 @@
 
 ## 新方式のTask
 
+- [TASK-016 / #90：Pythonのmain実行をNotebookフォームへ追加する](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/90)
+
 - [TASK-015 / #89：RENAMEリストによる列名変更をフォームへ追加する](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/89)
 
 - [TASK-014 / #88：BigQueryのSQL実行・SQLファイル実行・データロードを追加する](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/88)

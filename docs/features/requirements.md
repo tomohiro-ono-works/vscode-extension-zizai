@@ -1,5 +1,11 @@
 # ZizAI 要件仕様書
 
+## TASK-016：Python実行（担当ブランチ）
+
+[Issue #90](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/90)の「Python実行」は、フォームで入力したスクリプトと環境から通常の `import python_connector` を使うコードを生成する。初期状態のスクリプト欄は空。環境を省略するとカーネルと同じPythonを使う。Python実行ファイルまたは仮想環境を絶対パスで指定することもできる。
+
+利用者が生成コードを実行すると、別プロセスでスクリプトを読み、引数なしの `main()` を1回呼ぶ。実行権限は利用者のPythonと同じ。stdout・stderrと戻り値を分け、表・辞書・リストはDataFrameに、スカラー・NoneはPython値に戻す。受け渡しはJSONで行い、表の列は保持する。元のインデックス・型・attrsの完全保持は契約に含めない。一時ファイルは終了後に整理する。
+
 ## TASK-015：RENAMEリストで列名変更（担当ブランチ）
 
 [Issue #89](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/89)の列名変更は、既存のDataFrameとUTF-8のRENAME CSV（BOM可）を入力とし、別のDataFrameを返す。生成時はファイルを読み込まない。RENAMEリストの見出しは `origin_name` と `replaced_name` または `new_name`。旧版の日本語見出しも使える。任意の `description` と `ziz_datatype`（例 `INT64`）で説明・明示の型変換を指定できる。

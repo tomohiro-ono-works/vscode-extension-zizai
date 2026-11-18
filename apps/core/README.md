@@ -1,5 +1,11 @@
 # ZizAI Python最小基盤
 
+## Python実行（TASK-016、担当ブランチ）
+
+`[forms,python]` 付きのwheelを導入し、[Python資産](../../connectors/python/)を共通フォルダーの `python/` へ配置して `configure_connectors` で再登録します。`%form` の「Python」→「Python実行」で、引数なしの `main()` を持つコードを入力します。実行環境を空欄にするとNotebookと同じPythonを使います。
+
+生成コードを実行すると、選んだPythonで `main()` が動き、戻り値が出力変数に入ります。スクリプトが利用するライブラリは選んだ環境に導入してください。
+
 ## RENAMEリストで列名変更（TASK-015、担当ブランチ）
 
 カーネルと同じPython環境にwheelを`[forms,dataintegration]`付きで導入します。[データ統合資産](../../connectors/dataintegration/)を共通フォルダーの`dataintegration/`へ配置し、`configure_connectors`で再登録します。`%form`の「データ統合」→「RENAMEリストで列名変更」で入力変数とCSVを指定し、生成コードをPythonセルで実行します。
