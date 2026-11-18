@@ -1,5 +1,9 @@
 # ZizAI Python最小基盤
 
+## Windowsバッチファイル実行（TASK-018）
+
+`[forms,shell]` 付きのwheelを導入し、[Shell資産](../../connectors/shell/)を共通フォルダーへ登録します。`%form` の「Shell」→「バッチファイル実行」で `.bat` ファイルを指定します。引数が必要な場合は `["入力 1", "入力 2"]` のようなJSON配列を入力します。生成コードを実行すると標準出力・標準エラー・終了コードを受け取れます。
+
 ## Python実行（TASK-016、担当ブランチ）
 
 `[forms,python]` 付きのwheelを導入し、[Python資産](../../connectors/python/)を共通フォルダーの `python/` へ配置して `configure_connectors` で再登録します。`%form` の「Python」→「Python実行（ファイル）」で、引数なしの `main()` を持つ `.py` ファイルを指定します。実行環境を空欄にするとNotebookと同じPythonを使います。

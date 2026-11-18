@@ -1,5 +1,9 @@
 # ZizAI 要件仕様書
 
+## TASK-018：Windowsバッチファイル実行
+
+[Issue #92](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/92)の「バッチファイル実行」は、Windowsの `.bat` と任意の引数をフォームで指定する。引数は文字列のJSON配列。生成コードの実行時に利用者権限で選んだバッチを実行し、標準出力・標準エラー・終了コードをDataFrameで返す。終了コードが0以外なら出力付きのエラーを返す。標準出力・標準エラーはCP932でデコードする。
+
 ## TASK-017：SQL・Pythonのファイル指定
 
 2026-11-19の利用者指示により、DuckDB・BigQueryのSQLとPythonスクリプトはフォームからファイルを指定する。[Issue #91](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/91) 生成コードはパスを引数として渡し、実行時にファイルを読む。既に生成されたPythonコードで使う関数も提供する。

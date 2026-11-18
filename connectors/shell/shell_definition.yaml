@@ -1,0 +1,15 @@
+version: 1
+output_template: "{connector}.{action}のコードを生成"
+connectors:
+  shell:
+    label: Shell
+    module_file: shell_connector.py
+    actions:
+      execute_bat:
+        label: バッチファイル実行
+        generation: shell.execute_bat
+        fields:
+          folder: {label: BATファイルのフォルダー, type: folder, required: true}
+          filename: {label: BATファイル名, type: text, required: true}
+          args: {label: 引数（JSON配列・省略可）, type: text}
+          output_variable: {label: 出力変数, type: text, default: result, required: true}
