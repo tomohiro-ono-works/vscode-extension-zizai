@@ -1,12 +1,13 @@
 """Selection and placeholder generation; no GUI, kernel or business execution."""
 from copy import deepcopy
 from .form_definition import valid_value
+from .bigquery_codegen import generate_bigquery
 from .csv_codegen import generate_csv
 from .duckdb_codegen import generate_duckdb
 from .excel_codegen import generate_excel
 
 
-GENERATORS = {'csv': generate_csv, 'duckdb': generate_duckdb, 'excel': generate_excel}
+GENERATORS = {'bigquery': generate_bigquery, 'csv': generate_csv, 'duckdb': generate_duckdb, 'excel': generate_excel}
 
 
 class FormModel:

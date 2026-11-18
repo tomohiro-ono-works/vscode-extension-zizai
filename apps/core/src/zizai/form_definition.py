@@ -4,6 +4,7 @@ from pathlib import Path
 import keyword
 import re
 from string import Formatter
+from .bigquery_codegen import GENERATION_FIELDS as BIGQUERY_GENERATION_FIELDS
 from .csv_codegen import GENERATION_KINDS
 from .duckdb_codegen import GENERATION_FIELDS as DUCKDB_GENERATION_FIELDS
 from .excel_codegen import GENERATION_FIELDS as EXCEL_GENERATION_FIELDS
@@ -11,7 +12,7 @@ from .core.connector_config import get_connector_directory
 
 MAX_BYTES = 1024 * 1024
 ID = re.compile(r'[A-Za-z_][A-Za-z0-9_]*\Z')
-GENERATION_FIELDS = {**EXCEL_GENERATION_FIELDS, **DUCKDB_GENERATION_FIELDS}
+GENERATION_FIELDS = {**EXCEL_GENERATION_FIELDS, **DUCKDB_GENERATION_FIELDS, **BIGQUERY_GENERATION_FIELDS}
 ALLOWED_GENERATIONS = GENERATION_KINDS.union(GENERATION_FIELDS)
 
 

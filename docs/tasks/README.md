@@ -10,6 +10,7 @@
 
 ## 新方式のTask
 
+- [TASK-014 / #88：BigQueryのSQL実行・SQLファイル実行・データロードを追加する](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/88)
 - [TASK-013 / #86：DuckDBのDB作成・SQL実行・テーブル作成をフォームへ追加する](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/86)
 
 - [TASK-012 / #85：Excelの読み込み・範囲読み込み・書き出しとフォーム生成を実装する](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/85)
