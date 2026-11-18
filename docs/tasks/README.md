@@ -10,6 +10,7 @@
 
 ## 新方式のTask
 
+- [TASK-012 / #85：Excelの読み込み・範囲読み込み・書き出しとフォーム生成を実装する](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/85)
 - [TASK-011 / #84：CSV読み込み・書き出しとフォームからの実コード生成を実装する](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/84)
 - [TASK-010 / #82：%formによる横並び連動フォームとコード生成を実装する](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/82)
 - [TASK-008 / #76：新方式の要件仕様書と参照入口の整備](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/76)
