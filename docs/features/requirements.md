@@ -1,10 +1,14 @@
 # ZizAI 要件仕様書
 
+## TASK-017：SQL・Pythonのファイル指定
+
+2026-11-19の利用者指示により、DuckDB・BigQueryのSQLとPythonスクリプトはフォームからファイルを指定する。[Issue #91](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/91) 生成コードはパスを引数として渡し、実行時にファイルを読む。既に生成されたPythonコードで使う関数も提供する。
+
 ## TASK-016：Python実行（担当ブランチ）
 
-[Issue #90](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/90)の「Python実行」は、フォームで入力したスクリプトと環境から通常の `import python_connector` を使うコードを生成する。初期状態のスクリプト欄は空。環境を省略するとカーネルと同じPythonを使う。Python実行ファイルまたは仮想環境を絶対パスで指定することもできる。
+[Issue #90](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/90)の「Python実行」は、フォームで指定した `.py` ファイルと環境から通常の `import python_connector` を使うコードを生成する。環境を省略するとカーネルと同じPythonを使う。Python実行ファイルまたは仮想環境を絶対パスで指定することもできる。
 
-利用者が生成コードを実行すると、別プロセスでスクリプトを読み、引数なしの `main()` を1回呼ぶ。実行権限は利用者のPythonと同じ。stdout・stderrと戻り値を分け、表・辞書・リストはDataFrameに、スカラー・NoneはPython値に戻す。受け渡しはJSONで行い、表の列は保持する。元のインデックス・型・attrsの完全保持は契約に含めない。一時ファイルは終了後に整理する。
+利用者が生成コードを実行すると、別プロセスで指定ファイルを読み、引数なしの `main()` を1回呼ぶ。実行権限は利用者のPythonと同じ。stdout・stderrと戻り値を分け、表・辞書・リストはDataFrameに、スカラー・NoneはPython値に戻す。受け渡しはJSONで行い、表の列は保持する。元のインデックス・型・attrsの完全保持は契約に含めない。一時結果は終了後に整理する。
 
 ## TASK-015：RENAMEリストで列名変更（担当ブランチ）
 
@@ -14,9 +18,9 @@
 
 ## TASK-014：BigQueryフォーム（担当ブランチ）
 
-[Issue #88](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/88)のSQL実行、SQLファイル実行、データロードを外部共通フォルダーの `bigquery_connector.py` と `bigquery_definition.yaml` で提供する。コード生成時はファイル読込・認証・接続を行わない。実行時はフォームで指定したプロジェクトと、Python環境のApplication Default Credentialsを使用する。
+[Issue #88](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/88)のSQLファイル実行とデータロードを外部共通フォルダーの `bigquery_connector.py` と `bigquery_definition.yaml` で提供する。コード生成時はファイル読込・認証・接続を行わない。実行時はフォームで指定したプロジェクトと、Python環境のApplication Default Credentialsを使用する。
 
-- SQLはGoogleSQL。直接入力は複数行に対応し、SQLファイルの文字コードはUTF-8またはShift_JIS。クエリ結果はDataFrame、結果表のないジョブは完了情報を返す。
+- SQLはGoogleSQL。フォームで指定するSQLファイルの文字コードはUTF-8またはShift_JIS。クエリ結果はDataFrame、結果表のないジョブは完了情報を返す。任意の出力スキーマはSQLファイル実行で指定できる。
 - データロードはDataFrameを指定されたプロジェクト・データセット・テーブルへ渡す。初期設定は「新規／空テーブル」（`WRITE_EMPTY`）。「追記」または「置換」は明示して選択する。省略可能なロード用スキーマはBigQueryのフィールド定義JSON（`name`、`type`、必要に応じて `mode` や `fields`）。
 - 実サービスの確認で実行するSQLは `SELECT 1` に限定する。架空データによるロードは通信を代替して検証する。
 
@@ -24,7 +28,7 @@
 
 [Issue #86](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/86)のDBファイル作成は、外部共通フォルダーの `duckdb_connector.py` と `duckdb_definition.yaml` を使う。初期ファイル名は `sample.duckdb`。拡張子省略時は `.duckdb` を補い、入力されたフォルダーがなければPythonの実行時に作成する。同じDBファイルを指定した場合は開いて閉じ、既存テーブルを保持する。出力変数 `db_info` にDBのパス・ファイル名・拡張子を除いた名前・処理時刻を1行のDataFrameで返す。依存は `duckdb` extraから導入する。
 
-SQL実行は指定した既存DB内で利用する。SQLは複数行で入力するか、Pythonが指定されたSQLファイルを読み込む。SQLファイルの文字コードはUTF-8が初期値で、Shift_JIS／CP932も選べる。SQLが参照する外部ファイルへのアクセスは接続設定で無効化し、設定をロックする。入力するSQLは信頼済みのものを前提とし、結果はDataFrameとして受け取る。
+SQL実行は指定した既存DB内で利用する。Pythonの実行時にフォームで指定したSQLファイルを読み込む。文字コードはUTF-8が初期値で、Shift_JIS／CP932も選べる。SQLが参照する外部ファイルへのアクセスは接続設定で無効化し、設定をロックする。入力するSQLは信頼済みのものを前提とし、結果はDataFrameとして受け取る。
 
 テーブル作成はNotebookの表データを指定した既存DBに保存する。フォームのテーブル名初期値は `table1`、作成モード初期値は「新規作成」。同名テーブルがあれば実行時にエラーとし、既存データを保持する。「置換」を選んだ場合は、生成コードが `replace=True` を渡して指定テーブルを置換する。新規作成・置換の結果は、DBパス、テーブル名、行数、処理時刻を含むDataFrameで返す。
 

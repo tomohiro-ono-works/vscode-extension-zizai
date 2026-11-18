@@ -8,7 +8,6 @@ from .connector_codegen import _identifier, _text, module_name_for, render_call
 DATABASE_FIELDS = {'db_folder', 'db_file_name', 'output_variable'}
 GENERATION_FIELDS = {
     'duckdb.create_db_file': DATABASE_FIELDS,
-    'duckdb.execute_sql': DATABASE_FIELDS | {'sql'},
     'duckdb.execute_sql_file': DATABASE_FIELDS | {'sql_folder', 'sql_file_name', 'encoding'},
     'duckdb.create_table': DATABASE_FIELDS | {'input_variable', 'table_name', 'mode'},
 }
@@ -33,9 +32,7 @@ def generate_duckdb(kind, values, module_path):
         parameters = {'db_folder': folder.as_posix(), 'db_file_name': filename}
     else:
         parameters = {'db_file': (folder / filename).as_posix()}
-        if function == 'execute_sql':
-            parameters['sql'] = _text(values, 'sql', required=True)
-        elif function == 'execute_sql_file':
+        if function == 'execute_sql_file':
             sql_folder = _absolute_folder(values, 'sql_folder')
             sql_name = _text(values, 'sql_file_name', required=True).strip()
             parameters['sql_file'] = (sql_folder / sql_name).as_posix()

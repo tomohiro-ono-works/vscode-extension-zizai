@@ -14,6 +14,7 @@ import runpy
 import sys
 
 source, destination = map(Path, sys.argv[1:])
+sys.path.insert(0, str(source.parent))
 main = runpy.run_path(str(source), run_name='__ziz_user__').get('main')
 if not callable(main):
     raise ValueError('引数なしの main() を定義してください。')
@@ -43,29 +44,22 @@ def _interpreter(env_path):
     return str(path)
 
 
-def execute_python(script, *, env_path=None):
-    """Run trusted code and return main()'s result separately from process logs."""
-    if not isinstance(script, str) or not script.strip():
-        raise ValueError('スクリプトを入力してください。')
+def _run_file(source, output, env_path):
     python = _interpreter(env_path)
-    with TemporaryDirectory(prefix='zizai-python-') as directory:
-        source = Path(directory) / 'user_script.py'
-        output = Path(directory) / 'result.json'
-        source.write_text(script, encoding='utf-8')
-        process = subprocess.run(
-            [python, '-B', '-X', 'utf8', '-c', _RUN_MAIN, str(source), str(output)],
-            capture_output=True, encoding='utf-8', errors='replace',
-            creationflags=getattr(subprocess, 'CREATE_NO_WINDOW', 0),
-        )
-        if process.stdout:
-            print(process.stdout, end='')
-        if process.stderr:
-            print(process.stderr, end='', file=sys.stderr)
-        if process.returncode:
-            raise RuntimeError(f'Python実行に失敗しました。終了コード {process.returncode}')
-        if not output.is_file():
-            raise RuntimeError('Pythonのmain()から戻り値を取得できませんでした。')
-        payload = json.loads(output.read_text(encoding='utf-8'))
+    process = subprocess.run(
+        [python, '-B', '-X', 'utf8', '-c', _RUN_MAIN, str(source), str(output)],
+        capture_output=True, encoding='utf-8', errors='replace',
+        creationflags=getattr(subprocess, 'CREATE_NO_WINDOW', 0),
+    )
+    if process.stdout:
+        print(process.stdout, end='')
+    if process.stderr:
+        print(process.stderr, end='', file=sys.stderr)
+    if process.returncode:
+        raise RuntimeError(f'Python実行に失敗しました。終了コード {process.returncode}')
+    if not output.is_file():
+        raise RuntimeError('Pythonのmain()から戻り値を取得できませんでした。')
+    payload = json.loads(output.read_text(encoding='utf-8'))
     if payload['kind'] == 'dataframe':
         from pandas import DataFrame
 
@@ -76,3 +70,24 @@ def execute_python(script, *, env_path=None):
 
         return TabularOperations.to_dataframe(value)
     return value
+
+
+def execute_python_file(script_file, *, env_path=None):
+    """Execute main() from the selected .py file and leave the source untouched."""
+    source = Path(script_file).absolute()
+    if source.suffix.lower() != '.py':
+        raise ValueError('拡張子が .py のファイルを指定してください。')
+    if not source.is_file():
+        raise FileNotFoundError(f'Pythonファイルが見つかりません: {source.as_posix()}')
+    with TemporaryDirectory(prefix='zizai-python-') as directory:
+        return _run_file(source, Path(directory) / 'result.json', env_path)
+
+
+def execute_python(script, *, env_path=None):
+    """Run source from Python code generated before the form switched to files."""
+    if not isinstance(script, str) or not script.strip():
+        raise ValueError('スクリプトを入力してください。')
+    with TemporaryDirectory(prefix='zizai-python-') as directory:
+        source = Path(directory) / 'user_script.py'
+        source.write_text(script, encoding='utf-8')
+        return _run_file(source, Path(directory) / 'result.json', env_path)

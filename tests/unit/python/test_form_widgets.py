@@ -47,22 +47,29 @@ class FormWidgetTests(unittest.TestCase):
         self.assertIn('data = df', form.result)
         self.assertIn('write_csv(data=data', form.result)
 
-    def test_duckdb_sql_uses_a_multiline_field(self):
-        import ast
-        import ipywidgets as widgets
-        form = self.make_form()
-        form.connector.value = 'duckdb'
-        form.action.value = 'execute_sql'
-        form.folder_buttons['db_folder'].click()
-        form.field_widgets['db_file_name'].value = '商品.duckdb'
-        sql = form.field_widgets['sql']
-        self.assertIsInstance(sql, widgets.Textarea)
-        self.assertTrue(form.generate_button.disabled)
-        sql.value = 'SELECT 商品\nFROM products'
-        form.generate_button.click()
-        self.assertIn('execute_sql(db_file=db_file, sql=sql)', form.result)
-        self.assertIn(sql.value, [node.value for node in ast.walk(ast.parse(form.result))
-                                  if isinstance(node, ast.Constant)])
+    def test_sql_and_python_use_only_files_in_the_form(self):
+        for connector, action, folder, filename, call in (
+            ('duckdb', 'execute_sql_file', 'sql_folder', 'sql_file_name', 'execute_sql_file'),
+            ('bigquery', 'execute_sql_file', 'sql_folder', 'sql_file_name', 'execute_sql_file'),
+            ('python', 'execute_python', 'folder', 'filename', 'execute_python_file'),
+        ):
+            with self.subTest(connector=connector):
+                form = self.make_form()
+                form.connector.value = connector
+                form.action.value = action
+                self.assertNotIn('sql', form.field_widgets)
+                self.assertNotIn('script', form.field_widgets)
+                self.assertNotIn('execute_sql', form.model.actions)
+                if connector == 'duckdb':
+                    form.folder_buttons['db_folder'].click()
+                    form.field_widgets['db_file_name'].value = '商品.duckdb'
+                if connector == 'bigquery':
+                    form.field_widgets['project_id'].value = 'fixture-project'
+                form.folder_buttons[folder].click()
+                self.assertTrue(form.generate_button.disabled)
+                form.field_widgets[filename].value = '試用.py' if connector == 'python' else '試用.sql'
+                form.generate_button.click()
+                self.assertIn(call + '(', form.result)
 
     def test_csv_encoding_and_delimiter_share_a_horizontal_row(self):
         import ipywidgets as widgets

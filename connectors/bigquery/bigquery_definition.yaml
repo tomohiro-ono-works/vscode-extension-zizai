@@ -5,14 +5,6 @@ connectors:
     label: BigQuery
     module_file: bigquery_connector.py
     actions:
-      execute_sql:
-        label: SQL実行
-        generation: bigquery.execute_sql
-        fields:
-          project_id: {label: プロジェクトID, type: text, required: true}
-          output_variable: {label: 出力変数, type: text, default: df, required: true}
-          sql: {label: SQL, type: textarea, required: true}
-          schema: {label: 出力スキーマ（JSON・省略可）, type: textarea}
       execute_sql_file:
         label: SQL実行（ファイル）
         generation: bigquery.execute_sql_file
@@ -21,6 +13,7 @@ connectors:
           sql_folder: {label: SQLフォルダー, type: folder, required: true}
           sql_file_name: {label: SQLファイル名, type: text, required: true}
           encoding: {label: 文字コード, type: choice, choices: [utf8, shift_jis], default: utf8, required: true}
+          schema: {label: 出力スキーマ（JSON・省略可）, type: textarea}
           output_variable: {label: 出力変数, type: text, default: df, required: true}
       load_data:
         label: データロード

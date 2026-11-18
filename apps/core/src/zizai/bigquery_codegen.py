@@ -6,7 +6,6 @@ from .connector_codegen import _identifier, _text, form_file_path, module_name_f
 
 COMMON_FIELDS = {'project_id', 'output_variable'}
 GENERATION_FIELDS = {
-    'bigquery.execute_sql': COMMON_FIELDS | {'sql', 'schema'},
     'bigquery.execute_sql_file': COMMON_FIELDS | {'sql_folder', 'sql_file_name', 'encoding'},
     'bigquery.load_data': COMMON_FIELDS | {'dataset_id', 'table_id', 'input_variable', 'mode', 'schema'},
 }
@@ -24,9 +23,7 @@ def generate_bigquery(kind, values, module_path):
     output = _identifier(values, 'output_variable')
     function = kind.split('.', 1)[1]
     parameters = {'project_id': _text(values, 'project_id', required=True).strip()}
-    if function == 'execute_sql':
-        parameters['sql'] = _text(values, 'sql', required=True)
-    elif function == 'execute_sql_file':
+    if function == 'execute_sql_file':
         parameters['sql_file'] = form_file_path({'folder': values['sql_folder'], 'filename': values['sql_file_name']})
         parameters['encoding'] = _text(values, 'encoding', required=True)
     else:

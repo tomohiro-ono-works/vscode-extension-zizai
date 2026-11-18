@@ -35,11 +35,16 @@ class PythonConnectorTests(unittest.TestCase):
                 '    print(\'__ZIZ_RESULT__={"unexpected": 1}\')\n'
                 '    return {"結果": "成功", "一時ファイル": __file__}\n'
             )
-            self.model.set_value('script', script)
+            path = Path(folder) / '試用.py'
+            self.model.set_value('folder', folder)
+            self.model.set_value('filename', path.name)
             self.model.set_value('output_variable', '結果')
             code = self.model.generate()
             self.assertFalse(marker.exists())
+            self.assertFalse(path.exists())
             self.assertTrue(code.startswith('import python_connector\n'))
+            self.assertNotIn('def main()', code)
+            path.write_text(script, encoding='utf-8')
             namespace = {}
             with redirect_stdout(io.StringIO()) as stdout:
                 exec(compile(code, '<generated-python>', 'exec'), namespace)
@@ -47,7 +52,8 @@ class PythonConnectorTests(unittest.TestCase):
             self.assertIn('__ZIZ_RESULT__', stdout.getvalue())
             row = namespace['結果'].iloc[0]
             self.assertEqual(row['結果'], '成功')
-            self.assertFalse(Path(row['一時ファイル']).parent.exists())
+            self.assertEqual(Path(row['一時ファイル']), path)
+            self.assertEqual(path.read_text(encoding='utf-8'), script)
 
     def test_selected_venv_scalar_result_and_failure_cleanup(self):
         from python_connector import execute_python
@@ -55,7 +61,10 @@ class PythonConnectorTests(unittest.TestCase):
             environment = Path(folder) / '選択環境'
             venv.EnvBuilder(with_pip=False).create(environment)
             script = 'import sys\ndef main():\n    return sys.prefix\n'
-            self.model.set_value('script', script)
+            path = Path(folder) / 'environment.py'
+            path.write_text(script, encoding='utf-8')
+            self.model.set_value('folder', folder)
+            self.model.set_value('filename', path.name)
             self.model.set_value('env_path', environment.as_posix())
             namespace = {}
             exec(compile(self.model.generate(), '<generated-venv>', 'exec'), namespace)

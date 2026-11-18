@@ -27,7 +27,7 @@ class BigQueryConnectorTests(unittest.TestCase):
             self.model.set_value(name, value)
         return self.model.generate()
 
-    def test_direct_and_file_sql_send_only_when_generated_code_runs(self):
+    def test_file_sql_sends_only_when_generated_code_runs(self):
         import pandas as pd
         from bigquery_connector import bigquery
         client = Mock()
@@ -36,10 +36,10 @@ class BigQueryConnectorTests(unittest.TestCase):
         rows.to_dataframe.return_value = pd.DataFrame({'f0_': [1]})
 
         with patch.object(bigquery, 'Client', return_value=client) as factory:
-            self.model.set_action('execute_sql')
+            self.assertNotIn('execute_sql', self.model.actions)
+            self.model.set_action('execute_sql_file')
             with self.assertRaises(ValueError):
                 self.model.generate()
-            direct = self.generate('execute_sql', sql='SELECT 1', output_variable='集計')
             with tempfile.TemporaryDirectory(prefix='zizai-bq-') as scratch:
                 script = Path(scratch) / '確認.sql'
                 from_file = self.generate('execute_sql_file', sql_folder=scratch, sql_file_name=script.name,
@@ -47,13 +47,12 @@ class BigQueryConnectorTests(unittest.TestCase):
                 self.assertFalse(script.exists())
                 factory.assert_not_called()
                 script.write_text('SELECT 1 -- 確認', encoding='shift_jis')
-                for code, expected in [(direct, 'SELECT 1'), (from_file, 'SELECT 1 -- 確認')]:
-                    exec(compile(code, '<generated-bigquery>', 'exec'), self.namespace)
-                    self.assertEqual(self.namespace['集計'].to_dict('records'), [{'f0_': 1}])
-                    self.assertEqual(client.query.call_args.args, (expected,))
-                    self.assertFalse(client.query.call_args.kwargs['job_config'].use_legacy_sql)
+                exec(compile(from_file, '<generated-bigquery>', 'exec'), self.namespace)
+                self.assertEqual(self.namespace['集計'].to_dict('records'), [{'f0_': 1}])
+                self.assertEqual(client.query.call_args.args, ('SELECT 1 -- 確認',))
+                self.assertFalse(client.query.call_args.kwargs['job_config'].use_legacy_sql)
             factory.assert_called_with(project='fixture-project')
-            self.assertEqual(client.close.call_count, 2)
+            client.close.assert_called_once()
 
     def test_load_modes_and_schema_reach_the_mock_client(self):
         import pandas as pd

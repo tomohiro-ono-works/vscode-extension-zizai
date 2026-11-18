@@ -6,9 +6,10 @@ connectors:
     module_file: python_connector.py
     actions:
       execute_python:
-        label: Python実行
-        generation: python.execute_python
+        label: Python実行（ファイル）
+        generation: python.execute_python_file
         fields:
           env_path: {label: Python実行ファイルまたは仮想環境のパス（省略可）, type: text}
-          script: {label: Pythonコード（main()を定義）, type: textarea, required: true}
+          folder: {label: Pythonファイルのフォルダー, type: folder, required: true}
+          filename: {label: Pythonファイル名, type: text, required: true}
           output_variable: {label: 出力変数, type: text, default: result, required: true}

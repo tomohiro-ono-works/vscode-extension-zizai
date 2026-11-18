@@ -2,7 +2,7 @@
 
 ## Python実行（TASK-016、担当ブランチ）
 
-`[forms,python]` 付きのwheelを導入し、[Python資産](../../connectors/python/)を共通フォルダーの `python/` へ配置して `configure_connectors` で再登録します。`%form` の「Python」→「Python実行」で、引数なしの `main()` を持つコードを入力します。実行環境を空欄にするとNotebookと同じPythonを使います。
+`[forms,python]` 付きのwheelを導入し、[Python資産](../../connectors/python/)を共通フォルダーの `python/` へ配置して `configure_connectors` で再登録します。`%form` の「Python」→「Python実行（ファイル）」で、引数なしの `main()` を持つ `.py` ファイルを指定します。実行環境を空欄にするとNotebookと同じPythonを使います。
 
 生成コードを実行すると、選んだPythonで `main()` が動き、戻り値が出力変数に入ります。スクリプトが利用するライブラリは選んだ環境に導入してください。
 
@@ -20,7 +20,7 @@ origin_name,replaced_name,description,ziz_datatype
 
 ## BigQueryフォーム（TASK-014、担当ブランチ）
 
-カーネルと同じ環境に開発版のwheelを`[forms,bigquery]`付きで導入します。[BigQuery資産](../../connectors/bigquery/)を共通フォルダーの `bigquery/` に置き、`configure_connectors` で再登録します。`%form` のBigQueryからSQL入力、SQLファイル、データロードを選んでコードを生成します。生成コードを実行すると、指定したプロジェクトと既存のApplication Default Credentialsを使用します。
+カーネルと同じ環境に開発版のwheelを`[forms,bigquery]`付きで導入します。[BigQuery資産](../../connectors/bigquery/)を共通フォルダーの `bigquery/` に置き、`configure_connectors` で再登録します。`%form` のBigQueryからSQLファイル実行またはデータロードを選んでコードを生成します。生成コードを実行すると、指定したプロジェクトと既存のApplication Default Credentialsを使用します。
 
 ロードの初期値は「新規／空テーブル」です。既存データを追記・置換する場合は対応するモードを選択します。任意のロード用スキーマは `[{"name":"id","type":"INTEGER"}]` のようなBigQuery形式です。
 
@@ -28,7 +28,7 @@ origin_name,replaced_name,description,ziz_datatype
 
 Notebookのカーネルと同じPython環境に開発版のwheelを `[forms,duckdb]` 付きで導入します。[DuckDB資産](../../connectors/duckdb/)を共通フォルダーの `duckdb/` に置き、`configure_connectors` で登録してからカーネルを再起動します。`%form` で「DuckDB」→「DBファイル作成」を選び、設定後に生成コードを実行するとDBファイルの情報が `db_info` に入ります。既存DBを指定した場合は中のテーブルを保持します。
 
-「SQL実行」「SQL実行（ファイル）」では既存のDBを指定します。SQLからはそのDB内のテーブルを参照できます。SQLファイルの文字コードはUTF-8、Shift_JIS、CP932から選べます。
+「SQL実行（ファイル）」では、既存のDBとSQLファイルを指定します。SQLからはそのDB内のテーブルを参照できます。SQLファイルの文字コードはUTF-8、Shift_JIS、CP932から選べます。
 
 「テーブル作成」では、CSVやExcelを取り込んだDataFrameを入力変数として指定します。初期設定の「新規作成」では同名テーブルがあるとエラーになり、既存データを保持します。「置換」を選ぶと、生成コードの実行時に指定したテーブルを上書きします。
 
