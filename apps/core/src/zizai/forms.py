@@ -142,6 +142,9 @@ class NotebookForm:
                 elif field['type'] == 'integer':
                     widget = widgets.IntText(description=label, value=value)
                     widget.add_class('zizai-integer')
+                elif field['type'] == 'textarea':
+                    widget = widgets.Textarea(description=label, value=value, rows=5, continuous_update=True)
+                    widget.add_class('zizai-textarea')
                 else:
                     widget = widgets.Text(description=label, value=value, continuous_update=True)
                 widget.layout.width = 'auto'

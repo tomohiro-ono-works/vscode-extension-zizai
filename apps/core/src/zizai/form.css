@@ -14,7 +14,8 @@
 .zizai-form * { box-sizing: border-box; }
 .zizai-form .zizai-toolbar { gap: 16px; }
 .zizai-form .zizai-details { gap: 16px; }
-.zizai-form .widget-text, .zizai-form .widget-dropdown, .zizai-form .zizai-integer {
+.zizai-form .widget-text, .zizai-form .widget-dropdown, .zizai-form .zizai-integer,
+.zizai-form .zizai-textarea {
   flex-direction: column;
   align-items: stretch;
   height: auto;
@@ -33,7 +34,7 @@
   line-height: 1.5;
 }
 .zizai-form .zizai-required { color: #bd2929; }
-.zizai-form input, .zizai-form select {
+.zizai-form input, .zizai-form select, .zizai-form textarea {
   width: 100% !important;
   min-width: 0;
   height: 36px !important;
@@ -49,7 +50,13 @@
   font: inherit;
 }
 .zizai-form select { padding: 0 12px; line-height: normal; }
-.zizai-form input:focus, .zizai-form select:focus,
+.zizai-form textarea {
+  height: auto !important;
+  min-height: 112px;
+  max-height: none;
+  flex: 1 0 auto;
+}
+.zizai-form input:focus, .zizai-form select:focus, .zizai-form textarea:focus,
 .zizai-form button:focus-visible {
   outline: 2px solid var(--zizai-green);
   outline-offset: 2px;

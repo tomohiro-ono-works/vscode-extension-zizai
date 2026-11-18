@@ -26,3 +26,33 @@ def create_db_file(db_folder, db_file_name='sample.duckdb'):
         'created_at': datetime.now().isoformat(timespec='seconds'),
     }
     return TabularOperations.attach_dataframe_schema(TabularOperations.to_dataframe(metadata))
+
+
+def execute_sql(db_file, sql):
+    """Run trusted SQL against an existing database with external access disabled."""
+    path = Path(db_file).resolve()
+    if not path.is_file():
+        raise FileNotFoundError(f'DBファイルが見つかりません: {path.as_posix()}')
+    config = {
+        'enable_external_access': 'false',
+        'autoinstall_known_extensions': 'false',
+        'autoload_known_extensions': 'false',
+        'allow_community_extensions': 'false',
+    }
+    with duckdb.connect(str(path), config=config) as connection:
+        connection.execute('SET lock_configuration = true')
+        cursor = connection.execute(sql)
+        if cursor.description is not None:
+            result = cursor.df()
+        else:
+            result = TabularOperations.to_dataframe({
+                'db_file': path.as_posix(),
+                'status': 'executed',
+                'executed_at': datetime.now().isoformat(timespec='seconds'),
+            })
+    return TabularOperations.attach_dataframe_schema(result)
+
+
+def execute_sql_file(db_file, sql_file, *, encoding='utf8'):
+    """Read the selected script in Python, then run it with the same SQL settings."""
+    return execute_sql(db_file, Path(sql_file).read_text(encoding=encoding))

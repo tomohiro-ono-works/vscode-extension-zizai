@@ -27,7 +27,7 @@ def valid_value(field, value, *, require=False):
         return value in field['choices']
     if kind == 'folder':
         return Path(value).is_absolute()
-    return kind == 'text'
+    return kind in ('text', 'textarea')
 
 
 def _mapping(value, name):
@@ -120,8 +120,8 @@ def parse_definition(text):
                 if not isinstance(name, str) or not ID.fullmatch(name) or not isinstance(field, dict):
                     raise ValueError('入力項目の定義が不正です。')
                 _label(field.get('label'))
-                if field.get('type') not in {'text', 'choice', 'folder', 'integer'}:
-                    raise ValueError('項目型はtext/choice/folder/integerにしてください。')
+                if field.get('type') not in {'text', 'textarea', 'choice', 'folder', 'integer'}:
+                    raise ValueError('項目型はtext/textarea/choice/folder/integerにしてください。')
                 if set(field) - {'label', 'type', 'required', 'default', 'choices', 'minimum'}:
                     raise ValueError('入力項目に未対応の設定があります。')
                 if 'required' in field and type(field['required']) is not bool:
