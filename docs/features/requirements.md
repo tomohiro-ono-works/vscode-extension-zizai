@@ -1,5 +1,11 @@
 # ZizAI 要件仕様書
 
+## TASK-015：RENAMEリストで列名変更（担当ブランチ）
+
+[Issue #89](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/89)の列名変更は、既存のDataFrameとUTF-8のRENAME CSV（BOM可）を入力とし、別のDataFrameを返す。生成時はファイルを読み込まない。RENAMEリストの見出しは `origin_name` と `replaced_name` または `new_name`。旧版の日本語見出しも使える。任意の `description` と `ziz_datatype`（例 `INT64`）で説明・明示の型変換を指定できる。
+
+変更前の空白・改行削除、全角英数字の半角化、半角記号のアンダースコア化、変更後の日本語を含む列の除外は、フォームで選んだ項目だけ適用する。初期値はすべてオフ。入力表の内容と、出力内の型指定のない列の値・型を保持する。変更による列名衝突や矛盾する定義はエラーとする。出力の列名・説明・型は `attrs["ziz_schema"]` に記録する。
+
 ## TASK-014：BigQueryフォーム（担当ブランチ）
 
 [Issue #88](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/88)のSQL実行、SQLファイル実行、データロードを外部共通フォルダーの `bigquery_connector.py` と `bigquery_definition.yaml` で提供する。コード生成時はファイル読込・認証・接続を行わない。実行時はフォームで指定したプロジェクトと、Python環境のApplication Default Credentialsを使用する。

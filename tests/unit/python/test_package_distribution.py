@@ -14,9 +14,10 @@ class PackageDistributionTests(PackageArtifactTestCase):
             name = next(n for n in archive.namelist() if n.endswith('.dist-info/METADATA'))
             metadata = Parser().parsestr(archive.read(name).decode('utf-8'))
         requirements = metadata.get_all('Requires-Dist')
-        self.assertEqual(len(requirements), 15)
+        self.assertEqual(len(requirements), 17)
         forms = [item for item in requirements if 'extra == "forms"' in item]
         csv = [item for item in requirements if 'extra == "csv"' in item]
+        dataintegration = [item for item in requirements if 'extra == "dataintegration"' in item]
         bigquery = [item for item in requirements if 'extra == "bigquery"' in item]
         duckdb = [item for item in requirements if 'extra == "duckdb"' in item]
         excel = [item for item in requirements if 'extra == "excel"' in item]
@@ -24,6 +25,9 @@ class PackageDistributionTests(PackageArtifactTestCase):
         self.assertEqual(len(csv), 2)
         self.assertTrue(any(item.startswith('pandas==3.1.1') for item in csv))
         self.assertTrue(any(item.startswith('numpy==2.5.4') for item in csv))
+        self.assertEqual({item.split(';')[0].strip() for item in dataintegration}, {
+            'pandas==3.1.1', 'numpy==2.5.4',
+        })
         self.assertEqual({item.split(';')[0].strip() for item in bigquery}, {
             'google-cloud-bigquery[pandas]==3.47.0', 'pandas==3.1.1', 'numpy==2.5.4', 'pyarrow==26.0.1',
         })

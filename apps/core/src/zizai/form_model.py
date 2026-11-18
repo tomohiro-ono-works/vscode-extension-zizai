@@ -3,11 +3,15 @@ from copy import deepcopy
 from .form_definition import valid_value
 from .bigquery_codegen import generate_bigquery
 from .csv_codegen import generate_csv
+from .dataintegration_codegen import generate_dataintegration
 from .duckdb_codegen import generate_duckdb
 from .excel_codegen import generate_excel
 
 
-GENERATORS = {'bigquery': generate_bigquery, 'csv': generate_csv, 'duckdb': generate_duckdb, 'excel': generate_excel}
+GENERATORS = {
+    'bigquery': generate_bigquery, 'csv': generate_csv, 'dataintegration': generate_dataintegration,
+    'duckdb': generate_duckdb, 'excel': generate_excel,
+}
 
 
 class FormModel:
@@ -32,6 +36,8 @@ class FormModel:
                 self.values[name] = previous_values[name]
             else:
                 default = field.get('minimum', 0) if field['type'] == 'integer' else (None if field['type'] == 'choice' else '')
+                if field['type'] == 'checkbox':
+                    default = False
                 self.values[name] = field.get('default', default)
 
     def set_connector(self, connector):

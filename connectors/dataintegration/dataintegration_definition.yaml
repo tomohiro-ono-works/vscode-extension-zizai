@@ -1,0 +1,20 @@
+version: 1
+output_template: "{connector}.{action}のコードを生成"
+connectors:
+  dataintegration:
+    label: データ統合
+    module_file: dataintegration_connector.py
+    actions:
+      replace_fields_forrenamelist:
+        label: RENAMEリストで列名変更
+        generation: dataintegration.replace_fields_forrenamelist
+        fields:
+          input_variable: {label: 入力変数, type: text, required: true}
+          folder: {label: RENAMEリストのフォルダー, type: folder, required: true}
+          filename: {label: RENAMEリストのファイル名, type: text, required: true}
+          output_variable: {label: 出力変数, type: text, default: renamed_df, required: true}
+          remove_spaces: {label: 変更前に全角・半角スペースを削除, type: checkbox}
+          remove_newlines: {label: 変更前に改行を削除, type: checkbox}
+          to_halfwidth_alnum: {label: 変更前に全角英数字を半角に変換, type: checkbox}
+          symbols_to_snake: {label: 変更前に半角記号をアンダースコアに変換, type: checkbox}
+          exclude_japanese_columns: {label: 変更後に日本語を含む列を除外, type: checkbox}
