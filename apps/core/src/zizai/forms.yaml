@@ -16,7 +16,6 @@ connectors:
           data_start_row: {label: データ開始行, type: integer, default: 2, minimum: 1}
           chunk_size: {label: 読込分割行数（0は一括）, type: integer, default: 50000, minimum: 0}
           schema: {label: schema（JSON・省略可）, type: text}
-          date_cleansing: {label: 日付処理, type: choice, choices: [有効, 無効], default: 有効, required: true}
       export:
         label: 書き出し
         fields:

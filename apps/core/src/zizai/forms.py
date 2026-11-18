@@ -141,6 +141,7 @@ class NotebookForm:
                     widget = widgets.Dropdown(description=label, options=[('選択してください', None)] + [(x, x) for x in field['choices']], value=value)
                 elif field['type'] == 'integer':
                     widget = widgets.IntText(description=label, value=value)
+                    widget.add_class('zizai-integer')
                 else:
                     widget = widgets.Text(description=label, value=value, continuous_update=True)
                 widget.layout.width = 'auto'
@@ -157,7 +158,10 @@ class NotebookForm:
                     self._dynamic.append(button)
             self.toolbar.children = [self.connector, self.action]
             rows = []
-            paired = 'encoding' in self.field_widgets and 'delimiter' in self.field_widgets
+            pairs = [('encoding', 'delimiter')]
+            if (self.model.connector, self.model.action) == ('csv', 'import'):
+                pairs.extend([('output_variable', 'chunk_size'), ('header_row', 'data_start_row')])
+            paired_fields = {left: right for left, right in pairs if left in self.field_widgets and right in self.field_widgets}
             for name, widget in self.field_widgets.items():
                 if name in self.folder_buttons:
                     widget.layout.flex = '1 1 0'
@@ -167,8 +171,8 @@ class NotebookForm:
                     row.add_class('zizai-folder-row')
                     self._dynamic.append(row)
                     rows.append(row)
-                elif paired and name == 'encoding':
-                    pair = [widget, self.field_widgets['delimiter']]
+                elif name in paired_fields:
+                    pair = [widget, self.field_widgets[paired_fields[name]]]
                     for item in pair:
                         item.layout.flex = '1 1 240px'
                         item.layout.min_width = '0'
@@ -176,7 +180,7 @@ class NotebookForm:
                     row.add_class('zizai-pair')
                     self._dynamic.append(row)
                     rows.append(row)
-                elif not (paired and name == 'delimiter'):
+                elif name not in paired_fields.values():
                     rows.append(widget)
             self.details.children = rows
             self.message.value = ''

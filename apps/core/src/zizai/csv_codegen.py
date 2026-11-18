@@ -43,7 +43,7 @@ def generate_csv(kind, values, module_path):
     reading = kind == 'csv.read_csv'
     if not reading and not Path(filename).suffix:
         filename += '.csv'
-    path = str(Path(folder) / filename)
+    path = (Path(folder) / filename).as_posix()
     schema = _text(values, 'schema')
     options = {'encoding': _text(values, 'encoding'), 'delimiter': _text(values, 'delimiter'),
                'schema': schema if schema.strip() else None}
@@ -55,7 +55,8 @@ def generate_csv(kind, values, module_path):
         start = _integer(values, 'data_start_row', 1)
         if start < header:
             raise ValueError('データ開始行はヘッダー行以上にしてください。')
-        cleansing = values.get('date_cleansing')
+        # Older custom definitions can still expose this option.
+        cleansing = values.get('date_cleansing', '有効')
         if cleansing not in ('有効', '無効'):
             raise ValueError('日付処理を選択してください。')
         options.update(header_row=header, data_start_row=start,

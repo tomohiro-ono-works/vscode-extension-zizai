@@ -71,7 +71,7 @@ class CsvCodegenTests(unittest.TestCase):
                     self.assertIn(argument.value.id, definitions)
                 path_argument = 'file_path' if kind.endswith('read_csv') else 'output_path'
                 path_name = next(arg.value.id for arg in call.keywords if arg.arg == path_argument)
-                self.assertEqual(definitions[path_name].value, str(self.directory / '入力.csv'))
+                self.assertEqual(definitions[path_name].value, (self.directory / '入力.csv').as_posix())
 
     def test_output_variable_can_match_parameter_names(self):
         import csv_connector
@@ -91,7 +91,7 @@ class CsvCodegenTests(unittest.TestCase):
             namespace = {}
             exec(compile(code, '<generated-csv>', 'exec'), namespace)
         self.assertEqual(namespace['df'], 'safe')
-        self.assertEqual(read.call_args.kwargs['file_path'], str(Path(self.values['folder']) / self.values['filename']))
+        self.assertEqual(read.call_args.kwargs['file_path'], (Path(self.values['folder']) / self.values['filename']).as_posix())
         self.assertEqual(read.call_args.kwargs['schema'], self.values['schema'])
 
     def test_invalid_identifiers_missing_inputs_and_rows_do_not_generate(self):

@@ -104,7 +104,7 @@ def parse_definition(text):
                 raise ValueError('fieldsは項目一覧にしてください。')
             if 'generation' in action:
                 needed = {'folder', 'filename', 'encoding', 'delimiter', 'schema'}
-                needed |= ({'output_variable', 'header_row', 'data_start_row', 'chunk_size', 'date_cleansing'}
+                needed |= ({'output_variable', 'header_row', 'data_start_row', 'chunk_size'}
                            if action['generation'] == 'csv.read_csv' else {'input_variable'})
                 if not needed <= fields.keys():
                     raise ValueError('CSV生成に必要な入力項目が不足しています。')

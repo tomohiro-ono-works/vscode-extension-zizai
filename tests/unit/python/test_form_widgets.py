@@ -79,6 +79,32 @@ class FormWidgetTests(unittest.TestCase):
                 picker.assert_called_once_with('C:/現在')
                 self.assertEqual(field.value, 'C:/選択先')
 
+    def test_csv_read_form_pairs_row_and_chunk_settings_without_date_control(self):
+        import ipywidgets as widgets
+        repo = Path(__file__).resolve().parents[3]
+        definitions = (repo / 'connectors', repo / 'apps/core/src/zizai/forms.yaml')
+        for definition in definitions:
+            with self.subTest(definition=definition.name):
+                form = create_form(definition, folder_picker=lambda current: 'C:/選択先')
+                self.addCleanup(form.close)
+                self.select(form, 'import')
+                fields = form.field_widgets
+                rows = [row.children for row in form.details.children if isinstance(row, widgets.HBox)]
+                self.assertIn((fields['header_row'], fields['data_start_row']), rows)
+                self.assertIn((fields['output_variable'], fields['chunk_size']), rows)
+                self.assertNotIn('date_cleansing', fields)
+                form.folder_buttons['folder'].click()
+                fields['header_row'].value = 2
+                fields['data_start_row'].value = 4
+                fields['chunk_size'].value = 0
+                self.assertFalse(form.generate_button.disabled)
+                form.generate_button.click()
+                if definition.is_dir():
+                    for name, value in (('header_row', 2), ('data_start_row', 4), ('chunk_size', 0)):
+                        self.assertIn(f'{name} = {value}', form.result)
+                        self.assertIn(f'{name}={name}', form.result)
+                    self.assertNotIn('date_cleansing', form.result)
+
     def test_native_folder_picker_sets_parent_topmost_before_opening_and_cleans_up(self):
         from unittest.mock import Mock, call
         from zizai.forms import _select_folder

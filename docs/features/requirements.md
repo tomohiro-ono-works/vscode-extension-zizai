@@ -105,7 +105,8 @@ Jupyter標準カーネルがPythonコードを実行することを確認済み�
 - `write_csv(data, output_path, *, encoding="utf-8-sig", delimiter=",", schema=None)`：DataFrame（元コードが扱えるlist／dictも含む）を受け、indexなしで書き出す。空の表は既存どおりエラー。既存ファイルは元コードと同様に上書きする。保存完了の文字列を返す。
 - 関数へ直接渡す相対パスはカーネルcwd基準。フォームのフォルダーは既存どおり絶対パス。旧workspace／flowディレクトリーの暗黙探索は使わない。フォームはフォルダーとファイル名からパスを組み立て、書出の拡張子省略時の`.csv`補完を維持する。
 - 読込・書出を外部の`csv_connector.py`へ置く。型／schema／日付処理は`zizai.core.tabular`と`zizai.core.type_registry`へ出所付きで移管する。旧BaseConnectorの継承・抽象execute・Engineのlogger/contextを新しい公開契約にしない。
-- 生成コードは必要なCSV関数のimportと呼出し。読込の出力変数・書出の入力変数は単一の有効なPython識別子とし、フォームで評価しない。パス・文字列・設定値は安全にコード化する。フォームへ読込ファイル名、行指定、chunk_size、schema、日付処理等を追加し、旧CSVが持つ機能を未説明のまま削らない。
+- 生成コードは必要なCSV関数のimportと呼出し。読込の出力変数・書出の入力変数は単一の有効なPython識別子とし、フォームで評価しない。パス・文字列・設定値は安全にコード化し、読み込み・書き出しの生成コードではパスの区切りを `/` にする。
+- CSV読み込みフォームでは「ヘッダー行」の右に「データ開始行」、「出力変数」の右に「読込分割行数」を置く。「日付処理」欄は外し、生成コードはコネクタの既定の動作を使う。Pythonの `read_csv(..., date_cleansing=...)` と、同項目を持つ既存のカスタムYAMLは引き続き利用できる。
 - YAMLは既存の候補・項目定義を維持し、CSVの生成種別を識別する任意設定を追加する案。既存のCSV選択ID`import`／`export`は維持し、実装するPython関数`read_csv`／`write_csv`へ対応させる。生成種別のないアクションは従来どおり仮表示とし、CSV実装だけでExcel等まで対応済みにしない。
 - 既存パッケージの基本importにpandasを必須とせず、CSV用extraへ分離する。初回は元宣言と同じpandas 3.0.1／NumPy 2.4.2で専用環境の互換確認を行った。その後、利用者原文「OKです。ライブラリのバージョンは安全なもののなかで最新でおねがい」により、動作確認済みのPython環境へのCSV依存追加と最新版の選定を承認。2026-11-15時点の最新安定版[pandas 3.1.1](https://pypi.org/project/pandas/3.1.1/)・[NumPy 2.5.4](https://pypi.org/project/numpy/2.5.4/)をCSV extraへ固定した。Python 3.14／Windows向けの非撤回wheelと公式の配布元を照合し、PyPI・OSV APIで両版に該当する既知脆弱性が返らないことを確認した。絶対的な安全保証とは扱わない。
 - 利用者が以前操作したTASK-010専用Python環境へ上記2ライブラリだけを追加し、既存パッケージの版変更がないこととpip checkを確認した。最新版で関連44テストが合格。以前動いたVS Codeの比較用Notebookで、新CSVフォームから生成したコードをPlaywrightでコードセルへ入力・実行し、架空CSVの読込と書出、2行の値の一致・入力ファイルの保持を確認した。書出はフォーム設定反映後に当該段階だけを再開して合格した。利用者のCSV操作確認とmain反映は未完了。詳細は[TASK-011](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/84)へ記録する。
