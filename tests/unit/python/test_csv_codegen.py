@@ -31,7 +31,7 @@ class CsvCodegenTests(unittest.TestCase):
         source.write_text('名前,数\n東京,1\n', encoding='utf-8')
         before = source.read_bytes()
         with patch('pandas.read_csv', side_effect=AssertionError('generation must not read')):
-            code = self.generate('csv.read_csv', self.values)
+            code = self.generate('csv.read_csv', {**self.values, 'file_path': str(source)})
         namespace = {}
         exec(compile(code, '<generated-csv>', 'exec'), namespace)
         self.assertEqual(namespace['df']['名前'].tolist(), ['東京'])
@@ -109,11 +109,11 @@ class CsvCodegenTests(unittest.TestCase):
         form = FormModel(definition)
         form.set_connector('csv')
         form.set_action('import')
-        form.set_value('folder', str(self.directory))
-        form.set_value('filename', '入力.csv')
+        form.set_value('file_path', str(self.directory / '入力.csv'))
         self.assertIn('import csv_connector', form.generate())
         self.assertFalse(form.is_placeholder)
         form.set_action('export')
+        form.set_value('folder', str(self.directory))
         self.assertIn('write_csv', form.generate())
         fallback = FormModel(load_definition(source_test_support.REPO / 'apps/core/src/zizai/forms.yaml'))
         fallback.set_connector('excel')

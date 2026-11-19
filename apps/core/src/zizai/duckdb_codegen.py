@@ -2,23 +2,15 @@
 import ast
 from pathlib import Path
 
-from .connector_codegen import _identifier, _text, module_name_for, render_call
+from .connector_codegen import _identifier, _text, absolute_file_path, module_name_for, render_call
 
 
-DATABASE_FIELDS = {'db_folder', 'db_file_name', 'output_variable'}
+DATABASE_FIELDS = {'db_file', 'output_variable'}
 GENERATION_FIELDS = {
-    'duckdb.create_db_file': DATABASE_FIELDS,
-    'duckdb.execute_sql': DATABASE_FIELDS | {'sql'},
-    'duckdb.execute_sql_file': DATABASE_FIELDS | {'sql_folder', 'sql_file_name', 'encoding'},
+    'duckdb.create_db_file': {'db_folder', 'db_file_name', 'output_variable'},
+    'duckdb.execute_sql_file': DATABASE_FIELDS | {'sql_file', 'encoding'},
     'duckdb.create_table': DATABASE_FIELDS | {'input_variable', 'table_name', 'mode'},
 }
-
-
-def _absolute_folder(values, field):
-    folder = Path(_text(values, field, required=True))
-    if not folder.is_absolute():
-        raise ValueError('フォルダーは絶対パスで指定してください。')
-    return folder
 
 
 def generate_duckdb(kind, values, module_path):
@@ -26,19 +18,17 @@ def generate_duckdb(kind, values, module_path):
         raise ValueError('未対応のDuckDB生成種別です。')
     module_name = module_name_for(module_path)
     variable = _identifier(values, 'output_variable')
-    folder = _absolute_folder(values, 'db_folder')
-    filename = _text(values, 'db_file_name', required=True).strip()
     function = kind.split('.', 1)[1]
     if function == 'create_db_file':
-        parameters = {'db_folder': folder.as_posix(), 'db_file_name': filename}
+        folder = Path(_text(values, 'db_folder', required=True))
+        if not folder.is_absolute():
+            raise ValueError('フォルダーは絶対パスで指定してください。')
+        parameters = {'db_folder': folder.as_posix(),
+                      'db_file_name': _text(values, 'db_file_name', required=True).strip()}
     else:
-        parameters = {'db_file': (folder / filename).as_posix()}
-        if function == 'execute_sql':
-            parameters['sql'] = _text(values, 'sql', required=True)
-        elif function == 'execute_sql_file':
-            sql_folder = _absolute_folder(values, 'sql_folder')
-            sql_name = _text(values, 'sql_file_name', required=True).strip()
-            parameters['sql_file'] = (sql_folder / sql_name).as_posix()
+        parameters = {'db_file': absolute_file_path(values, 'db_file')}
+        if function == 'execute_sql_file':
+            parameters['sql_file'] = absolute_file_path(values, 'sql_file')
             parameters['encoding'] = _text(values, 'encoding', required=True)
         else:
             parameters['table_name'] = _text(values, 'table_name', required=True)

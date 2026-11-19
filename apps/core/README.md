@@ -1,8 +1,8 @@
 # ZizAI Python最小基盤
 
-## RENAMEリストで列名変更（TASK-015、担当ブランチ）
+## RENAMEリストで列名変更（TASK-015）
 
-カーネルと同じPython環境にwheelを`[forms,dataintegration]`付きで導入します。[データ統合資産](../../connectors/dataintegration/)を共通フォルダーの`dataintegration/`へ配置し、`configure_connectors`で再登録します。`%form`の「データ統合」→「RENAMEリストで列名変更」で入力変数とCSVを指定し、生成コードをPythonセルで実行します。
+カーネルと同じPython環境にwheelを`[forms,dataintegration]`付きで導入します。[データ統合資産](../../connectors/dataintegration/)を共通フォルダーの`dataintegration/`へ配置し、`configure_connectors`で再登録します。`%form`の「データ統合」→「RENAMEリストで列名変更」で入力変数を指定し、`参照…`からRENAMEのCSVファイルを選びます。生成コードをPythonセルで実行すると、変更後のDataFrameが初期値 `renamed_df` の出力変数に入ります。
 
 ```csv
 origin_name,replaced_name,description,ziz_datatype
@@ -12,25 +12,25 @@ origin_name,replaced_name,description,ziz_datatype
 
 変換結果の列名が重複する場合はエラーになります。必要なクレンジング項目だけを選択してください。
 
-## BigQueryフォーム（TASK-014、担当ブランチ）
+## BigQueryフォーム（TASK-014）
 
-カーネルと同じ環境に開発版のwheelを`[forms,bigquery]`付きで導入します。[BigQuery資産](../../connectors/bigquery/)を共通フォルダーの `bigquery/` に置き、`configure_connectors` で再登録します。`%form` のBigQueryからSQL入力、SQLファイル、データロードを選んでコードを生成します。生成コードを実行すると、指定したプロジェクトと既存のApplication Default Credentialsを使用します。
+カーネルと同じ環境に開発版のwheelを`[forms,bigquery]`付きで導入します。[BigQuery資産](../../connectors/bigquery/)を共通フォルダーの `bigquery/` に置き、`configure_connectors` で再登録します。`%form` のBigQueryから「SQL実行（ファイル）」または「データロード」を選んでコードを生成します。SQL実行では `参照…` から `.sql` を選びます。出力変数の初期値は `result` です。生成コードを実行すると、指定したプロジェクトと既存のApplication Default Credentialsを使用します。
 
 ロードの初期値は「新規／空テーブル」です。既存データを追記・置換する場合は対応するモードを選択します。任意のロード用スキーマは `[{"name":"id","type":"INTEGER"}]` のようなBigQuery形式です。
 
-## DuckDBフォーム（TASK-013、担当ブランチ）
+## DuckDBフォーム（TASK-013）
 
-Notebookのカーネルと同じPython環境に開発版のwheelを `[forms,duckdb]` 付きで導入します。[DuckDB資産](../../connectors/duckdb/)を共通フォルダーの `duckdb/` に置き、`configure_connectors` で登録してからカーネルを再起動します。`%form` で「DuckDB」→「DBファイル作成」を選び、設定後に生成コードを実行するとDBファイルの情報が `db_info` に入ります。既存DBを指定した場合は中のテーブルを保持します。
+Notebookのカーネルと同じPython環境に開発版のwheelを `[forms,duckdb]` 付きで導入します。[DuckDB資産](../../connectors/duckdb/)を共通フォルダーの `duckdb/` に置き、`configure_connectors` で登録してからカーネルを再起動します。`%form` で「DuckDB」→「DBファイル作成」を選び、保存先フォルダーとファイル名を指定します。生成コードを実行するとDBファイルの情報が `result` に入ります。既存DBを指定した場合は中のテーブルを保持します。
 
-「SQL実行」「SQL実行（ファイル）」では既存のDBを指定します。SQLからはそのDB内のテーブルを参照できます。SQLファイルの文字コードはUTF-8、Shift_JIS、CP932から選べます。
+「SQL実行（ファイル）」では、既存のDBとSQLファイルをそれぞれ `参照…` から選びます。SQLからはそのDB内のテーブルを参照できます。SQLファイルの文字コードはUTF-8、Shift_JIS、CP932から選べます。
 
-「テーブル作成」では、CSVやExcelを取り込んだDataFrameを入力変数として指定します。初期設定の「新規作成」では同名テーブルがあるとエラーになり、既存データを保持します。「置換」を選ぶと、生成コードの実行時に指定したテーブルを上書きします。
+「テーブル作成」では、既存のDBを選び、CSVやExcelを取り込んだDataFrameを入力変数として指定します。初期設定の「新規作成」では同名テーブルがあるとエラーになり、既存データを保持します。「置換」を選ぶと、生成コードの実行時に指定したテーブルを上書きします。出力変数の初期値は3アクションとも `result` です。
 
 ## Excelフォーム（TASK-012、開発版）
 
 `zizai_runtime-0.0.3.dev0-py3-none-any.whl[forms,excel]`をNotebookのカーネルと同じPython環境に導入します。CSVも使う場合は`[forms,csv,excel]`を指定します。[Excel資産の正本](../../connectors/excel/)の`excel_connector.py`と`excel_definition.yaml`を共通フォルダーの`excel/`へ配置します。既にCSVを登録した環境でも、Excelを追加したら`configure_connectors`で同じ共通フォルダーを再登録し、カーネルを再起動してください。
 
-`%load_ext zizai.forms`と`%form`でフォームを表示します。Excelの通常読み込み・範囲読み込み・書き出しから選び、生成コードをPythonセルへ貼って実行してください。範囲読み込みのヘッダー行とデータ開始行は、指定範囲の先頭を1とします。書き出し先の既定は`output.xlsx`の`シート1`です。`create_or_replace`は対象シートを置換し、`create_or_insert`は既存の対象シートの末尾にヘッダーなしで追記します。生成コードは通常の`import excel_connector`を使います。
+`%load_ext zizai.forms`と`%form`でフォームを表示します。「読み込み」と「範囲読み込み」は、入力ファイル欄の`参照…`から`.xlsx`を選びます。「書き出し」は保存先フォルダーとファイル名を指定します。生成コードをPythonセルへ貼って実行してください。範囲読み込みのヘッダー行とデータ開始行は、指定範囲の先頭を1とします。書き出し先の既定は`output.xlsx`の`シート1`です。`create_or_replace`は対象シートを置換し、`create_or_insert`は既存の対象シートの末尾にヘッダーなしで追記します。生成コードは通常の`import excel_connector`を使います。
 
 ## CSVフォーム（TASK-011、開発版0.0.3.dev0）
 
@@ -40,7 +40,7 @@ Notebookのカーネルと同じPython環境に開発版のwheelを `[forms,duck
 
 参照画面が背面へ回る報告を受け、Tk親を選択中だけ最前面にする修正を追加しました。関連フォーム13テスト合格、試用環境へ導入済み。実画面での改善は確認待ちです。既に開いている選択画面には反映されないため、いったん選択／取消後、カーネル再起動と`%form`再実行で反映してください。
 
-フォルダー選択は、保存先・入力フォルダー欄のすぐ横の`参照…`ボタンから開きます（ダブルクリック案からの利用者承認済み変更）。関連52テストと更新wheelの導入・部品配置の確認が合格。最新配置の画面描画・ネイティブダイアログ実操作は未確認です。
+読み込みは「入力ファイル」横の`参照…`からCSVファイルを選択します。書き出しは「保存先」横の`参照…`からフォルダーを選択し、別欄でファイル名を指定します。入力ファイルは絶対パスの手入力もできます。
 
 追加変更：文字コード・区切り文字を横配置とし、`sjis`を候補へ追加しました。読込は`df = csv_connector.read_csv(...)`、生成結果はコード欄と「コードをコピー」ボタンで表示します。コピーはローカルPythonの標準Tkを使い、ボタン押下時だけ行います。関連51テストが合格。画面描画と実クリップボード操作は未確認で、保存先ダブルクリックは未実装です。試用環境のカーネルを再起動し、`%form`を実行すると更新が反映されます。
 

@@ -1,13 +1,12 @@
 """Generate normal Python calls from the BigQuery form."""
 import ast
 
-from .connector_codegen import _identifier, _text, form_file_path, module_name_for, render_call
+from .connector_codegen import _identifier, _text, absolute_file_path, module_name_for, render_call
 
 
 COMMON_FIELDS = {'project_id', 'output_variable'}
 GENERATION_FIELDS = {
-    'bigquery.execute_sql': COMMON_FIELDS | {'sql', 'schema'},
-    'bigquery.execute_sql_file': COMMON_FIELDS | {'sql_folder', 'sql_file_name', 'encoding'},
+    'bigquery.execute_sql_file': COMMON_FIELDS | {'sql_file', 'encoding'},
     'bigquery.load_data': COMMON_FIELDS | {'dataset_id', 'table_id', 'input_variable', 'mode', 'schema'},
 }
 WRITE_MODES = {
@@ -24,11 +23,10 @@ def generate_bigquery(kind, values, module_path):
     output = _identifier(values, 'output_variable')
     function = kind.split('.', 1)[1]
     parameters = {'project_id': _text(values, 'project_id', required=True).strip()}
-    if function == 'execute_sql':
-        parameters['sql'] = _text(values, 'sql', required=True)
-    elif function == 'execute_sql_file':
-        parameters['sql_file'] = form_file_path({'folder': values['sql_folder'], 'filename': values['sql_file_name']})
+    if function == 'execute_sql_file':
+        parameters['sql_file'] = absolute_file_path(values, 'sql_file')
         parameters['encoding'] = _text(values, 'encoding', required=True)
+        schema = values.get('output_schema')
     else:
         for name in ('dataset_id', 'table_id'):
             parameters[name] = _text(values, name, required=True).strip()
@@ -36,7 +34,7 @@ def generate_bigquery(kind, values, module_path):
         if disposition is None:
             raise ValueError('書き込みモードを選択してください。')
         parameters['write_disposition'] = disposition
-    schema = values.get('schema')
+        schema = values.get('schema')
     if schema and schema.strip():
         parameters['schema'] = schema
     arguments = [ast.keyword(arg=name, value=ast.Constant(value)) for name, value in parameters.items()]

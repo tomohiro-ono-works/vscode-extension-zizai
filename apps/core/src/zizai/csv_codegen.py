@@ -1,6 +1,6 @@
 """Pure CSV call generation. Never import a connector, evaluate input, or do IO."""
 import ast
-from .connector_codegen import _text, _identifier, _integer, form_file_path, module_name_for, render_call
+from .connector_codegen import _text, _identifier, _integer, form_file_path, form_input_file_path, module_name_for, render_call
 
 GENERATION_KINDS = frozenset({'csv.read_csv', 'csv.write_csv'})
 
@@ -11,7 +11,7 @@ def generate_csv(kind, values, module_path):
         raise ValueError('未対応のCSV生成種別です。')
     module_name = module_name_for(module_path)
     reading = kind == 'csv.read_csv'
-    path = form_file_path(values, default_extension=None if reading else '.csv')
+    path = form_input_file_path(values) if reading else form_file_path(values, default_extension='.csv')
     schema = _text(values, 'schema')
     options = {'encoding': _text(values, 'encoding'), 'delimiter': _text(values, 'delimiter'),
                'schema': schema if schema.strip() else None}

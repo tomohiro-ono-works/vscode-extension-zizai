@@ -46,9 +46,10 @@ def execute_sql(project_id, sql, *, schema=None, maximum_bytes_billed=None):
                             table_id=getattr(destination, 'table_id', None), rows=job.num_dml_affected_rows)
 
 
-def execute_sql_file(project_id, sql_file, *, encoding='utf8'):
+def execute_sql_file(project_id, sql_file, *, encoding='utf8', schema=None, maximum_bytes_billed=None):
     """Read the selected SQL file locally, then run it as GoogleSQL."""
-    return execute_sql(project_id, Path(sql_file).read_text(encoding=encoding))
+    return execute_sql(project_id, Path(sql_file).read_text(encoding=encoding),
+                       schema=schema, maximum_bytes_billed=maximum_bytes_billed)
 
 
 def load_data(project_id, dataset_id, table_id, data, *, write_disposition='WRITE_EMPTY', schema=None):

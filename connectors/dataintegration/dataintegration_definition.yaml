@@ -10,8 +10,7 @@ connectors:
         generation: dataintegration.replace_fields_forrenamelist
         fields:
           input_variable: {label: 入力変数, type: text, required: true}
-          folder: {label: RENAMEリストのフォルダー, type: folder, required: true}
-          filename: {label: RENAMEリストのファイル名, type: text, required: true}
+          file_path: {label: RENAMEリスト, type: file, extension: .csv, required: true}
           output_variable: {label: 出力変数, type: text, default: renamed_df, required: true}
           remove_spaces: {label: 変更前に全角・半角スペースを削除, type: checkbox}
           remove_newlines: {label: 変更前に改行を削除, type: checkbox}

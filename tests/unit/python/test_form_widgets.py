@@ -19,14 +19,36 @@ class FormWidgetTests(unittest.TestCase):
         form.connector.value = 'csv'
         form.action.value = action
 
-    def test_horizontal_form_passes_selection_and_folder_result_to_python(self):
+    def test_csv_read_browse_selects_file_and_keeps_it_on_cancel(self):
         import ipywidgets as widgets
+        from unittest.mock import Mock
         form = self.make_form()
         self.assertIsInstance(form.toolbar, widgets.HBox)
         self.select(form, 'import')
-        form.folder_buttons['folder'].click()
-        form.generate_button.click()
-        self.assertEqual(form.model.values['folder'], 'C:/選択先')
+        field = form.field_widgets['file_path']
+        button = next(row.children[1] for row in form.details.children
+                      if isinstance(row, widgets.HBox) and row.children[0] is field)
+        self.assertIsInstance(button, widgets.Button)
+        self.assertEqual(button.description, '参照…')
+        self.assertTrue(form.generate_button.disabled)
+        root = Mock()
+        with patch('tkinter.Tk', return_value=root), patch('tkinter.filedialog.askdirectory') as folder, \
+                patch('tkinter.filedialog.askopenfilename', side_effect=['C:/選択先/入力.csv', '']) as file:
+            button.click()
+            form.generate_button.click()
+            generated = form.result
+            button.click()
+            self.assertEqual(file.call_count, 2)
+            self.assertEqual(file.call_args.kwargs['initialdir'], str(Path('C:/選択先')))
+            self.assertEqual(file.call_args.kwargs['initialfile'], '入力.csv')
+            self.assertEqual(file.call_args.kwargs['filetypes'][0][1], '*.csv')
+            folder.assert_not_called()
+        self.assertEqual(root.attributes.call_count, 2)
+        root.attributes.assert_called_with('-topmost', True)
+        self.assertEqual(root.destroy.call_count, 2)
+        self.assertEqual(form.model.values['file_path'], 'C:/選択先/入力.csv')
+        self.assertEqual(form.result, generated)
+        self.assertIn("file_path = 'C:/選択先/入力.csv'", form.result)
         self.assertIn('import csv_connector', form.result)
         self.assertIn('生成コード', form.generated.value)
         self.assertNotIn('仮表示', form.generated.value)
@@ -35,7 +57,7 @@ class FormWidgetTests(unittest.TestCase):
     def test_regeneration_preserves_form_and_replaces_only_output(self):
         form = self.make_form()
         self.select(form)
-        form.folder_buttons['folder'].click()
+        form.browse_buttons['folder'].click()
         form.generate_button.click()
         root, controls = form.root, form.details.children
         form.field_widgets['filename'].value = '変更.csv'
@@ -47,22 +69,80 @@ class FormWidgetTests(unittest.TestCase):
         self.assertIn('data = df', form.result)
         self.assertIn('write_csv(data=data', form.result)
 
-    def test_duckdb_sql_uses_a_multiline_field(self):
-        import ast
-        import ipywidgets as widgets
+    def test_duckdb_form_browses_for_db_and_sql_files_without_direct_sql(self):
+        from unittest.mock import Mock
+
         form = self.make_form()
         form.connector.value = 'duckdb'
-        form.action.value = 'execute_sql'
-        form.folder_buttons['db_folder'].click()
-        form.field_widgets['db_file_name'].value = '商品.duckdb'
-        sql = form.field_widgets['sql']
-        self.assertIsInstance(sql, widgets.Textarea)
+        self.assertEqual(set(form.model.actions), {'create_db_file', 'execute_sql_file', 'create_table'})
+        form.action.value = 'execute_sql_file'
+        self.assertEqual(form.field_widgets['output_variable'].value, 'result')
         self.assertTrue(form.generate_button.disabled)
-        sql.value = 'SELECT 商品\nFROM products'
+        with patch('tkinter.Tk', return_value=Mock()), patch('tkinter.filedialog.askdirectory') as folder, \
+                patch('tkinter.filedialog.askopenfilename', side_effect=[
+                    'C:/選択先/商品.duckdb', 'C:/選択先/集計.sql',
+                ]) as file:
+            form.browse_buttons['db_file'].click()
+            self.assertTrue(form.generate_button.disabled)
+            form.browse_buttons['sql_file'].click()
+            self.assertEqual([call.kwargs['filetypes'][0][1] for call in file.call_args_list], ['*.duckdb', '*.sql'])
+            folder.assert_not_called()
         form.generate_button.click()
-        self.assertIn('execute_sql(db_file=db_file, sql=sql)', form.result)
-        self.assertIn(sql.value, [node.value for node in ast.walk(ast.parse(form.result))
-                                  if isinstance(node, ast.Constant)])
+        self.assertIn("db_file = 'C:/選択先/商品.duckdb'", form.result)
+        self.assertIn("sql_file = 'C:/選択先/集計.sql'", form.result)
+        self.assertIn('result = duckdb_connector.execute_sql_file(', form.result)
+        form.action.value = 'create_table'
+        self.assertEqual(form.field_widgets['db_file'].value, 'C:/選択先/商品.duckdb')
+        self.assertNotIn('sql_file', form.field_widgets)
+        self.assertIn('db_file', form.browse_buttons)
+        form.action.value = 'create_db_file'
+        self.assertEqual(set(form.browse_buttons), {'db_folder'})
+
+    def test_bigquery_form_browses_for_sql_and_keeps_load_schema_separate(self):
+        from unittest.mock import Mock
+
+        form = self.make_form()
+        form.connector.value = 'bigquery'
+        form.action.value = 'execute_sql_file'
+        form.field_widgets['project_id'].value = 'fixture-project'
+        self.assertTrue(form.generate_button.disabled)
+        with patch('tkinter.Tk', return_value=Mock()), \
+                patch('tkinter.filedialog.askopenfilename', return_value='C:/選択先/確認.sql') as file:
+            form.browse_buttons['sql_file'].click()
+            self.assertEqual(file.call_args.kwargs['filetypes'][0][1], '*.sql')
+        form.field_widgets['output_schema'].value = '[{"origin_name":"f0_","new_name":"answer"}]'
+        form.generate_button.click()
+        self.assertIn("sql_file = 'C:/選択先/確認.sql'", form.result)
+        self.assertIn('result = bigquery_connector.execute_sql_file(', form.result)
+        form.action.value = 'load_data'
+        self.assertEqual(form.field_widgets['schema'].value, '')
+        self.assertEqual(form.field_widgets['mode'].value, '新規／空テーブル')
+
+    def test_excel_read_actions_browse_for_xlsx_and_generate_with_the_selected_path(self):
+        from unittest.mock import Mock
+
+        form = self.make_form()
+        form.connector.value = 'excel'
+        form.action.value = 'read_excel'
+        self.assertTrue(form.generate_button.disabled)
+        selected = 'C:/選択先/商品表.xlsx'
+        root = Mock()
+        with patch('tkinter.Tk', return_value=root), patch('tkinter.filedialog.askdirectory') as folder, \
+                patch('tkinter.filedialog.askopenfilename', return_value=selected) as file:
+            form.browse_buttons['file_path'].click()
+            file.assert_called_once()
+            self.assertEqual(file.call_args.kwargs['filetypes'][0][1], '*.xlsx')
+            folder.assert_not_called()
+        self.assertEqual(form.field_widgets['file_path'].value, selected)
+        form.generate_button.click()
+        self.assertIn("file_path = 'C:/選択先/商品表.xlsx'", form.result)
+        self.assertIn('excel_connector.read_excel(', form.result)
+        form.action.value = 'read_excel_range'
+        self.assertEqual(form.field_widgets['file_path'].value, selected)
+        form.field_widgets['cell_range'].value = 'A2:B5'
+        form.generate_button.click()
+        self.assertIn('excel_connector.read_excel_range(', form.result)
+        self.assertIn("cell_range = 'A2:B5'", form.result)
 
     def test_csv_encoding_and_delimiter_share_a_horizontal_row(self):
         import ipywidgets as widgets
@@ -80,13 +160,13 @@ class FormWidgetTests(unittest.TestCase):
         from unittest.mock import Mock
         picker = Mock(return_value='C:/選択先')
         form = self.make_form(picker)
-        for connector, action in (('csv', 'import'), ('csv', 'export'), ('excel', 'export')):
+        for connector, action in (('csv', 'export'), ('excel', 'export')):
             with self.subTest(connector=connector, action=action):
                 form.connector.value = connector
                 form.action.value = action
                 field = form.field_widgets['folder']
                 field.value = 'C:/現在'
-                button = form.folder_buttons['folder']
+                button = form.browse_buttons['folder']
                 self.assertEqual(button.description, '参照…')
                 self.assertNotIn(button, form.toolbar.children)
                 self.assertTrue(any(isinstance(row, widgets.HBox) and row.children == (field, button)
@@ -110,7 +190,7 @@ class FormWidgetTests(unittest.TestCase):
                 self.assertIn((fields['header_row'], fields['data_start_row']), rows)
                 self.assertIn((fields['output_variable'], fields['chunk_size']), rows)
                 self.assertNotIn('date_cleansing', fields)
-                form.folder_buttons['folder'].click()
+                fields['file_path'].value = 'C:/選択先/入力.csv'
                 fields['header_row'].value = 2
                 fields['data_start_row'].value = 4
                 fields['chunk_size'].value = 0
@@ -145,7 +225,10 @@ class FormWidgetTests(unittest.TestCase):
         for action in ('import', 'export'):
             with self.subTest(action=action):
                 self.select(form, action)
-                form.folder_buttons['folder'].click()
+                if action == 'import':
+                    form.field_widgets['file_path'].value = 'C:/選択先/入力.csv'
+                else:
+                    form.browse_buttons['folder'].click()
                 form.field_widgets['encoding'].value = 'sjis'
                 form.generate_button.click()
                 self.assertIn("encoding = 'sjis'", form.result)
@@ -159,20 +242,20 @@ class FormWidgetTests(unittest.TestCase):
         from zizai.form_definition import load_definition
         copy = Mock()
         form = NotebookForm(load_definition(Path(__file__).resolve().parents[3] / 'connectors'),
-                            folder_picker=lambda current: 'C:/選択先', clipboard_writer=copy)
+                            clipboard_writer=copy)
         self.addCleanup(form.close)
         self.assertEqual(form.code_actions.children, (form.generate_button, form.copy_button))
         self.assertNotIn(form.generate_button, form.toolbar.children)
         self.assertTrue(form.copy_button.disabled)
         self.select(form, 'import')
-        form.folder_buttons['folder'].click()
+        form.field_widgets['file_path'].value = 'C:/選択先/入力.csv'
         form.generate_button.click()
         self.assertIn('<code', form.generated.value)
         self.assertFalse(form.copy_button.disabled)
         copy.assert_not_called()
         form.copy_button.click()
         copy.assert_called_once_with(form.result)
-        form.field_widgets['filename'].value = '変更.csv'
+        form.field_widgets['file_path'].value = 'C:/選択先/変更.csv'
         self.assertTrue(form.copy_button.disabled)
         form.copy_button.click()
         self.assertEqual(copy.call_count, 1)
@@ -200,7 +283,7 @@ class FormWidgetTests(unittest.TestCase):
         form = self.make_form(lambda current: '')
         self.select(form)
         form.field_widgets['folder'].value = 'C:/keep'
-        form.folder_buttons['folder'].click()
+        form.browse_buttons['folder'].click()
         self.assertEqual(form.model.values['folder'], 'C:/keep')
         form.connector.value = 'excel'
         self.assertEqual(form.action.value, 'export')

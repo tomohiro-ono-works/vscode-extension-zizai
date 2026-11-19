@@ -122,7 +122,7 @@ async function main() {
       await chooseAction(0, "読み込み");
       const generate = widget.getByRole("button", { name: "コード生成", exact: true }).first();
       await expect(generate).toBeDisabled();
-      await widget.getByRole("textbox", { name: "入力フォルダー *", exact: true }).fill(data);
+      await widget.getByRole("textbox", { name: "入力ファイル *", exact: true }).fill(path.join(data, "input.csv"));
       await expect(generate).toBeEnabled(); await generate.click();
       await expect(widget.locator("pre").first()).toContainText("csv_connector.read_csv", { timeout: 15000 });
       const code = await widget.locator("pre").first().innerText();
