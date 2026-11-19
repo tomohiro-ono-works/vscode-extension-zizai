@@ -9,8 +9,7 @@ connectors:
         label: 読み込み
         generation: excel.read_excel
         fields:
-          folder: {label: 入力フォルダー, type: folder, required: true}
-          filename: {label: ファイル名, type: text, required: true}
+          file_path: {label: 入力ファイル, type: file, extension: .xlsx, required: true}
           output_variable: {label: 出力変数, type: text, default: df, required: true}
           chunk_size: {label: 読込分割行数, type: integer, default: 50000, minimum: 1}
           sheet_name: {label: シート名, type: text, default: シート1, required: true}
@@ -21,8 +20,7 @@ connectors:
         label: 範囲読み込み
         generation: excel.read_excel_range
         fields:
-          folder: {label: 入力フォルダー, type: folder, required: true}
-          filename: {label: ファイル名, type: text, required: true}
+          file_path: {label: 入力ファイル, type: file, extension: .xlsx, required: true}
           output_variable: {label: 出力変数, type: text, default: df, required: true}
           sheet_name: {label: シート名, type: text, default: シート1, required: true}
           cell_range: {label: 読込範囲（例：A1:D100）, type: text, required: true}
