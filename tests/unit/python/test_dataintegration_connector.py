@@ -96,10 +96,23 @@ class DataIntegrationConnectorTests(unittest.TestCase):
             self.assertTrue(editor._type_controls.children)
             self.assertFalse(editor._controls.children)
 
+            def marker(index):
+                return editor._heading.children[index].children[0]
+
+            other_marker = marker(0)
+            self.assertEqual(marker(1).description, 'ABC')
+            editor._handle_type(marker(1), '数量', {'event': 'column-type', 'role': 'integer'})
+            self.assertEqual(marker(1).description, '123')
+            self.assertIs(marker(0), other_marker)
+            self.assertEqual(editor.preview['数量'].iloc[0], 12)
+            self.assertFalse(editor._type_controls.children)
+            self.assertEqual(source['数量'].iloc[0], '12')
+
             send('商品', event='column-rename', name='product')
             self.assertFalse(editor._type_controls.children)
             send('数量', event='column-operation', role='drop')
             self.assertEqual(editor.preview.columns.tolist(), ['product', '数量', '備考'])
+            self.assertTrue(marker(1).disabled)
             self.assertIn('column-pending-delete', editor._body.value)
             send('product', event='column-move', source='備考', after=False)
             self.assertEqual(editor.preview.columns.tolist(), ['備考', 'product', '数量'])

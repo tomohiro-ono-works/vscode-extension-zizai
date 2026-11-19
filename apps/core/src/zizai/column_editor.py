@@ -3,7 +3,7 @@ from html import escape
 
 import ipywidgets as widgets
 from pandas import isna
-from pandas.api.types import is_scalar
+from pandas.api.types import is_datetime64_any_dtype, is_float_dtype, is_integer_dtype, is_scalar, is_string_dtype
 from traitlets import Bool, Dict, Unicode
 
 from .row_preview import CELL_WIDTH, MAX_ROWS, _close_widgets
@@ -17,6 +17,20 @@ OPERATIONS = {
     'convert': '型を変換',
 }
 TYPES = {'text': '文字列', 'integer': '整数', 'number': '小数', 'date': '日付'}
+TYPE_MARKERS = {'text': 'ABC', 'integer': '123', 'number': '1.2', 'date': ''}
+
+
+def _type_kind(series):
+    dtype = series.dtype
+    if is_integer_dtype(dtype):
+        return 'integer'
+    if is_float_dtype(dtype):
+        return 'number'
+    if is_datetime64_any_dtype(dtype):
+        return 'date'
+    if is_string_dtype(series):
+        return 'text'
+    return None
 
 
 class ColumnHeader(widgets.Button):
@@ -27,6 +41,14 @@ class ColumnHeader(widgets.Button):
     _column_name = Unicode().tag(sync=True)
     _pending_delete = Bool(False).tag(sync=True)
     _grid_id = Unicode().tag(sync=True)
+
+
+class ColumnTypeButton(widgets.Button):
+    _view_name = Unicode('ColumnTypeView').tag(sync=True)
+    _view_module = Unicode('zizai-row-preview').tag(sync=True)
+    _view_module_version = Unicode('1.0.0').tag(sync=True)
+    _menu_items = Dict(default_value=TYPES).tag(sync=True)
+    _type_label = Unicode().tag(sync=True)
 
 
 class ColumnEditor:
@@ -40,10 +62,11 @@ class ColumnEditor:
         self._history = []
         self.preview = apply_operations(self._sample, operations=[])
         self._headers = []
+        self._header_cells = {}
         self._editor_widgets = []
         self._intro = widgets.HTML(
-            f'<h3>列のプレビュー</h3><p>先頭{MAX_ROWS}行。列見出しを右クリックで操作、'
-            'ダブルクリックで名前変更、ドラッグで移動できます。</p>')
+            f'<h3>列のプレビュー</h3><p>先頭{MAX_ROWS}行。型アイコンをクリックで型変換。'
+            '列名は右クリックで操作、ダブルクリックで名前変更、ドラッグで移動できます。</p>')
         self._heading = widgets.HBox(layout=widgets.Layout(flex='0 0 32px', overflow='visible'))
         self._heading.add_class('column-preview-heading')
         self._body = widgets.HTML()
@@ -69,25 +92,22 @@ class ColumnEditor:
         self._render()
 
     def _render(self):
-        self._heading.children = ()
-        _close_widgets(self._headers)
-        self._headers = []
+        headers = {}
         width = f'{max(1, len(self.preview.columns)) * CELL_WIDTH}px'
         self._heading.layout.min_width = width
         self._body.layout.min_width = width
         names = list(map(str, self.preview.columns))
         deletion_flags = [name in self._deleted for name in names]
-        for name, dtype, deleted in zip(names, self.preview.dtypes, deletion_flags):
-            description = f'{name} · 削除予定' if deleted else f'{name} · {dtype}'
-            menu = {'restore': '元に戻す'} if deleted else {key: OPERATIONS[key] for key in ('drop', 'convert')}
-            header = ColumnHeader(description=description, tooltip=name, _column_name=name,
-                                  _pending_delete=deleted, _grid_id=self.grid.model_id, _menu_items=menu,
-                                  layout=widgets.Layout(flex=f'1 0 {CELL_WIDTH}px'))
-            if deleted:
-                header.add_class('column-pending-delete')
-            header.on_msg(lambda button, message, _, column=name: self._handle_header(button, column, message))
-            self._headers.append(header)
-        self._heading.children = tuple(self._headers)
+        for index, (name, deleted) in enumerate(zip(names, deletion_flags)):
+            series = self.preview.iloc[:, index]
+            kind = _type_kind(series)
+            type_label = f'{name}の型：{TYPES.get(kind, str(series.dtype))}'
+            key = name, kind, type_label, deleted
+            headers[key] = self._header_cells.get(key) or self._make_header(name, kind, type_label, deleted)
+        self._heading.children = tuple(cell for _, _, cell in headers.values())
+        _close_widgets(widget for key, group in self._header_cells.items() if key not in headers for widget in group)
+        self._header_cells = headers
+        self._headers = [header for _, header, _ in headers.values()]
 
         rows = []
         for row in self.preview.itertuples(index=False, name=None):
@@ -105,6 +125,26 @@ class ColumnEditor:
         self.keep.disabled = not any(not deleted for deleted in deletion_flags)
         entries = ''.join(f'<li>{escape(self._describe(change))}</li>' for change in self.operations)
         self.changes.value = '<h3>変更一覧</h3>' + (f'<ol>{entries}</ol>' if entries else '<p>設定した操作はここに表示します。</p>')
+
+    def _make_header(self, name, kind, type_label, deleted):
+        description = f'{name} · 削除予定' if deleted else name
+        menu = {'restore': '元に戻す'} if deleted else {key: OPERATIONS[key] for key in ('drop', 'convert')}
+        header = ColumnHeader(description=description, tooltip=name, _column_name=name,
+                              _pending_delete=deleted, _grid_id=self.grid.model_id, _menu_items=menu,
+                              layout=widgets.Layout(flex='1 1 0', min_width='0'))
+        button = ColumnTypeButton(description=TYPE_MARKERS.get(kind, '?'), tooltip=type_label,
+                                  icon='calendar' if kind == 'date' else '', _type_label=type_label,
+                                  disabled=deleted, layout=widgets.Layout(flex='0 0 36px', min_width='36px'))
+        button.add_class('column-type-button')
+        if deleted:
+            header.add_class('column-pending-delete')
+            button.add_class('column-pending-delete')
+        button.on_msg(lambda widget, message, _: self._handle_type(widget, name, message))
+        header.on_msg(lambda widget, message, _: self._handle_header(widget, name, message))
+        cell = widgets.HBox([button, header], layout=widgets.Layout(
+            flex=f'1 0 {CELL_WIDTH}px', min_width=f'{CELL_WIDTH}px', overflow='visible'))
+        cell.add_class('column-preview-cell')
+        return button, header, cell
 
     @staticmethod
     def _describe(change):
@@ -147,6 +187,14 @@ class ColumnEditor:
             position = labels.index(column) + 1 + after
             if position != current:
                 self.add_operation({'op': 'move', 'column': source, 'position': position})
+
+    def _handle_type(self, button, column, message):
+        if (button.disabled or not isinstance(message, dict)
+                or not any(button is icon for icon, _, _ in self._header_cells.values())):
+            return
+        target = message.get('role')
+        if message.get('event') == 'column-type' and isinstance(target, str) and target in TYPES:
+            self.add_operation({'op': 'convert', 'column': column, 'type': target})
 
     def _show_controls(self, op, column=None):
         self._clear_controls()
@@ -218,4 +266,5 @@ class ColumnEditor:
 
     def close(self):
         self._clear_controls()
-        _close_widgets([*self._headers, self._heading, self._body, self.keep, self.undo, *self.root.children, self.root])
+        _close_widgets(widget for group in self._header_cells.values() for widget in group)
+        _close_widgets([self._heading, self._body, self.keep, self.undo, *self.root.children, self.root])

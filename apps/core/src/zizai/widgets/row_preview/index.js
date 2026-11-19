@@ -41,7 +41,7 @@ define(["@jupyter-widgets/controls"], function (controls) {
             const menu = document.createElement("div");
             menu.className = "zizai-row-preview-menu";
             menu.setAttribute("role", "menu");
-            menu.setAttribute("aria-label", this.model.get("description"));
+            menu.setAttribute("aria-label", this.el.getAttribute("aria-label") || this.model.get("description"));
             const items = this.menuChoices().map(([role, label]) => {
                 const item = document.createElement("button");
                 item.type = "button";
@@ -252,5 +252,20 @@ define(["@jupyter-widgets/controls"], function (controls) {
         }
     }
 
-    return { RowContextView, ColumnContextView };
+    class ColumnTypeView extends RowContextView {
+        render() {
+            super.render();
+            this.el.setAttribute("aria-label", this.model.get("_type_label"));
+        }
+
+        menuChoices() {
+            return Object.entries(this.model.get("_menu_items"));
+        }
+
+        selectRole(role) {
+            this.send({ event: "column-type", role });
+        }
+    }
+
+    return { RowContextView, ColumnContextView, ColumnTypeView };
 });
