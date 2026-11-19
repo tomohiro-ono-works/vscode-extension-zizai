@@ -98,6 +98,26 @@ class FormWidgetTests(unittest.TestCase):
         form.action.value = 'create_db_file'
         self.assertEqual(set(form.browse_buttons), {'db_folder'})
 
+    def test_bigquery_form_browses_for_sql_and_keeps_load_schema_separate(self):
+        from unittest.mock import Mock
+
+        form = self.make_form()
+        form.connector.value = 'bigquery'
+        form.action.value = 'execute_sql_file'
+        form.field_widgets['project_id'].value = 'fixture-project'
+        self.assertTrue(form.generate_button.disabled)
+        with patch('tkinter.Tk', return_value=Mock()), \
+                patch('tkinter.filedialog.askopenfilename', return_value='C:/選択先/確認.sql') as file:
+            form.browse_buttons['sql_file'].click()
+            self.assertEqual(file.call_args.kwargs['filetypes'][0][1], '*.sql')
+        form.field_widgets['output_schema'].value = '[{"origin_name":"f0_","new_name":"answer"}]'
+        form.generate_button.click()
+        self.assertIn("sql_file = 'C:/選択先/確認.sql'", form.result)
+        self.assertIn('result = bigquery_connector.execute_sql_file(', form.result)
+        form.action.value = 'load_data'
+        self.assertEqual(form.field_widgets['schema'].value, '')
+        self.assertEqual(form.field_widgets['mode'].value, '新規／空テーブル')
+
     def test_excel_read_actions_browse_for_xlsx_and_generate_with_the_selected_path(self):
         from unittest.mock import Mock
 

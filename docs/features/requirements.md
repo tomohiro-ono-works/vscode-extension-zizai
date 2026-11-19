@@ -1,5 +1,13 @@
 # ZizAI 要件仕様書
 
+## TASK-014：BigQueryフォーム
+
+[Issue #88](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/88)のSQLファイル実行とデータロードを外部共通フォルダーの `bigquery_connector.py` と `bigquery_definition.yaml` で提供する。出力変数の初期値は `result`。コード生成時はファイル読込・認証・接続を行わない。実行時はフォームで指定したプロジェクトと、Python環境のApplication Default Credentialsを使用する。
+
+- SQL実行では `参照…` でGoogleSQLの `.sql` ファイルを選ぶか、絶対パスを入力する。文字コードはUTF-8またはShift_JIS。任意の出力スキーマは `origin_name`、`new_name` などを使う既存のZizAI形式。クエリ結果はDataFrame、結果表のないジョブは完了情報を返す。既存Notebookから呼び出すPythonの `execute_sql` は継続する。[TASK-017 #91](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/91)
+- データロードはDataFrameを指定されたプロジェクト・データセット・テーブルへ渡す。初期設定は「新規／空テーブル」（`WRITE_EMPTY`）。「追記」または「置換」は明示して選択する。省略可能なロード用スキーマはBigQueryのフィールド定義JSON（`name`、`type`、必要に応じて `mode` や `fields`）。
+- 実サービスの確認で実行するSQLは `SELECT 1` に限定する。架空データによるロードは通信を代替して検証する。
+
 ## TASK-013：DuckDBフォーム
 
 [Issue #86](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/86)のDBファイル作成は、外部共通フォルダーの `duckdb_connector.py` と `duckdb_definition.yaml` を使う。保存先フォルダーを選び、ファイル名を指定する。初期ファイル名は `sample.duckdb`。拡張子省略時は `.duckdb` を補い、入力されたフォルダーがなければPythonの実行時に作成する。同じDBファイルを指定した場合は開いて閉じ、既存テーブルを保持する。DBのパス・ファイル名・拡張子を除いた名前・処理時刻を1行のDataFrameで返す。3アクションとも出力変数の初期値は `result`。依存は `duckdb` extraから導入する。

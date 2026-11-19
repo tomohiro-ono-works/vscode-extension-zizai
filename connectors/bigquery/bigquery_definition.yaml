@@ -1,0 +1,27 @@
+version: 1
+output_template: "{connector}.{action}のコードを生成"
+connectors:
+  bigquery:
+    label: BigQuery
+    module_file: bigquery_connector.py
+    actions:
+      execute_sql_file:
+        label: SQL実行（ファイル）
+        generation: bigquery.execute_sql_file
+        fields:
+          project_id: {label: プロジェクトID, type: text, required: true}
+          sql_file: {label: SQLファイル, type: file, extension: .sql, required: true}
+          encoding: {label: 文字コード, type: choice, choices: [utf8, shift_jis], default: utf8, required: true}
+          output_schema: {label: 出力スキーマ（JSON・省略可）, type: textarea}
+          output_variable: {label: 出力変数, type: text, default: result, required: true}
+      load_data:
+        label: データロード
+        generation: bigquery.load_data
+        fields:
+          project_id: {label: プロジェクトID, type: text, required: true}
+          dataset_id: {label: データセットID, type: text, required: true}
+          table_id: {label: テーブル名, type: text, required: true}
+          input_variable: {label: 入力変数, type: text, required: true}
+          mode: {label: 書き込みモード, type: choice, choices: [新規／空テーブル, 追記, 置換], default: 新規／空テーブル, required: true}
+          schema: {label: BigQueryスキーマ（JSON・省略可）, type: textarea}
+          output_variable: {label: 出力変数, type: text, default: result, required: true}

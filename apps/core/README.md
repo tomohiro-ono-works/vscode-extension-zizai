@@ -1,5 +1,11 @@
 # ZizAI Python最小基盤
 
+## BigQueryフォーム（TASK-014）
+
+カーネルと同じ環境に開発版のwheelを`[forms,bigquery]`付きで導入します。[BigQuery資産](../../connectors/bigquery/)を共通フォルダーの `bigquery/` に置き、`configure_connectors` で再登録します。`%form` のBigQueryから「SQL実行（ファイル）」または「データロード」を選んでコードを生成します。SQL実行では `参照…` から `.sql` を選びます。出力変数の初期値は `result` です。生成コードを実行すると、指定したプロジェクトと既存のApplication Default Credentialsを使用します。
+
+ロードの初期値は「新規／空テーブル」です。既存データを追記・置換する場合は対応するモードを選択します。任意のロード用スキーマは `[{"name":"id","type":"INTEGER"}]` のようなBigQuery形式です。
+
 ## DuckDBフォーム（TASK-013）
 
 Notebookのカーネルと同じPython環境に開発版のwheelを `[forms,duckdb]` 付きで導入します。[DuckDB資産](../../connectors/duckdb/)を共通フォルダーの `duckdb/` に置き、`configure_connectors` で登録してからカーネルを再起動します。`%form` で「DuckDB」→「DBファイル作成」を選び、保存先フォルダーとファイル名を指定します。生成コードを実行するとDBファイルの情報が `result` に入ります。既存DBを指定した場合は中のテーブルを保持します。
