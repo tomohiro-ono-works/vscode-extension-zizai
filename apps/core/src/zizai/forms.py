@@ -7,6 +7,12 @@ from .form_definition import load_definition
 from .form_model import FormModel
 
 
+_ROW_PREVIEW_FIELDS = {
+    ('csv', 'import'): {'encoding': 'choice', 'delimiter': 'text'},
+    ('excel', 'read_excel'): {'sheet_name': 'text'},
+}
+
+
 def _show_native_picker(choose, **options):
     # A user button opens a local OS dialog; never called during import/display.
     import tkinter as tk
@@ -76,6 +82,8 @@ class NotebookForm:
         self.result = ''
         self.field_widgets = {}
         self.browse_buttons = {}
+        self.row_preview_button = None
+        self._row_preview = None
         layout = lambda: widgets.Layout(flex='1 1 180px', min_width='150px')
         self.connector = widgets.Dropdown(description='コネクタ', options=[('選択してください', None)] + [
             (entry['label'], key) for key, entry in definition['connectors'].items()], layout=layout())
@@ -95,8 +103,10 @@ class NotebookForm:
         self.generated = widgets.HTML()
         css = files('zizai').joinpath('form.css').read_text(encoding='utf-8')
         self.styles = widgets.HTML('<style>' + css + '</style>', layout=widgets.Layout(display='none'))
-        self.root = widgets.VBox([self.styles, self.toolbar, self.details, self.message, self.generated, self.code_actions],
+        self._form_children = (self.styles, self.toolbar, self.details, self.message, self.generated, self.code_actions)
+        self.root = widgets.VBox(self._form_children,
                                  layout=widgets.Layout(width='100%', max_width='880px'))
+        self._form_width = self.root.layout.max_width
         self.root.add_class('zizai-form')
         self.connector.observe(self._connector_changed, names='value')
         self.action.observe(self._action_changed, names='value')
@@ -128,6 +138,7 @@ class NotebookForm:
             self._sync()
 
     def _sync(self):
+        self._dismiss_row_preview()
         widgets = self._widgets
         self._syncing = True
         try:
@@ -148,6 +159,7 @@ class NotebookForm:
             self._dynamic = []
             self.field_widgets = {}
             self.browse_buttons = {}
+            self.row_preview_button = None
             self._invalid_fields.clear()
             for name, field in self.model.fields.items():
                 value = self.model.values[name]
@@ -188,7 +200,15 @@ class NotebookForm:
                 if name in self.browse_buttons:
                     widget.layout.flex = '1 1 0'
                     widget.layout.min_width = '0'
-                    row = widgets.HBox([widget, self.browse_buttons[name]],
+                    controls = [widget, self.browse_buttons[name]]
+                    if name == 'file_path' and self._supports_row_preview():
+                        button = widgets.Button(description='行を確認', layout=widgets.Layout(width='auto'))
+                        button.disabled = not widget.value or not Path(widget.value).is_absolute()
+                        button.on_click(self._open_row_preview)
+                        self.row_preview_button = button
+                        self._dynamic.append(button)
+                        controls.append(button)
+                    row = widgets.HBox(controls,
                                        layout=widgets.Layout(width='100%', align_items='flex-end'))
                     row.add_class('zizai-folder-row')
                     self._dynamic.append(row)
@@ -214,12 +234,16 @@ class NotebookForm:
     def _value_changed(self, name, value):
         if self._syncing:
             return
+        if name == 'file_path' and self.row_preview_button is not None:
+            self._dismiss_row_preview()
         self._clear_result()
         try:
             self.model.set_value(name, value)
             self._invalid_fields.discard(name)
         except ValueError:
             self._invalid_fields.add(name)
+        if name == 'file_path' and self.row_preview_button is not None:
+            self.row_preview_button.disabled = not value.strip() or name in self._invalid_fields
         if self._invalid_fields:
             self.message.value = '入力値を確認してください。ファイルとフォルダーは絶対パスを指定します。'
         else:
@@ -229,6 +253,32 @@ class NotebookForm:
             except ValueError as error:
                 self.message.value = escape(str(error))
         self._refresh_generate()
+
+    def _supports_row_preview(self):
+        settings = _ROW_PREVIEW_FIELDS.get((self.model.connector, self.model.action))
+        if settings is None or self.model.is_placeholder:
+            return False
+        fields = dict(settings, file_path='file', header_row='integer', data_start_row='integer')
+        return all(self.model.fields.get(name, {}).get('type') == kind for name, kind in fields.items())
+
+    def _open_row_preview(self, button):
+        if button is not self.row_preview_button or button.disabled or self._row_preview is not None:
+            return
+        from .row_preview import RowPreview
+        try:
+            self._row_preview = RowPreview(self, Path(self.field_widgets['file_path'].value))
+        except Exception as error:
+            self.message.value = '<p role="alert">行のプレビューを開けません。' + escape(str(error)) + '</p>'
+            return
+        self.root.layout.max_width = 'none'
+        self.root.children = (self.styles, self._row_preview.root)
+
+    def _dismiss_row_preview(self):
+        if self._row_preview is not None:
+            preview, self._row_preview = self._row_preview, None
+            self.root.layout.max_width = self._form_width
+            self.root.children = self._form_children
+            preview.close()
 
     def _pick_path(self, name):
         field = self.model.fields[name]
@@ -267,6 +317,7 @@ class NotebookForm:
             self.message.value = 'コピーできません。コード欄を選択してコピーしてください。(' + escape(type(error).__name__) + ')'
 
     def close(self):
+        self._dismiss_row_preview()
         for widget in [*self._dynamic, self.connector, self.action, self.generate_button, self.copy_button,
                        self.toolbar, self.details, self.message, self.generated, self.code_actions, self.root]:
             widget.close()

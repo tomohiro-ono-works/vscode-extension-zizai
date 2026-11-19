@@ -54,6 +54,59 @@ class FormWidgetTests(unittest.TestCase):
         self.assertNotIn('仮表示', form.generated.value)
         self.assertEqual(form.field_widgets['encoding'].value, 'utf-8')
 
+    def test_csv_and_excel_row_preview_commits_only_on_confirmation(self):
+        import csv
+        from openpyxl import Workbook
+
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            rows = [[f'{row}-{column}' for column in range(1, 43)] for row in range(1, 36)]
+            csv_path = root / 'input.csv'
+            with csv_path.open('w', encoding='utf-8', newline='') as stream:
+                csv.writer(stream).writerows(rows)
+            excel_path = root / 'input.xlsx'
+            workbook = Workbook()
+            workbook.active.title = 'データ'
+            for row in rows:
+                workbook.active.append(row)
+            workbook.save(excel_path)
+            workbook.close()
+
+            for connector, action, path in (('csv', 'import', csv_path), ('excel', 'read_excel', excel_path)):
+                with self.subTest(connector=connector):
+                    form = self.make_form()
+                    form.connector.value = connector
+                    form.action.value = action
+                    self.assertTrue(form.row_preview_button.disabled)
+                    form.field_widgets['file_path'].value = str(path)
+                    original_children, original_width = form.root.children, form.root.layout.max_width
+                    form.row_preview_button.click()
+                    preview = form._row_preview
+                    self.assertEqual(form.root.layout.max_width, 'none')
+                    self.assertEqual(len(preview.rows), 30)
+                    self.assertEqual(len(preview.rows[-1]), 40)
+                    preview._choose_role(3, {'event': 'row-role', 'role': 'header_row'})
+                    self.assertTrue(preview.confirm.disabled)
+                    preview._choose_role(5, {'event': 'row-role', 'role': 'data_start_row'})
+                    preview.cancel.click()
+                    self.assertEqual(form.model.values['header_row'], 1)
+                    self.assertEqual(form.model.values['data_start_row'], 2)
+                    self.assertEqual(form.root.children, original_children)
+                    self.assertEqual(form.root.layout.max_width, original_width)
+
+                    form.row_preview_button.click()
+                    preview = form._row_preview
+                    preview._choose_role(3, {'event': 'row-role', 'role': 'header_row'})
+                    preview._choose_role(5, {'event': 'row-role', 'role': 'data_start_row'})
+                    preview.confirm.click()
+                    form.generate_button.click()
+                    self.assertIn('header_row = 3', form.result)
+                    self.assertIn('data_start_row = 5', form.result)
+                    if connector == 'excel':
+                        self.assertEqual(form.model.values['sheet_name'], 'データ')
+                        form.action.value = 'read_excel_range'
+                        self.assertIsNone(form.row_preview_button)
+
     def test_regeneration_preserves_form_and_replaces_only_output(self):
         form = self.make_form()
         self.select(form)

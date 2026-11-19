@@ -40,6 +40,10 @@
 - 書き出しは `output.xlsx`・`シート1` を初期値とし、書き込みモードの初期選択は `create_or_replace`（対象シートを置換）、もう一方は `create_or_insert`（既存シート末尾へヘッダーなしで追記）。フォームは選択されたモードを生成コードへ明示する。ないブック・シートは作成し、別シートを維持する。書き出しに失敗した場合は元のブックを残す。データ内の文字列は文字列として書き、他シートの既存の式は保持する。マクロや一部図形などExcel固有機能の完全な保持は対象外。
 - 対象日付・型の共通処理には既存の表変換を使う。Excelのライブラリは別の `excel` extraで導入する。[pandasのExcel依存](https://pandas.pydata.org/docs/getting_started/install#excel-files)のopenpyxl 3.1.5と、[openpyxlが案内するXML保護](https://openpyxl.readthedocs.io/en/stable/#security)のdefusedxml 0.7.1を使用する。
 
+### CSV・Excel共通の行プレビュー
+
+CSV・Excelの通常読み込みで、入力ファイル欄の `行を確認` から先頭30行・最大40列を表示する。表はノートブックの出力幅を使い、横スクロール中も左端の行番号を固定する。行番号の右クリックメニューでヘッダー行とデータ開始行を選び、`確定` でフォームと生成コードに反映する。CSVの文字コード・区切り文字またはExcelのシートはプレビュー内で変更でき、`キャンセル` は元の入力と生成結果を保持する。CSVの空行で読み込みと行番号がずれうる場合は、フォームでの直接入力を案内する。
+
 ## TASK-011：CSVとコネクタ共通の呼出し規約（2026-11-16、通常importへの変更承認済み）
 
 CSVは修正済み共通フォームでの利用者確認を経て [PR #87](https://github.com/tomohiro-ono-works/vscode-extension-zizai/pull/87) でmainへ反映済み。以下の試用・反映の状態は各変更時点の記録。

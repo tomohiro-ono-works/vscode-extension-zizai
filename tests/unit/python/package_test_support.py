@@ -22,6 +22,7 @@ PACKAGE_FILES = {
     "zizai/forms.py",
     "zizai/forms.yaml",
     "zizai/form.css",
+    "zizai/row_preview.py",
     "zizai/csv_codegen.py",
     "zizai/bigquery_codegen.py",
     "zizai/duckdb_codegen.py",
@@ -107,5 +108,7 @@ class PackageArtifactTestCase(unittest.TestCase):
         with zipfile.ZipFile(wheel) as archive:
             names = archive.namelist()
         payload = {name for name in names if ".dist-info/" not in name}
-        self.assertEqual(payload, PACKAGE_FILES)
+        distribution, version, _ = wheel.name.split("-", 2)
+        widget_root = f"{distribution}-{version}.data/data/share/jupyter/nbextensions/zizai-row-preview"
+        self.assertEqual(payload, PACKAGE_FILES | {f"{widget_root}/{name}" for name in ("extension.js", "index.js")})
         self.assertEqual(len([n for n in names if n.endswith(".dist-info/METADATA")]), 1)

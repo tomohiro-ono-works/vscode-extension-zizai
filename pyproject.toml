@@ -30,3 +30,9 @@ zizai = "apps/core/src/zizai"
 
 [tool.setuptools.package-data]
 zizai = ["forms.yaml", "form.css"]
+
+[tool.setuptools.data-files]
+"share/jupyter/nbextensions/zizai-row-preview" = [
+    "apps/core/src/zizai/widgets/row_preview/extension.js",
+    "apps/core/src/zizai/widgets/row_preview/index.js",
+]

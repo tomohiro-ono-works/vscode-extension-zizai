@@ -97,3 +97,31 @@
   line-height: 1.7;
 }
 .zizai-form code { color: inherit; background: transparent; }
+
+.zizai-form .row-preview {gap:12px;padding:14px;border:1px solid #d5dcd8;border-radius:8px;background:white}
+.zizai-form .row-preview h3 {margin:0 0 4px;font-size:17px;color:#27372f}
+.zizai-form .row-preview p {margin:0;overflow-wrap:anywhere}
+.zizai-form .row-preview-controls,.zizai-form .row-preview-footer {gap:10px}
+.zizai-form .row-preview-grid {border:1px solid #d5dcd8;border-radius:6px;background:#fff}
+.zizai-form .row-preview-heading {position:sticky;top:0;z-index:4}
+.zizai-form .row-preview-heading .widget-html {background:#1e6f5c;color:#fff;padding:7px 8px;font-weight:600}
+.zizai-form .row-preview-first {position:sticky;left:0;z-index:2}
+.zizai-form .row-preview-grid button.jupyter-button {height:31px;padding:0 8px;background:#fff;color:#27372f;border:0;border-radius:0;border-right:1px solid #e4e9e6;border-bottom:1px solid #e4e9e6;font-weight:400;text-align:left}
+.zizai-form .row-preview-grid button.jupyter-button:hover:enabled {background:#eef6f1;color:#173828}
+.zizai-form .row-preview-grid button.row-preview-first {background:#1e6f5c;color:#fff;font-weight:600}
+.zizai-form .row-preview-grid .row-preview-picked button.row-preview-first {background:#145240}
+.zizai-form .row-preview-cancel.jupyter-button {background:#fff;color:#187a57}
+.zizai-form .row-preview-cancel.jupyter-button:hover:enabled {background:#ecf4ef}
+.zizai-form .row-preview-summary {font-weight:600;padding:5px 0}
+
+.zizai-form .row-preview-values-line {display:flex;width:100%}
+.zizai-form .row-preview-value {flex:1 0 138px;min-width:138px;line-height:30px;height:31px;
+  border-right:1px solid #e4e9e6;border-bottom:1px solid #e4e9e6;padding:0 8px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;background:#fff}
+.zizai-form .row-preview-picked .row-preview-value {background:#d7eee2;box-shadow:inset 0 -2px #1e6f5c}
+.zizai-row-preview-menu {z-index:10000;position:fixed;background:#fff;min-width:176px;
+  padding:5px;border:1px solid #b9c9be;border-radius:7px;box-shadow:0 5px 18px #20342730;
+  color:#27372f;font:14px system-ui,"Segoe UI",sans-serif}
+.zizai-row-preview-menu button {display:block;width:100%;text-align:left;border:0;
+  background:#fff;color:inherit;border-radius:4px;padding:8px 10px;font:inherit;cursor:pointer}
+.zizai-row-preview-menu button:hover,.zizai-row-preview-menu button:focus {background:#d7eee2;outline:none}
