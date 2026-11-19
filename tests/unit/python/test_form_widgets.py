@@ -69,6 +69,35 @@ class FormWidgetTests(unittest.TestCase):
         self.assertIn('data = df', form.result)
         self.assertIn('write_csv(data=data', form.result)
 
+    def test_duckdb_form_browses_for_db_and_sql_files_without_direct_sql(self):
+        from unittest.mock import Mock
+
+        form = self.make_form()
+        form.connector.value = 'duckdb'
+        self.assertEqual(set(form.model.actions), {'create_db_file', 'execute_sql_file', 'create_table'})
+        form.action.value = 'execute_sql_file'
+        self.assertEqual(form.field_widgets['output_variable'].value, 'result')
+        self.assertTrue(form.generate_button.disabled)
+        with patch('tkinter.Tk', return_value=Mock()), patch('tkinter.filedialog.askdirectory') as folder, \
+                patch('tkinter.filedialog.askopenfilename', side_effect=[
+                    'C:/選択先/商品.duckdb', 'C:/選択先/集計.sql',
+                ]) as file:
+            form.browse_buttons['db_file'].click()
+            self.assertTrue(form.generate_button.disabled)
+            form.browse_buttons['sql_file'].click()
+            self.assertEqual([call.kwargs['filetypes'][0][1] for call in file.call_args_list], ['*.duckdb', '*.sql'])
+            folder.assert_not_called()
+        form.generate_button.click()
+        self.assertIn("db_file = 'C:/選択先/商品.duckdb'", form.result)
+        self.assertIn("sql_file = 'C:/選択先/集計.sql'", form.result)
+        self.assertIn('result = duckdb_connector.execute_sql_file(', form.result)
+        form.action.value = 'create_table'
+        self.assertEqual(form.field_widgets['db_file'].value, 'C:/選択先/商品.duckdb')
+        self.assertNotIn('sql_file', form.field_widgets)
+        self.assertIn('db_file', form.browse_buttons)
+        form.action.value = 'create_db_file'
+        self.assertEqual(set(form.browse_buttons), {'db_folder'})
+
     def test_excel_read_actions_browse_for_xlsx_and_generate_with_the_selected_path(self):
         from unittest.mock import Mock
 

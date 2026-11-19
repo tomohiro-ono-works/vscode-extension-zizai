@@ -14,14 +14,18 @@ class PackageDistributionTests(PackageArtifactTestCase):
             name = next(n for n in archive.namelist() if n.endswith('.dist-info/METADATA'))
             metadata = Parser().parsestr(archive.read(name).decode('utf-8'))
         requirements = metadata.get_all('Requires-Dist')
-        self.assertEqual(len(requirements), 8)
+        self.assertEqual(len(requirements), 11)
         forms = [item for item in requirements if 'extra == "forms"' in item]
         csv = [item for item in requirements if 'extra == "csv"' in item]
+        duckdb = [item for item in requirements if 'extra == "duckdb"' in item]
         excel = [item for item in requirements if 'extra == "excel"' in item]
         self.assertEqual(len(forms), 2)
         self.assertEqual(len(csv), 2)
         self.assertTrue(any(item.startswith('pandas==3.1.1') for item in csv))
         self.assertTrue(any(item.startswith('numpy==2.5.4') for item in csv))
+        self.assertEqual({item.split(';')[0].strip() for item in duckdb}, {
+            'duckdb==2.0.0', 'pandas==3.1.1', 'numpy==2.5.4',
+        })
         self.assertEqual({item.split(';')[0].strip() for item in excel}, {
             'pandas==3.1.1', 'numpy==2.5.4', 'openpyxl==3.1.5', 'defusedxml==0.7.1',
         })
@@ -31,7 +35,7 @@ class PackageDistributionTests(PackageArtifactTestCase):
 import json, sys
 import zizai, zizai.forms
 print(json.dumps({'loaded': sorted(set(sys.modules) & {'ipywidgets', 'yaml', 'tkinter', 'pandas', 'numpy',
-                                                      'openpyxl', 'defusedxml'})}))
+                                                      'openpyxl', 'defusedxml', 'duckdb'})}))
 ''')
         self.assertEqual(result, {'loaded': []})
 

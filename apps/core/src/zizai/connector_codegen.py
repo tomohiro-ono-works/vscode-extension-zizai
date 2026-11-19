@@ -44,19 +44,27 @@ def form_file_path(values, *, default_extension=None):
     return (Path(folder) / filename).as_posix()
 
 
-def form_input_file_path(values):
-    if 'file_path' not in values:  # Accept existing folder/filename definitions.
-        return form_file_path(values)
-    path = Path(_text(values, 'file_path', required=True))
+def absolute_file_path(values, name):
+    path = Path(_text(values, name, required=True))
     if not path.is_absolute():
         raise ValueError('入力ファイルは絶対パスで指定してください。')
     return path.as_posix()
 
 
+def form_input_file_path(values):
+    if 'file_path' not in values:  # Accept existing folder/filename definitions.
+        return form_file_path(values)
+    return absolute_file_path(values, 'file_path')
+
+
 def render_call(module_name, function, arguments, variable, *, reading):
-    handle = '_zizai_' + module_name if variable == module_name else module_name
+    reserved = {variable}
+    reserved.update(argument.value.id for argument in arguments if isinstance(argument.value, ast.Name))
+    handle = '_zizai_' + module_name if module_name in reserved else module_name
+    while handle in reserved:
+        handle = '_' + handle
     body = [ast.Import(names=[ast.alias(name=module_name, asname=handle if handle != module_name else None)])]
-    reserved = {variable, handle}
+    reserved.add(handle)
     for argument in arguments:
         name = argument.arg
         suffix = 2

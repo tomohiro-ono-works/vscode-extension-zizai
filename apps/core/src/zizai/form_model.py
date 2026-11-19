@@ -1,8 +1,12 @@
 """Selection and placeholder generation; no GUI, kernel or business execution."""
 from copy import deepcopy
 from .form_definition import valid_value
-from .csv_codegen import GENERATION_KINDS, generate_csv
+from .csv_codegen import generate_csv
+from .duckdb_codegen import generate_duckdb
 from .excel_codegen import generate_excel
+
+
+GENERATORS = {'csv': generate_csv, 'duckdb': generate_duckdb, 'excel': generate_excel}
 
 
 class FormModel:
@@ -66,6 +70,6 @@ class FormModel:
         if not self.is_placeholder:
             connector = self.definition['connectors'][self.connector]
             kind = self.actions[self.action]['generation']
-            generate_code = generate_csv if kind in GENERATION_KINDS else generate_excel
+            generate_code = GENERATORS[kind.split('.', 1)[0]]
             return generate_code(kind, self.values, connector.get('module_path'))
         return '{' + self.definition['output_template'].format(connector=self.connector, action=self.action) + '}'
