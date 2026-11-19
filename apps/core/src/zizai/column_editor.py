@@ -33,6 +33,22 @@ def _type_kind(series):
     return None
 
 
+def render_dataframe_rows(frame, deleted=()):
+    if not len(frame.columns):
+        return '<p>表示できる列がありません。</p>'
+    deletion_flags = [str(column) in deleted for column in frame.columns]
+    rows = []
+    for row in frame.itertuples(index=False, name=None):
+        cells = []
+        for value, pending_delete in zip(row, deletion_flags):
+            text = 'NULL' if is_scalar(value) and isna(value) else str(value)
+            label = escape(text[:200] + ('…' if len(text) > 200 else ''))
+            classes = 'row-preview-value column-pending-delete' if pending_delete else 'row-preview-value'
+            cells.append(f'<span class="{classes}" title="{label}">{label}</span>')
+        rows.append('<div class="row-preview-values-line">' + ''.join(cells) + '</div>')
+    return ''.join(rows) if rows else '<p>表示できる行がありません。</p>'
+
+
 class ColumnHeader(widgets.Button):
     _view_name = Unicode('ColumnContextView').tag(sync=True)
     _view_module = Unicode('zizai-row-preview').tag(sync=True)
@@ -109,18 +125,7 @@ class ColumnEditor:
         self._header_cells = headers
         self._headers = [header for _, header, _ in headers.values()]
 
-        rows = []
-        for row in self.preview.itertuples(index=False, name=None):
-            cells = []
-            for value, deleted in zip(row, deletion_flags):
-                text = 'NULL' if is_scalar(value) and isna(value) else str(value)
-                label = escape(text[:200] + ('…' if len(text) > 200 else ''))
-                classes = 'row-preview-value column-pending-delete' if deleted else 'row-preview-value'
-                cells.append(f'<span class="{classes}" title="{label}">{label}</span>')
-            rows.append('<div class="row-preview-values-line">' + ''.join(cells) + '</div>')
-        self._body.value = ''.join(rows) if rows else '<p>表示できる行がありません。</p>'
-        if not self._headers:
-            self._body.value = '<p>表示できる列がありません。</p>'
+        self._body.value = render_dataframe_rows(self.preview, self._deleted)
         self.undo.disabled = not self._history
         self.keep.disabled = not any(not deleted for deleted in deletion_flags)
         entries = ''.join(f'<li>{escape(self._describe(change))}</li>' for change in self.operations)

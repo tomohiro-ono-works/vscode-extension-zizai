@@ -8,8 +8,13 @@ from .connector_codegen import _identifier, _text, form_input_file_path, module_
 
 PRE_FLAGS = ('remove_spaces', 'remove_newlines', 'to_halfwidth_alnum', 'symbols_to_snake')
 COLUMN_OPERATIONS = 'dataintegration.apply_column_operations'
+VALUE_OPERATIONS = 'dataintegration.apply_value_operations'
+DATAFRAME_OPERATIONS = {
+    COLUMN_OPERATIONS: 'apply_column_operations',
+    VALUE_OPERATIONS: 'apply_value_operations',
+}
 GENERATION_FIELDS = {
-    COLUMN_OPERATIONS: {'input_variable', 'output_variable', 'operations'},
+    **{kind: {'input_variable', 'output_variable', 'operations'} for kind in DATAFRAME_OPERATIONS},
     'dataintegration.replace_fields_forrenamelist': {
         'folder', 'filename', 'input_variable', 'output_variable', 'exclude_japanese_columns', *PRE_FLAGS,
     },
@@ -22,18 +27,19 @@ def generate_dataintegration(kind, values, module_path):
     module = module_name_for(module_path)
     incoming = _identifier(values, 'input_variable')
     output = _identifier(values, 'output_variable')
-    if kind == COLUMN_OPERATIONS:
+    if kind in DATAFRAME_OPERATIONS:
+        label = '列操作' if kind == COLUMN_OPERATIONS else '値加工'
         if unicodedata.normalize('NFKC', incoming) == unicodedata.normalize('NFKC', output):
             raise ValueError('入力と出力には別の変数名を指定してください。')
         try:
             operations = json.loads(_text(values, 'operations', required=True))
         except json.JSONDecodeError as error:
-            raise ValueError('列操作の設定を確認してください。') from error
+            raise ValueError(f'{label}の設定を確認してください。') from error
         if not isinstance(operations, list) or not operations or any(not isinstance(op, dict) for op in operations):
-            raise ValueError('列操作を1件以上設定してください。')
+            raise ValueError(f'{label}を1件以上設定してください。')
         arguments = [ast.keyword(arg='data', value=ast.Name(id=incoming, ctx=ast.Load())),
                      ast.keyword(arg='operations', value=ast.parse(repr(operations), mode='eval').body)]
-        return render_call(module, 'apply_column_operations', arguments, output, reading=True,
+        return render_call(module, DATAFRAME_OPERATIONS[kind], arguments, output, reading=True,
                            direct_variables=True, temporary_prefix='_zizai_')
     arguments = [
         ast.keyword(arg='data', value=ast.Name(id=incoming, ctx=ast.Load())),
