@@ -6,17 +6,23 @@ import re
 from string import Formatter
 from .bigquery_codegen import GENERATION_FIELDS as BIGQUERY_GENERATION_FIELDS
 from .csv_codegen import GENERATION_KINDS
+from .dataintegration_codegen import GENERATION_FIELDS as DATAINTEGRATION_GENERATION_FIELDS
 from .duckdb_codegen import GENERATION_FIELDS as DUCKDB_GENERATION_FIELDS
 from .excel_codegen import GENERATION_FIELDS as EXCEL_GENERATION_FIELDS
 from .core.connector_config import get_connector_directory
 
 MAX_BYTES = 1024 * 1024
 ID = re.compile(r'[A-Za-z_][A-Za-z0-9_]*\Z')
-GENERATION_FIELDS = {**EXCEL_GENERATION_FIELDS, **DUCKDB_GENERATION_FIELDS, **BIGQUERY_GENERATION_FIELDS}
+GENERATION_FIELDS = {
+    **BIGQUERY_GENERATION_FIELDS, **DATAINTEGRATION_GENERATION_FIELDS,
+    **DUCKDB_GENERATION_FIELDS, **EXCEL_GENERATION_FIELDS,
+}
 ALLOWED_GENERATIONS = GENERATION_KINDS.union(GENERATION_FIELDS)
 
 
 def valid_value(field, value, *, require=False):
+    if field['type'] == 'checkbox':
+        return type(value) is bool
     if value is None or (isinstance(value, str) and not value.strip()):
         return not (require and field.get('required', False))
     kind = field['type']
@@ -115,7 +121,10 @@ def parse_definition(text):
                     needed = {'folder', 'filename', 'encoding', 'delimiter', 'schema'}
                     needed |= ({'output_variable', 'header_row', 'data_start_row', 'chunk_size'}
                                if generation == 'csv.read_csv' else {'input_variable'})
-                if 'file_path' in fields and generation in {'csv.read_csv', 'excel.read_excel', 'excel.read_excel_range'}:
+                if 'file_path' in fields and generation in {
+                    'csv.read_csv', 'excel.read_excel', 'excel.read_excel_range',
+                    'dataintegration.replace_fields_forrenamelist',
+                }:
                     needed = (needed - {'folder', 'filename'}) | {'file_path'}
                 if not needed <= fields.keys():
                     raise ValueError('コード生成に必要な入力項目が不足しています。')
@@ -123,8 +132,8 @@ def parse_definition(text):
                 if not isinstance(name, str) or not ID.fullmatch(name) or not isinstance(field, dict):
                     raise ValueError('入力項目の定義が不正です。')
                 _label(field.get('label'))
-                if field.get('type') not in {'text', 'textarea', 'choice', 'file', 'folder', 'integer'}:
-                    raise ValueError('項目型はtext/textarea/choice/file/folder/integerにしてください。')
+                if field.get('type') not in {'text', 'textarea', 'choice', 'file', 'folder', 'integer', 'checkbox'}:
+                    raise ValueError('項目型はtext/textarea/choice/file/folder/integer/checkboxにしてください。')
                 if set(field) - {'label', 'type', 'required', 'default', 'choices', 'minimum', 'extension'}:
                     raise ValueError('入力項目に未対応の設定があります。')
                 if 'extension' in field and (field['type'] != 'file' or not isinstance(field['extension'], str)
@@ -143,6 +152,7 @@ def parse_definition(text):
                 if 'default' in field:
                     default = field['default']
                     correct_type = (type(default) is int if field['type'] == 'integer' else
+                                    type(default) is bool if field['type'] == 'checkbox' else
                                     (default is None or isinstance(default, str)) if field['type'] == 'choice' else
                                     isinstance(default, str))
                     if not correct_type or not valid_value(field, default):

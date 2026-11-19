@@ -34,7 +34,7 @@
   line-height: 1.5;
 }
 .zizai-form .zizai-required { color: #bd2929; }
-.zizai-form input, .zizai-form select, .zizai-form textarea {
+.zizai-form input:not([type="checkbox"]), .zizai-form select, .zizai-form textarea {
   width: 100% !important;
   min-width: 0;
   height: 36px !important;

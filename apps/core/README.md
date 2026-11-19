@@ -1,5 +1,17 @@
 # ZizAI Python最小基盤
 
+## RENAMEリストで列名変更（TASK-015）
+
+カーネルと同じPython環境にwheelを`[forms,dataintegration]`付きで導入します。[データ統合資産](../../connectors/dataintegration/)を共通フォルダーの`dataintegration/`へ配置し、`configure_connectors`で再登録します。`%form`の「データ統合」→「RENAMEリストで列名変更」で入力変数を指定し、`参照…`からRENAMEのCSVファイルを選びます。生成コードをPythonセルで実行すると、変更後のDataFrameが初期値 `renamed_df` の出力変数に入ります。
+
+```csv
+origin_name,replaced_name,description,ziz_datatype
+商品名,product,商品名,STRING
+数量,amount,数量,INT64
+```
+
+変換結果の列名が重複する場合はエラーになります。必要なクレンジング項目だけを選択してください。
+
 ## BigQueryフォーム（TASK-014）
 
 カーネルと同じ環境に開発版のwheelを`[forms,bigquery]`付きで導入します。[BigQuery資産](../../connectors/bigquery/)を共通フォルダーの `bigquery/` に置き、`configure_connectors` で再登録します。`%form` のBigQueryから「SQL実行（ファイル）」または「データロード」を選んでコードを生成します。SQL実行では `参照…` から `.sql` を選びます。出力変数の初期値は `result` です。生成コードを実行すると、指定したプロジェクトと既存のApplication Default Credentialsを使用します。

@@ -160,6 +160,8 @@ class NotebookForm:
                 elif field['type'] == 'textarea':
                     widget = widgets.Textarea(description=label, value=value, rows=5, continuous_update=True)
                     widget.add_class('zizai-textarea')
+                elif field['type'] == 'checkbox':
+                    widget = widgets.Checkbox(description=label, value=value, indent=False)
                 else:
                     widget = widgets.Text(description=label, value=value, continuous_update=True)
                 widget.layout.width = 'auto'
