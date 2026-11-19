@@ -7,8 +7,7 @@ connectors:
       import:
         label: 読み込み
         fields:
-          folder: {label: 入力フォルダー, type: folder, required: true}
-          filename: {label: ファイル名, type: text, default: input.csv, required: true}
+          file_path: {label: 入力ファイル, type: file, extension: .csv, required: true}
           output_variable: {label: 出力変数, type: text, default: df, required: true}
           encoding: {label: 文字コード, type: choice, choices: [utf-8, utf-8-sig, cp932, sjis], default: utf-8}
           delimiter: {label: 区切り文字, type: text, default: ','}

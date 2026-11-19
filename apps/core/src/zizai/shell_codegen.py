@@ -2,7 +2,7 @@
 import ast
 import json
 
-from .connector_codegen import _identifier, _text, form_file_path, module_name_for, render_call
+from .connector_codegen import _identifier, _text, form_input_file_path, module_name_for, render_call
 
 
 GENERATION_FIELDS = {'shell.execute_bat': {'folder', 'filename', 'args', 'output_variable'}}
@@ -13,7 +13,7 @@ def generate_shell(kind, values, module_path):
         raise ValueError('未対応のバッチ実行種別です。')
     module = module_name_for(module_path)
     variable = _identifier(values, 'output_variable')
-    arguments = [ast.keyword(arg='file_path', value=ast.Constant(form_file_path(values)))]
+    arguments = [ast.keyword(arg='file_path', value=ast.Constant(form_input_file_path(values)))]
     text = _text(values, 'args').strip()
     if text:
         args = json.loads(text)

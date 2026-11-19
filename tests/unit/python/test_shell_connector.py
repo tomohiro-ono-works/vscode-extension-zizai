@@ -24,10 +24,11 @@ class ShellConnectorTests(unittest.TestCase):
 
     def test_generated_code_runs_only_the_selected_batch_with_literal_arguments(self):
         with tempfile.TemporaryDirectory(prefix='zizai-batch-') as scratch:
-            self.model.set_value('folder', scratch)
-            self.model.set_value('filename', '試用 & %TEMP% !.bat')
+            with self.assertRaises(ValueError):
+                self.model.generate()
+            path = Path(scratch) / '試用 & %TEMP% !.bat'
+            self.model.set_value('file_path', str(path))
             self.model.set_value('args', '["2 words", "A&B!%TEMP%"]')
-            path = Path(scratch) / self.model.values['filename']
             code = self.model.generate()
             self.assertFalse(path.exists())
             path.write_text('@echo off\necho "%~1"\necho "%~2"\necho done 1>&2\nexit /b 0\n',

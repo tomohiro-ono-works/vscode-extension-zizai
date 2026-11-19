@@ -11,24 +11,21 @@ connectors:
         fields:
           db_folder: {label: DBファイルの場所, type: folder, required: true}
           db_file_name: {label: DBファイル名, type: text, default: sample.duckdb, required: true}
-          output_variable: {label: 出力変数, type: text, default: db_info, required: true}
+          output_variable: {label: 出力変数, type: text, default: result, required: true}
       execute_sql_file:
         label: SQL実行（ファイル）
         generation: duckdb.execute_sql_file
         fields:
-          db_folder: {label: DBフォルダー, type: folder, required: true}
-          db_file_name: {label: DBファイル名, type: text, required: true}
-          sql_folder: {label: SQLフォルダー, type: folder, required: true}
-          sql_file_name: {label: SQLファイル名, type: text, required: true}
+          db_file: {label: DBファイル, type: file, extension: .duckdb, required: true}
+          sql_file: {label: SQLファイル, type: file, extension: .sql, required: true}
           encoding: {label: 文字コード, type: choice, choices: [utf8, shift_jis, cp932], default: utf8, required: true}
-          output_variable: {label: 出力変数, type: text, default: df, required: true}
+          output_variable: {label: 出力変数, type: text, default: result, required: true}
       create_table:
         label: テーブル作成
         generation: duckdb.create_table
         fields:
-          db_folder: {label: DBフォルダー, type: folder, required: true}
-          db_file_name: {label: DBファイル名, type: text, required: true}
+          db_file: {label: DBファイル, type: file, extension: .duckdb, required: true}
           input_variable: {label: 入力変数, type: text, required: true}
           table_name: {label: テーブル名, type: text, default: table1, required: true}
           mode: {label: 作成モード, type: choice, choices: [新規作成, 置換], default: 新規作成, required: true}
-          output_variable: {label: 出力変数, type: text, default: table_info, required: true}
+          output_variable: {label: 出力変数, type: text, default: result, required: true}

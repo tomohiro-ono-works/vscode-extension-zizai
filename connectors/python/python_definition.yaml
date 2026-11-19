@@ -9,7 +9,5 @@ connectors:
         label: Python実行（ファイル）
         generation: python.execute_python_file
         fields:
-          env_path: {label: Python実行ファイルまたは仮想環境のパス（省略可）, type: text}
-          folder: {label: Pythonファイルのフォルダー, type: folder, required: true}
-          filename: {label: Pythonファイル名, type: text, required: true}
+          file_path: {label: Pythonファイル, type: file, extension: .py, required: true}
           output_variable: {label: 出力変数, type: text, default: result, required: true}

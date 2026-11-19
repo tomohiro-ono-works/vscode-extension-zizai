@@ -27,32 +27,37 @@ class BigQueryConnectorTests(unittest.TestCase):
             self.model.set_value(name, value)
         return self.model.generate()
 
-    def test_file_sql_sends_only_when_generated_code_runs(self):
+    def test_file_sql_sends_only_when_generated_code_runs_and_applies_output_schema(self):
         import pandas as pd
-        from bigquery_connector import bigquery
+        from bigquery_connector import bigquery, execute_sql_file
         client = Mock()
         rows = client.query.return_value.result.return_value
         rows.schema = [bigquery.SchemaField('f0_', 'INTEGER')]
         rows.to_dataframe.return_value = pd.DataFrame({'f0_': [1]})
 
         with patch.object(bigquery, 'Client', return_value=client) as factory:
-            self.assertNotIn('execute_sql', self.model.actions)
+            self.assertEqual(set(self.model.actions), {'execute_sql_file', 'load_data'})
             self.model.set_action('execute_sql_file')
+            self.model.set_value('project_id', 'fixture-project')
+            self.assertEqual(self.model.values['output_variable'], 'result')
             with self.assertRaises(ValueError):
                 self.model.generate()
             with tempfile.TemporaryDirectory(prefix='zizai-bq-') as scratch:
                 script = Path(scratch) / '確認.sql'
-                from_file = self.generate('execute_sql_file', sql_folder=scratch, sql_file_name=script.name,
-                                          encoding='shift_jis', output_variable='集計')
+                from_file = self.generate('execute_sql_file', sql_file=str(script), encoding='shift_jis',
+                                          output_schema='[{"origin_name":"f0_","new_name":"answer"}]')
                 self.assertFalse(script.exists())
                 factory.assert_not_called()
                 script.write_text('SELECT 1 -- 確認', encoding='shift_jis')
                 exec(compile(from_file, '<generated-bigquery>', 'exec'), self.namespace)
-                self.assertEqual(self.namespace['集計'].to_dict('records'), [{'f0_': 1}])
+                self.assertEqual(self.namespace['result'].to_dict('records'), [{'answer': 1}])
                 self.assertEqual(client.query.call_args.args, ('SELECT 1 -- 確認',))
                 self.assertFalse(client.query.call_args.kwargs['job_config'].use_legacy_sql)
+                raw = execute_sql_file('fixture-project', script, encoding='shift_jis', maximum_bytes_billed=1)
+                self.assertEqual(raw.to_dict('records'), [{'f0_': 1}])
+                self.assertEqual(client.query.call_args.kwargs['job_config'].maximum_bytes_billed, 1)
             factory.assert_called_with(project='fixture-project')
-            client.close.assert_called_once()
+            self.assertEqual(client.close.call_count, 2)
 
     def test_load_modes_and_schema_reach_the_mock_client(self):
         import pandas as pd
@@ -64,6 +69,8 @@ class BigQueryConnectorTests(unittest.TestCase):
         job.job_id = 'fixture-job'
         job.output_rows = 1
         with patch.object(bigquery, 'Client', return_value=client) as factory:
+            self.model.set_action('load_data')
+            self.assertEqual(self.model.values['output_variable'], 'result')
             for mode, disposition in [('新規／空テーブル', 'WRITE_EMPTY'),
                                       ('追記', 'WRITE_APPEND'), ('置換', 'WRITE_TRUNCATE')]:
                 code = self.generate('load_data', dataset_id='fixture_data', table_id='items',
