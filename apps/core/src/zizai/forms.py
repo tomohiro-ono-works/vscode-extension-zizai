@@ -1,54 +1,113 @@
 """Notebook output forms. Import does not register magics or open any windows."""
 from html import escape
+from importlib.resources import files
+from pathlib import Path
 import shlex
 from .form_definition import load_definition
 from .form_model import FormModel
 
 
-def _select_folder(current):
+def _show_native_picker(choose, **options):
     # A user button opens a local OS dialog; never called during import/display.
     import tkinter as tk
-    from tkinter.filedialog import askdirectory
-    from pathlib import Path
     root = tk.Tk()
     try:
         root.withdraw()
-        return askdirectory(parent=root, title='フォルダーを選択',
-                            initialdir=current if current and Path(current).is_absolute() else None)
+        root.attributes('-topmost', True)
+        root.update_idletasks()
+        return choose(parent=root, **options)
+    finally:
+        root.destroy()
+
+
+def _select_folder(current):
+    from tkinter.filedialog import askdirectory
+    return _show_native_picker(askdirectory, title='フォルダーを選択',
+                               initialdir=current if current and Path(current).is_absolute() else None)
+
+
+def _select_file(current, extension):
+    from tkinter.filedialog import askopenfilename
+    path = Path(current)
+    absolute = path.is_absolute()
+    patterns = [(extension.upper().lstrip('.') + 'ファイル', '*' + extension)] if extension else []
+    patterns.append(('すべてのファイル', '*'))
+    return _show_native_picker(askopenfilename, title='ファイルを選択', filetypes=patterns,
+                               initialdir=str(path.parent) if absolute else None,
+                               initialfile=path.name if absolute else None)
+
+
+def _copy_to_clipboard(text):
+    import sys
+    if sys.platform == 'win32':
+        # Use persistent Windows text storage rather than a temporary Tk owner.
+        # The command is fixed; generated code is stdin data, never shell code.
+        import os
+        from pathlib import Path
+        import subprocess
+        powershell = Path(os.environ['SystemRoot']) / 'System32/WindowsPowerShell/v1.0/powershell.exe'
+        command = "$ErrorActionPreference='Stop';[Console]::InputEncoding=[Text.UTF8Encoding]::new($false);Set-Clipboard -Value ([Console]::In.ReadToEnd())"
+        subprocess.run([str(powershell), '-NoProfile', '-NonInteractive', '-STA', '-Command', command],
+                       input=text, encoding='utf-8', capture_output=True, check=True, shell=False,
+                       timeout=10, creationflags=subprocess.CREATE_NO_WINDOW)
+        return
+    # Preserve the existing Tk path outside the current Windows target.
+    import tkinter as tk
+    root = tk.Tk()
+    try:
+        root.withdraw()
+        root.clipboard_clear()
+        root.clipboard_append(text)
+        root.update()
     finally:
         root.destroy()
 
 
 class NotebookForm:
-    def __init__(self, definition, *, folder_picker=None):
+    def __init__(self, definition, *, folder_picker=None, clipboard_writer=None):
         import ipywidgets as widgets
         self._widgets = widgets
         self.model = FormModel(definition)
         self._folder_picker = folder_picker or _select_folder
+        self._clipboard_writer = clipboard_writer or _copy_to_clipboard
         self._syncing = False
         self._invalid_fields = set()
         self._dynamic = []
         self.result = ''
         self.field_widgets = {}
-        self.folder_buttons = {}
+        self.browse_buttons = {}
         layout = lambda: widgets.Layout(flex='1 1 180px', min_width='150px')
         self.connector = widgets.Dropdown(description='コネクタ', options=[('選択してください', None)] + [
             (entry['label'], key) for key, entry in definition['connectors'].items()], layout=layout())
         self.action = widgets.Dropdown(description='アクション', options=[('選択してください', None)], disabled=True, layout=layout())
         self.generate_button = widgets.Button(description='コード生成', disabled=True, button_style='primary')
+        self.generate_button.add_class('zizai-generate')
+        self.copy_button = widgets.Button(description='コードをコピー', disabled=True, icon='copy')
+        self.copy_button.add_class('zizai-copy')
+        self.code_actions = widgets.HBox([self.generate_button, self.copy_button],
+                                         layout=widgets.Layout(flex_flow='row wrap'))
+        self.code_actions.add_class('zizai-code-actions')
         self.toolbar = widgets.HBox(layout=widgets.Layout(display='flex', flex_flow='row wrap', align_items='center'))
+        self.toolbar.add_class('zizai-toolbar')
         self.details = widgets.VBox()
+        self.details.add_class('zizai-details')
         self.message = widgets.HTML()
         self.generated = widgets.HTML()
-        self.root = widgets.VBox([self.toolbar, self.details, self.message, self.generated])
+        css = files('zizai').joinpath('form.css').read_text(encoding='utf-8')
+        self.styles = widgets.HTML('<style>' + css + '</style>', layout=widgets.Layout(display='none'))
+        self.root = widgets.VBox([self.styles, self.toolbar, self.details, self.message, self.generated, self.code_actions],
+                                 layout=widgets.Layout(width='100%', max_width='880px'))
+        self.root.add_class('zizai-form')
         self.connector.observe(self._connector_changed, names='value')
         self.action.observe(self._action_changed, names='value')
         self.generate_button.on_click(self._generate)
+        self.copy_button.on_click(self._copy_code)
         self._sync()
 
     def _clear_result(self):
         self.result = ''
         self.generated.value = ''
+        self.copy_button.disabled = True
 
     def _refresh_generate(self):
         try:
@@ -88,29 +147,57 @@ class NotebookForm:
                 widget.close()
             self._dynamic = []
             self.field_widgets = {}
-            self.folder_buttons = {}
+            self.browse_buttons = {}
             self._invalid_fields.clear()
             for name, field in self.model.fields.items():
                 value = self.model.values[name]
-                label = field['label'] + (' *' if field.get('required') else '')
+                label = escape(field['label']) + (' <span class="zizai-required">*</span>' if field.get('required') else '')
                 if field['type'] == 'choice':
                     widget = widgets.Dropdown(description=label, options=[('選択してください', None)] + [(x, x) for x in field['choices']], value=value)
                 elif field['type'] == 'integer':
                     widget = widgets.IntText(description=label, value=value)
+                    widget.add_class('zizai-integer')
                 else:
                     widget = widgets.Text(description=label, value=value, continuous_update=True)
                 widget.layout.width = 'auto'
+                widget.description_allow_html = True
                 widget.style.description_width = 'initial'
                 widget.observe(lambda change, key=name: self._value_changed(key, change['new']), names='value')
                 self.field_widgets[name] = widget
                 self._dynamic.append(widget)
-                if field['type'] == 'folder':
-                    button = widgets.Button(description=field['label'] + 'を選択')
-                    button.on_click(lambda _, key=name: self._pick_folder(key))
-                    self.folder_buttons[name] = button
+                if field['type'] in ('file', 'folder'):
+                    button = widgets.Button(description='参照…', tooltip=field['label'] + 'を選択',
+                                            layout=widgets.Layout(width='85px', flex='0 0 85px'))
+                    button.on_click(lambda _, key=name: self._pick_path(key))
+                    self.browse_buttons[name] = button
                     self._dynamic.append(button)
-            self.toolbar.children = [self.connector, self.action, *self.folder_buttons.values(), self.generate_button]
-            self.details.children = list(self.field_widgets.values())
+            self.toolbar.children = [self.connector, self.action]
+            rows = []
+            pairs = [('encoding', 'delimiter')]
+            if (self.model.connector, self.model.action) == ('csv', 'import'):
+                pairs.extend([('output_variable', 'chunk_size'), ('header_row', 'data_start_row')])
+            paired_fields = {left: right for left, right in pairs if left in self.field_widgets and right in self.field_widgets}
+            for name, widget in self.field_widgets.items():
+                if name in self.browse_buttons:
+                    widget.layout.flex = '1 1 0'
+                    widget.layout.min_width = '0'
+                    row = widgets.HBox([widget, self.browse_buttons[name]],
+                                       layout=widgets.Layout(width='100%', align_items='flex-end'))
+                    row.add_class('zizai-folder-row')
+                    self._dynamic.append(row)
+                    rows.append(row)
+                elif name in paired_fields:
+                    pair = [widget, self.field_widgets[paired_fields[name]]]
+                    for item in pair:
+                        item.layout.flex = '1 1 240px'
+                        item.layout.min_width = '0'
+                    row = widgets.HBox(pair, layout=widgets.Layout(flex_flow='row wrap', width='100%'))
+                    row.add_class('zizai-pair')
+                    self._dynamic.append(row)
+                    rows.append(row)
+                elif name not in paired_fields.values():
+                    rows.append(widget)
+            self.details.children = rows
             self.message.value = ''
             self._clear_result()
             self._refresh_generate()
@@ -127,18 +214,27 @@ class NotebookForm:
         except ValueError:
             self._invalid_fields.add(name)
         if self._invalid_fields:
-            self.message.value = '入力値を確認してください。フォルダーは絶対パスを指定します。'
+            self.message.value = '入力値を確認してください。ファイルとフォルダーは絶対パスを指定します。'
         else:
             self.message.value = ''
+            try:
+                self.model.generate()
+            except ValueError as error:
+                self.message.value = escape(str(error))
         self._refresh_generate()
 
-    def _pick_folder(self, name):
+    def _pick_path(self, name):
+        field = self.model.fields[name]
+        widget = self.field_widgets[name]
+        is_file = field['type'] == 'file'
         try:
-            selected = self._folder_picker(self.field_widgets[name].value)
+            selected = (_select_file(widget.value, field.get('extension')) if is_file
+                        else self._folder_picker(widget.value))
             if selected:  # Cancellation preserves the existing value and result.
-                self.field_widgets[name].value = selected
+                widget.value = selected
         except Exception as error:
-            self.message.value = 'フォルダー選択を開けません。ローカルPythonのTk環境を確認してください。(' + escape(type(error).__name__) + ')'
+            kind = 'ファイル' if is_file else 'フォルダー'
+            self.message.value = kind + '選択を開けません。ローカルPythonのTk環境を確認してください。(' + escape(type(error).__name__) + ')'
 
     def _generate(self, _):
         if self._invalid_fields:
@@ -150,17 +246,29 @@ class NotebookForm:
             self.message.value = escape(str(error))
             return
         self.message.value = ''
-        self.generated.value = '<p><b>生成結果（仮表示・実行可能なPythonコードではありません）</b></p><pre style="white-space:pre-wrap;user-select:text">' + escape(self.result) + '</pre>'
+        label = '生成結果（仮表示・実行可能なPythonコードではありません）' if self.model.is_placeholder else '生成コード'
+        self.generated.value = '<p><b>' + label + '</b></p><pre style="white-space:pre-wrap;user-select:text;overflow:auto;max-height:320px"><code class="language-python">' + escape(self.result) + '</code></pre>'
+        self.copy_button.disabled = self.model.is_placeholder
+
+    def _copy_code(self, _):
+        if self.copy_button.disabled or not self.result:
+            return
+        try:
+            self._clipboard_writer(self.result)
+            self.message.value = 'コードをコピーしました。'
+        except Exception as error:
+            self.message.value = 'コピーできません。コード欄を選択してコピーしてください。(' + escape(type(error).__name__) + ')'
 
     def close(self):
-        for widget in [*self._dynamic, self.connector, self.action, self.generate_button,
-                       self.toolbar, self.details, self.message, self.generated, self.root]:
+        for widget in [*self._dynamic, self.connector, self.action, self.generate_button, self.copy_button,
+                       self.toolbar, self.details, self.message, self.generated, self.code_actions, self.root]:
             widget.close()
+        self.styles.close()
 
 
-def create_form(config_path=None, *, folder_picker=None):
+def create_form(config_path=None, *, folder_picker=None, clipboard_writer=None):
     """Return a controller with .root, .model and .result for explicit Python use."""
-    return NotebookForm(load_definition(config_path), folder_picker=folder_picker)
+    return NotebookForm(load_definition(config_path), folder_picker=folder_picker, clipboard_writer=clipboard_writer)
 
 
 def show_form(config_path=None):

@@ -1,0 +1,92 @@
+.zizai-form {
+  --zizai-green: #187a57;
+  --zizai-border: #d5dcd8;
+  background: #f4f6f5;
+  color: #27372f;
+  border: 1px solid var(--zizai-border);
+  border-radius: 12px;
+  padding: 20px;
+  gap: 16px;
+  font-family: system-ui, "Segoe UI", sans-serif;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+.zizai-form * { box-sizing: border-box; }
+.zizai-form .zizai-toolbar { gap: 16px; }
+.zizai-form .zizai-details { gap: 16px; }
+.zizai-form .widget-text, .zizai-form .widget-dropdown, .zizai-form .zizai-integer {
+  flex-direction: column;
+  align-items: stretch;
+  height: auto;
+  margin: 0;
+}
+.zizai-form .widget-label {
+  width: auto !important;
+  max-width: none;
+  height: auto;
+  margin: 0 0 7px;
+  padding: 0;
+  text-align: left;
+  color: #35483d;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+.zizai-form .zizai-required { color: #bd2929; }
+.zizai-form input, .zizai-form select {
+  width: 100% !important;
+  min-width: 0;
+  height: 36px !important;
+  min-height: 36px;
+  max-height: 36px;
+  flex: 0 0 36px;
+  margin: 0;
+  padding: 9px 12px;
+  border: 1px solid var(--zizai-border);
+  border-radius: 6px;
+  background-color: #fff;
+  color: #27372f;
+  font: inherit;
+}
+.zizai-form select { padding: 0 12px; line-height: normal; }
+.zizai-form input:focus, .zizai-form select:focus,
+.zizai-form button:focus-visible {
+  outline: 2px solid var(--zizai-green);
+  outline-offset: 2px;
+}
+.zizai-form button.jupyter-button {
+  height: 36px;
+  margin: 0;
+  padding: 0 18px;
+  border: 1px solid var(--zizai-green);
+  border-radius: 6px;
+  background: var(--zizai-green);
+  color: #fff;
+  font: inherit;
+  font-weight: 600;
+  box-shadow: none;
+}
+.zizai-form button.jupyter-button:hover:enabled { background: #126343; }
+.zizai-form button.jupyter-button:disabled {
+  background: #c7d6ce;
+  border-color: #c7d6ce;
+  color: #566b5e;
+  opacity: 1;
+}
+.zizai-form .zizai-code-actions { gap: 10px; align-items: center; }
+.zizai-form .zizai-generate { min-width: 138px; }
+.zizai-form .zizai-copy { width: auto; }
+.zizai-form .zizai-pair { gap: 16px; }
+.zizai-form .zizai-folder-row { gap: 10px; }
+.zizai-form .widget-html { margin: 0; color: inherit; }
+.zizai-form .widget-html-content { width: 100%; }
+.zizai-form pre {
+  background: #e9eeeb;
+  color: #27372f;
+  border: 1px solid var(--zizai-border);
+  border-radius: 8px;
+  padding: 16px;
+  margin: 8px 0 0;
+  line-height: 1.7;
+}
+.zizai-form code { color: inherit; background: transparent; }
