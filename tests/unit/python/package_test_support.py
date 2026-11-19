@@ -24,6 +24,7 @@ PACKAGE_FILES = {
     "zizai/form.css",
     "zizai/csv_codegen.py",
     "zizai/bigquery_codegen.py",
+    "zizai/chrome_codegen.py",
     "zizai/duckdb_codegen.py",
     "zizai/dataintegration_codegen.py",
     "zizai/python_codegen.py",

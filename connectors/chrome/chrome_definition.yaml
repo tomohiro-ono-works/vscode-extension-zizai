@@ -1,0 +1,13 @@
+version: 1
+output_template: "{connector}.{action}のコードを生成"
+connectors:
+  chrome:
+    label: Chrome
+    module_file: chrome_connector.py
+    actions:
+      open_in_chrome:
+        label: Chromeでページを開く
+        generation: chrome.open_in_chrome
+        fields:
+          url: {label: URL, type: text, required: true}
+          output_variable: {label: 出力変数, type: text, default: result, required: true}

@@ -2,6 +2,7 @@
 from copy import deepcopy
 from .form_definition import valid_value
 from .bigquery_codegen import generate_bigquery
+from .chrome_codegen import generate_chrome
 from .csv_codegen import generate_csv
 from .dataintegration_codegen import generate_dataintegration
 from .duckdb_codegen import generate_duckdb
@@ -11,7 +12,7 @@ from .shell_codegen import generate_shell
 
 
 GENERATORS = {
-    'bigquery': generate_bigquery, 'csv': generate_csv, 'dataintegration': generate_dataintegration,
+    'bigquery': generate_bigquery, 'chrome': generate_chrome, 'csv': generate_csv, 'dataintegration': generate_dataintegration,
     'duckdb': generate_duckdb, 'excel': generate_excel, 'python': generate_python, 'shell': generate_shell,
 }
 

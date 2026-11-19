@@ -1,0 +1,6 @@
+version: 1
+web:
+  allowlist:
+    - domain: example.com
+      path_prefixes:
+        - /

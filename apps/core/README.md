@@ -1,5 +1,9 @@
 # ZizAI Python最小基盤
 
+## Chromeでページを開く（TASK-019）
+
+`[forms,chrome]` 付きのwheelと、[外部Chrome資産](../../connectors/chrome/)を登録します。同じ `chrome/` にある `security_policies.example.yml` をもとに `security_policies.yml` を置き、利用するドメイン・パスを設定します。フォームの「Chrome」→「Chromeでページを開く」でHTTP／HTTPSのURLを入力します。生成コードを実行するとWindowsのChromeにURLを渡し、初期値 `result` に起動要求の状態とURLを返します。
+
 ## Windowsバッチファイル実行（TASK-018）
 
 `[forms,shell]` 付きのwheelを導入し、[Shell資産](../../connectors/shell/)を共通フォルダーへ登録します。`%form` の「Shell」→「バッチファイル実行」で `.bat` ファイルを指定します。引数が必要な場合は `["入力 1", "入力 2"]` のようなJSON配列を入力します。生成コードを実行すると標準出力・標準エラー・終了コードを受け取れます。

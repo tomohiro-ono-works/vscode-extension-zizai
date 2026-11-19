@@ -1,5 +1,9 @@
 # ZizAI 要件仕様書
 
+## TASK-019：Chromeでページを開く
+
+[Issue #93](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/93)のフォームにURLを指定し、生成コードを実行するとWindowsのGoogle Chromeへ起動を要求する。出力の初期値は `result`。許可リストは `chrome_connector.py` と同じ場所の `security_policies.yml` の `web.allowlist`。HTTP／HTTPSのドメインとパス前方一致を確認する。`*.example.com` は1階層のサブドメインに一致。取得・生成時の認証や通信はなく、戻り値は要求の状態を表す。Chrome内部で行われる転送やページ表示の成否は取得対象外。
+
 ## TASK-018：Windowsバッチファイル実行
 
 [Issue #92](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/92)の「バッチファイル実行」は、Windowsの `.bat` と任意の引数をフォームで指定する。引数は文字列のJSON配列。生成コードの実行時に利用者権限で選んだバッチを実行し、標準出力・標準エラー・終了コードをDataFrameで返す。終了コードが0以外なら出力付きのエラーを返す。標準出力・標準エラーはCP932でデコードする。
