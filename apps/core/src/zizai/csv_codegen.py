@@ -36,14 +36,20 @@ def generate_csv(kind, values, module_path):
     module_name = Path(module_path).stem
     if not module_name.isidentifier() or keyword.iskeyword(module_name):
         raise ValueError('コネクタのファイル名はPythonのモジュール名にしてください。')
-    folder = _text(values, 'folder', required=True)
-    if not Path(folder).is_absolute():
-        raise ValueError('フォルダーは絶対パスで指定してください。')
-    filename = _text(values, 'filename', required=True)
     reading = kind == 'csv.read_csv'
-    if not reading and not Path(filename).suffix:
-        filename += '.csv'
-    path = (Path(folder) / filename).as_posix()
+    if reading and 'file_path' in values:
+        selected = Path(_text(values, 'file_path', required=True))
+        if not selected.is_absolute():
+            raise ValueError('入力ファイルは絶対パスで指定してください。')
+        path = selected.as_posix()
+    else:
+        folder = _text(values, 'folder', required=True)
+        if not Path(folder).is_absolute():
+            raise ValueError('フォルダーは絶対パスで指定してください。')
+        filename = _text(values, 'filename', required=True)
+        if not reading and not Path(filename).suffix:
+            filename += '.csv'
+        path = (Path(folder) / filename).as_posix()
     schema = _text(values, 'schema')
     options = {'encoding': _text(values, 'encoding'), 'delimiter': _text(values, 'delimiter'),
                'schema': schema if schema.strip() else None}

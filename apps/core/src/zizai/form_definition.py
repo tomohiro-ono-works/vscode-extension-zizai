@@ -21,7 +21,7 @@ def valid_value(field, value, *, require=False):
         return False
     if kind == 'choice':
         return value in field['choices']
-    if kind == 'folder':
+    if kind in ('file', 'folder'):
         return Path(value).is_absolute()
     return kind == 'text'
 
@@ -103,7 +103,9 @@ def parse_definition(text):
             if not isinstance(fields, dict):
                 raise ValueError('fieldsは項目一覧にしてください。')
             if 'generation' in action:
-                needed = {'folder', 'filename', 'encoding', 'delimiter', 'schema'}
+                needed = {'encoding', 'delimiter', 'schema'}
+                needed |= ({'file_path'} if action['generation'] == 'csv.read_csv' and 'file_path' in fields
+                           else {'folder', 'filename'})
                 needed |= ({'output_variable', 'header_row', 'data_start_row', 'chunk_size'}
                            if action['generation'] == 'csv.read_csv' else {'input_variable'})
                 if not needed <= fields.keys():
@@ -112,10 +114,13 @@ def parse_definition(text):
                 if not isinstance(name, str) or not ID.fullmatch(name) or not isinstance(field, dict):
                     raise ValueError('入力項目の定義が不正です。')
                 _label(field.get('label'))
-                if field.get('type') not in {'text', 'choice', 'folder', 'integer'}:
-                    raise ValueError('項目型はtext/choice/folder/integerにしてください。')
-                if set(field) - {'label', 'type', 'required', 'default', 'choices', 'minimum'}:
+                if field.get('type') not in {'text', 'choice', 'file', 'folder', 'integer'}:
+                    raise ValueError('項目型はtext/choice/file/folder/integerにしてください。')
+                if set(field) - {'label', 'type', 'required', 'default', 'choices', 'minimum', 'extension'}:
                     raise ValueError('入力項目に未対応の設定があります。')
+                if 'extension' in field and (field['type'] != 'file' or not isinstance(field['extension'], str)
+                                             or not re.fullmatch(r'\.[A-Za-z0-9]+', field['extension'])):
+                    raise ValueError('extensionはfile項目の拡張子を指定してください。')
                 if 'required' in field and type(field['required']) is not bool:
                     raise ValueError('requiredはtrue/falseにしてください。')
                 if field['type'] == 'choice':
