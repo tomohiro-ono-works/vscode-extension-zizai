@@ -1,0 +1,39 @@
+version: 1
+output_template: "{connector}.{action}のコードを生成"
+connectors:
+  excel:
+    label: Excel
+    module_file: excel_connector.py
+    actions:
+      read_excel:
+        label: 読み込み
+        generation: excel.read_excel
+        fields:
+          file_path: {label: 入力ファイル, type: file, extension: .xlsx, required: true}
+          output_variable: {label: 出力変数, type: text, default: df, required: true}
+          chunk_size: {label: 読込分割行数, type: integer, default: 50000, minimum: 1}
+          sheet_name: {label: シート名, type: text, default: シート1, required: true}
+          header_row: {label: ヘッダー行, type: integer, default: 1, minimum: 1}
+          data_start_row: {label: データ開始行, type: integer, default: 2, minimum: 1}
+          schema: {label: schema（JSON・省略可）, type: text}
+      read_excel_range:
+        label: 範囲読み込み
+        generation: excel.read_excel_range
+        fields:
+          file_path: {label: 入力ファイル, type: file, extension: .xlsx, required: true}
+          output_variable: {label: 出力変数, type: text, default: df, required: true}
+          sheet_name: {label: シート名, type: text, default: シート1, required: true}
+          cell_range: {label: 読込範囲（例：A1:D100）, type: text, required: true}
+          header_row: {label: ヘッダー行（範囲内）, type: integer, default: 1, minimum: 1}
+          data_start_row: {label: データ開始行（範囲内）, type: integer, default: 2, minimum: 1}
+          schema: {label: schema（JSON・省略可）, type: text}
+      export:
+        label: 書き出し
+        generation: excel.write_excel
+        fields:
+          folder: {label: 保存先, type: folder, required: true}
+          filename: {label: ファイル名, type: text, default: output.xlsx, required: true}
+          input_variable: {label: 入力変数, type: text, default: df, required: true}
+          sheet_name: {label: シート名, type: text, default: シート1, required: true}
+          mode: {label: 書き込みモード, type: choice, choices: [create_or_replace, create_or_insert], default: create_or_replace, required: true}
+          schema: {label: schema（JSON・省略可）, type: text}

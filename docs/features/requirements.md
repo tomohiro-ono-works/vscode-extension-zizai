@@ -1,6 +1,16 @@
 # ZizAI 要件仕様書
 
+## TASK-012：Excelフォームとコネクタ
+
+[Issue #85](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/85)の3アクションを、外部共通フォルダーの `excel_connector.py` と隣接する `excel_definition.yaml` で提供する。対象形式はローカルの `.xlsx`。フォームは通常の `import excel_connector` と関数呼び出しを生成する。パスは `/` 区切りとし、計算やファイル操作は生成コードの実行時に行う。
+
+- 通常読込と範囲読込では、入力ファイル欄の `参照…` から `.xlsx` を選択するか、絶対パスを入力する。通常読込はシート全体から1始まりのヘッダー行とデータ開始行を指定する。範囲読込は `A2:B5` などを入力し、範囲内の1始まりで行を指定する。フォームの初期値はシート名 `シート1`、ヘッダー行 `1`、データ開始行 `2`。通常読込の分割行数は `50000`。読み込みの結果と書き出しの入力はDataFrameで渡せる。
+- 書き出しは `output.xlsx`・`シート1` を初期値とし、書き込みモードの初期選択は `create_or_replace`（対象シートを置換）、もう一方は `create_or_insert`（既存シート末尾へヘッダーなしで追記）。フォームは選択されたモードを生成コードへ明示する。ないブック・シートは作成し、別シートを維持する。書き出しに失敗した場合は元のブックを残す。データ内の文字列は文字列として書き、他シートの既存の式は保持する。マクロや一部図形などExcel固有機能の完全な保持は対象外。
+- 対象日付・型の共通処理には既存の表変換を使う。Excelのライブラリは別の `excel` extraで導入する。[pandasのExcel依存](https://pandas.pydata.org/docs/getting_started/install#excel-files)のopenpyxl 3.1.5と、[openpyxlが案内するXML保護](https://openpyxl.readthedocs.io/en/stable/#security)のdefusedxml 0.7.1を使用する。
+
 ## TASK-011：CSVとコネクタ共通の呼出し規約（2026-11-16、通常importへの変更承認済み）
+
+CSVは修正済み共通フォームでの利用者確認を経て [PR #87](https://github.com/tomohiro-ono-works/vscode-extension-zizai/pull/87) でmainへ反映済み。以下の試用・反映の状態は各変更時点の記録。
 
 ### 通常のimportへ変更するメモ（2026-11-16）
 

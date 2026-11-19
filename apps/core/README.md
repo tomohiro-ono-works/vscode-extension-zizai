@@ -1,5 +1,11 @@
 # ZizAI Python最小基盤
 
+## Excelフォーム（TASK-012、開発版）
+
+`zizai_runtime-0.0.3.dev0-py3-none-any.whl[forms,excel]`をNotebookのカーネルと同じPython環境に導入します。CSVも使う場合は`[forms,csv,excel]`を指定します。[Excel資産の正本](../../connectors/excel/)の`excel_connector.py`と`excel_definition.yaml`を共通フォルダーの`excel/`へ配置します。既にCSVを登録した環境でも、Excelを追加したら`configure_connectors`で同じ共通フォルダーを再登録し、カーネルを再起動してください。
+
+`%load_ext zizai.forms`と`%form`でフォームを表示します。「読み込み」と「範囲読み込み」は、入力ファイル欄の`参照…`から`.xlsx`を選びます。「書き出し」は保存先フォルダーとファイル名を指定します。生成コードをPythonセルへ貼って実行してください。範囲読み込みのヘッダー行とデータ開始行は、指定範囲の先頭を1とします。書き出し先の既定は`output.xlsx`の`シート1`です。`create_or_replace`は対象シートを置換し、`create_or_insert`は既存の対象シートの末尾にヘッダーなしで追記します。生成コードは通常の`import excel_connector`を使います。
+
 ## CSVフォーム（TASK-011、開発版0.0.3.dev0）
 
 操作ボタンはコード欄下で`コード生成`→`コードをコピー`の順に横配置します。Windowsのコピーは標準`Set-Clipboard`を非表示プロセスで呼び、コードをUTF-8の標準入力データとして渡します。54テストと、実フォームの1クリックコピーを別プロセスから読む確認が合格。コピーのためのTkウィンドウはWindowsでは作りません。以前のTk方式・コピー未確認という記述は当時の履歴です。ユーザー試用とmain反映は継続中です。
@@ -36,7 +42,7 @@ configure_connectors("D:/shared/connectors")  # このPython環境へ一度登�
 
 CSV・読み込みを選んで設定し、生成コードを通常のPythonセルへコピーして実行するとDataFrameを返します。書き出しでは入力変数・保存先・ファイル名を確認して実行します。既存ファイルは上書きされます。同じフォームでアクションを切り替えると有効な値を保持するため、ファイル名も確認してください。生成だけではモジュールimportやファイルの読み書きはしません。存在・権限等は実行時にPythonが確認します。
 
-外部YAMLは`module_file: csv_connector.py`で同じフォルダーのPythonモジュールを指定します。生成コードは通常の`import csv_connector`です。登録・フォーム表示・生成だけでコネクタをimportせず、利用者が生成コードを実行したときに読み込みます。共有元の同名モジュールに注意し、更新後はカーネルを再起動してください。共通フォルダー未設定なら同梱定義の仮表示です。Excel等も仮表示を維持します。[CSVの未実行サンプル](../../examples/csv-form.ipynb)を参照してください。
+外部YAMLは`module_file: csv_connector.py`で同じフォルダーのPythonモジュールを指定します。生成コードは通常の`import csv_connector`です。登録・フォーム表示・生成だけでコネクタをimportせず、利用者が生成コードを実行したときに読み込みます。共有元の同名モジュールに注意し、更新後はカーネルを再起動してください。外部定義が未配置のコネクタは同梱定義の仮表示です。[CSVの未実行サンプル](../../examples/csv-form.ipynb)を参照してください。
 
 ### キャッシュ
 

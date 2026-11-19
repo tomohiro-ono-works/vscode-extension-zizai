@@ -104,7 +104,7 @@ class CsvCodegenTests(unittest.TestCase):
             with self.subTest(values=values), self.assertRaises(ValueError):
                 self.generate('csv.read_csv', values)
 
-    def test_yaml_routes_csv_to_real_code_and_leaves_other_actions_as_placeholder(self):
+    def test_yaml_routes_csv_to_real_code_and_preserves_unconfigured_placeholder(self):
         definition = load_definition(source_test_support.REPO / 'connectors')
         form = FormModel(definition)
         form.set_connector('csv')
@@ -115,9 +115,12 @@ class CsvCodegenTests(unittest.TestCase):
         form.set_action('export')
         form.set_value('folder', str(self.directory))
         self.assertIn('write_csv', form.generate())
-        form.set_connector('excel')
-        self.assertTrue(form.is_placeholder)
-        self.assertEqual(form.generate(), '{excel.exportのコードを生成}')
+        fallback = FormModel(load_definition(source_test_support.REPO / 'apps/core/src/zizai/forms.yaml'))
+        fallback.set_connector('excel')
+        fallback.set_action('export')
+        fallback.set_value('folder', str(self.directory))
+        self.assertTrue(fallback.is_placeholder)
+        self.assertEqual(fallback.generate(), '{excel.exportのコードを生成}')
 
     def test_yaml_cannot_choose_arbitrary_python_generator(self):
         import yaml

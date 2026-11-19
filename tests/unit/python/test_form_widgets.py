@@ -69,6 +69,32 @@ class FormWidgetTests(unittest.TestCase):
         self.assertIn('data = df', form.result)
         self.assertIn('write_csv(data=data', form.result)
 
+    def test_excel_read_actions_browse_for_xlsx_and_generate_with_the_selected_path(self):
+        from unittest.mock import Mock
+
+        form = self.make_form()
+        form.connector.value = 'excel'
+        form.action.value = 'read_excel'
+        self.assertTrue(form.generate_button.disabled)
+        selected = 'C:/選択先/商品表.xlsx'
+        root = Mock()
+        with patch('tkinter.Tk', return_value=root), patch('tkinter.filedialog.askdirectory') as folder, \
+                patch('tkinter.filedialog.askopenfilename', return_value=selected) as file:
+            form.browse_buttons['file_path'].click()
+            file.assert_called_once()
+            self.assertEqual(file.call_args.kwargs['filetypes'][0][1], '*.xlsx')
+            folder.assert_not_called()
+        self.assertEqual(form.field_widgets['file_path'].value, selected)
+        form.generate_button.click()
+        self.assertIn("file_path = 'C:/選択先/商品表.xlsx'", form.result)
+        self.assertIn('excel_connector.read_excel(', form.result)
+        form.action.value = 'read_excel_range'
+        self.assertEqual(form.field_widgets['file_path'].value, selected)
+        form.field_widgets['cell_range'].value = 'A2:B5'
+        form.generate_button.click()
+        self.assertIn('excel_connector.read_excel_range(', form.result)
+        self.assertIn("cell_range = 'A2:B5'", form.result)
+
     def test_csv_encoding_and_delimiter_share_a_horizontal_row(self):
         import ipywidgets as widgets
         form = self.make_form()
@@ -234,8 +260,7 @@ class FormWidgetTests(unittest.TestCase):
         from comm import get_comm_manager
         # A frontend selection can already be queued when the connector changes
         # (for example while the native folder chooser blocks the kernel).
-        # CSV index 1 means import; Excel index 1 means export. CSV index 2
-        # is export and does not exist in the shorter Excel option list.
+        # An index from CSV can refer to an unrelated action in Excel.
         for old_index in (1, 2):
             with self.subTest(old_index=old_index):
                 form = self.make_form()
@@ -250,16 +275,18 @@ class FormWidgetTests(unittest.TestCase):
                 self.assertIsNone(form.model.action)
                 self.assertTrue(form.generate_button.disabled)
                 # A fresh selection on the current form still works.
+                export_index = next(index for index, (_, value) in enumerate(form.action.options) if value == 'export')
                 get_comm_manager().comm_msg(None, None, {
                     'content': {'comm_id': form.action.comm.comm_id, 'data': {
-                        'method': 'update', 'state': {'index': 1},
+                        'method': 'update', 'state': {'index': export_index},
                         'buffer_paths': []}}, 'buffers': []})
                 self.assertEqual(form.model.action, 'export')
 
     def test_output_is_escaped_text_not_executable_html(self):
-        from zizai.form_definition import load_definition
+        from importlib.resources import files
+        from zizai.form_definition import parse_definition
         from zizai.forms import NotebookForm
-        config = load_definition()
+        config = parse_definition(files('zizai').joinpath('forms.yaml').read_text(encoding='utf-8'))
         config['output_template'] = '<img src=x onerror=bad()> {connector}.{action}'
         form = NotebookForm(config)
         self.addCleanup(form.close)

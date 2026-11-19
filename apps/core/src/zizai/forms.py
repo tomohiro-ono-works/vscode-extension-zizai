@@ -174,7 +174,9 @@ class NotebookForm:
             self.toolbar.children = [self.connector, self.action]
             rows = []
             pairs = [('encoding', 'delimiter')]
-            if (self.model.connector, self.model.action) == ('csv', 'import'):
+            if (self.model.connector, self.model.action) in {
+                ('csv', 'import'), ('excel', 'read_excel'), ('excel', 'read_excel_range'),
+            }:
                 pairs.extend([('output_variable', 'chunk_size'), ('header_row', 'data_start_row')])
             paired_fields = {left: right for left, right in pairs if left in self.field_widgets and right in self.field_widgets}
             for name, widget in self.field_widgets.items():
