@@ -73,6 +73,43 @@ class DataIntegrationConnectorTests(unittest.TestCase):
             self.assertTrue(form.generate_button.disabled)
             self.assertEqual(editor.preview['数量'].iloc[0], '12')
 
+    def test_column_header_actions_keep_pending_deletion_visible_and_restore_it(self):
+        import pandas as pd
+        from zizai.forms import create_form
+
+        shared = source_test_support.REPO / 'connectors'
+        source = pd.DataFrame({'商品': ['りんご'], '数量': ['12'], '備考': ['メモ']})
+        with patch.object(sys, 'path', [str(shared / 'dataintegration'), *sys.path]):
+            form = create_form(shared, namespace={'df': source})
+            self.addCleanup(form.close)
+            form.connector.value = 'dataintegration'
+            form.action.value = 'apply_column_operations'
+            form.field_widgets['input_variable'].value = 'df'
+            editor = form._column_editor
+
+            def send(column, **message):
+                header = next(header for header in editor._headers if header._column_name == column)
+                editor._handle_header(header, column, message)
+
+            send('商品', event='column-rename', name='product')
+            send('数量', event='column-operation', role='drop')
+            self.assertEqual(editor.preview.columns.tolist(), ['product', '数量', '備考'])
+            self.assertIn('column-pending-delete', editor._body.value)
+            send('product', event='column-move', source='備考', after=False)
+            self.assertEqual(editor.preview.columns.tolist(), ['備考', 'product', '数量'])
+            form.generate_button.click()
+            dropped = {'df': source}
+            exec(compile(form.result, '<drop-column>', 'exec'), dropped)
+            self.assertEqual(dropped['processed_df'].columns.tolist(), ['備考', 'product'])
+
+            send('数量', event='column-operation', role='restore')
+            self.assertNotIn('column-pending-delete', editor._body.value)
+            form.generate_button.click()
+            restored = {'df': source}
+            exec(compile(form.result, '<restore-column>', 'exec'), restored)
+            self.assertEqual(restored['processed_df'].columns.tolist(), ['備考', 'product', '数量'])
+            self.assertEqual(source.columns.tolist(), ['商品', '数量', '備考'])
+
     def test_csv_and_excel_tables_are_renamed_without_mutating_input(self):
         from openpyxl import Workbook
 
