@@ -105,7 +105,7 @@ class DuckDBConnectorTests(unittest.TestCase):
             result = {}
             with patch.object(sys, 'path', [str(shared / 'duckdb'), *sys.path]):
                 exec(compile(script_code, '<generated-script>', 'exec'), result)
-                self.assertEqual(result['df'].to_dict('records'), [{'商品': 'りんご', '数量': 3}])
+                self.assertEqual(result['result'].to_dict('records'), [{'商品': 'りんご', '数量': 3}])
                 from duckdb_connector import execute_sql
                 with self.assertRaises(FileNotFoundError):
                     execute_sql(folder / 'missing.duckdb', 'SELECT 1')
@@ -139,7 +139,7 @@ class DuckDBConnectorTests(unittest.TestCase):
             with patch.object(sys, 'path', [str(shared / 'duckdb'), *sys.path]):
                 exec(compile(code, '<generated-duckdb>', 'exec'), result)
                 database = folder / '商品DB.duckdb'
-                written_path = result['db_info']['file_path'].iat[0]
+                written_path = result['result']['file_path'].iat[0]
                 self.assertEqual(Path(written_path), database)
                 self.assertNotIn('\\', written_path)
                 with duckdb.connect(str(database)) as connection:

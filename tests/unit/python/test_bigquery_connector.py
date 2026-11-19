@@ -67,7 +67,7 @@ class BigQueryConnectorTests(unittest.TestCase):
             for mode, disposition in [('新規／空テーブル', 'WRITE_EMPTY'),
                                       ('追記', 'WRITE_APPEND'), ('置換', 'WRITE_TRUNCATE')]:
                 code = self.generate('load_data', dataset_id='fixture_data', table_id='items',
-                                     input_variable='bigquery_connector', output_variable='load_info',
+                                     input_variable='bigquery_connector',
                                      schema='[{"name": "商品", "type": "STRING"}]')
                 if mode == '新規／空テーブル':
                     self.assertEqual(self.model.values['mode'], mode)
@@ -82,7 +82,7 @@ class BigQueryConnectorTests(unittest.TestCase):
                 config = call.kwargs['job_config']
                 self.assertEqual(config.write_disposition, disposition)
                 self.assertEqual(config.schema[0].name, '商品')
-                self.assertEqual(self.namespace['load_info']['rows'].iat[0], 1)
+                self.assertEqual(self.namespace['result']['rows'].iat[0], 1)
             self.assertEqual(job.result.call_count, 3)
             self.assertEqual(client.close.call_count, 3)
 

@@ -60,6 +60,7 @@ class FormWidgetTests(unittest.TestCase):
                 self.assertNotIn('sql', form.field_widgets)
                 self.assertNotIn('script', form.field_widgets)
                 self.assertNotIn('execute_sql', form.model.actions)
+                self.assertEqual(form.field_widgets['output_variable'].value, 'result')
                 if connector == 'duckdb':
                     form.folder_buttons['db_folder'].click()
                     form.field_widgets['db_file_name'].value = '商品.duckdb'

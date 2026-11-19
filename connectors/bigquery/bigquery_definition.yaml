@@ -14,7 +14,7 @@ connectors:
           sql_file_name: {label: SQLファイル名, type: text, required: true}
           encoding: {label: 文字コード, type: choice, choices: [utf8, shift_jis], default: utf8, required: true}
           schema: {label: 出力スキーマ（JSON・省略可）, type: textarea}
-          output_variable: {label: 出力変数, type: text, default: df, required: true}
+          output_variable: {label: 出力変数, type: text, default: result, required: true}
       load_data:
         label: データロード
         generation: bigquery.load_data
@@ -25,4 +25,4 @@ connectors:
           input_variable: {label: 入力変数, type: text, required: true}
           mode: {label: 書き込みモード, type: choice, choices: [新規／空テーブル, 追記, 置換], default: 新規／空テーブル, required: true}
           schema: {label: BigQueryスキーマ（JSON・省略可）, type: textarea}
-          output_variable: {label: 出力変数, type: text, default: load_info, required: true}
+          output_variable: {label: 出力変数, type: text, default: result, required: true}

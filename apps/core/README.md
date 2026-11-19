@@ -30,7 +30,7 @@ origin_name,replaced_name,description,ziz_datatype
 
 ## DuckDBフォーム（TASK-013、担当ブランチ）
 
-Notebookのカーネルと同じPython環境に開発版のwheelを `[forms,duckdb]` 付きで導入します。[DuckDB資産](../../connectors/duckdb/)を共通フォルダーの `duckdb/` に置き、`configure_connectors` で登録してからカーネルを再起動します。`%form` で「DuckDB」→「DBファイル作成」を選び、設定後に生成コードを実行するとDBファイルの情報が `db_info` に入ります。既存DBを指定した場合は中のテーブルを保持します。
+Notebookのカーネルと同じPython環境に開発版のwheelを `[forms,duckdb]` 付きで導入します。[DuckDB資産](../../connectors/duckdb/)を共通フォルダーの `duckdb/` に置き、`configure_connectors` で登録してからカーネルを再起動します。`%form` で「DuckDB」→「DBファイル作成」を選び、設定後に生成コードを実行するとDBファイルの情報が `result` に入ります。既存DBを指定した場合は中のテーブルを保持します。
 
 「SQL実行（ファイル）」では、既存のDBとSQLファイルを指定します。SQLからはそのDB内のテーブルを参照できます。SQLファイルの文字コードはUTF-8、Shift_JIS、CP932から選べます。
 

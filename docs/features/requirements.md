@@ -8,6 +8,8 @@
 
 2026-11-19の利用者指示により、DuckDB・BigQueryのSQLとPythonスクリプトはフォームからファイルを指定する。[Issue #91](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/91) 生成コードはパスを引数として渡し、実行時にファイルを読む。既に生成されたPythonコードで使う関数も提供する。
 
+SQL実行、DBファイル・テーブル作成、BigQueryデータロード、Python・BAT実行は、フォームの出力変数初期値を `result` に揃える。任意の変数名も指定できる。
+
 ## TASK-016：Python実行（担当ブランチ）
 
 [Issue #90](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/90)の「Python実行」は、フォームで指定した `.py` ファイルと環境から通常の `import python_connector` を使うコードを生成する。環境を省略するとカーネルと同じPythonを使う。Python実行ファイルまたは仮想環境を絶対パスで指定することもできる。
@@ -30,7 +32,7 @@
 
 ## TASK-013：DuckDBフォーム（担当ブランチ）
 
-[Issue #86](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/86)のDBファイル作成は、外部共通フォルダーの `duckdb_connector.py` と `duckdb_definition.yaml` を使う。初期ファイル名は `sample.duckdb`。拡張子省略時は `.duckdb` を補い、入力されたフォルダーがなければPythonの実行時に作成する。同じDBファイルを指定した場合は開いて閉じ、既存テーブルを保持する。出力変数 `db_info` にDBのパス・ファイル名・拡張子を除いた名前・処理時刻を1行のDataFrameで返す。依存は `duckdb` extraから導入する。
+[Issue #86](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/86)のDBファイル作成は、外部共通フォルダーの `duckdb_connector.py` と `duckdb_definition.yaml` を使う。初期ファイル名は `sample.duckdb`。拡張子省略時は `.duckdb` を補い、入力されたフォルダーがなければPythonの実行時に作成する。同じDBファイルを指定した場合は開いて閉じ、既存テーブルを保持する。出力変数 `result` にDBのパス・ファイル名・拡張子を除いた名前・処理時刻を1行のDataFrameで返す。依存は `duckdb` extraから導入する。
 
 SQL実行は指定した既存DB内で利用する。Pythonの実行時にフォームで指定したSQLファイルを読み込む。文字コードはUTF-8が初期値で、Shift_JIS／CP932も選べる。SQLが参照する外部ファイルへのアクセスは接続設定で無効化し、設定をロックする。入力するSQLは信頼済みのものを前提とし、結果はDataFrameとして受け取る。
 
