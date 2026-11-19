@@ -29,7 +29,9 @@ async function main() {
   await copy.scrollIntoViewIfNeeded();
   const left = await generate.boundingBox(), right = await copy.boundingBox();
   assert(left && right && left.x < right.x && Math.abs(left.y - right.y) < 2, "Generation must be immediately left of copy");
-  const filename = frame.getByRole("textbox", { name: "ファイル名 *", exact: true });
+  const inputFile = frame.getByRole("textbox", { name: "入力ファイル *", exact: true });
+  const reading = await inputFile.count() === 1;
+  const filename = reading ? inputFile : frame.getByRole("textbox", { name: "ファイル名 *", exact: true });
   const original = await filename.inputValue();
   const report = { adjacentButtons: true, generatedCodeNotExecuted: true, copies: [], passed: false };
   const read = async expected => {
@@ -43,9 +45,10 @@ async function main() {
     await expect(copy).toBeDisabled();
     await generate.click();
     await expect(copy).toBeEnabled();
-    await expect(frame.locator(".zizai-form pre code")).toContainText(value);
+    const generatedPath = value.split(path.win32.sep).join("/");
+    await expect(frame.locator(".zizai-form pre code")).toContainText(generatedPath);
     const code = await frame.locator(".zizai-form pre code").innerText();
-    assert(code.includes(value), "Wait for the current generated code");
+    assert(code.includes(generatedPath), "Wait for the current generated code");
     const expected = path.join(out, name + ".py");
     await fs.writeFile(expected, code);
     assert.equal(await read(expected), false, "Require different clipboard content before the tested click");
@@ -55,7 +58,8 @@ async function main() {
     report.copies.push({ name, clicks: 1, externalClipboardMatches: true });
   }
   try {
-    await generateAndCopy("changed-filename", "clipboard-check-" + Date.now() + ".csv");
+    const sampleName = "clipboard-check-" + Date.now() + ".csv";
+    await generateAndCopy("changed-filename", reading ? path.join(path.dirname(original), sampleName) : sampleName);
     await generateAndCopy("original-filename", original);
     report.passed = true;
     await page.screenshot({ path: path.join(out, "copy-controls.png") });

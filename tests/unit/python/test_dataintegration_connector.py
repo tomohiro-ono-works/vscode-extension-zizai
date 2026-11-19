@@ -3,7 +3,7 @@ from pathlib import Path
 import sys
 import tempfile
 import unittest
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 import source_test_support
 from zizai.form_definition import load_definition
@@ -38,13 +38,14 @@ class DataIntegrationConnectorTests(unittest.TestCase):
             workbook.close()
 
             with patch.object(sys, 'path', [str(shared / 'dataintegration'), *sys.path]):
-                for connector, action, filename, output in (
-                    ('csv', 'import', 'input.csv', 'csv_input'), ('excel', 'read_excel', 'input.xlsx', 'excel_input'),
-                ):
-                    code = generate(connector, action, folder=scratch, filename=filename, output_variable=output)
+                csv_code = generate('csv', 'import', file_path=str(folder / 'input.csv'), output_variable='csv_input')
+                excel_code = generate('excel', 'read_excel', file_path=str(folder / 'input.xlsx'),
+                                      output_variable='excel_input')
+                for code in (csv_code, excel_code):
                     exec(compile(code, '<generated-import>', 'exec'), namespace)
-                first = generate('dataintegration', 'replace_fields_forrenamelist', folder=scratch,
-                                 filename='rename.csv', input_variable='csv_input', output_variable='renamed')
+                first = generate('dataintegration', 'replace_fields_forrenamelist',
+                                 file_path=str(folder / 'rename.csv'), input_variable='csv_input',
+                                 output_variable='renamed')
                 self.assertTrue(first.startswith('import dataintegration_connector\n'))
                 self.assertFalse((folder / 'rename.csv').exists())
                 (folder / 'rename.csv').write_text('元フィールド名,新フィールド名,説明,データ型\n'
@@ -83,13 +84,18 @@ class DataIntegrationConnectorTests(unittest.TestCase):
         self.addCleanup(form.close)
         form.connector.value = 'dataintegration'
         form.action.value = 'replace_fields_forrenamelist'
-        form.field_widgets['folder'].value = str(source_test_support.REPO)
-        form.field_widgets['filename'].value = 'rename.csv'
         form.field_widgets['input_variable'].value = 'df'
+        self.assertTrue(form.generate_button.disabled)
+        with patch('tkinter.Tk', return_value=Mock()), patch('tkinter.filedialog.askdirectory') as folder, \
+                patch('tkinter.filedialog.askopenfilename', return_value='C:/選択先/RENAME.csv') as file:
+            form.browse_buttons['file_path'].click()
+            self.assertEqual(file.call_args.kwargs['filetypes'][0][1], '*.csv')
+            folder.assert_not_called()
         checkbox = form.field_widgets['remove_newlines']
         self.assertIsInstance(checkbox, Checkbox)
-        self.assertFalse(checkbox.value)
+        self.assertTrue(all(not widget.value for widget in form.field_widgets.values() if isinstance(widget, Checkbox)))
         form.generate_button.click()
+        self.assertIn("rename_list_path = 'C:/選択先/RENAME.csv'", form.result)
         self.assertNotIn('pre_rename_cleansing', form.result)
         checkbox.value = True
         form.generate_button.click()

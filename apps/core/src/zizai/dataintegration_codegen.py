@@ -1,7 +1,7 @@
 """Generate the RENAME-list call from the Notebook form."""
 import ast
 
-from .connector_codegen import _identifier, form_file_path, module_name_for, render_call
+from .connector_codegen import _identifier, form_input_file_path, module_name_for, render_call
 
 
 PRE_FLAGS = ('remove_spaces', 'remove_newlines', 'to_halfwidth_alnum', 'symbols_to_snake')
@@ -20,7 +20,7 @@ def generate_dataintegration(kind, values, module_path):
     output = _identifier(values, 'output_variable')
     arguments = [
         ast.keyword(arg='data', value=ast.Name(id=incoming, ctx=ast.Load())),
-        ast.keyword(arg='rename_list_path', value=ast.Constant(form_file_path(values))),
+        ast.keyword(arg='rename_list_path', value=ast.Constant(form_input_file_path(values))),
     ]
     pre_cleaning = tuple(flag for flag in PRE_FLAGS if values.get(flag) is True)
     if pre_cleaning:

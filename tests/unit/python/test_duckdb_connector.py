@@ -37,10 +37,10 @@ class DuckDBConnectorTests(unittest.TestCase):
             book.save(folder / '商品.xlsx')
             book.close()
 
-            csv_code = generate('csv', 'import', folder=str(folder), filename='商品.csv', output_variable='注文')
-            excel_code = generate('excel', 'read_excel', folder=str(folder), filename='商品.xlsx', output_variable='入荷')
+            csv_code = generate('csv', 'import', file_path=str(folder / '商品.csv'), output_variable='注文')
+            excel_code = generate('excel', 'read_excel', file_path=str(folder / '商品.xlsx'), output_variable='入荷')
             db_code = generate('duckdb', 'create_db_file', db_folder=str(folder), db_file_name=database.name)
-            table_code = generate('duckdb', 'create_table', input_variable='注文', table_name='注文表',
+            table_code = generate('duckdb', 'create_table', db_file=str(database), input_variable='注文', table_name='注文表',
                                   output_variable='結果')
             self.assertEqual(model.values['mode'], '新規作成')
             self.assertIn('replace = False', table_code)
@@ -53,7 +53,9 @@ class DuckDBConnectorTests(unittest.TestCase):
                 exec(compile(excel_table, '<generated-excel-table>', 'exec'), data)
                 sql = ('SELECT 注文表.商品, CAST(注文表.数量 AS INTEGER) AS 注文数, 入荷表.数量 AS 入荷数 '
                        'FROM 注文表 JOIN 入荷表 USING (商品)')
-                query = generate('duckdb', 'execute_sql', sql=sql, output_variable='集計')
+                script = folder / '集計.sql'
+                script.write_text(sql, encoding='utf-8')
+                query = generate('duckdb', 'execute_sql_file', sql_file=str(script), output_variable='集計')
                 exec(compile(query, '<generated-query>', 'exec'), data)
                 self.assertEqual(data['集計'].to_dict('records'), [{'商品': 'りんご', '注文数': 3, '入荷数': 5}])
 
@@ -73,39 +75,33 @@ class DuckDBConnectorTests(unittest.TestCase):
                 exec(compile(query, '<generated-query>', 'exec'), data)
                 self.assertEqual(data['集計'].to_dict('records'), [{'商品': 'りんご', '注文数': 5, '入荷数': 5}])
 
-    def test_generated_sql_and_cp932_script_run_only_against_selected_database(self):
+    def test_generated_cp932_script_runs_only_against_selected_database(self):
         import duckdb
 
         shared = source_test_support.REPO / 'connectors'
         model = FormModel(load_definition(shared))
         model.set_connector('duckdb')
-        model.set_action('execute_sql')
+        model.set_action('execute_sql_file')
         with tempfile.TemporaryDirectory(prefix='zizai-duckdb-sql-') as scratch:
             folder = Path(scratch)
             database = folder / '商品.duckdb'
-            model.set_value('db_folder', str(folder))
-            model.set_value('db_file_name', database.name)
+            model.set_value('db_file', str(database))
             with self.assertRaises(ValueError):
                 model.generate()
-            model.set_value('sql', "CREATE TABLE products AS SELECT 'りんご' AS 商品, 3 AS 数量")
-            create_code = model.generate()
-            self.assertFalse(database.exists())
-
-            with duckdb.connect(str(database)):
-                pass
             script = folder / '商品.sql'
-            script.write_text('SELECT 商品,\n数量 FROM products', encoding='cp932')
-            model.set_action('execute_sql_file')
             self.assertEqual(model.values['encoding'], 'utf8')
-            model.set_value('sql_folder', str(folder))
-            model.set_value('sql_file_name', script.name)
+            model.set_value('sql_file', str(script))
             model.set_value('encoding', 'cp932')
             script_code = model.generate()
+            self.assertFalse(database.exists())
+            self.assertFalse(script.exists())
+            script.write_text('SELECT 商品,\n数量 FROM products', encoding='cp932')
+            with duckdb.connect(str(database)) as connection:
+                connection.execute("CREATE TABLE products AS SELECT 'りんご' AS 商品, 3 AS 数量")
             result = {}
             with patch.object(sys, 'path', [str(shared / 'duckdb'), *sys.path]):
-                exec(compile(create_code, '<generated-sql>', 'exec'), result)
                 exec(compile(script_code, '<generated-script>', 'exec'), result)
-                self.assertEqual(result['df'].to_dict('records'), [{'商品': 'りんご', '数量': 3}])
+                self.assertEqual(result['result'].to_dict('records'), [{'商品': 'りんご', '数量': 3}])
                 from duckdb_connector import execute_sql
                 with self.assertRaises(FileNotFoundError):
                     execute_sql(folder / 'missing.duckdb', 'SELECT 1')
@@ -139,7 +135,7 @@ class DuckDBConnectorTests(unittest.TestCase):
             with patch.object(sys, 'path', [str(shared / 'duckdb'), *sys.path]):
                 exec(compile(code, '<generated-duckdb>', 'exec'), result)
                 database = folder / '商品DB.duckdb'
-                written_path = result['db_info']['file_path'].iat[0]
+                written_path = result['result']['file_path'].iat[0]
                 self.assertEqual(Path(written_path), database)
                 self.assertNotIn('\\', written_path)
                 with duckdb.connect(str(database)) as connection:

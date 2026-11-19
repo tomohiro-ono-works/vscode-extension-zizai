@@ -44,6 +44,19 @@ def form_file_path(values, *, default_extension=None):
     return (Path(folder) / filename).as_posix()
 
 
+def absolute_file_path(values, name):
+    path = Path(_text(values, name, required=True))
+    if not path.is_absolute():
+        raise ValueError('入力ファイルは絶対パスで指定してください。')
+    return path.as_posix()
+
+
+def form_input_file_path(values):
+    if 'file_path' not in values:  # Accept existing folder/filename definitions.
+        return form_file_path(values)
+    return absolute_file_path(values, 'file_path')
+
+
 def render_call(module_name, function, arguments, variable, *, reading):
     reserved = {variable}
     reserved.update(argument.value.id for argument in arguments if isinstance(argument.value, ast.Name))

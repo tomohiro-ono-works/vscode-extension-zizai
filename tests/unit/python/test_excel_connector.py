@@ -20,7 +20,8 @@ class ExcelConnectorTests(unittest.TestCase):
     def run_generated(self, connector, action, **settings):
         self.form.set_connector(connector)
         self.form.set_action(action)
-        self.form.set_value('folder', str(self.folder))
+        if 'folder' in self.form.fields:
+            self.form.set_value('folder', str(self.folder))
         for name, value in settings.items():
             self.form.set_value(name, value)
         self.assertFalse(self.form.is_placeholder)
@@ -44,16 +45,15 @@ class ExcelConnectorTests(unittest.TestCase):
 
         self.form.set_connector('excel')
         self.form.set_action('read_excel')
-        self.form.set_value('folder', str(self.folder))
-        self.assertEqual(self.form.values['filename'], '')
+        self.assertEqual(self.form.values['file_path'], '')
         with self.assertRaises(ValueError):
             self.form.generate()
-        self.run_generated('excel', 'read_excel', filename=source.name, header_row=2,
+        self.run_generated('excel', 'read_excel', file_path=str(source), header_row=2,
                            data_start_row=4, chunk_size=1, output_variable='商品表')
-        self.run_generated('excel', 'read_excel_range', filename=source.name, cell_range='A2:B5',
+        self.run_generated('excel', 'read_excel_range', file_path=str(source), cell_range='A2:B5',
                            header_row=1, data_start_row=3, output_variable='指定範囲')
         self.assertTrue(self.namespace['商品表'].equals(self.namespace['指定範囲']))
-        self.run_generated('csv', 'import', filename='注文.csv', output_variable='注文')
+        self.run_generated('csv', 'import', file_path=str(self.folder / '注文.csv'), output_variable='注文')
         exec("明細 = 注文.merge(指定範囲, on='商品', validate='many_to_one')\n"
              "明細['数量'] = 明細['数量'].astype(int)\n"
              "明細['金額'] = 明細['数量'] * 明細['単価'].astype(int)", self.namespace)
