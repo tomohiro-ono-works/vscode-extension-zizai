@@ -1,5 +1,9 @@
 # ZizAI 要件仕様書
 
+## TASK-018：Windowsバッチファイル実行
+
+[Issue #92](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/92)の「バッチファイル実行」は、フォームの `参照…` で `.bat` を選ぶか、絶対パスを入力する。引数は省略可能な文字列のJSON配列。生成コードの実行時に利用者権限で選んだバッチを実行し、標準出力・標準エラー・終了コードをDataFrameで返す。終了コードが0以外なら出力付きのエラーを返す。標準出力・標準エラーはCP932でデコードする。
+
 ## TASK-016：Python実行
 
 [Issue #90](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/90)の「Python実行（ファイル）」は、引数なしの `main()` を持つ `.py` を `参照…` から選ぶか、絶対パスを入力する。出力変数の初期値は `result`。利用者の指示によりフォームの環境指定欄を廃止し、生成コードはカーネルと同じPython環境を使う。[TASK-017 #91](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/91)

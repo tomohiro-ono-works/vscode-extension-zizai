@@ -10,6 +10,10 @@
 
 ## 新方式のTask
 
+- [TASK-018 / #92：Windowsバッチファイル実行をフォームへ追加する](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/92)
+
+- [TASK-017 / #91：SQL・Pythonフォームをファイル指定に揃える](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/91)
+
 - [TASK-016 / #90：Pythonのmain実行をNotebookフォームへ追加する](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/90)
 
 - [TASK-015 / #89：RENAMEリストによる列名変更をフォームへ追加する](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/89)

@@ -27,6 +27,7 @@ PACKAGE_FILES = {
     "zizai/duckdb_codegen.py",
     "zizai/dataintegration_codegen.py",
     "zizai/python_codegen.py",
+    "zizai/shell_codegen.py",
     "zizai/connector_codegen.py",
     "zizai/excel_codegen.py",
     "zizai/core/tabular.py",

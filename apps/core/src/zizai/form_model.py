@@ -7,11 +7,12 @@ from .dataintegration_codegen import generate_dataintegration
 from .duckdb_codegen import generate_duckdb
 from .excel_codegen import generate_excel
 from .python_codegen import generate_python
+from .shell_codegen import generate_shell
 
 
 GENERATORS = {
     'bigquery': generate_bigquery, 'csv': generate_csv, 'dataintegration': generate_dataintegration,
-    'duckdb': generate_duckdb, 'excel': generate_excel, 'python': generate_python,
+    'duckdb': generate_duckdb, 'excel': generate_excel, 'python': generate_python, 'shell': generate_shell,
 }
 
 
