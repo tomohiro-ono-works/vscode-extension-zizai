@@ -44,6 +44,15 @@ def form_file_path(values, *, default_extension=None):
     return (Path(folder) / filename).as_posix()
 
 
+def form_input_file_path(values):
+    if 'file_path' not in values:  # Accept existing folder/filename definitions.
+        return form_file_path(values)
+    path = Path(_text(values, 'file_path', required=True))
+    if not path.is_absolute():
+        raise ValueError('入力ファイルは絶対パスで指定してください。')
+    return path.as_posix()
+
+
 def render_call(module_name, function, arguments, variable, *, reading):
     handle = '_zizai_' + module_name if variable == module_name else module_name
     body = [ast.Import(names=[ast.alias(name=module_name, asname=handle if handle != module_name else None)])]

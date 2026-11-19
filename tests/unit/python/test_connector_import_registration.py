@@ -36,7 +36,7 @@ class ConnectorImportRegistrationTests(unittest.TestCase):
     def test_generated_code_uses_ordinary_import_without_module_path(self):
         model=FormModel(load_definition(self.shared))
         model.set_connector('csv');model.set_action('import')
-        model.set_value('folder',str(self.root))
+        model.set_value('file_path',str(self.root / 'input.csv'))
         code=model.generate()
         self.assertIsInstance(ast.parse(code).body[0],ast.Import)
         self.assertIn('import csv_connector',code)

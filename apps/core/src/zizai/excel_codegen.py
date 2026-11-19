@@ -1,7 +1,7 @@
 """Generate safe Python calls for the three Excel form actions."""
 import ast
 from pathlib import Path
-from .connector_codegen import _identifier, _integer, _text, form_file_path, module_name_for, render_call
+from .connector_codegen import _identifier, _integer, _text, form_file_path, form_input_file_path, module_name_for, render_call
 
 
 COMMON_FIELDS = {'folder', 'filename', 'sheet_name', 'schema'}
@@ -16,7 +16,7 @@ GENERATION_FIELDS = {
 def generate_excel(kind, values, module_path):
     module_name = module_name_for(module_path)
     reading = kind != 'excel.write_excel'
-    path = form_file_path(values, default_extension=None if reading else '.xlsx')
+    path = form_input_file_path(values) if reading else form_file_path(values, default_extension='.xlsx')
     if Path(path).suffix.lower() != '.xlsx':
         raise ValueError('Excelファイルには .xlsx を指定してください。')
 
