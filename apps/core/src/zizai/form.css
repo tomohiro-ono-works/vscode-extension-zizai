@@ -125,3 +125,33 @@
 .zizai-row-preview-menu button {display:block;width:100%;text-align:left;border:0;
   background:#fff;color:inherit;border-radius:4px;padding:8px 10px;font:inherit;cursor:pointer}
 .zizai-row-preview-menu button:hover,.zizai-row-preview-menu button:focus {background:#d7eee2;outline:none}
+
+.zizai-form .column-preview-heading {position:sticky;top:0;z-index:4}
+.zizai-form .column-preview-heading button.jupyter-button {
+  background:#1e6f5c;color:#fff;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap
+}
+.zizai-form .column-preview-heading button.jupyter-button:hover:enabled {background:#145240;color:#fff}
+.zizai-form .column-preview-heading button[draggable="true"] {cursor:grab}
+.zizai-form .column-preview-cell {position:relative}
+.zizai-form .column-preview-heading button.column-type-button {
+  text-align:center;padding:0;font-size:12px;background:#145240;border-right:1px solid #ffffff36
+}
+.zizai-form .column-preview-heading button.column-type-button:hover:enabled {
+  cursor:pointer;background:#103e32
+}
+.zizai-form .column-preview-heading button.column-pending-delete,
+.zizai-form .column-preview-heading button.column-pending-delete:hover:enabled {
+  background:#d5dad7;color:#394640
+}
+.zizai-form .row-preview-value.column-pending-delete {background:#eceeec;color:#52605a}
+.zizai-form .column-preview-heading .zizai-column-drop-before {box-shadow:inset 4px 0 #f5c760}
+.zizai-form .column-preview-heading .zizai-column-drop-after {box-shadow:inset -4px 0 #f5c760}
+.zizai-form .column-preview-heading input.zizai-column-rename {
+  position:absolute;top:0;z-index:1;width:var(--column-editor-width) !important;
+  height:31px !important;min-height:31px;max-height:31px;margin:0;border-radius:0
+}
+.zizai-form .column-preview-controls {gap:6px}
+.zizai-form .column-preview-controls:empty {display:none}
+.zizai-form .column-preview-controls select[multiple] {
+  height:auto !important;min-height:72px;max-height:none;flex:0 0 auto;padding:4px 8px
+}

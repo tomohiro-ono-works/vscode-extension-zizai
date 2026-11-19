@@ -23,6 +23,7 @@ PACKAGE_FILES = {
     "zizai/forms.yaml",
     "zizai/form.css",
     "zizai/row_preview.py",
+    "zizai/column_editor.py",
     "zizai/csv_codegen.py",
     "zizai/bigquery_codegen.py",
     "zizai/duckdb_codegen.py",

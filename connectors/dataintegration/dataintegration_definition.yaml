@@ -5,6 +5,13 @@ connectors:
     label: データ統合
     module_file: dataintegration_connector.py
     actions:
+      apply_column_operations:
+        label: 列操作
+        generation: dataintegration.apply_column_operations
+        fields:
+          input_variable: {label: 入力DataFrame, type: text, required: true}
+          output_variable: {label: 出力変数, type: text, default: processed_df, required: true}
+          operations: {label: 列操作, type: textarea, required: true}
       replace_fields_forrenamelist:
         label: RENAMEリストで列名変更
         generation: dataintegration.replace_fields_forrenamelist
