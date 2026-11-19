@@ -5,6 +5,14 @@ define(["@jupyter-widgets/controls"], function (controls) {
     ];
 
     class RowContextView extends controls.ButtonView {
+        menuChoices() {
+            return choices;
+        }
+
+        selectRole(role) {
+            this.send({ event: "row-role", role });
+        }
+
         render() {
             super.render();
             this.el.setAttribute("aria-haspopup", "menu");
@@ -34,13 +42,13 @@ define(["@jupyter-widgets/controls"], function (controls) {
             menu.className = "zizai-row-preview-menu";
             menu.setAttribute("role", "menu");
             menu.setAttribute("aria-label", this.model.get("description"));
-            const items = choices.map(([role, label]) => {
+            const items = this.menuChoices().map(([role, label]) => {
                 const item = document.createElement("button");
                 item.type = "button";
                 item.setAttribute("role", "menuitem");
                 item.textContent = label;
                 item.onclick = () => {
-                    this.send({ event: "row-role", role });
+                    this.selectRole(role);
                     this.closeMenu(true);
                 };
                 return item;
@@ -69,6 +77,7 @@ define(["@jupyter-widgets/controls"], function (controls) {
             menu.style.left = `${Math.max(4, Math.min(x, viewport.clientWidth - menu.offsetWidth - 4))}px`;
             menu.style.top = `${Math.max(top, Math.min(menuY, bottom - menu.offsetHeight - 4))}px`;
             this.menu = menu;
+            this.keepMenuVisible(menu);
             this.el.setAttribute("aria-expanded", "true");
             this.menuListeners = new AbortController();
             const options = { capture: true, signal: this.menuListeners.signal };
@@ -78,6 +87,22 @@ define(["@jupyter-widgets/controls"], function (controls) {
             document.addEventListener("scroll", () => this.closeMenu(), options);
             window.addEventListener("resize", () => this.closeMenu(), options);
             items[0].focus({ preventScroll: true });
+        }
+
+        keepMenuVisible(menu) {
+            // VS Code can clip the notebook output outside this iframe's own viewport.
+            const observer = new IntersectionObserver(([entry]) => {
+                observer.disconnect();
+                if (this.menu !== menu || entry.intersectionRect.height === 0) return;
+                const box = entry.boundingClientRect;
+                const visible = entry.intersectionRect;
+                const clippedTop = visible.top - box.top;
+                const clippedBottom = box.bottom - visible.bottom;
+                if (clippedTop > 1 || clippedBottom > 1) {
+                    menu.style.top = `${Math.max(4, box.top + Math.ceil(clippedTop) - Math.ceil(clippedBottom))}px`;
+                }
+            });
+            observer.observe(menu);
         }
 
         closeMenu(returnFocus = false) {
@@ -94,5 +119,15 @@ define(["@jupyter-widgets/controls"], function (controls) {
         }
     }
 
-    return { RowContextView };
+    class ColumnContextView extends RowContextView {
+        menuChoices() {
+            return Object.entries(this.model.get("_menu_items"));
+        }
+
+        selectRole(role) {
+            this.send({ event: "column-operation", role });
+        }
+    }
+
+    return { RowContextView, ColumnContextView };
 });

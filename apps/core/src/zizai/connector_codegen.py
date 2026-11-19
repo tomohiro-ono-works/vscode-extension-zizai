@@ -57,7 +57,7 @@ def form_input_file_path(values):
     return absolute_file_path(values, 'file_path')
 
 
-def render_call(module_name, function, arguments, variable, *, reading):
+def render_call(module_name, function, arguments, variable, *, reading, direct_variables=False, temporary_prefix=''):
     reserved = {variable}
     reserved.update(argument.value.id for argument in arguments if isinstance(argument.value, ast.Name))
     handle = '_zizai_' + module_name if module_name in reserved else module_name
@@ -66,10 +66,13 @@ def render_call(module_name, function, arguments, variable, *, reading):
     body = [ast.Import(names=[ast.alias(name=module_name, asname=handle if handle != module_name else None)])]
     reserved.add(handle)
     for argument in arguments:
-        name = argument.arg
+        if direct_variables and isinstance(argument.value, ast.Name):
+            continue
+        base = temporary_prefix + argument.arg
+        name = base
         suffix = 2
         while name in reserved:
-            name = f'{argument.arg}_{suffix}'
+            name = f'{base}_{suffix}'
             suffix += 1
         reserved.add(name)
         body.append(ast.Assign(targets=[ast.Name(id=name, ctx=ast.Store())], value=argument.value))

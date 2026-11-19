@@ -11,6 +11,68 @@ from zizai.form_model import FormModel
 
 
 class DataIntegrationConnectorTests(unittest.TestCase):
+    def test_ordered_column_operations_generate_and_preserve_input(self):
+        import json
+        import pandas as pd
+
+        shared = source_test_support.REPO / 'connectors'
+        original = pd.DataFrame({'商品': ['りんご'], '数量': ['12'], '不要': ['x'], '省略': ['y']}, index=[9])
+        original.attrs['ziz_schema'] = [{'new_name': '商品', 'description': '品名'}]
+        before = original.copy(deep=True)
+        operations = [
+            {'op': 'rename', 'column': '商品', 'name': 'product'},
+            {'op': 'duplicate', 'column': 'product', 'name': 'copy'},
+            {'op': 'convert', 'column': '数量', 'type': 'integer'},
+            {'op': 'drop', 'columns': ['不要']},
+            {'op': 'keep', 'columns': ['product', '数量', 'copy']},
+            {'op': 'move', 'column': 'copy', 'position': 1},
+        ]
+        form = FormModel(load_definition(shared))
+        form.set_connector('dataintegration')
+        form.set_action('apply_column_operations')
+        form.set_value('input_variable', 'original')
+        form.set_value('operations', json.dumps(operations, ensure_ascii=False))
+        with patch.object(sys, 'path', [str(shared / 'dataintegration'), *sys.path]):
+            namespace = {'original': original}
+            exec(compile(form.generate(), '<generated-column-operations>', 'exec'), namespace)
+        result = namespace['processed_df']
+        self.assertEqual(result.to_dict('records'), [{'copy': 'りんご', 'product': 'りんご', '数量': 12}])
+        self.assertEqual(list(result.columns), ['copy', 'product', '数量'])
+        self.assertEqual(result.index.tolist(), [9])
+        self.assertEqual(str(result['数量'].dtype), 'Int64')
+        self.assertEqual([(item['new_name'], item.get('description')) for item in result.attrs['ziz_schema'][:2]],
+                         [('copy', '品名'), ('product', '品名')])
+        self.assertTrue(original.equals(before))
+        self.assertEqual(original.attrs, before.attrs)
+
+    def test_column_form_previews_only_thirty_rows_and_keeps_previous_valid_changes(self):
+        import pandas as pd
+        from zizai.forms import create_form
+
+        shared = source_test_support.REPO / 'connectors'
+        source = pd.DataFrame({'数量': ['12'] * 30 + ['未入力'], '注記': ['変換不可'] * 31})
+        with patch.object(sys, 'path', [str(shared / 'dataintegration'), *sys.path]):
+            form = create_form(shared, namespace={'df': source, 'scalar': 1})
+            self.addCleanup(form.close)
+            form.connector.value = 'dataintegration'
+            form.action.value = 'apply_column_operations'
+            self.assertEqual([key for _, key in form.field_widgets['input_variable'].options], ['', 'df'])
+            form.field_widgets['input_variable'].value = 'df'
+            editor = form._column_editor
+            self.assertEqual(len(editor.preview), 30)
+            self.assertTrue(editor.add_operation({'op': 'convert', 'column': '数量', 'type': 'integer'}))
+            self.assertFalse(editor.add_operation({'op': 'convert', 'column': '注記', 'type': 'integer'}))
+            self.assertIn('注記', editor.status.value)
+            self.assertEqual(editor.preview['数量'].iloc[0], 12)
+            self.assertEqual(source['数量'].iloc[0], '12')
+            form.generate_button.click()
+            self.assertIn('apply_column_operations', form.result)
+            with self.assertRaisesRegex(ValueError, '数量'):
+                exec(compile(form.result, '<whole-table>', 'exec'), {'df': source})
+            editor.undo.click()
+            self.assertTrue(form.generate_button.disabled)
+            self.assertEqual(editor.preview['数量'].iloc[0], '12')
+
     def test_csv_and_excel_tables_are_renamed_without_mutating_input(self):
         from openpyxl import Workbook
 

@@ -1,11 +1,15 @@
-"""Generate the RENAME-list call from the Notebook form."""
+"""Generate data integration calls from the Notebook form."""
 import ast
+import json
+import unicodedata
 
-from .connector_codegen import _identifier, form_input_file_path, module_name_for, render_call
+from .connector_codegen import _identifier, _text, form_input_file_path, module_name_for, render_call
 
 
 PRE_FLAGS = ('remove_spaces', 'remove_newlines', 'to_halfwidth_alnum', 'symbols_to_snake')
+COLUMN_OPERATIONS = 'dataintegration.apply_column_operations'
 GENERATION_FIELDS = {
+    COLUMN_OPERATIONS: {'input_variable', 'output_variable', 'operations'},
     'dataintegration.replace_fields_forrenamelist': {
         'folder', 'filename', 'input_variable', 'output_variable', 'exclude_japanese_columns', *PRE_FLAGS,
     },
@@ -18,6 +22,19 @@ def generate_dataintegration(kind, values, module_path):
     module = module_name_for(module_path)
     incoming = _identifier(values, 'input_variable')
     output = _identifier(values, 'output_variable')
+    if kind == COLUMN_OPERATIONS:
+        if unicodedata.normalize('NFKC', incoming) == unicodedata.normalize('NFKC', output):
+            raise ValueError('入力と出力には別の変数名を指定してください。')
+        try:
+            operations = json.loads(_text(values, 'operations', required=True))
+        except json.JSONDecodeError as error:
+            raise ValueError('列操作の設定を確認してください。') from error
+        if not isinstance(operations, list) or not operations or any(not isinstance(op, dict) for op in operations):
+            raise ValueError('列操作を1件以上設定してください。')
+        arguments = [ast.keyword(arg='data', value=ast.Name(id=incoming, ctx=ast.Load())),
+                     ast.keyword(arg='operations', value=ast.parse(repr(operations), mode='eval').body)]
+        return render_call(module, 'apply_column_operations', arguments, output, reading=True,
+                           direct_variables=True, temporary_prefix='_zizai_')
     arguments = [
         ast.keyword(arg='data', value=ast.Name(id=incoming, ctx=ast.Load())),
         ast.keyword(arg='rename_list_path', value=ast.Constant(form_input_file_path(values))),

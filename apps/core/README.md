@@ -22,6 +22,12 @@ origin_name,replaced_name,description,ziz_datatype
 
 変換結果の列名が重複する場合はエラーになります。必要なクレンジング項目だけを選択してください。
 
+## DataFrameの列操作（TASK-020）
+
+Notebookのカーネルに `[forms,dataintegration]` 付きの更新wheelを導入し、共通フォルダーにあるデータ統合のPythonとYAMLを更新してカーネルを再起動します。DataFrameを作成したあとに `%form` を表示し、「データ統合」→「列操作」から入力の変数を選びます。
+
+表の列見出しを右クリックし、操作を選んで「変更を追加」を押します。先頭30行で結果を確認し、「コード生成」で作ったコードをPythonセルで実行すると、全行を加工した結果が `processed_df` に入ります。出力変数名はフォームで変更できます。
+
 ## BigQueryフォーム（TASK-014）
 
 カーネルと同じ環境に開発版のwheelを`[forms,bigquery]`付きで導入します。[BigQuery資産](../../connectors/bigquery/)を共通フォルダーの `bigquery/` に置き、`configure_connectors` で再登録します。`%form` のBigQueryから「SQL実行（ファイル）」または「データロード」を選んでコードを生成します。SQL実行では `参照…` から `.sql` を選びます。出力変数の初期値は `result` です。生成コードを実行すると、指定したプロジェクトと既存のApplication Default Credentialsを使用します。
