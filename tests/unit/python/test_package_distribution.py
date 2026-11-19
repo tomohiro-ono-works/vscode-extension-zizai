@@ -78,15 +78,18 @@ else:
 import importlib.metadata, json, pathlib, sys
 import zizai, zizai.core, zizai.connectors
 modules = (zizai, zizai.core, zizai.connectors)
+widgets = pathlib.Path(sys.prefix) / 'share/jupyter/nbextensions/zizai-row-preview'
 print(json.dumps({
     "names": [module.__name__ for module in modules],
     "installed": [pathlib.Path(module.__file__).is_relative_to(sys.prefix) for module in modules],
     "distribution": importlib.metadata.distribution("zizai-runtime").metadata["Name"],
+    "widget_files": sorted(path.name for path in widgets.iterdir()),
 }))
 """)
         self.assertEqual(installed, {
             "names": ["zizai", "zizai.core", "zizai.connectors"],
             "installed": [True, True, True], "distribution": "zizai-runtime",
+            "widget_files": ["extension.js", "index.js"],
         })
 
     def test_package_imports_do_not_require_optional_sdks(self):
