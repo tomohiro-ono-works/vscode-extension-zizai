@@ -1,25 +1,40 @@
 """Notebook output forms. Import does not register magics or open any windows."""
 from html import escape
 from importlib.resources import files
+from pathlib import Path
 import shlex
 from .form_definition import load_definition
 from .form_model import FormModel
 
 
-def _select_folder(current):
+def _show_native_picker(choose, **options):
     # A user button opens a local OS dialog; never called during import/display.
     import tkinter as tk
-    from tkinter.filedialog import askdirectory
-    from pathlib import Path
     root = tk.Tk()
     try:
         root.withdraw()
         root.attributes('-topmost', True)
         root.update_idletasks()
-        return askdirectory(parent=root, title='フォルダーを選択',
-                            initialdir=current if current and Path(current).is_absolute() else None)
+        return choose(parent=root, **options)
     finally:
         root.destroy()
+
+
+def _select_folder(current):
+    from tkinter.filedialog import askdirectory
+    return _show_native_picker(askdirectory, title='フォルダーを選択',
+                               initialdir=current if current and Path(current).is_absolute() else None)
+
+
+def _select_file(current, extension):
+    from tkinter.filedialog import askopenfilename
+    path = Path(current)
+    absolute = path.is_absolute()
+    patterns = [(extension.upper().lstrip('.') + 'ファイル', '*' + extension)] if extension else []
+    patterns.append(('すべてのファイル', '*'))
+    return _show_native_picker(askopenfilename, title='ファイルを選択', filetypes=patterns,
+                               initialdir=str(path.parent) if absolute else None,
+                               initialfile=path.name if absolute else None)
 
 
 def _copy_to_clipboard(text):
@@ -60,7 +75,7 @@ class NotebookForm:
         self._dynamic = []
         self.result = ''
         self.field_widgets = {}
-        self.folder_buttons = {}
+        self.browse_buttons = {}
         layout = lambda: widgets.Layout(flex='1 1 180px', min_width='150px')
         self.connector = widgets.Dropdown(description='コネクタ', options=[('選択してください', None)] + [
             (entry['label'], key) for key, entry in definition['connectors'].items()], layout=layout())
@@ -132,7 +147,7 @@ class NotebookForm:
                 widget.close()
             self._dynamic = []
             self.field_widgets = {}
-            self.folder_buttons = {}
+            self.browse_buttons = {}
             self._invalid_fields.clear()
             for name, field in self.model.fields.items():
                 value = self.model.values[name]
@@ -153,11 +168,11 @@ class NotebookForm:
                 widget.observe(lambda change, key=name: self._value_changed(key, change['new']), names='value')
                 self.field_widgets[name] = widget
                 self._dynamic.append(widget)
-                if field['type'] == 'folder':
+                if field['type'] in ('file', 'folder'):
                     button = widgets.Button(description='参照…', tooltip=field['label'] + 'を選択',
                                             layout=widgets.Layout(width='85px', flex='0 0 85px'))
-                    button.on_click(lambda _, key=name: self._pick_folder(key))
-                    self.folder_buttons[name] = button
+                    button.on_click(lambda _, key=name: self._pick_path(key))
+                    self.browse_buttons[name] = button
                     self._dynamic.append(button)
             self.toolbar.children = [self.connector, self.action]
             rows = []
@@ -168,10 +183,10 @@ class NotebookForm:
                 pairs.extend([('output_variable', 'chunk_size'), ('header_row', 'data_start_row')])
             paired_fields = {left: right for left, right in pairs if left in self.field_widgets and right in self.field_widgets}
             for name, widget in self.field_widgets.items():
-                if name in self.folder_buttons:
+                if name in self.browse_buttons:
                     widget.layout.flex = '1 1 0'
                     widget.layout.min_width = '0'
-                    row = widgets.HBox([widget, self.folder_buttons[name]],
+                    row = widgets.HBox([widget, self.browse_buttons[name]],
                                        layout=widgets.Layout(width='100%', align_items='flex-end'))
                     row.add_class('zizai-folder-row')
                     self._dynamic.append(row)
@@ -204,7 +219,7 @@ class NotebookForm:
         except ValueError:
             self._invalid_fields.add(name)
         if self._invalid_fields:
-            self.message.value = '入力値を確認してください。フォルダーは絶対パスを指定します。'
+            self.message.value = '入力値を確認してください。ファイルとフォルダーは絶対パスを指定します。'
         else:
             self.message.value = ''
             try:
@@ -213,13 +228,18 @@ class NotebookForm:
                 self.message.value = escape(str(error))
         self._refresh_generate()
 
-    def _pick_folder(self, name):
+    def _pick_path(self, name):
+        field = self.model.fields[name]
+        widget = self.field_widgets[name]
+        is_file = field['type'] == 'file'
         try:
-            selected = self._folder_picker(self.field_widgets[name].value)
+            selected = (_select_file(widget.value, field.get('extension')) if is_file
+                        else self._folder_picker(widget.value))
             if selected:  # Cancellation preserves the existing value and result.
-                self.field_widgets[name].value = selected
+                widget.value = selected
         except Exception as error:
-            self.message.value = 'フォルダー選択を開けません。ローカルPythonのTk環境を確認してください。(' + escape(type(error).__name__) + ')'
+            kind = 'ファイル' if is_file else 'フォルダー'
+            self.message.value = kind + '選択を開けません。ローカルPythonのTk環境を確認してください。(' + escape(type(error).__name__) + ')'
 
     def _generate(self, _):
         if self._invalid_fields:
