@@ -1,5 +1,11 @@
 # ZizAI 要件仕様書
 
+## TASK-016：Python実行
+
+[Issue #90](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/90)の「Python実行（ファイル）」は、引数なしの `main()` を持つ `.py` を `参照…` から選ぶか、絶対パスを入力する。出力変数の初期値は `result`。利用者の指示によりフォームの環境指定欄を廃止し、生成コードはカーネルと同じPython環境を使う。[TASK-017 #91](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/91)
+
+利用者が生成コードを実行すると、通常の `import python_connector` を使い、`sys.executable` で起動した別プロセスで `main()` を1回呼ぶ。実行権限は利用者のPythonと同じ。stdout・stderrと戻り値を分け、表・辞書・リストはDataFrameに、スカラー・NoneはPython値に戻す。受け渡しはJSONで行い、表の列は保持する。元のインデックス・型・attrsの完全保持は契約に含めない。一時ファイルは終了後に整理する。既存の生成コードが使う `execute_python` とAPIの `env_path` は互換性のため維持する。
+
 ## TASK-015：RENAMEリストで列名変更
 
 [Issue #89](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/89)の列名変更は、既存のDataFrameとUTF-8のRENAME CSV（BOM可）を入力とし、別のDataFrameを返す。フォームのRENAMEリスト欄では、`参照…` で `.csv` を選ぶか、絶対パスを入力する。出力変数の初期値は `renamed_df`。生成時はファイルを読み込まない。RENAMEリストの見出しは `origin_name` と `replaced_name` または `new_name`。旧版の日本語見出しも使える。任意の `description` と `ziz_datatype`（例 `INT64`）で説明・明示の型変換を指定できる。

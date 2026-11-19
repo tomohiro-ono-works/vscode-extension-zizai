@@ -1,0 +1,13 @@
+version: 1
+output_template: "{connector}.{action}のコードを生成"
+connectors:
+  python:
+    label: Python
+    module_file: python_connector.py
+    actions:
+      execute_python:
+        label: Python実行（ファイル）
+        generation: python.execute_python_file
+        fields:
+          file_path: {label: Pythonファイル, type: file, extension: .py, required: true}
+          output_variable: {label: 出力変数, type: text, default: result, required: true}
