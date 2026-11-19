@@ -50,6 +50,8 @@ class ColumnEditor:
         self.grid = widgets.VBox([self._heading, self._body], layout=widgets.Layout(
             width='100%', max_height='310px', overflow='auto'))
         self.grid.add_class('row-preview-grid')
+        self._type_controls = widgets.VBox()
+        self._type_controls.add_class('column-preview-controls')
         self._controls = widgets.VBox()
         self._controls.add_class('column-preview-controls')
         self.status = widgets.HTML()
@@ -60,7 +62,9 @@ class ColumnEditor:
         self.keep.on_click(lambda _: self._show_controls('keep'))
         self._actions = widgets.HBox([self.keep, self.undo])
         self._actions.add_class('row-preview-footer')
-        self.root = widgets.VBox([self._intro, self.grid, self._controls, self.status, self.changes, self._actions])
+        self.root = widgets.VBox([
+            self._intro, self._type_controls, self.status, self.grid, self._controls, self.changes, self._actions,
+        ])
         self.root.add_class('row-preview')
         self._render()
 
@@ -149,19 +153,22 @@ class ColumnEditor:
         suffix = f'　{escape(column)}' if column is not None else ''
         hint = widgets.HTML(f'<strong>{escape(OPERATIONS[op])}</strong>{suffix}')
         if op == 'keep':
+            panel = self._controls
             labels = [name for name in map(str, self.preview.columns) if name not in self._deleted]
             if not labels:
                 _close_widgets([hint])
                 return
             field = widgets.SelectMultiple(
                 description='残す列', options=labels, value=tuple(labels), rows=min(8, len(labels)))
-            hint.value += '<p>Ctrlキー（macOSは⌘キー）で複数の列を選べます。</p>'
+            instructions = hint.value + '<p>Ctrlキー（macOSは⌘キー）で複数の列を選べます。</p>'
+            hint.value = instructions
             def apply():
                 if not field.value:
-                    self.status.value = '<p role="alert">残す列を1つ以上選んでください。</p>'
+                    hint.value = instructions + '<p role="alert">残す列を1つ以上選んでください。</p>'
                     return
                 self._update(self._transformations, self._deleted | (set(labels) - set(field.value)))
         else:
+            panel = self._type_controls
             field = widgets.Dropdown(description='変換先', options=[(label, key) for key, label in TYPES.items()])
             def apply():
                 self.add_operation({'op': 'convert', 'column': column, 'type': field.value})
@@ -174,10 +181,11 @@ class ColumnEditor:
         submit.on_click(lambda _: apply() if submit in self._editor_widgets else None)
         cancel.on_click(lambda _: self._clear_controls() if cancel in self._editor_widgets else None)
         self._editor_widgets = [hint, field, submit, cancel, buttons]
-        self._controls.children = (hint, field, buttons)
+        panel.children = (hint, field, buttons)
 
     def _clear_controls(self):
         self._controls.children = ()
+        self._type_controls.children = ()
         _close_widgets(self._editor_widgets)
         self._editor_widgets = []
         self.status.value = ''

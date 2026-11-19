@@ -91,7 +91,13 @@ class DataIntegrationConnectorTests(unittest.TestCase):
                 header = next(header for header in editor._headers if header._column_name == column)
                 editor._handle_header(header, column, message)
 
+            send('数量', event='column-operation', role='convert')
+            self.assertLess(editor.root.children.index(editor._type_controls), editor.root.children.index(editor.grid))
+            self.assertTrue(editor._type_controls.children)
+            self.assertFalse(editor._controls.children)
+
             send('商品', event='column-rename', name='product')
+            self.assertFalse(editor._type_controls.children)
             send('数量', event='column-operation', role='drop')
             self.assertEqual(editor.preview.columns.tolist(), ['product', '数量', '備考'])
             self.assertIn('column-pending-delete', editor._body.value)
