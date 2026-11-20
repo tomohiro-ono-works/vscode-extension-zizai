@@ -152,6 +152,6 @@
 }
 .zizai-form .column-preview-controls {gap:6px}
 .zizai-form .column-preview-controls:empty {display:none}
-.zizai-form .column-preview-controls select[multiple] {
+.zizai-form .column-preview-controls select[multiple], .zizai-form .row-preview-controls select[multiple] {
   height:auto !important;min-height:72px;max-height:none;flex:0 0 auto;padding:4px 8px
 }

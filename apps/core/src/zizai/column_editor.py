@@ -49,6 +49,38 @@ def render_dataframe_rows(frame, deleted=()):
     return ''.join(rows) if rows else '<p>表示できる行がありません。</p>'
 
 
+class DataFramePreview:
+    """A scrollable, read-only sample with fixed column headings."""
+
+    def __init__(self):
+        self._headings = []
+        self._heading = widgets.HBox(layout=widgets.Layout(flex='0 0 36px', overflow='visible'))
+        self._heading.add_class('row-preview-heading')
+        self._body = widgets.HTML()
+        self.root = widgets.VBox([self._heading, self._body], layout=widgets.Layout(
+            width='100%', max_height='310px', overflow='auto'))
+        self.root.add_class('row-preview-grid')
+
+    def render(self, frame):
+        names = list(map(str, frame.columns))
+        if names != [name for name, _ in self._headings]:
+            width = f'{max(1, len(names)) * CELL_WIDTH}px'
+            self._heading.layout.min_width = width
+            self._body.layout.min_width = width
+            previous = dict(self._headings)
+            self._headings = [
+                (name, previous.pop(name) if name in previous else widgets.HTML(
+                    escape(name), layout=widgets.Layout(flex=f'1 0 {CELL_WIDTH}px')))
+                for name in names
+            ]
+            self._heading.children = [heading for _, heading in self._headings]
+            _close_widgets(previous.values())
+        self._body.value = render_dataframe_rows(frame)
+
+    def close(self):
+        _close_widgets([*(heading for _, heading in self._headings), self._heading, self._body, self.root])
+
+
 class ColumnHeader(widgets.Button):
     _view_name = Unicode('ColumnContextView').tag(sync=True)
     _view_module = Unicode('zizai-row-preview').tag(sync=True)

@@ -10,6 +10,15 @@
 
 利用者が生成コードを実行すると、通常の `import python_connector` を使い、`sys.executable` で起動した別プロセスで `main()` を1回呼ぶ。実行権限は利用者のPythonと同じ。stdout・stderrと戻り値を分け、表・辞書・リストはDataFrameに、スカラー・NoneはPython値に戻す。受け渡しはJSONで行い、表の列は保持する。元のインデックス・型・attrsの完全保持は契約に含めない。一時ファイルは終了後に整理する。既存の生成コードが使う `execute_python` とAPIの `env_path` は互換性のため維持する。
 
+## TASK-022：DataFrameの行の条件
+
+[Issue #105](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/105)の「データ統合 → 行の条件」では、表の上で操作を選び、変更を追加する。
+
+- 条件で行を抽出・除外できる。比較は文字列の一致・部分一致、数値の一致・大小・範囲、NULL・非NULLを選べる。範囲は両端を含み、文字列の部分一致は入力文字をそのまま探す。NULLは一致・大小・範囲の対象から外れ、NULL判定で選べる。
+- 複数条件は前の条件との結合をANDまたはORで指定する。混在するときはANDを先に評価する。
+- 重複行の削除は最初の行を残す。NULL行の削除は判定列のどれかにNULLがある行を除く。どちらも未選択時は全列で判定する。先頭・末尾から指定行数を残す操作を提供する。
+- 先頭30行のサンプルで設定順に試行し、残った行数を表示する。先頭・末尾のプレビューもサンプル内で計算する。生成コードの実行時は全行を対象とし、元表を保持して別のDataFrame（初期値 `filtered_df`）を返す。残った行の順序とインデックスを保持する。
+
 ## TASK-021：DataFrameの値加工
 
 [Issue #103](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/103)の「データ統合 → 値加工」では、表の上のプルダウンから対象列、処理分類、操作を選ぶ。

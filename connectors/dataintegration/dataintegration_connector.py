@@ -338,3 +338,96 @@ def apply_value_operations(data, *, operations):
             schema.append(item)
         frame.attrs['ziz_schema'] = schema
     return frame
+
+
+_ROW_NUMERIC_COMPARISONS = {
+    'number_equal': operator.eq, 'greater': operator.gt, 'greater_equal': operator.ge,
+    'less': operator.lt, 'less_equal': operator.le,
+}
+
+
+def _row_bound(value):
+    if type(value) not in (int, float) or (type(value) is float and not isfinite(value)):
+        raise ValueError('比較値には有限の数値を指定してください。')
+    return value
+
+
+def _row_condition(frame, columns, condition):
+    column = condition.get('column')
+    if not isinstance(column, str) or column not in columns:
+        raise ValueError('対象列を選択してください。')
+    series = frame[columns[column]]
+    comparison = condition.get('comparison')
+    value = condition.get('value')
+    if comparison == 'is_null':
+        return series.isna()
+    if comparison == 'not_null':
+        return series.notna()
+    if comparison in ('text_equal', 'contains'):
+        if not isinstance(value, str) or (comparison == 'contains' and not value):
+            raise ValueError('比較する文字列を入力してください。')
+        text = series.astype('string')
+        result = text.eq(value) if comparison == 'text_equal' else text.str.contains(value, regex=False, na=False)
+        return result.fillna(False)
+    if not isinstance(comparison, str) or (comparison != 'between' and comparison not in _ROW_NUMERIC_COMPARISONS):
+        raise ValueError('比較方法を選択してください。')
+    try:
+        numeric = _numeric(series)
+    except (ValueError, TypeError, OverflowError) as error:
+        raise ValueError(f'「{column}」列に数値として比較できない値があります。') from error
+    lower = _row_bound(value)
+    if comparison == 'between':
+        upper = _row_bound(condition.get('upper'))
+        if upper < lower:
+            raise ValueError('範囲の下限は上限以下にしてください。')
+        return numeric.between(lower, upper).fillna(False)
+    return _ROW_NUMERIC_COMPARISONS[comparison](numeric, lower).fillna(False)
+
+
+def _row_mask(frame, columns, conditions):
+    if not isinstance(conditions, list) or not conditions or any(not isinstance(item, dict) for item in conditions):
+        raise ValueError('条件を1件以上設定してください。')
+    # Combine AND runs before folding them into the OR result.
+    current = _row_condition(frame, columns, conditions[0])
+    disjunction = None
+    for condition in conditions[1:]:
+        mask = _row_condition(frame, columns, condition)
+        logic = condition.get('logic')
+        if logic == 'and':
+            current = current & mask
+        elif logic == 'or':
+            disjunction = current if disjunction is None else disjunction | current
+            current = mask
+        else:
+            raise ValueError('条件の結合にはANDまたはORを指定してください。')
+    return current if disjunction is None else disjunction | current
+
+
+def filter_rows(data, *, operations):
+    """Select and clean rows in order, preserving the original input and index."""
+    frame = _operation_frame(data, operations, '行の条件')
+    columns = dict(zip(map(str, frame.columns), frame.columns))
+    for change in operations:
+        if not isinstance(change, dict):
+            raise ValueError('行の条件の設定が不正です。')
+        op = change.get('op')
+        if op == 'filter':
+            mode = change.get('mode')
+            if mode not in ('keep', 'exclude'):
+                raise ValueError('抽出または除外を選択してください。')
+            mask = _row_mask(frame, columns, change.get('conditions'))
+            frame = frame.loc[mask if mode == 'keep' else ~mask]
+        elif op in ('drop_duplicates', 'drop_nulls'):
+            selected = change.get('columns', [])
+            if not isinstance(selected, list) or any(not isinstance(key, str) or key not in columns for key in selected):
+                raise ValueError('判定する列を確認してください。')
+            subset = [columns[key] for key in selected] or None
+            frame = frame.drop_duplicates(subset=subset) if op == 'drop_duplicates' else frame.dropna(subset=subset)
+        elif op in ('head', 'tail'):
+            count = change.get('count')
+            if type(count) is not int or count < 0:
+                raise ValueError('行数は0以上の整数で指定してください。')
+            frame = frame.head(count) if op == 'head' else frame.tail(count)
+        else:
+            raise ValueError('未対応の行操作です。')
+    return frame

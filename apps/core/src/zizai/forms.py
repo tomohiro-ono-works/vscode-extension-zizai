@@ -8,7 +8,7 @@ from keyword import iskeyword
 from pathlib import Path
 import shlex
 from .connector_codegen import module_name_for
-from .dataintegration_codegen import DATAFRAME_OPERATIONS, VALUE_OPERATIONS
+from .dataintegration_codegen import DATAFRAME_OPERATIONS, ROW_OPERATIONS, VALUE_OPERATIONS
 from .form_definition import load_definition
 from .form_model import FormModel
 
@@ -320,6 +320,8 @@ class NotebookForm:
                 raise ValueError('データ統合コネクタを更新し、カーネルを再起動してください。')
             if generation == VALUE_OPERATIONS:
                 from .value_editor import ValueEditor as editor_class
+            elif generation == ROW_OPERATIONS:
+                from .row_filter_editor import RowFilterEditor as editor_class
             else:
                 from .column_editor import ColumnEditor as editor_class
             self._dataframe_editor = editor_class(self._namespace[name], apply_operations, self._set_dataframe_operations)

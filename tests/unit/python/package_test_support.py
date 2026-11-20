@@ -25,6 +25,7 @@ PACKAGE_FILES = {
     "zizai/row_preview.py",
     "zizai/column_editor.py",
     "zizai/value_editor.py",
+    "zizai/row_filter_editor.py",
     "zizai/csv_codegen.py",
     "zizai/bigquery_codegen.py",
     "zizai/duckdb_codegen.py",

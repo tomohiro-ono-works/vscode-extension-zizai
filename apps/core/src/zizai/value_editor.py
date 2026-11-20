@@ -4,8 +4,8 @@ from math import isfinite
 
 import ipywidgets as widgets
 
-from .column_editor import render_dataframe_rows
-from .row_preview import CELL_WIDTH, MAX_ROWS, _close_widgets
+from .column_editor import DataFramePreview
+from .row_preview import MAX_ROWS, _close_widgets
 
 
 VALUE_CATEGORIES = {
@@ -57,6 +57,12 @@ def _number(value):
     raise ValueError('有限の数値を入力してください。')
 
 
+def _settings_row(children):
+    row = widgets.HBox(children, layout=widgets.Layout(flex_flow='row wrap', align_items='flex-end'))
+    row.add_class('row-preview-controls')
+    return row
+
+
 class ValueEditor:
     def __init__(self, data, apply_operations, on_change):
         self._apply_operations = apply_operations
@@ -65,19 +71,18 @@ class ValueEditor:
         self.operations = []
         self.preview = apply_operations(self._sample, operations=[])
         self.fields = {}
-        self._headings = []
         self._syncing_columns = False
         self.column = _dropdown('対象列', self._column_options())
         self.category = _dropdown('処理分類', [('選択してください', None)] + [
             (label, key) for key, (label, _) in VALUE_CATEGORIES.items()])
         self.action = _dropdown('操作', [('選択してください', None)])
         self.category.disabled = self.action.disabled = True
-        self.selectors = self._row([self.column, self.category, self.action])
+        self.selectors = _settings_row([self.column, self.category, self.action])
         self.column.observe(self._select_column, names='value')
         self.category.observe(self._select_category, names='value')
         self.action.observe(self._select_action, names='value')
 
-        self._params = self._row([])
+        self._params = _settings_row([])
         self.output_mode = _dropdown(
             '加工結果', [('対象列を更新', 'existing'), ('新しい列へ出力', 'new')], value='existing')
         self.output_name = widgets.Text(description='新しい列名', layout=widgets.Layout(width='auto', display='none'))
@@ -85,15 +90,11 @@ class ValueEditor:
         self.output_mode.observe(self._toggle_output, names='value')
         self.add = widgets.Button(description='変更を追加', layout=widgets.Layout(width='auto'))
         self.add.on_click(self._add_current)
-        self._output = self._row([self.output_mode, self.output_name, self.add])
+        self._output = _settings_row([self.output_mode, self.output_name, self.add])
         self._output.layout.display = 'none'
         self.status = widgets.HTML()
-        self._heading = widgets.HBox(layout=widgets.Layout(flex='0 0 36px', overflow='visible'))
-        self._heading.add_class('row-preview-heading')
-        self._body = widgets.HTML()
-        self.grid = widgets.VBox([self._heading, self._body], layout=widgets.Layout(
-            width='100%', max_height='310px', overflow='auto'))
-        self.grid.add_class('row-preview-grid')
+        self._table = DataFramePreview()
+        self.grid = self._table.root
         self.changes = widgets.HTML()
         self.undo = widgets.Button(description='最後の変更を取り消す', layout=widgets.Layout(width='auto'))
         self.undo.on_click(self._undo_last)
@@ -102,12 +103,6 @@ class ValueEditor:
                                   self.status, self.grid, self.changes, self.undo])
         self.root.add_class('row-preview')
         self._render()
-
-    @staticmethod
-    def _row(children):
-        row = widgets.HBox(children, layout=widgets.Layout(flex_flow='row wrap', align_items='flex-end'))
-        row.add_class('row-preview-controls')
-        return row
 
     def _column_options(self):
         return [('選択してください', None), *((str(column), str(column)) for column in self.preview.columns)]
@@ -226,20 +221,7 @@ class ValueEditor:
                 previous = field.value
                 field.options = column_options
                 field.value = previous if previous in dict(column_options).values() else None
-        names = list(map(str, self.preview.columns))
-        if names != [name for name, _ in self._headings]:
-            width = f'{max(1, len(names)) * CELL_WIDTH}px'
-            self._heading.layout.min_width = width
-            self._body.layout.min_width = width
-            previous = dict(self._headings)
-            self._headings = [
-                (name, previous.pop(name) if name in previous else widgets.HTML(
-                    escape(name), layout=widgets.Layout(flex=f'1 0 {CELL_WIDTH}px')))
-                for name in names
-            ]
-            self._heading.children = [heading for _, heading in self._headings]
-            _close_widgets(previous.values())
-        self._body.value = render_dataframe_rows(self.preview)
+        self._table.render(self.preview)
         self.undo.disabled = not self.operations
         entries = []
         for change in self.operations:
@@ -251,6 +233,7 @@ class ValueEditor:
                                                 '<p>設定した加工はここに表示します。</p>')
 
     def close(self):
-        _close_widgets([*self.fields.values(), *(heading for _, heading in self._headings),
-                        self.column, self.category, self.action, self.output_mode, self.output_name,
-                        self.add, self._heading, self._body, *self.root.children, self.root])
+        self._table.close()
+        _close_widgets([*self.fields.values(), self.column, self.category, self.action, self.output_mode,
+                        self.output_name, self.add, *(child for child in self.root.children if child is not self.grid),
+                        self.root])

@@ -9,9 +9,11 @@ from .connector_codegen import _identifier, _text, form_input_file_path, module_
 PRE_FLAGS = ('remove_spaces', 'remove_newlines', 'to_halfwidth_alnum', 'symbols_to_snake')
 COLUMN_OPERATIONS = 'dataintegration.apply_column_operations'
 VALUE_OPERATIONS = 'dataintegration.apply_value_operations'
+ROW_OPERATIONS = 'dataintegration.filter_rows'
 DATAFRAME_OPERATIONS = {
     COLUMN_OPERATIONS: 'apply_column_operations',
     VALUE_OPERATIONS: 'apply_value_operations',
+    ROW_OPERATIONS: 'filter_rows',
 }
 GENERATION_FIELDS = {
     **{kind: {'input_variable', 'output_variable', 'operations'} for kind in DATAFRAME_OPERATIONS},
@@ -28,7 +30,7 @@ def generate_dataintegration(kind, values, module_path):
     incoming = _identifier(values, 'input_variable')
     output = _identifier(values, 'output_variable')
     if kind in DATAFRAME_OPERATIONS:
-        label = '列操作' if kind == COLUMN_OPERATIONS else '値加工'
+        label = {COLUMN_OPERATIONS: '列操作', VALUE_OPERATIONS: '値加工', ROW_OPERATIONS: '行の条件'}[kind]
         if unicodedata.normalize('NFKC', incoming) == unicodedata.normalize('NFKC', output):
             raise ValueError('入力と出力には別の変数名を指定してください。')
         try:

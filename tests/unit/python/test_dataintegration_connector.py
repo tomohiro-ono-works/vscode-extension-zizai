@@ -11,6 +11,76 @@ from zizai.form_model import FormModel
 
 
 class DataIntegrationConnectorTests(unittest.TestCase):
+    def test_row_operations_generate_mixed_conditions_then_apply_row_cleanup(self):
+        import json
+        import pandas as pd
+
+        shared = source_test_support.REPO / 'connectors'
+        source = pd.DataFrame({
+            '商品': ['A-1', 'B-1', 'A-2', None, 'OTHER', 'A-2'],
+            '数量': [1, 7, 10, 1, 12, 10],
+            '注記': ['x', 'y', 'ok', None, 'z', 'extra'],
+        }, index=[30, 31, 32, 33, 34, 35])
+        before = source.copy(deep=True)
+        operations = [
+            {'op': 'filter', 'mode': 'keep', 'conditions': [
+                {'column': '商品', 'comparison': 'contains', 'value': 'A-'},
+                {'logic': 'and', 'column': '数量', 'comparison': 'between', 'value': 5, 'upper': 10},
+                {'logic': 'or', 'column': '商品', 'comparison': 'is_null'},
+            ]},
+            {'op': 'drop_duplicates', 'columns': ['商品', '数量']},
+        ]
+        form = FormModel(load_definition(shared))
+        form.set_connector('dataintegration')
+        form.set_action('filter_rows')
+        form.set_value('input_variable', 'source')
+        form.set_value('operations', json.dumps(operations, ensure_ascii=False))
+        with patch.object(sys, 'path', [str(shared / 'dataintegration'), *sys.path]):
+            namespace = {'source': source}
+            exec(compile(form.generate(), '<generated-row-operations>', 'exec'), namespace)
+            from dataintegration_connector import filter_rows
+        self.assertEqual(namespace['filtered_df'].index.tolist(), [32, 33])
+        preceding_or = filter_rows(source, operations=[{'op': 'filter', 'mode': 'keep', 'conditions': [
+            {'column': '商品', 'comparison': 'contains', 'value': 'B-'},
+            {'logic': 'or', 'column': '商品', 'comparison': 'is_null'},
+            {'logic': 'and', 'column': '数量', 'comparison': 'greater_equal', 'value': 10},
+        ]}])
+        self.assertEqual(preceding_or.index.tolist(), [31])
+        result = filter_rows(source, operations=[
+            {'op': 'filter', 'mode': 'exclude', 'conditions': [
+                {'column': '商品', 'comparison': 'text_equal', 'value': 'OTHER'},
+            ]},
+            {'op': 'drop_nulls', 'columns': ['注記']},
+            {'op': 'head', 'count': 4}, {'op': 'tail', 'count': 2},
+        ])
+        self.assertEqual(result.index.tolist(), [32, 35])
+        self.assertTrue(source.equals(before))
+
+    def test_row_form_uses_sample_and_generates_for_all_rows(self):
+        import pandas as pd
+        from zizai.forms import create_form
+
+        shared = source_test_support.REPO / 'connectors'
+        source = pd.DataFrame({'数量': range(40)})
+        with patch.object(sys, 'path', [str(shared / 'dataintegration'), *sys.path]):
+            form = create_form(shared, namespace={'df': source})
+            self.addCleanup(form.close)
+            form.connector.value = 'dataintegration'
+            form.action.value = 'filter_rows'
+            form.field_widgets['input_variable'].value = 'df'
+            editor = form._dataframe_editor
+            self.assertLess(editor.root.children.index(editor.settings), editor.root.children.index(editor.grid))
+            editor.action.value = 'tail'
+            editor.count.value = 2
+            editor.apply.click()
+            self.assertEqual(editor.preview['数量'].tolist(), [28, 29])
+            form.generate_button.click()
+            namespace = {'df': source}
+            exec(compile(form.result, '<generated-tail>', 'exec'), namespace)
+            self.assertEqual(namespace['filtered_df']['数量'].tolist(), [38, 39])
+            editor.undo.click()
+            self.assertTrue(form.generate_button.disabled)
+
     def test_value_operations_generated_code_preserves_input_and_applies_steps(self):
         import json
         import pandas as pd
