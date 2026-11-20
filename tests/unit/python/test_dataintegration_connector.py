@@ -11,6 +11,100 @@ from zizai.form_model import FormModel
 
 
 class DataIntegrationConnectorTests(unittest.TestCase):
+    def test_value_operations_generated_code_preserves_input_and_applies_steps(self):
+        import json
+        import pandas as pd
+
+        shared = source_test_support.REPO / 'connectors'
+        source = pd.DataFrame({
+            '商品': ['東京-001', '大阪-020', None, '対象外'],
+            '数量': [12, 3, 8, 0], '単価': [2.5, 4.0, 1.5, 2.0],
+        }, index=[9, 6, 4, 2])
+        before = source.copy(deep=True)
+        operations = [
+            {'op': 'extract_regex', 'column': '商品', 'pattern': r'-(\d+)$', 'group': 1, 'output': '番号'},
+            {'op': 'fill_null', 'column': '番号', 'value': '未登録'},
+            {'op': 'replace_exact', 'column': '番号', 'search': '未登録', 'replacement': 'NA'},
+            {'op': 'split', 'column': '商品', 'separator': '-', 'position': 1, 'output': '地域'},
+            {'op': 'replace_part', 'column': '地域', 'search': '東京', 'replacement': '首都'},
+            {'op': 'multiply', 'column': '数量', 'other_column': '単価', 'output': '金額'},
+            {'op': 'add', 'column': '金額', 'number': 0.49},
+            {'op': 'round', 'column': '金額', 'digits': 0},
+            {'op': 'to_null', 'column': '数量', 'value': 0},
+        ]
+        form = FormModel(load_definition(shared))
+        form.set_connector('dataintegration')
+        form.set_action('apply_value_operations')
+        form.set_value('input_variable', 'source')
+        form.set_value('operations', json.dumps(operations, ensure_ascii=False))
+        with patch.object(sys, 'path', [str(shared / 'dataintegration'), *sys.path]):
+            scope = {'source': source}
+            exec(compile(form.generate(), '<generated-value-operations>', 'exec'), scope)
+        result = scope['processed_df']
+        self.assertEqual(result['番号'].tolist(), ['001', '020', 'NA', 'NA'])
+        self.assertEqual(result['地域'].fillna('_').tolist(), ['首都', '大阪', '_', '対象外'])
+        self.assertEqual(result['金額'].tolist(), [30.0, 12.0, 12.0, 0.0])
+        self.assertTrue(pd.isna(result.loc[2, '数量']))
+        self.assertEqual(result.index.tolist(), [9, 6, 4, 2])
+        self.assertTrue(source.equals(before))
+
+    def test_value_form_selectors_above_preview_keep_valid_settings_after_invalid_regex(self):
+        import pandas as pd
+        from zizai.forms import create_form
+
+        shared = source_test_support.REPO / 'connectors'
+        source = pd.DataFrame({'商品': ['東京-001'] * 31, '数量': [12] * 31})
+        with patch.object(sys, 'path', [str(shared / 'dataintegration'), *sys.path]):
+            form = create_form(shared, namespace={'df': source})
+            self.addCleanup(form.close)
+            form.connector.value = 'dataintegration'
+            form.action.value = 'apply_value_operations'
+            form.field_widgets['input_variable'].value = 'df'
+            editor = form._dataframe_editor
+            self.assertLess(editor.root.children.index(editor.selectors), editor.root.children.index(editor.grid))
+            self.assertTrue(editor.category.disabled)
+            editor.column.value = '商品'
+            editor.category.value = 'text'
+            editor.action.value = 'extract_regex'
+            editor.output_mode.value = 'new'
+            editor.output_name.value = '番号'
+            editor.fields['pattern'].value = '('
+            editor.add.click()
+            self.assertIn('正規表現', editor.status.value)
+            self.assertTrue(form.generate_button.disabled)
+            editor.fields['pattern'].value = r'-(\d+)$'
+            editor.fields['group'].value = 1
+            editor.add.click()
+            self.assertEqual(len(editor.preview), 30)
+            self.assertEqual(editor.preview['番号'].iloc[0], '001')
+            self.assertNotIn('番号', source.columns)
+            self.assertIn('番号', dict(editor.column.options).values())
+            form.generate_button.click()
+            self.assertIn('apply_value_operations', form.result)
+            editor.undo.click()
+            self.assertTrue(form.generate_button.disabled)
+
+    def test_value_operations_join_text_and_reject_zero_division_without_changing_input(self):
+        import pandas as pd
+
+        shared = source_test_support.REPO / 'connectors/dataintegration'
+        with patch.object(sys, 'path', [str(shared), *sys.path]):
+            from dataintegration_connector import apply_value_operations
+        source = pd.DataFrame({'地域': [' 東京 ', None], 'コード': ['AbC', 'XYZ'], '差': [-3, 0]})
+        operations = [
+            {'op': 'trim', 'column': '地域'},
+            {'op': 'lower', 'column': 'コード'},
+            {'op': 'concat', 'column': '地域', 'other_column': 'コード', 'separator': ' / ', 'output': '表示'},
+            {'op': 'abs', 'column': '差', 'output': '絶対値'},
+        ]
+        result = apply_value_operations(source, operations=operations)
+        self.assertEqual(result['表示'].fillna('-').tolist(), ['東京 / abc', '-'])
+        self.assertEqual(result['絶対値'].tolist(), [3, 0])
+        with self.assertRaisesRegex(ValueError, '0で割る'):
+            apply_value_operations(source, operations=[*operations, {'op': 'divide', 'column': '差', 'number': 0}])
+        self.assertEqual(source['地域'].iloc[0], ' 東京 ')
+        self.assertNotIn('表示', source.columns)
+
     def test_ordered_column_operations_generate_and_preserve_input(self):
         import json
         import pandas as pd
@@ -58,7 +152,7 @@ class DataIntegrationConnectorTests(unittest.TestCase):
             form.action.value = 'apply_column_operations'
             self.assertEqual([key for _, key in form.field_widgets['input_variable'].options], ['', 'df'])
             form.field_widgets['input_variable'].value = 'df'
-            editor = form._column_editor
+            editor = form._dataframe_editor
             self.assertEqual(len(editor.preview), 30)
             self.assertTrue(editor.add_operation({'op': 'convert', 'column': '数量', 'type': 'integer'}))
             self.assertFalse(editor.add_operation({'op': 'convert', 'column': '注記', 'type': 'integer'}))
@@ -85,7 +179,7 @@ class DataIntegrationConnectorTests(unittest.TestCase):
             form.connector.value = 'dataintegration'
             form.action.value = 'apply_column_operations'
             form.field_widgets['input_variable'].value = 'df'
-            editor = form._column_editor
+            editor = form._dataframe_editor
 
             def send(column, **message):
                 header = next(header for header in editor._headers if header._column_name == column)

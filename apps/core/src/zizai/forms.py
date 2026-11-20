@@ -8,7 +8,7 @@ from keyword import iskeyword
 from pathlib import Path
 import shlex
 from .connector_codegen import module_name_for
-from .dataintegration_codegen import COLUMN_OPERATIONS
+from .dataintegration_codegen import DATAFRAME_OPERATIONS, VALUE_OPERATIONS
 from .form_definition import load_definition
 from .form_model import FormModel
 
@@ -91,8 +91,8 @@ class NotebookForm:
         self.browse_buttons = {}
         self.row_preview_button = None
         self._row_preview = None
-        self._column_editor = None
-        self._column_slot = None
+        self._dataframe_editor = None
+        self._dataframe_slot = None
         layout = lambda: widgets.Layout(flex='1 1 180px', min_width='150px')
         self.connector = widgets.Dropdown(description='コネクタ', options=[('選択してください', None)] + [
             (entry['label'], key) for key, entry in definition['connectors'].items()], layout=layout())
@@ -148,8 +148,8 @@ class NotebookForm:
 
     def _sync(self):
         self._dismiss_row_preview()
-        self._close_column_editor()
-        self._column_slot = None
+        self._close_dataframe_editor()
+        self._dataframe_slot = None
         widgets = self._widgets
         self._syncing = True
         try:
@@ -172,15 +172,15 @@ class NotebookForm:
             self.browse_buttons = {}
             self.row_preview_button = None
             self._invalid_fields.clear()
-            column_mode = self._has_column_editor()
-            self.root.layout.max_width = 'none' if column_mode else self._form_width
+            dataframe_mode = self._has_dataframe_editor()
+            self.root.layout.max_width = 'none' if dataframe_mode else self._form_width
             for name, field in self.model.fields.items():
                 value = self.model.values[name]
                 label = escape(field['label']) + (' <span class="zizai-required">*</span>' if field.get('required') else '')
-                if column_mode and name == 'operations':
+                if dataframe_mode and name == 'operations':
                     self.model.set_value(name, '')
                     continue
-                if column_mode and name == 'input_variable':
+                if dataframe_mode and name == 'input_variable':
                     options = [('選択してください', '')] + [(name, name) for name in self._dataframe_names()]
                     if value not in dict(options).values():
                         value = ''
@@ -213,7 +213,7 @@ class NotebookForm:
             self.toolbar.children = [self.connector, self.action]
             rows = []
             pairs = [('encoding', 'delimiter')]
-            if column_mode:
+            if dataframe_mode:
                 pairs.append(('input_variable', 'output_variable'))
             if (self.model.connector, self.model.action) in {
                 ('csv', 'import'), ('excel', 'read_excel'), ('excel', 'read_excel_range'),
@@ -248,11 +248,11 @@ class NotebookForm:
                     rows.append(row)
                 elif name not in paired_fields.values():
                     rows.append(widget)
-            if column_mode:
-                self._column_slot = widgets.VBox()
-                self._dynamic.append(self._column_slot)
-                rows.append(self._column_slot)
-                self._show_column_editor(self.model.values['input_variable'])
+            if dataframe_mode:
+                self._dataframe_slot = widgets.VBox()
+                self._dynamic.append(self._dataframe_slot)
+                rows.append(self._dataframe_slot)
+                self._show_dataframe_editor(self.model.values['input_variable'])
             self.details.children = rows
             self.message.value = ''
             self._clear_result()
@@ -271,25 +271,25 @@ class NotebookForm:
             self._invalid_fields.discard(name)
         except ValueError:
             self._invalid_fields.add(name)
-        if name == 'input_variable' and self._column_slot is not None:
+        if name == 'input_variable' and self._dataframe_slot is not None:
             self.model.set_value('operations', '')
-            self._show_column_editor(value)
+            self._show_dataframe_editor(value)
         if name == 'file_path' and self.row_preview_button is not None:
             self.row_preview_button.disabled = not value.strip() or name in self._invalid_fields
         if self._invalid_fields:
             self.message.value = '入力値を確認してください。ファイルとフォルダーは絶対パスを指定します。'
         else:
             self.message.value = ''
-            if self._column_slot is None or self.model.values['operations']:
+            if self._dataframe_slot is None or self.model.values['operations']:
                 try:
                     self.model.generate()
                 except ValueError as error:
                     self.message.value = escape(str(error))
         self._refresh_generate()
 
-    def _has_column_editor(self):
+    def _has_dataframe_editor(self):
         action = self.model.actions.get(self.model.action, {})
-        return action.get('generation') == COLUMN_OPERATIONS
+        return action.get('generation') in DATAFRAME_OPERATIONS
 
     def _dataframe_names(self):
         try:
@@ -300,13 +300,13 @@ class NotebookForm:
                       if isinstance(name, str) and name.isidentifier() and not iskeyword(name)
                       and isinstance(value, DataFrame))
 
-    def _show_column_editor(self, name):
-        self._close_column_editor()
+    def _show_dataframe_editor(self, name):
+        self._close_dataframe_editor()
         widgets = self._widgets
         if not name:
             help_text = ('入力DataFrameを選択してください。' if len(self.field_widgets['input_variable'].options) > 1
                          else 'NotebookでDataFrameを作成してから、フォームを再表示してください。')
-            self._column_slot.children = (widgets.HTML(f'<p>{help_text}</p>'),)
+            self._dataframe_slot.children = (widgets.HTML(f'<p>{help_text}</p>'),)
             return
         path = self.model.definition['connectors'][self.model.connector].get('module_path')
         try:
@@ -314,26 +314,30 @@ class NotebookForm:
             spec = find_spec(module)
             if spec is None or spec.origin is None or Path(spec.origin).resolve() != Path(path).resolve():
                 raise ValueError('設定したデータ統合コネクタをカーネルに登録してください。')
-            apply_operations = getattr(import_module(module), 'apply_column_operations', None)
+            generation = self.model.actions[self.model.action]['generation']
+            apply_operations = getattr(import_module(module), DATAFRAME_OPERATIONS[generation], None)
             if not callable(apply_operations):
                 raise ValueError('データ統合コネクタを更新し、カーネルを再起動してください。')
-            from .column_editor import ColumnEditor
-            self._column_editor = ColumnEditor(self._namespace[name], apply_operations, self._set_column_operations)
+            if generation == VALUE_OPERATIONS:
+                from .value_editor import ValueEditor as editor_class
+            else:
+                from .column_editor import ColumnEditor as editor_class
+            self._dataframe_editor = editor_class(self._namespace[name], apply_operations, self._set_dataframe_operations)
         except (ImportError, TypeError, ValueError, KeyError, OSError) as error:
-            self._column_slot.children = (widgets.HTML(f'<p role="alert">{escape(str(error))}</p>'),)
+            self._dataframe_slot.children = (widgets.HTML(f'<p role="alert">{escape(str(error))}</p>'),)
             return
-        self._column_slot.children = (self._column_editor.root,)
+        self._dataframe_slot.children = (self._dataframe_editor.root,)
 
-    def _set_column_operations(self, operations):
+    def _set_dataframe_operations(self, operations):
         self._value_changed('operations', json.dumps(operations, ensure_ascii=False) if operations else '')
 
-    def _close_column_editor(self):
-        if self._column_slot is not None:
-            previous = self._column_slot.children
-            self._column_slot.children = ()
-            if self._column_editor is not None:
-                self._column_editor.close()
-                self._column_editor = None
+    def _close_dataframe_editor(self):
+        if self._dataframe_slot is not None:
+            previous = self._dataframe_slot.children
+            self._dataframe_slot.children = ()
+            if self._dataframe_editor is not None:
+                self._dataframe_editor.close()
+                self._dataframe_editor = None
             else:
                 for widget in previous:
                     widget.close()
@@ -402,7 +406,7 @@ class NotebookForm:
 
     def close(self):
         self._dismiss_row_preview()
-        self._close_column_editor()
+        self._close_dataframe_editor()
         for widget in [*self._dynamic, self.connector, self.action, self.generate_button, self.copy_button,
                        self.toolbar, self.details, self.message, self.generated, self.code_actions, self.root]:
             widget.close()
