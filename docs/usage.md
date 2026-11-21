@@ -2,7 +2,7 @@
 
 ## Windowsのファイル操作（TASK-027）
 
-Notebookのカーネルに `[forms,windows]` 付きのwheelを導入します。[Windows資産](../../connectors/windows/)のPythonとYAMLを共通フォルダーの `windows/` へ置き、`configure_connectors` で登録します。
+Notebookのカーネルに `[forms,windows]` 付きのwheelを導入します。[Windows資産](../connectors/windows/)のPythonとYAMLを共通フォルダーの `windows/` へ置き、`configure_connectors` で登録します。
 
 `%form` の「Windows」から、ファイル名検索、ファイル内の文字列検索、Markdown作成、ファイル名の変更・移動を選べます。生成したコードをNotebookのPythonセルで実行すると、検索結果は `df`、保存や移動の結果は `result` に入ります。移動先に同名ファイルがあると停止します。Markdownは既定で新規作成し、追記・上書きは書き込み方法で選びます。
 
@@ -10,17 +10,17 @@ Notebookのカーネルに `[forms,windows]` 付きのwheelを導入します。
 
 ## Windowsバッチファイル実行（TASK-018）
 
-`[forms,shell]` 付きのwheelを導入し、[Shell資産](../../connectors/shell/)を共通フォルダーへ登録します。`%form` の「Shell」→「バッチファイル実行」で、`参照…` から `.bat` を選びます。引数が必要な場合は `["入力 1", "入力 2"]` のようなJSON配列を入力します。生成コードを実行すると標準出力・標準エラー・終了コードを受け取れます。
+`[forms,shell]` 付きのwheelを導入し、[Shell資産](../connectors/shell/)を共通フォルダーへ登録します。`%form` の「Shell」→「バッチファイル実行」で、`参照…` から `.bat` を選びます。引数が必要な場合は `["入力 1", "入力 2"]` のようなJSON配列を入力します。生成コードを実行すると標準出力・標準エラー・終了コードを受け取れます。
 
 ## Python実行（TASK-016）
 
-`[forms,python]` 付きのwheelを導入し、[Python資産](../../connectors/python/)を共通フォルダーの `python/` へ配置して `configure_connectors` で再登録します。`%form` の「Python」→「Python実行（ファイル）」で、引数なしの `main()` を持つ `.py` ファイルを `参照…` から選びます。
+`[forms,python]` 付きのwheelを導入し、[Python資産](../connectors/python/)を共通フォルダーの `python/` へ配置して `configure_connectors` で再登録します。`%form` の「Python」→「Python実行（ファイル）」で、引数なしの `main()` を持つ `.py` ファイルを `参照…` から選びます。
 
 生成コードを実行すると、Notebookのカーネルと同じPython環境で `main()` が動き、戻り値が出力変数（初期値 `result`）に入ります。スクリプトが利用するライブラリはカーネルの環境に導入してください。
 
 ## RENAMEリストで列名変更（TASK-015）
 
-カーネルと同じPython環境にwheelを`[forms,dataintegration]`付きで導入します。[データ統合資産](../../connectors/dataintegration/)を共通フォルダーの`dataintegration/`へ配置し、`configure_connectors`で再登録します。`%form`の「データ統合」→「RENAMEリストで列名変更」で入力変数を指定し、`参照…`からRENAMEのCSVファイルを選びます。生成コードをPythonセルで実行すると、変更後のDataFrameが初期値 `renamed_df` の出力変数に入ります。
+カーネルと同じPython環境にwheelを`[forms,dataintegration]`付きで導入します。[データ統合資産](../connectors/dataintegration/)を共通フォルダーの`dataintegration/`へ配置し、`configure_connectors`で再登録します。`%form`の「データ統合」→「RENAMEリストで列名変更」で入力変数を指定し、`参照…`からRENAMEのCSVファイルを選びます。生成コードをPythonセルで実行すると、変更後のDataFrameが初期値 `renamed_df` の出力変数に入ります。
 
 ```csv
 origin_name,replaced_name,description,ziz_datatype
@@ -52,13 +52,13 @@ Notebookのカーネルに `[forms,dataintegration]` 付きの更新wheelを導�
 
 ## BigQueryフォーム（TASK-014）
 
-カーネルと同じ環境に開発版のwheelを`[forms,bigquery]`付きで導入します。[BigQuery資産](../../connectors/bigquery/)を共通フォルダーの `bigquery/` に置き、`configure_connectors` で再登録します。`%form` のBigQueryから「SQL実行（ファイル）」または「データロード」を選んでコードを生成します。SQL実行では `参照…` から `.sql` を選びます。出力変数の初期値は `result` です。生成コードを実行すると、指定したプロジェクトと既存のApplication Default Credentialsを使用します。
+カーネルと同じ環境に開発版のwheelを`[forms,bigquery]`付きで導入します。[BigQuery資産](../connectors/bigquery/)を共通フォルダーの `bigquery/` に置き、`configure_connectors` で再登録します。`%form` のBigQueryから「SQL実行（ファイル）」または「データロード」を選んでコードを生成します。SQL実行では `参照…` から `.sql` を選びます。出力変数の初期値は `result` です。生成コードを実行すると、指定したプロジェクトと既存のApplication Default Credentialsを使用します。
 
 ロードの初期値は「新規／空テーブル」です。既存データを追記・置換する場合は対応するモードを選択します。任意のロード用スキーマは `[{"name":"id","type":"INTEGER"}]` のようなBigQuery形式です。
 
 ## DuckDBフォーム（TASK-013）
 
-Notebookのカーネルと同じPython環境に開発版のwheelを `[forms,duckdb]` 付きで導入します。[DuckDB資産](../../connectors/duckdb/)を共通フォルダーの `duckdb/` に置き、`configure_connectors` で登録してからカーネルを再起動します。`%form` で「DuckDB」→「DBファイル作成」を選び、保存先フォルダーとファイル名を指定します。生成コードを実行するとDBファイルの情報が `result` に入ります。既存DBを指定した場合は中のテーブルを保持します。
+Notebookのカーネルと同じPython環境に開発版のwheelを `[forms,duckdb]` 付きで導入します。[DuckDB資産](../connectors/duckdb/)を共通フォルダーの `duckdb/` に置き、`configure_connectors` で登録してからカーネルを再起動します。`%form` で「DuckDB」→「DBファイル作成」を選び、保存先フォルダーとファイル名を指定します。生成コードを実行するとDBファイルの情報が `result` に入ります。既存DBを指定した場合は中のテーブルを保持します。
 
 「SQL実行（ファイル）」では、既存のDBとSQLファイルをそれぞれ `参照…` から選びます。SQLからはそのDB内のテーブルを参照できます。SQLファイルの文字コードはUTF-8、Shift_JIS、CP932から選べます。
 
@@ -66,7 +66,7 @@ Notebookのカーネルと同じPython環境に開発版のwheelを `[forms,duck
 
 ## Excelフォーム（TASK-012、開発版）
 
-`zizai_runtime-0.0.3.dev0-py3-none-any.whl[forms,excel]`をNotebookのカーネルと同じPython環境に導入します。CSVも使う場合は`[forms,csv,excel]`を指定します。[Excel資産の正本](../../connectors/excel/)の`excel_connector.py`と`excel_definition.yaml`を共通フォルダーの`excel/`へ配置します。既にCSVを登録した環境でも、Excelを追加したら`configure_connectors`で同じ共通フォルダーを再登録し、カーネルを再起動してください。
+`zizai_runtime-0.0.3.dev0-py3-none-any.whl[forms,excel]`をNotebookのカーネルと同じPython環境に導入します。CSVも使う場合は`[forms,csv,excel]`を指定します。[Excel資産の正本](../connectors/excel/)の`excel_connector.py`と`excel_definition.yaml`を共通フォルダーの`excel/`へ配置します。既にCSVを登録した環境でも、Excelを追加したら`configure_connectors`で同じ共通フォルダーを再登録し、カーネルを再起動してください。
 
 `%load_ext zizai.forms`と`%form`でフォームを表示します。「読み込み」と「範囲読み込み」は、入力ファイル欄の`参照…`から`.xlsx`を選びます。「書き出し」は保存先フォルダーとファイル名を指定します。生成コードをPythonセルへ貼って実行してください。範囲読み込みのヘッダー行とデータ開始行は、指定範囲の先頭を1とします。書き出し先の既定は`output.xlsx`の`シート1`です。`create_or_replace`は対象シートを置換し、`create_or_insert`は既存の対象シートの末尾にヘッダーなしで追記します。生成コードは通常の`import excel_connector`を使います。
 
@@ -92,7 +92,7 @@ CSVの読込・書出と、通常の`import csv_connector`を使うコード生�
 
 CSV依存は2026-11-15に公開情報・PyPI／OSVで既知脆弱性を確認した最新安定版のpandas 3.1.1／NumPy 2.5.4へ更新しました。動作確認済みのVS Codeで、フォームの生成コードをセルへ入力・実行するCSV読込→書出のPlaywright確認も合格しています。これを利用者の手動確認や他環境の合格へ振り替えません。
 
-選択するPython環境へ`zizai_runtime-0.0.3.dev0-py3-none-any.whl[forms,csv]`を導入します。[CSV資産の正本](../../connectors/csv/)の`csv_connector.py`・`csv_definition.yaml`を任意の共通フォルダーの`csv/`へ一度配置します。CSV本体はwheelへ同梱せず、各分析プロジェクトへの複製も不要です。
+選択するPython環境へ`zizai_runtime-0.0.3.dev0-py3-none-any.whl[forms,csv]`を導入します。[CSV資産の正本](../connectors/csv/)の`csv_connector.py`・`csv_definition.yaml`を任意の共通フォルダーの`csv/`へ一度配置します。CSV本体はwheelへ同梱せず、各分析プロジェクトへの複製も不要です。
 
 ```python
 from zizai.connectors import configure_connectors
@@ -110,19 +110,19 @@ configure_connectors("D:/shared/connectors")  # このPython環境へ一度登�
 
 CSV・読み込みを選んで設定し、生成コードを通常のPythonセルへコピーして実行するとDataFrameを返します。書き出しでは入力変数・保存先・ファイル名を確認して実行します。既存ファイルは上書きされます。同じフォームでアクションを切り替えると有効な値を保持するため、ファイル名も確認してください。生成だけではモジュールimportやファイルの読み書きはしません。存在・権限等は実行時にPythonが確認します。
 
-外部YAMLは`module_file: csv_connector.py`で同じフォルダーのPythonモジュールを指定します。生成コードは通常の`import csv_connector`です。登録・フォーム表示・生成だけでコネクタをimportせず、利用者が生成コードを実行したときに読み込みます。共有元の同名モジュールに注意し、更新後はカーネルを再起動してください。外部定義が未配置のコネクタは同梱定義の仮表示です。[CSVの未実行サンプル](../../examples/csv-form.ipynb)を参照してください。
+外部YAMLは`module_file: csv_connector.py`で同じフォルダーのPythonモジュールを指定します。生成コードは通常の`import csv_connector`です。登録・フォーム表示・生成だけでコネクタをimportせず、利用者が生成コードを実行したときに読み込みます。共有元の同名モジュールに注意し、更新後はカーネルを再起動してください。外部定義が未配置のコネクタは同梱定義の仮表示です。[CSVの未実行サンプル](../examples/csv-form.ipynb)を参照してください。
 
 ### キャッシュ
 
-`PYTHONPYCACHEPREFIX`をカーネル起動前に設定すると、キャッシュを指定先へ集約できます。初回登録で作る`.pth`の最小起動設定は、未指定の`sys.pycache_prefix`だけを利用者PC側の`%LOCALAPPDATA%/ZizAI/pycache`へ設定します。既存の指定は尊重します。登録したPython環境のプロセス全体へ適用され、共通フォルダーへのキャッシュ生成を避けます。コネクタ・業務コードは起動時に実行しません。CSV処理本体を高速化する機能ではありません。[採用方針・根拠](../../docs/features/requirements.md)を参照してください。
+`PYTHONPYCACHEPREFIX`をカーネル起動前に設定すると、キャッシュを指定先へ集約できます。初回登録で作る`.pth`の最小起動設定は、未指定の`sys.pycache_prefix`だけを利用者PC側の`%LOCALAPPDATA%/ZizAI/pycache`へ設定します。既存の指定は尊重します。登録したPython環境のプロセス全体へ適用され、共通フォルダーへのキャッシュ生成を避けます。コネクタ・業務コードは起動時に実行しません。CSV処理本体を高速化する機能ではありません。[採用方針・根拠](features/requirements.md)を参照してください。
 
 ## Notebookフォーム（TASK-010当時の記録、開発版0.0.1.dev0）
 
-独自VS Code拡張を使わず、Pythonコードセルの`%form`から出力欄へフォームを表示する実装を追加しています。**現在の生成結果は`{csv.importのコードを生成}`等の仮表示です。実際のCSV／Excel処理コードを生成・実行する機能はありません。** Python関連24テストと配布確認、専用Windows／VS Code InsidersでのPlaywright操作確認を実施済みです。利用者が実際のフォルダー選択・取消時の保持・仮表示の選択とコピーを確認しました。[検証範囲と制限](../../docs/research/notebook-ui/evidence/python-form-preview-20261112.json)を参照してください。
+独自VS Code拡張を使わず、Pythonコードセルの`%form`から出力欄へフォームを表示する実装を追加しています。**現在の生成結果は`{csv.importのコードを生成}`等の仮表示です。実際のCSV／Excel処理コードを生成・実行する機能はありません。** Python関連24テストと配布確認、専用Windows／VS Code InsidersでのPlaywright操作確認を実施済みです。利用者が実際のフォルダー選択・取消時の保持・仮表示の選択とコピーを確認しました。[検証範囲と制限](research/notebook-ui/evidence/python-form-preview-20261112.json)を参照してください。
 
 ### 導入と表示
 
-ローカルPython 3.12以降と既存のVS Code Python／Jupyter環境を使用します。開発・CLI確認環境はWindows／Python 3.14です。フォームにはipywidgets 8.1.9とPyYAML 6.0.3を使い、通常の最小基盤からはオプションとして分離しています。Jupyter公式プロジェクトと公式依存の採用条件・出典は[要件](../../docs/features/requirements.md)に記録しています。
+ローカルPython 3.12以降と既存のVS Code Python／Jupyter環境を使用します。開発・CLI確認環境はWindows／Python 3.14です。フォームにはipywidgets 8.1.9とPyYAML 6.0.3を使い、通常の最小基盤からはオプションとして分離しています。Jupyter公式プロジェクトと公式依存の採用条件・出典は[要件](features/requirements.md)に記録しています。
 
 選択カーネルに配布wheelのforms extraを導入します。NotebookのPythonセルからの例（実際のwheelパスへ置き換える）：
 
@@ -145,7 +145,7 @@ CSV・読み込みを選んで設定し、生成コードを通常のPythonセ�
 
 ### 設定ファイル
 
-省略時は同梱の[forms.yaml](src/zizai/forms.yaml)を使います。独自のファイルを指定すると、その全体を使います。拡張機能用`.vscode/zizai-definitions.yaml`とは別の形式です。
+省略時は同梱の[forms.yaml](../src/forms.yaml)を使います。独自のファイルを指定すると、その全体を使います。拡張機能用`.vscode/zizai-definitions.yaml`とは別の形式です。
 
 ```python
 %form "C:/設定/zizai-form.yaml"
@@ -195,7 +195,7 @@ display(form.root)
 
 `form_definition.py`は設定読込、`form_model.py`は選択・入力確認・仮表示、`forms.py`は表示・フォルダー選択・マジック登録を担当します。importだけでUIやダイアログを開かず、`%form`も明示した`%load_ext`まで登録しません。同名の他のマジックは上書きしません。カーネル再起動後は再登録・再表示が必要で、フォーム設定の自動復元は未実装です。
 
-[未実行サンプルNotebook](../../examples/python-form.ipynb)と[フォームのCLI確認](../../tests/unit/python/README.md)を参照してください。フォーム用extraを選ばなければ従来の最小基盤の通常importにUI依存を要求しません。
+[未実行サンプルNotebook](../examples/python-form.ipynb)と[フォームのCLI確認](../tests/unit/python/README.md)を参照してください。フォーム用extraを選ばなければ従来の最小基盤の通常importにUI依存を要求しません。
 
 ## 保持した最小基盤の記録
 
@@ -207,9 +207,9 @@ distributionは`zizai-runtime`、importは`zizai`です。当時の`0.0.0.dev0`�
 
 | 正本 | wheel内 |
 | --- | --- |
-| `apps/core/src/zizai/__init__.py` | `zizai/__init__.py` |
-| `apps/core/src/zizai/core/__init__.py` | `zizai/core/__init__.py` |
-| `apps/connectors/src/zizai/connectors/__init__.py` | `zizai/connectors/__init__.py` |
+| `src/__init__.py` | `zizai/__init__.py` |
+| `src/core/__init__.py` | `zizai/core/__init__.py` |
+| `src/connectors.py` | `zizai/connectors.py` |
 
 rootの`pyproject.toml`がpackage一覧とソースの対応を明示します。生成されたwheelやsdistのコピーを直接編集せず、上記正本を更新して再ビルドします。Python側でHost・UI・他コネクタ・SDKを自動読込しません。
 
@@ -223,7 +223,7 @@ rootの`pyproject.toml`がpackage一覧とソースの対応を明示します�
 python -m unittest discover -s tests/unit/python -p 'test_*.py' -v
 ```
 
-テストはソースを一時領域へコピーし、既存のsetuptools backendでwheel・sdistを生成します。別cwd・日本語と空白を含む使い捨てvenvへの手動導入を確認し、依存のネットワーク取得や既存Python環境への導入は行いません。詳しくは[独立テストの手順](../../tests/unit/python/README.md)を参照してください。
+テストはソースを一時領域へコピーし、既存のsetuptools backendでwheel・sdistを生成します。別cwd・日本語と空白を含む使い捨てvenvへの手動導入を確認し、依存のネットワーク取得や既存Python環境への導入は行いません。詳しくは[独立テストの手順](../tests/unit/python/README.md)を参照してください。
 
 setuptoolsが導入済みの開発環境でwheelを作る最小入口は、リポジトリ直下から次を実行する方法です。build backendを直接使うコマンドであり、006の標準frontend・固定版・製品配布コマンドが確定した意味ではありません。
 
@@ -241,6 +241,6 @@ python -c 'from setuptools.build_meta import build_wheel; build_wheel("dist")'
 
 ### Vectorの登録・検索
 
-Notebookのカーネル環境に開発版のwheelを `[forms,vector]` 付きで導入し、[Vector資産](../../connectors/vector/) のPythonとYAMLを共通フォルダーの `vector/` に置いて `configure_connectors` で登録します。`%form` の「Vector」から「ベクトルDB構築・更新」または「ベクトル検索」を選べます。初回実行時に埋め込みモデルがローカルにない場合は、モデルの取得が発生します。アクセス先とモデルは利用する環境で確認してください。
+Notebookのカーネル環境に開発版のwheelを `[forms,vector]` 付きで導入し、[Vector資産](../connectors/vector/) のPythonとYAMLを共通フォルダーの `vector/` に置いて `configure_connectors` で登録します。`%form` の「Vector」から「ベクトルDB構築・更新」または「ベクトル検索」を選べます。初回実行時に埋め込みモデルがローカルにない場合は、モデルの取得が発生します。アクセス先とモデルは利用する環境で確認してください。
 
 ベクトルを登録したあと、検索フォームの「検索方法」でコサイン類似度・ユークリッド距離・マンハッタン距離をその都度選びます。登録の「補正検索の詳細設定」で補正を有効にすると、「コサイン類似度（補正込み）」と「コサイン類似度（補正前後を比較）」も使えます。

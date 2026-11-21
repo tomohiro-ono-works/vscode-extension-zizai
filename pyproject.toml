@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "zizai-runtime"
 version = "0.0.3.dev0"
 description = "Python package foundation for ZizAI notebooks"
-readme = "apps/core/README.md"
+readme = "docs/usage.md"
 requires-python = ">=3.12"
 dependencies = []
 
@@ -26,18 +26,17 @@ vector = [
 windows = ["pandas==3.1.1", "numpy==2.5.4"]
 
 [tool.setuptools]
-packages = ["zizai", "zizai.core", "zizai.connectors"]
+packages = ["zizai", "zizai.core"]
 include-package-data = false
 
 [tool.setuptools.package-dir]
-zizai = "apps/core/src/zizai"
-"zizai.connectors" = "apps/connectors/src/zizai/connectors"
+zizai = "src"
 
 [tool.setuptools.package-data]
 zizai = ["forms.yaml", "form.css"]
 
 [tool.setuptools.data-files]
 "share/jupyter/nbextensions/zizai-row-preview" = [
-    "apps/core/src/zizai/widgets/row_preview/extension.js",
-    "apps/core/src/zizai/widgets/row_preview/index.js",
+    "src/widgets/row_preview/extension.js",
+    "src/widgets/row_preview/index.js",
 ]

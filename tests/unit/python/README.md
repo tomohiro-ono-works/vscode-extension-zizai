@@ -1,5 +1,12 @@
 # Pythonパッケージの独立確認
 
+開発用Python環境にZizAIと検証対象のextraを導入してから、リポジトリ直下でテストを実行します。例えば全Python回帰は次のコマンドで確認できます。Vectorの単体テストはダミーの埋め込みを使い、モデルの取得は発生しません。
+
+```shell
+python -m pip install -e ".[forms,csv,excel,duckdb,bigquery,dataintegration,python,shell,windows]"
+python -B -m unittest discover -s tests/unit/python -v
+```
+
 ## TASK-011 CSV・外部コネクタとフォームのCLI確認
 
 CSV用extraも導入した専用環境で、以下の同じunittestコマンドを使います。通常importへの変更後は45件合格です。`test_csv_connector.py`は合意したCSV処理、`test_csv_codegen.py`は安全な生成・生成コードの実行、`test_external_connectors.py`は外部YAML読込・生成時の非実行、`test_connector_import_registration.py`は標準import・利用者側キャッシュ・2つのcwd・移動時の再登録・既存設定の保護を確認します。旧専用load関数の確認は新しい登録・importの確認へ置き換えています。CSVの本体・定義は外部資産で、wheelには共通設定・フォーム等を収録します。依存宣言はforms extraが2件、csv extraが2件の計4件で、基本importは追加SDKを要求しません。実ブラウザー・ネイティブダイアログの確認とは区別します。
@@ -33,7 +40,7 @@ python -m unittest discover -s tests/unit/python -p 'test_*.py' -v
 | テストメソッド | 分類 | 実際の操作・検証経路 |
 | --- | --- | --- |
 | `test_notebook_is_unexecuted_and_uses_a_standard_kernel` | 単体 | Notebook JSONの未実行状態・metadata・セル構文を直接検査 |
-| `test_wheel_contains_both_source_roots_without_unrelated_assets` | API・結合 | build backendを呼び、生成wheelの収録内容を検査 |
+| `test_wheel_contains_the_runtime_without_unrelated_assets` | API・結合 | build backendを呼び、生成wheelの収録内容を検査 |
 | `test_hand_installation_enables_imports_without_source_paths` | API・結合 | 別プロセス・使い捨てvenv・pip導入とimportの前後を照合 |
 | `test_package_imports_do_not_require_optional_sdks` | API・結合 | 実wheelを導入し、別Pythonで不要SDKの読込要求を検査 |
 | `test_import_preserves_cwd_environment_and_search_path` | API・結合 | 実wheelを導入し、別Pythonでimport前後の状態を照合 |
@@ -89,6 +96,6 @@ backendとpipを実行するのはコマンド先頭のPythonで、隔離venvを
 
 003-02のU01〜U05の対象部分を確認します。個別SDK欠落時の処理、共通関数・戻り値、実際のwheel更新とカーネル再起動、正式な契約資産の読込は対象実装が成立してから確認します。現在の最小入口の合格で、これらを合格にしません。
 
-[正本と配布経路](../../../apps/core/README.md)・[設計と確認ケース](https://github.com/tomohiro-ono-works/vscode-extension-zizai/blob/65631504f146a4dfa2ab52d557e58db53c2e6a00/docs/research/python-import/TASK-003-02.md)を参照してください。
+[正本と配布経路](../../../docs/usage.md)・[設計と確認ケース](https://github.com/tomohiro-ono-works/vscode-extension-zizai/blob/65631504f146a4dfa2ab52d557e58db53c2e6a00/docs/research/python-import/TASK-003-02.md)を参照してください。
 
 003-05の[実機手順とNotebook](../../manual/TASK-003-05-python.md)を用意しています。Notebookの診断コードも通常Pythonプロセスと実wheelで確認しますが、ipykernelを起動した結果や、VS Code上のカーネル再起動の合格には数えません。現在は配布5件＋Notebook診断4件の合計9件です。テスト専用のpackage生成・導入処理は`package_test_support.py`へ集約し、製品packageへは収録しません。

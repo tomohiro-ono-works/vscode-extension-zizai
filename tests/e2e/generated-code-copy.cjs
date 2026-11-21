@@ -16,6 +16,7 @@ for (const target of [sessionDir, out]) {
   assert(relative && !relative.startsWith("..") && !path.isAbsolute(relative), "Use results subfolders");
 }
 async function main() {
+  await fs.mkdir(path.dirname(out), { recursive: true });
   await fs.mkdir(out);
   const session = JSON.parse(await fs.readFile(path.join(sessionDir, "session.local.json"), "utf8"));
   const browser = await req("playwright").chromium.connectOverCDP("http://127.0.0.1:" + session.ports[1], { timeout: 8000 });

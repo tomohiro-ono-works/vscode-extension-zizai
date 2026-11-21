@@ -79,7 +79,7 @@
 
 ## Subtasks
 
-担当・状態・完了条件を分ける作業は個別Issueにし、[Subtask本文のひな形](https://github.com/tomohiro-ono-works/vscode-extension-zizai/blob/main/template/subtask.md)を使う。小さなTodoはこのIssue内のチェックリストにする。
+担当・状態・完了条件を分ける作業は個別Issueにし、[Subtask本文のひな形](https://github.com/tomohiro-ono-works/vscode-extension-zizai/blob/main/docs/tasks/templates/subtask.md)を使う。小さなTodoはこのIssue内のチェックリストにする。
 
 | ID | 工程 | 作業名 | Issue | 必須の前提条件 | 相互確認先 |
 | --- | --- | --- | --- | --- | --- |

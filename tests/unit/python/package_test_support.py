@@ -16,7 +16,7 @@ RUNTIME = os.environ.get("ZIZAI_TEST_PYTHON", sys.executable)
 PACKAGE_FILES = {
     "zizai/__init__.py",
     "zizai/core/__init__.py",
-    "zizai/connectors/__init__.py",
+    "zizai/connectors.py",
     "zizai/form_definition.py",
     "zizai/form_model.py",
     "zizai/forms.py",
@@ -59,8 +59,10 @@ class PackageArtifactTestCase(unittest.TestCase):
         cls.built_wheel = None
 
     def run_process(self, arguments, *, cwd=None):
+        environment = os.environ.copy()
+        environment.pop("PYTHONPATH", None)
         result = subprocess.run(
-            arguments, cwd=cwd or self.outside,
+            arguments, cwd=cwd or self.outside, env=environment,
             capture_output=True, text=True, encoding="utf-8", errors="replace",
             timeout=120,
         )
@@ -84,11 +86,13 @@ class PackageArtifactTestCase(unittest.TestCase):
             self.source.mkdir()
             shutil.copy2(REPO / "pyproject.toml", self.source)
             shutil.copy2(REPO / "README.md", self.source)
+            (self.source / "docs").mkdir()
+            shutil.copy2(REPO / "docs" / "usage.md", self.source / "docs")
             shutil.copytree(
-                REPO / "apps", self.source / "apps",
+                REPO / "src", self.source / "src",
                 ignore=shutil.ignore_patterns("__pycache__", "*.egg-info", "node_modules", "*.vsix"),
             )
-            unrelated = self.source / "apps" / "extension" / "unrelated.py"
+            unrelated = self.source / "unrelated" / "__init__.py"
             unrelated.parent.mkdir(parents=True, exist_ok=True)
             unrelated.write_text("raise RuntimeError('not a Python package asset')\n")
             (self.source / "private-input.csv").write_text("private fixture\n")

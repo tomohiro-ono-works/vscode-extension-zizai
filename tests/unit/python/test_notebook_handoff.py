@@ -62,7 +62,7 @@ class NotebookHandoffTests(PackageArtifactTestCase):
                 for name, path in [
                     ("zizai", "zizai/__init__.py"),
                     ("zizai.core", "zizai/core/__init__.py"),
-                    ("zizai.connectors", "zizai/connectors/__init__.py"),
+                    ("zizai.connectors", "zizai/connectors.py"),
                 ]
             }
         self.assertEqual({item["module"]: item["sha256"] for item in report["files"]}, expected)
@@ -89,7 +89,7 @@ class NotebookHandoffTests(PackageArtifactTestCase):
         shadow = self.root / "shadow"
         shadow.mkdir()
         with zipfile.ZipFile(wheel) as archive:
-            for name in ["zizai/__init__.py", "zizai/core/__init__.py", "zizai/connectors/__init__.py"]:
+            for name in ["zizai/__init__.py", "zizai/core/__init__.py", "zizai/connectors.py"]:
                 path = shadow / name
                 path.parent.mkdir(parents=True, exist_ok=True)
                 path.write_bytes(archive.read(name))

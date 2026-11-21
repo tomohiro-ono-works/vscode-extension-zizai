@@ -8,16 +8,17 @@ import subprocess
 import sys
 import sysconfig
 import tempfile
-import unittest
 from unittest.mock import patch
+from zipfile import ZipFile
 
+from package_test_support import PackageArtifactTestCase
 import source_test_support
 from zizai.connectors import configure_connectors
 from zizai.form_definition import load_definition
 from zizai.form_model import FormModel
 
 
-class ConnectorImportRegistrationTests(unittest.TestCase):
+class ConnectorImportRegistrationTests(PackageArtifactTestCase):
     def setUp(self):
         self.temp=tempfile.TemporaryDirectory(prefix='zizai-import-')
         self.addCleanup(self.temp.cleanup)
@@ -47,19 +48,20 @@ class ConnectorImportRegistrationTests(unittest.TestCase):
         self.register()
         pth=self.site/'zizai-connectors.pth'
         self.assertTrue(pth.is_file())
+        with ZipFile(self.wheel()) as wheel:
+            wheel.extractall(self.site, members=[name for name in wheel.namelist() if name.startswith('zizai/')])
         # Isolate this fake site directory from an already registered real env.
         # Dependencies still come from the interpreter's installed site-packages.
         source='''import site,sys,json
-sys.path.append(sys.argv[3])
+sys.path.append(sys.argv[2])
 site.addsitedir(sys.argv[1])
-sys.path.insert(0,sys.argv[2])
 import csv_connector
 print(json.dumps({'file':csv_connector.__file__,'cache':sys.pycache_prefix}))
 '''
         for project_name in ('analysis-a','analysis-b'):
             project=self.root/project_name;project.mkdir()
             proc=subprocess.run([sys.executable,'-S','-X','utf8','-c',source,str(self.site),
-                str(source_test_support.REPO/'apps/core/src'),sysconfig.get_path('purelib')],cwd=project,
+                sysconfig.get_path('purelib')],cwd=project,
                 env={**os.environ,**self.env},capture_output=True,text=True,encoding='utf-8',check=True)
             data=json.loads(proc.stdout)
             self.assertEqual(Path(data['file']).resolve(),(self.shared/'csv/csv_connector.py').resolve())

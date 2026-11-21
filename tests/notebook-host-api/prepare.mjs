@@ -39,7 +39,7 @@ const probeWorkspace = {
 };
 await writeFile(path.join(dist, 'probe.code-workspace'), JSON.stringify(probeWorkspace, null, 2) + '\n');
 await writeFile(path.join(dist, 'save-followup.code-workspace'), JSON.stringify({ ...probeWorkspace, settings: { ...probeWorkspace.settings, 'window.title': 'TASK-002-01 保存追加確認 ${activeEditorShort}' } }, null, 2) + '\n');
-const profile = path.join(root, 'config/task-002-01-desktop/User');
+const profile = path.join(root, 'results/task-002-01/profile/User');
 await mkdir(profile, { recursive: true });
 const settingsFile = path.join(profile, 'settings.json');
 let settings = {};

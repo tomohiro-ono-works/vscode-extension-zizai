@@ -32,6 +32,7 @@ async function main() {
     await action(); progress.steps.push({ name, passed: true }); await save();
   }
   if (mode === "prepare") {
+    await fs.mkdir(path.dirname(out), { recursive: true });
     await fs.mkdir(out);
     await step("prepare-synthetic-sample", async () => {
       await fs.mkdir(data);

@@ -8,7 +8,7 @@
       "runtimeExecutable": "${execPath}",
       "args": [
         "--extensionDevelopmentPath=${workspaceFolder}/tests/notebook-host-api/dist",
-        "--user-data-dir=${workspaceFolder}/config/task-002-01-desktop",
+        "--user-data-dir=${workspaceFolder}/results/task-002-01/profile",
         "--disable-extension=google.colab",
         "${workspaceFolder}/tests/notebook-host-api/dist/probe.code-workspace",
         "${workspaceFolder}/results/task-002-01/workspace/D1-structure.ipynb"

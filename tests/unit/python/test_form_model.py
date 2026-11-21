@@ -2,10 +2,8 @@
 import copy
 from importlib.resources import files
 from pathlib import Path
-import sys
 import unittest
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[3] / 'apps/core/src'))
 from zizai.form_definition import load_definition, parse_definition
 from zizai.form_model import FormModel
 

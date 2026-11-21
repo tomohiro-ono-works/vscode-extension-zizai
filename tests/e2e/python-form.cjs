@@ -20,7 +20,10 @@ async function main() {
   const seedArgument = process.argv.find(value => value.startsWith("--extension-seed="));
   const extensionSeed = seedArgument ? path.resolve(seedArgument.slice("--extension-seed=".length))
     : path.join(process.env.USERPROFILE, ".vscode/extensions");
-  if (!resume) await fs.mkdir(out);
+  if (!resume) {
+    await fs.mkdir(path.dirname(out), { recursive: true });
+    await fs.mkdir(out);
+  }
   const workspace = path.join(out, "workspace");
   const profile = path.join(out, "profile");
   const extensions = path.join(out, "extensions");
