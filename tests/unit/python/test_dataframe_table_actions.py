@@ -132,6 +132,7 @@ class DataFrameTableActionsTests(unittest.TestCase):
 
     def test_pivot_previews_multiple_columns_and_aggregates_repeated_keys(self):
         import pandas as pd
+        from ipywidgets import Checkbox
 
         data = pd.DataFrame({'店': ['東京'] * 3, '部門': ['食品'] * 3, '年': [2026] * 3,
                              '月': ['4月', '4月', '5月'], '売上': [100, 20, 150], '件数': [1, 1, 3]})
@@ -139,10 +140,17 @@ class DataFrameTableActionsTests(unittest.TestCase):
         for picker, selected in (
             (editor.keep, ('店', '部門')), (editor.pivot_by, ('年', '月')), (editor.measures, ('売上', '件数'))
         ):
-            self.assertEqual(picker.selection.layout.display, 'none')
+            self.assertEqual(picker.options.layout.display, 'none')
             picker.toggle.value = True
-            self.assertEqual(picker.selection.layout.display, '')
-            picker.selection.value = selected
+            self.assertEqual(picker.options.layout.display, '')
+            options = {option.description: option for option in picker.options.children}
+            for name in selected:
+                self.assertIsInstance(options[name], Checkbox)
+                options[name].value = True
+            picker.toggle.value = False
+            self.assertEqual(picker.value, selected)
+            picker.toggle.value = True
+            self.assertTrue(all(options[name].value for name in selected))
             picker.toggle.value = False
         self.assertTrue(form.generate_button.disabled)
         self.assertIn('集計方法を選択', editor.status.value)
@@ -165,8 +173,11 @@ class DataFrameTableActionsTests(unittest.TestCase):
                              '4月': list(range(35)), '5月': [99] * 35, 'メモ': ['対象外'] * 35})
         form, editor = self.open_form('reshape_rows', left=data)
         editor.mode.value = 'unpivot'
-        editor.keep.selection.value = ('店舗', '部門')
-        editor.unpivot_by.selection.value = ('4月', '5月')
+        for picker, selected in ((editor.keep, ('店舗', '部門')), (editor.unpivot_by, ('4月', '5月'))):
+            picker.toggle.value = True
+            for option in picker.options.children:
+                option.value = option.description in selected
+            picker.toggle.value = False
         editor.key_name.value = '月'
         editor.value_name.value = '金額'
         self.assertIn('入力の先頭30行', editor.preview.value)

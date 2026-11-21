@@ -267,27 +267,37 @@ class CombineEditor(TableEditor):
 
 
 class MultiColumnDropdown:
-    def __init__(self, label, columns):
+    def __init__(self, label, columns, on_change):
         self.label = label
+        self._columns = tuple(columns)
+        self._on_change = on_change
         self.toggle = widgets.ToggleButton(
-            description=label, icon='chevron-down', tooltip='CtrlまたはShiftで複数選択',
+            description=label, icon='chevron-down', tooltip=f'{label}を選択',
             layout=widgets.Layout(width='100%'))
         self.toggle.add_class('zizai-column-picker-toggle')
-        self.selection = widgets.SelectMultiple(
-            description=label, options=list(columns), rows=6, layout=widgets.Layout(width='100%', display='none'))
-        self.selection.style.description_width = 'initial'
-        self.root = widgets.VBox([self.toggle, self.selection], layout=widgets.Layout(width='auto'))
+        self.options = widgets.VBox(layout=widgets.Layout(width='100%', display='none'))
+        self.options.add_class('zizai-column-picker-options')
+        self.root = widgets.VBox([self.toggle, self.options], layout=widgets.Layout(width='auto'))
         self.root.add_class('zizai-column-picker')
         self.toggle.observe(self._toggle, names='value')
-        self.selection.observe(self._summarize, names='value')
+
+    @property
+    def value(self):
+        return tuple(option.description for option in self.options.children if option.value)
 
     def _toggle(self, change):
         is_open = change['new']
-        self.selection.layout.display = '' if is_open else 'none'
+        if is_open and not self.options.children:
+            options = [widgets.Checkbox(description=column, indent=False, layout=widgets.Layout(width='100%'))
+                       for column in self._columns]
+            for option in options:
+                option.observe(self._summarize, names='value')
+            self.options.children = tuple(options)
+        self.options.layout.display = '' if is_open else 'none'
         self.toggle.icon = 'chevron-up' if is_open else 'chevron-down'
 
-    def _summarize(self, change):
-        choices = change['new']
+    def _summarize(self, _change):
+        choices = self.value
         if len(choices) == 1:
             self.toggle.description = f'{self.label}　{choices[0]}'
         elif choices:
@@ -295,10 +305,11 @@ class MultiColumnDropdown:
         else:
             self.toggle.description = self.label
         suffix = f'　選択済み: {"、".join(choices)}' if choices else ''
-        self.toggle.tooltip = 'CtrlまたはShiftで複数選択' + suffix
+        self.toggle.tooltip = f'{self.label}を選択' + suffix
+        self._on_change()
 
     def close(self):
-        _close_widgets([self.selection, self.toggle, self.root])
+        _close_widgets([*self.options.children, self.options, self.toggle, self.root])
 
 
 class ReshapeEditor(TableEditor):
@@ -306,10 +317,10 @@ class ReshapeEditor(TableEditor):
         super().__init__(source, on_change)
         self._sample = source.head(MAX_ROWS).copy()
         self.mode = _dropdown('操作', [('ピボット', 'pivot'), ('アンピボット', 'unpivot')], value='pivot')
-        self.keep = MultiColumnDropdown('残す列', self.columns)
-        self.pivot_by = MultiColumnDropdown('ピボットする列', self.columns)
-        self.measures = MultiColumnDropdown('集計列', self.columns)
-        self.unpivot_by = MultiColumnDropdown('アンピボットする列', self.columns)
+        self.keep = MultiColumnDropdown('残す列', self.columns, self.refresh)
+        self.pivot_by = MultiColumnDropdown('ピボットする列', self.columns, self.refresh)
+        self.measures = MultiColumnDropdown('集計列', self.columns, self.refresh)
+        self.unpivot_by = MultiColumnDropdown('アンピボットする列', self.columns, self.refresh)
         self.pickers = (self.keep, self.pivot_by, self.measures, self.unpivot_by)
         self.method = _dropdown('集計方法', [('集計なし', 'none'),
                                           *((label, method) for method, label in AGGREGATIONS.items())], value='none')
@@ -324,7 +335,6 @@ class ReshapeEditor(TableEditor):
         self.settings_row.add_class('zizai-table-step-row')
         self._owned.extend([self.mode, self.method, self.key_name, self.value_name, self.preview, self.settings_row])
         for picker in self.pickers:
-            picker.selection.observe(self.refresh, names='value')
             picker.toggle.observe(self._close_other_pickers, names='value')
         for field in (self.method, self.key_name, self.value_name):
             field.observe(self.refresh, names='value')
@@ -349,14 +359,14 @@ class ReshapeEditor(TableEditor):
         self.refresh()
 
     def settings(self):
-        keep = list(self.keep.selection.value)
+        keep = list(self.keep.value)
         if self.mode.value == 'pivot':
-            pivot_by, values = list(self.pivot_by.selection.value), list(self.measures.selection.value)
+            pivot_by, values = list(self.pivot_by.value), list(self.measures.value)
             if not (keep and pivot_by and values):
                 return None
             return {'mode': 'pivot', 'keep': keep, 'pivot_by': pivot_by,
                     'values': values, 'method': None if self.method.value == 'none' else self.method.value}
-        columns = list(self.unpivot_by.selection.value)
+        columns = list(self.unpivot_by.value)
         if not columns:
             return None
         return {'mode': 'unpivot', 'keep': keep, 'unpivot_by': columns,
