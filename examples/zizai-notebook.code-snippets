@@ -1,11 +1,18 @@
 {
+  "ZizAIを読み込む": {
+    "scope": "python",
+    "prefix": "@zizai_load",
+    "body": [
+      "%load_ext zizai.forms"
+    ],
+    "description": "このカーネルでZizAIを使えるようにする"
+  },
   "ZizAIフォームを開く": {
     "scope": "python",
     "prefix": "@zizai_form",
     "body": [
-      "%load_ext zizai.forms",
-      "%form"
+      "%zizai_form"
     ],
-    "description": "ZizAIフォームを開く"
+    "description": "ZizAIのフォームを表示する"
   }
 }

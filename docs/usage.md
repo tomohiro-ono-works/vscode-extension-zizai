@@ -4,29 +4,29 @@
 
 [環境構築Notebook](../examples/setup-zizai.ipynb)を開き、冒頭のPowerShell手順で先に `.venv` を作成して `ipykernel` を導入します。Notebook右上で `.venv\Scripts\python.exe` をカーネルに選んでから、0のコードセルを実行してください。コネクタ登録後は同じカーネルを再起動し、0と④を実行します。
 
-セットアップ手順⑤でVS Codeに `@zizai_form` を登録できます。Pythonセルで入力し、候補を選んでからセルを実行するとフォームが開きます。
+セットアップ手順⑤でスニペットを登録できます。カーネルを起動・再起動したら `@zizai_load` で読み込み、フォームを開くときに `@zizai_form` を使います。
 
 ## Windowsのファイル操作（TASK-027）
 
 Notebookのカーネルに `[forms,windows]` 付きのwheelを導入します。[Windows資産](../connectors/windows/)のPythonとYAMLを共通フォルダーの `windows/` へ置き、`configure_connectors` で登録します。
 
-`%form` の「Windows」から、ファイル名検索、ファイル内の文字列検索、Markdown作成、ファイル名の変更・移動を選べます。生成したコードをNotebookのPythonセルで実行すると、検索結果は `df`、保存や移動の結果は `result` に入ります。移動先に同名ファイルがあると停止します。Markdownは既定で新規作成し、追記・上書きは書き込み方法で選びます。
+`%zizai_form` の「Windows」から、ファイル名検索、ファイル内の文字列検索、Markdown作成、ファイル名の変更・移動を選べます。生成したコードをNotebookのPythonセルで実行すると、検索結果は `df`、保存や移動の結果は `result` に入ります。移動先に同名ファイルがあると停止します。Markdownは既定で新規作成し、追記・上書きは書き込み方法で選びます。
 
 「クリック」「文字入力」「キー入力」には操作の前後それぞれに待機秒数を指定できます（既定は0秒）。ローカルWindowsで生成コードを実行すると、指定座標や操作時点のカーソル位置・入力先が対象になります。アプリを切り替える場合は、操作前の待機中に切り替えてください。
 
 ## Windowsバッチファイル実行（TASK-018）
 
-`[forms,shell]` 付きのwheelを導入し、[Shell資産](../connectors/shell/)を共通フォルダーへ登録します。`%form` の「Shell」→「バッチファイル実行」で、`参照…` から `.bat` を選びます。引数が必要な場合は `["入力 1", "入力 2"]` のようなJSON配列を入力します。生成コードを実行すると標準出力・標準エラー・終了コードを受け取れます。
+`[forms,shell]` 付きのwheelを導入し、[Shell資産](../connectors/shell/)を共通フォルダーへ登録します。`%zizai_form` の「Shell」→「バッチファイル実行」で、`参照…` から `.bat` を選びます。引数が必要な場合は `["入力 1", "入力 2"]` のようなJSON配列を入力します。生成コードを実行すると標準出力・標準エラー・終了コードを受け取れます。
 
 ## Python実行（TASK-016）
 
-`[forms,python]` 付きのwheelを導入し、[Python資産](../connectors/python/)を共通フォルダーの `python/` へ配置して `configure_connectors` で再登録します。`%form` の「Python」→「Python実行（ファイル）」で、引数なしの `main()` を持つ `.py` ファイルを `参照…` から選びます。
+`[forms,python]` 付きのwheelを導入し、[Python資産](../connectors/python/)を共通フォルダーの `python/` へ配置して `configure_connectors` で再登録します。`%zizai_form` の「Python」→「Python実行（ファイル）」で、引数なしの `main()` を持つ `.py` ファイルを `参照…` から選びます。
 
 生成コードを実行すると、Notebookのカーネルと同じPython環境で `main()` が動き、戻り値が出力変数（初期値 `result`）に入ります。スクリプトが利用するライブラリはカーネルの環境に導入してください。
 
 ## RENAMEリストで列名変更（TASK-015）
 
-カーネルと同じPython環境にwheelを`[forms,dataintegration]`付きで導入します。[データ統合資産](../connectors/dataintegration/)を共通フォルダーの`dataintegration/`へ配置し、`configure_connectors`で再登録します。`%form`の「データ統合」→「RENAMEリストで列名変更」で入力変数を指定し、`参照…`からRENAMEのCSVファイルを選びます。生成コードをPythonセルで実行すると、変更後のDataFrameが初期値 `renamed_df` の出力変数に入ります。
+カーネルと同じPython環境にwheelを`[forms,dataintegration]`付きで導入します。[データ統合資産](../connectors/dataintegration/)を共通フォルダーの`dataintegration/`へ配置し、`configure_connectors`で再登録します。`%zizai_form`の「データ統合」→「RENAMEリストで列名変更」で入力変数を指定し、`参照…`からRENAMEのCSVファイルを選びます。生成コードをPythonセルで実行すると、変更後のDataFrameが初期値 `renamed_df` の出力変数に入ります。
 
 ```csv
 origin_name,replaced_name,description,ziz_datatype
@@ -38,7 +38,7 @@ origin_name,replaced_name,description,ziz_datatype
 
 ## DataFrameの条件・値加工（TASK-021・TASK-022）
 
-`%form` の「データ統合 → 条件・値加工」で入力DataFrameを選びます。処理一覧の下のフォームで対象列、処理分類、操作の順に選びます。「編集」を押すと、その処理の直下にフォームが表示されます。
+`%zizai_form` の「データ統合 → 条件・値加工」で入力DataFrameを選びます。処理一覧の下のフォームで対象列、処理分類、操作の順に選びます。「編集」を押すと、その処理の直下にフォームが表示されます。
 
 生成コードは一覧の上から順に全行を処理し、元表を保持したまま結果を `processed_df` に返します。例えば、値を加算してから条件を設定すると、加算後の値で抽出します。
 
@@ -48,7 +48,7 @@ origin_name,replaced_name,description,ziz_datatype
 
 ## DataFrameの列操作（TASK-020）
 
-Notebookのカーネルに `[forms,dataintegration]` 付きの更新wheelを導入し、共通フォルダーにあるデータ統合のPythonとYAMLを更新してカーネルを再起動します。DataFrameを作成したあとに `%form` を表示し、「データ統合」→「列操作」から入力の変数を選びます。
+Notebookのカーネルに `[forms,dataintegration]` 付きの更新wheelを導入し、共通フォルダーにあるデータ統合のPythonとYAMLを更新してカーネルを再起動します。DataFrameを作成したあとに `%zizai_form` を表示し、「データ統合」→「列操作」から入力の変数を選びます。
 
 列見出しを右クリックすると削除と型変換を選べます。型変換は表の上で変換先を選び、「変更を追加」で確定します。削除予定の列は灰色になり、右クリックの「元に戻す」で復元できます。列名はダブルクリックで編集し、Enterで確定します。並び替えは列見出しをドラッグ＆ドロップします。
 
@@ -58,13 +58,13 @@ Notebookのカーネルに `[forms,dataintegration]` 付きの更新wheelを導�
 
 ## BigQueryフォーム（TASK-014）
 
-カーネルと同じ環境に開発版のwheelを`[forms,bigquery]`付きで導入します。[BigQuery資産](../connectors/bigquery/)を共通フォルダーの `bigquery/` に置き、`configure_connectors` で再登録します。`%form` のBigQueryから「SQL実行（ファイル）」または「データロード」を選んでコードを生成します。SQL実行では `参照…` から `.sql` を選びます。出力変数の初期値は `result` です。生成コードを実行すると、指定したプロジェクトと既存のApplication Default Credentialsを使用します。
+カーネルと同じ環境に開発版のwheelを`[forms,bigquery]`付きで導入します。[BigQuery資産](../connectors/bigquery/)を共通フォルダーの `bigquery/` に置き、`configure_connectors` で再登録します。`%zizai_form` のBigQueryから「SQL実行（ファイル）」または「データロード」を選んでコードを生成します。SQL実行では `参照…` から `.sql` を選びます。出力変数の初期値は `result` です。生成コードを実行すると、指定したプロジェクトと既存のApplication Default Credentialsを使用します。
 
 ロードの初期値は「新規／空テーブル」です。既存データを追記・置換する場合は対応するモードを選択します。任意のロード用スキーマは `[{"name":"id","type":"INTEGER"}]` のようなBigQuery形式です。
 
 ## DuckDBフォーム（TASK-013）
 
-Notebookのカーネルと同じPython環境に開発版のwheelを `[forms,duckdb]` 付きで導入します。[DuckDB資産](../connectors/duckdb/)を共通フォルダーの `duckdb/` に置き、`configure_connectors` で登録してからカーネルを再起動します。`%form` で「DuckDB」→「DBファイル作成」を選び、保存先フォルダーとファイル名を指定します。生成コードを実行するとDBファイルの情報が `result` に入ります。既存DBを指定した場合は中のテーブルを保持します。
+Notebookのカーネルと同じPython環境に開発版のwheelを `[forms,duckdb]` 付きで導入します。[DuckDB資産](../connectors/duckdb/)を共通フォルダーの `duckdb/` に置き、`configure_connectors` で登録してからカーネルを再起動します。`%zizai_form` で「DuckDB」→「DBファイル作成」を選び、保存先フォルダーとファイル名を指定します。生成コードを実行するとDBファイルの情報が `result` に入ります。既存DBを指定した場合は中のテーブルを保持します。
 
 「SQL実行（ファイル）」では、既存のDBとSQLファイルをそれぞれ `参照…` から選びます。SQLからはそのDB内のテーブルを参照できます。SQLファイルの文字コードはUTF-8、Shift_JIS、CP932から選べます。
 
@@ -74,7 +74,7 @@ Notebookのカーネルと同じPython環境に開発版のwheelを `[forms,duck
 
 `zizai_runtime-0.0.3.dev0-py3-none-any.whl[forms,excel]`をNotebookのカーネルと同じPython環境に導入します。CSVも使う場合は`[forms,csv,excel]`を指定します。[Excel資産の正本](../connectors/excel/)の`excel_connector.py`と`excel_definition.yaml`を共通フォルダーの`excel/`へ配置します。既にCSVを登録した環境でも、Excelを追加したら`configure_connectors`で同じ共通フォルダーを再登録し、カーネルを再起動してください。
 
-`%load_ext zizai.forms`と`%form`でフォームを表示します。「読み込み」と「範囲読み込み」は、入力ファイル欄の`参照…`から`.xlsx`を選びます。「書き出し」は保存先フォルダーとファイル名を指定します。生成コードをPythonセルへ貼って実行してください。範囲読み込みのヘッダー行とデータ開始行は、指定範囲の先頭を1とします。書き出し先の既定は`output.xlsx`の`シート1`です。`create_or_replace`は対象シートを置換し、`create_or_insert`は既存の対象シートの末尾にヘッダーなしで追記します。生成コードは通常の`import excel_connector`を使います。
+`%load_ext zizai.forms`と`%zizai_form`でフォームを表示します。「読み込み」と「範囲読み込み」は、入力ファイル欄の`参照…`から`.xlsx`を選びます。「書き出し」は保存先フォルダーとファイル名を指定します。生成コードをPythonセルへ貼って実行してください。範囲読み込みのヘッダー行とデータ開始行は、指定範囲の先頭を1とします。書き出し先の既定は`output.xlsx`の`シート1`です。`create_or_replace`は対象シートを置換し、`create_or_insert`は既存の対象シートの末尾にヘッダーなしで追記します。生成コードは通常の`import excel_connector`を使います。
 
 ### CSV・Excelの行プレビュー
 
@@ -111,7 +111,7 @@ configure_connectors("D:/shared/connectors")  # このPython環境へ一度登�
 
 ```python
 %load_ext zizai.forms
-%form
+%zizai_form
 ```
 
 CSV・読み込みを選んで設定し、生成コードを通常のPythonセルへコピーして実行するとDataFrameを返します。書き出しでは入力変数・保存先・ファイル名を確認して実行します。既存ファイルは上書きされます。同じフォームでアクションを切り替えると有効な値を保持するため、ファイル名も確認してください。生成だけではモジュールimportやファイルの読み書きはしません。存在・権限等は実行時にPythonが確認します。
@@ -248,6 +248,6 @@ python -c 'from setuptools.build_meta import build_wheel; build_wheel("dist")'
 
 ### Vectorの登録・検索
 
-Notebookのカーネル環境に開発版のwheelを `[forms,vector]` 付きで導入し、[Vector資産](../connectors/vector/) のPythonとYAMLを共通フォルダーの `vector/` に置いて `configure_connectors` で登録します。`%form` の「Vector」から「ベクトルDB構築・更新」または「ベクトル検索」を選べます。初回実行時に埋め込みモデルがローカルにない場合は、モデルの取得が発生します。アクセス先とモデルは利用する環境で確認してください。
+Notebookのカーネル環境に開発版のwheelを `[forms,vector]` 付きで導入し、[Vector資産](../connectors/vector/) のPythonとYAMLを共通フォルダーの `vector/` に置いて `configure_connectors` で登録します。`%zizai_form` の「Vector」から「ベクトルDB構築・更新」または「ベクトル検索」を選べます。初回実行時に埋め込みモデルがローカルにない場合は、モデルの取得が発生します。アクセス先とモデルは利用する環境で確認してください。
 
 ベクトルを登録したあと、検索フォームの「検索方法」でコサイン類似度・ユークリッド距離・マンハッタン距離をその都度選びます。登録の「補正検索の詳細設定」で補正を有効にすると、「コサイン類似度（補正込み）」と「コサイン類似度（補正前後を比較）」も使えます。
