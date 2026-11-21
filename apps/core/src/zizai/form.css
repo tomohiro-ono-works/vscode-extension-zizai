@@ -166,6 +166,11 @@
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis
 }
 .zizai-form .zizai-operation-list {gap:4px}
+.zizai-form .zizai-operation-editor {gap:8px;padding-top:6px}
+.zizai-form .zizai-operation-editor-inline {
+  padding:10px 12px;background:#f4f6f5;border:1px solid var(--zizai-border);border-radius:6px
+}
+.zizai-form .zizai-operation-expression textarea {min-height:82px}
 .zizai-form .zizai-operation-entry {
   gap:12px;padding:6px 8px;border:1px solid var(--zizai-border);border-radius:6px
 }

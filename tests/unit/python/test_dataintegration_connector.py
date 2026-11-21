@@ -50,7 +50,7 @@ class DataIntegrationConnectorTests(unittest.TestCase):
                 return scope['processed_df']
 
             self.assertEqual(result()['数量'].tolist(), [12])
-            entry = editor.entries.rows.children[0]
+            entry = editor.entries.items[0]
             self.assertEqual([btn.description for btn in entry.children[-2:]], ['編集', '削除'])
             entry.children[-2].click()
             self.assertEqual(value.fields['expression'].value, '数量 + 10')
@@ -122,7 +122,7 @@ class DataIntegrationConnectorTests(unittest.TestCase):
             form.field_widgets['input_variable'].value = 'df'
             editor = form._dataframe_editor
             self.assertFalse(hasattr(editor, 'grid'))
-            self.assertIs(editor.settings.children[-1], editor.apply)
+            self.assertIs(editor._settings_row.children[-1], editor.apply)
             editor.category.value = 'condition'
             row = editor.row_fields
             row.column.value = '数量'
@@ -134,13 +134,13 @@ class DataIntegrationConnectorTests(unittest.TestCase):
             row.comparison.value = 'less'
             row.value.value = '3'
             editor.apply.click()
-            self.assertEqual(len(editor.entries.rows.children), 2)
-            editor.entries.rows.children[0].children[-1].click()
+            self.assertEqual(len(editor.entries.items), 2)
+            editor.entries.items[0].children[-1].click()
             form.generate_button.click()
             namespace = {'df': source}
             exec(compile(form.result, '<generated-remaining-condition>', 'exec'), namespace)
             self.assertEqual(namespace['processed_df']['数量'].tolist(), [0, 1, 2])
-            editor.entries.rows.children[0].children[-1].click()
+            editor.entries.items[0].children[-1].click()
             self.assertTrue(form.generate_button.disabled)
             row.column.value = False
             row.action.value = 'tail'
@@ -150,7 +150,7 @@ class DataIntegrationConnectorTests(unittest.TestCase):
             namespace = {'df': source}
             exec(compile(form.result, '<generated-tail>', 'exec'), namespace)
             self.assertEqual(namespace['processed_df']['数量'].tolist(), [38, 39])
-            editor.entries.rows.children[0].children[-1].click()
+            editor.entries.items[0].children[-1].click()
             self.assertTrue(form.generate_button.disabled)
 
     def test_value_operations_generated_code_preserves_input_and_applies_steps(self):
@@ -206,14 +206,14 @@ class DataIntegrationConnectorTests(unittest.TestCase):
             form.field_widgets['input_variable'].value = 'df'
             editor = form._dataframe_editor
             self.assertFalse(hasattr(editor, 'grid'))
-            self.assertIs(editor.settings.children[-1], editor.apply)
+            self.assertIs(editor._settings_row.children[-1], editor.apply)
             editor.category.value = 'value'
             value = editor.value_fields
             self.assertTrue(value.action.disabled)
-            value.column.value = '商品'
+            value.column.value = editor.column.options[0][1]
             value.action.value = 'extract_regex'
-            value.output_mode.value = 'new'
-            value.output_name.value = '番号'
+            value.source.value = '商品'
+            value.new_column.value = '番号'
             value.fields['pattern'].value = '('
             editor.apply.click()
             self.assertIn('正規表現', editor.status.value)
@@ -225,16 +225,15 @@ class DataIntegrationConnectorTests(unittest.TestCase):
             self.assertIn('番号', dict(value.column.options).values())
             value.column.value = '番号'
             value.action.value = 'trim'
-            value.output_mode.value = 'existing'
             editor.apply.click()
-            self.assertEqual(len(editor.entries.rows.children), 2)
-            editor.entries.rows.children[0].children[-1].click()
+            self.assertEqual(len(editor.entries.items), 2)
+            editor.entries.items[0].children[-1].click()
             self.assertIn('削除できません', editor.status.value)
             self.assertEqual(len(editor.operations), 2)
             form.generate_button.click()
             self.assertIn('.str.strip()', form.result)
-            editor.entries.rows.children[1].children[-1].click()
-            editor.entries.rows.children[0].children[-1].click()
+            editor.entries.items[1].children[-1].click()
+            editor.entries.items[0].children[-1].click()
             self.assertTrue(form.generate_button.disabled)
 
     def test_unified_form_keeps_numeric_looking_codes_as_text(self):
@@ -279,8 +278,9 @@ class DataIntegrationConnectorTests(unittest.TestCase):
             exec(compile(form.result, '<typed-conditions>', 'exec'), scope)
             self.assertEqual(scope['processed_df']['コード'].tolist(), ['001'])
 
-    def test_formula_inserts_quoted_column_and_generates_normal_pandas(self):
+    def test_new_column_accepts_multiline_formula_below_list_and_edits_inline(self):
         import pandas as pd
+        from ipywidgets import Textarea
         from zizai.forms import create_form
 
         data = pd.DataFrame({'数量': [2, 3], '税抜 単価': [50, 80], 'コード': ['001', '002']}, index=[4, 7])
@@ -293,17 +293,15 @@ class DataIntegrationConnectorTests(unittest.TestCase):
             form.field_widgets['input_variable'].value = 'df'
             editor = form._dataframe_editor
             value = editor.value_fields
-            editor.column.value = '数量'
-            editor.category.value = 'value'
+            self.assertIs(editor.entries.rows.children[-1], editor.settings)
+            self.assertEqual(editor.column.options[0][0], '新しく作る')
+            editor.column.value = editor.column.options[0][1]
             value.action.value = 'formula'
             entry = value.fields['expression']
-            self.assertEqual(entry.value, '数量')
-            entry.value = '(数量 + 1) *'
-            self.assertNotIn('コード', dict(value.fields['formula_column'].options).values())
-            value.fields['formula_column'].value = '税抜 単価'
-            self.assertEqual(entry.value, '(数量 + 1) * `税抜 単価`')
-            value.output_mode.value = 'new'
-            value.output_name.value = '金額'
+            self.assertIsInstance(entry, Textarea)
+            self.assertIs(editor.settings.children[1], entry)
+            entry.value = '(数量 + 1) *\n    `税抜 単価`'
+            value.new_column.value = '金額'
             editor.apply.click()
             form.generate_button.click()
             self.assertIn("processed_df['金額'] = (processed_df['数量'] + 1) * processed_df['税抜 単価']", form.result)
@@ -315,12 +313,23 @@ class DataIntegrationConnectorTests(unittest.TestCase):
 
             for expression in ('数量.sum()', '数量 / 0', '不明列 + 1', '数量 + コード'):
                 entry.value = expression
-                value.output_name.value = '別の列'
+                value.new_column.value = '別の列'
                 editor.apply.click()
                 self.assertIn('role="alert"', editor.status.value)
                 self.assertEqual(len(editor.operations), 1)
                 form.generate_button.click()
                 self.assertEqual(form.result, total)
+            editor.column.value = '数量'
+            value.action.value = 'formula'
+            value.fields['expression'].value = '数量 + 1'
+            editor.apply.click()
+            first, second = editor.entries.items
+            first.children[-2].click()
+            self.assertEqual(editor.entries.rows.children, (first, editor.settings, second))
+            self.assertEqual(value.new_column.value, '金額')
+            self.assertEqual(value.fields['expression'].value, '(数量 + 1) *\n    `税抜 単価`')
+            editor.cancel.click()
+            self.assertEqual(editor.entries.rows.children, (first, second, editor.settings))
 
     def test_value_operations_join_text_and_reject_zero_division_without_changing_input(self):
         import pandas as pd

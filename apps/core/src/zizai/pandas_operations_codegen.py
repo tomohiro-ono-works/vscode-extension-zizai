@@ -45,13 +45,13 @@ class PandasOperationsCode:
         return f'{self.output}[{self.label(key)}]'
 
     def value(self, step):
-        key, op = step['column'], step['op']
-        column = self.column(key)
+        key, op = step.get('column'), step['op']
+        column = self.column(key) if key is not None else None
         target = f'{self.output}[{step["output"]!r}]' if 'output' in step else column
         text = f"{column}.astype('string').str"
         if op == 'formula':
             expression = ArithmeticFormula(step.get('expression')).to_python(
-                self.column, lambda code, series: self.formula_divisor(key, code, series))
+                self.column, lambda code, series: self.formula_divisor(step.get('output', key), code, series))
         elif op in ARITHMETIC:
             other = self.column(step['other_column']) if 'other_column' in step else repr(step['number'])
             if op == 'divide' and 'other_column' in step:

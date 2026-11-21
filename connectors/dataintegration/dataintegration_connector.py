@@ -320,17 +320,18 @@ def apply_value_operations(data, *, operations):
         if not isinstance(change, dict):
             raise ValueError('値加工の設定が不正です。')
         columns = dict(zip(map(str, frame.columns), frame.columns))
-        key = change.get('column')
-        if not isinstance(key, str) or key not in columns:
-            raise ValueError(f'対象列が見つかりません: {key}')
         output = change.get('output')
+        key = change.get('column')
+        op = change.get('op')
+        new_formula = op == 'formula' and 'output' in change and key is None
+        if not new_formula and (not isinstance(key, str) or key not in columns):
+            raise ValueError(f'対象列が見つかりません: {key}')
         if 'output' in change and (not isinstance(output, str) or not output.strip()):
             raise ValueError('新しい列名を入力してください。')
         if output in columns:
             raise ValueError(f'同じ列名が既にあります: {output}')
         destination = columns[key] if output is None else output
-        series = frame[columns[key]]
-        op = change.get('op')
+        series = None if new_formula else frame[columns[key]]
         if not isinstance(op, str):
             raise ValueError('値加工の操作を指定してください。')
         try:
@@ -351,7 +352,7 @@ def apply_value_operations(data, *, operations):
             else:
                 raise ValueError('未対応の値加工です。')
         except (TypeError, ValueError, OverflowError) as error:
-            raise ValueError(f'「{key}」列: {error}') from error
+            raise ValueError(f'「{output if new_formula else key}」列: {error}') from error
         frame[destination] = result
         changed.add(str(destination))
 

@@ -26,7 +26,7 @@ ACTION_FIELDS = {
     'round': ('digits',),
     'to_null': ('value_type', 'value'),
     'fill_null': ('value_type', 'value'),
-    'formula': ('expression', 'formula_column'),
+    'formula': ('expression',),
 }
 FIELD_LABELS = {
     'search': '検索文字列', 'replacement': '置換後の文字列', 'separator': '区切り文字',
@@ -36,6 +36,7 @@ FIELD_LABELS = {
 NULL_VALUE_TYPES = {
     'text': '文字列', 'numeric': '数値', 'bool': '真偽値', 'datetime': '日付・日時',
 }
+NEW_COLUMN = True
 
 
 def _dropdown(description, options, *, value=None):
@@ -73,64 +74,81 @@ class ValueFields:
         self.column = column
         self.action = _dropdown('操作', [('選択してください', None)])
         self.action.disabled = True
-        self.output_mode = _dropdown(
-            '加工結果', [('対象列を更新', 'existing'), ('新しい列へ出力', 'new')], value='existing')
-        self.output_mode.layout.display = 'none'
-        self.output_name = widgets.Text(description='新しい列名', layout=widgets.Layout(width='auto', display='none'))
-        self.output_name.style.description_width = 'initial'
+        self.new_column = widgets.Text(description='新しい列名', layout=widgets.Layout(width='auto'))
+        self.new_column.style.description_width = 'initial'
+        self.source = _dropdown('入力列', [('選択してください', None)])
+        self.source.observe(self._change_source, names='value')
         self.action.observe(self._select_action, names='value')
-        self.output_mode.observe(self._toggle_output, names='value')
 
     def controls(self):
-        return (self.action, *self.fields.values(), self.output_mode, self.output_name)
+        source = (self.source,) if self._needs_source else ()
+        return (self.action, *source, *(widget for name, widget in self.fields.items() if name != 'expression'))
 
-    def _column_options(self, *, numeric=False):
-        return [('選択してください', None), *((name, name) for name, kind in self._columns.items()
-                                          if not numeric or kind == 'numeric')]
+    @property
+    def _needs_source(self):
+        return self.column.value is NEW_COLUMN and self.action.value not in (None, 'formula')
+
+    def _column_options(self):
+        return [('選択してください', None), *((name, name) for name in self._columns)]
 
     def set_columns(self, columns):
         self._columns = columns
 
     def select_column(self):
         kind = self._columns.get(self.column.value)
-        actions = {**VALUE_ACTIONS.get(kind, {}), **NULL_ACTIONS} if kind is not None else {}
+        if self.column.value is NEW_COLUMN:
+            actions = {'formula': ACTION_LABELS['formula']}
+            for column_kind in dict.fromkeys(self._columns.values()):
+                actions.update(VALUE_ACTIONS.get(column_kind, {}))
+            if self._columns:
+                actions.update(NULL_ACTIONS)
+        else:
+            actions = {**VALUE_ACTIONS.get(kind, {}), **NULL_ACTIONS} if kind is not None else {}
         options = (('選択してください', None), *((label, key) for key, label in actions.items()))
         if options != self.action.options:
             previous = self.action.value
             self.action.options = options
             self.action.value = previous if previous in actions else None
         self.action.disabled = not actions
-        for name, choices in [('other_column', self._column_options()),
-                              ('formula_column', self._column_options(numeric=True)),
-                              ('value_type', self._null_value_options())]:
+        self._sync_source()
+        self._change_source(None)
+
+    @staticmethod
+    def _sync_options(field, choices):
+        if tuple(choices) != field.options:
+            previous = field.value
+            field.options = choices
+            field.value = previous if previous in dict(choices).values() else choices[0][1]
+
+    def _sync_source(self):
+        op = self.action.value
+        choices = [('選択してください', None)]
+        if self._needs_source:
+            choices.extend((name, name) for name, kind in self._columns.items()
+                           if op in NULL_ACTIONS or op in VALUE_ACTIONS.get(kind, {}))
+        self._sync_options(self.source, choices)
+
+    def _change_source(self, _change):
+        for name, choices in [('other_column', self._column_options()), ('value_type', self._null_value_options())]:
             if name in self.fields:
-                field = self.fields[name]
-                if tuple(choices) != field.options:
-                    previous = field.value
-                    field.options = choices
-                    field.value = previous if previous in dict(choices).values() else choices[0][1]
+                self._sync_options(self.fields[name], choices)
         self._on_layout()
 
     def _null_value_options(self):
-        kind = self._columns.get(self.column.value)
+        kind = self._columns.get(self.source.value if self._needs_source else self.column.value)
         types = (kind,) if kind in NULL_VALUE_TYPES else ('text', 'numeric', 'bool')
         return [(NULL_VALUE_TYPES[key], key) for key in types]
 
     def _select_action(self, _change):
         previous = self.fields
+        self._sync_source()
         self.fields = {name: self._make_field(name) for name in ACTION_FIELDS.get(self.action.value, ())}
-        self.output_mode.layout.display = '' if self.action.value else 'none'
-        self._toggle_output(None)
-        if 'formula_column' in self.fields:
-            self.fields['formula_column'].observe(self._insert_formula_column, names='value')
         self._on_layout()
         _close_widgets(previous.values())
 
     def _make_field(self, name):
         if name == 'other_column':
             return _dropdown(FIELD_LABELS[name], self._column_options())
-        if name == 'formula_column':
-            return _dropdown('列を式に追加', self._column_options(numeric=True))
         if name == 'value_type':
             options = self._null_value_options()
             return _dropdown('指定値の型', options, value=options[0][1])
@@ -139,30 +157,32 @@ class ValueFields:
             widget = widgets.IntText(description=FIELD_LABELS[name], value=1 if name == 'position' else 0, layout=layout)
             widget.add_class('zizai-integer')
         elif name == 'expression':
-            widget = widgets.Text(description=FIELD_LABELS[name], value=format_column(self.column.value),
-                                  placeholder='数量 * 単価', layout=widgets.Layout(width='240px'))
+            target = self.column.value
+            widget = widgets.Textarea(description=FIELD_LABELS[name], value=format_column(target) if isinstance(target, str) else '',
+                                      rows=3, placeholder='数量 * 単価', layout=widgets.Layout(width='100%'))
+            widget.add_class('zizai-textarea')
+            widget.add_class('zizai-operation-expression')
         else:
             widget = widgets.Text(description=FIELD_LABELS[name], layout=layout,
                                   placeholder='true / false または値' if name == 'value' else '')
         widget.style.description_width = 'initial'
         return widget
 
-    def _insert_formula_column(self, change):
-        if change['new'] is not None:
-            expression = self.fields['expression']
-            expression.value = f"{expression.value.rstrip()} {format_column(change['new'])}".lstrip()
-            change['owner'].value = None
-
-    def _toggle_output(self, _change):
-        self.output_name.layout.display = '' if self.action.value and self.output_mode.value == 'new' else 'none'
-
     def operation(self):
         op = self.action.value
         if self.column.value is None or op is None:
             raise ValueError('対象列と操作を選択してください。')
-        change = {'op': op, 'column': self.column.value}
-        if self.output_mode.value == 'new':
-            change['output'] = self.output_name.value
+        change = {'op': op}
+        if self.column.value is NEW_COLUMN:
+            change['output'] = self.new_column.value.strip()
+            if not change['output']:
+                raise ValueError('新しい列名を入力してください。')
+            if self._needs_source:
+                if self.source.value is None:
+                    raise ValueError('入力列を選択してください。')
+                change['column'] = self.source.value
+        else:
+            change['column'] = self.column.value
         if op == 'formula':
             change['expression'] = self.fields['expression'].value.strip()
         elif 'value_type' in self.fields:
@@ -184,10 +204,11 @@ class ValueFields:
 
     def load(self, operation):
         action = operation['op']
-        self.column.value = operation['column']
+        self.column.value = NEW_COLUMN if 'output' in operation else operation['column']
         self.action.value = action
-        self.output_mode.value = 'new' if 'output' in operation else 'existing'
-        self.output_name.value = operation.get('output', '')
+        self.new_column.value = operation.get('output', '')
+        if self._needs_source:
+            self.source.value = operation.get('column')
         if 'value_type' in self.fields:
             raw = operation.get('value')
             kind = operation.get('value_type') or (
@@ -200,11 +221,12 @@ class ValueFields:
 
     @staticmethod
     def describe(change):
-        label = f'{change["column"]}　{ACTION_LABELS[change["op"]]}'
-        if 'output' in change:
+        label = f'{change.get("column", change.get("output"))}　{ACTION_LABELS[change["op"]]}'
+        if 'output' in change and 'column' in change:
             label += f' → {change["output"]}'
-        details = [f'{FIELD_LABELS[key]} {value!r}' for key, value in change.items() if key in FIELD_LABELS]
+        details = [f'{FIELD_LABELS[key]} {" ".join(value.splitlines()) if key == "expression" else repr(value)}'
+                   for key, value in change.items() if key in FIELD_LABELS]
         return label + ('　' + '、'.join(details) if details else '')
 
     def close(self):
-        _close_widgets(self.controls())
+        _close_widgets([self.action, self.new_column, self.source, *self.fields.values()])

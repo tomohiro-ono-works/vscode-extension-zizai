@@ -24,8 +24,8 @@ class ArithmeticFormula:
     def __init__(self, expression):
         if not isinstance(expression, str) or not expression.strip():
             raise ValueError('計算式を入力してください。')
-        if len(expression) > 2048 or '\n' in expression or '\r' in expression:
-            raise ValueError('計算式は2048文字以内の1行で入力してください。')
+        if len(expression) > 2048:
+            raise ValueError('計算式は2048文字以内で入力してください。')
         self.columns = {}
         self.expression = self._parse(expression.strip())
 
@@ -40,7 +40,7 @@ class ArithmeticFormula:
             quoted[key] = match[1].replace('``', '`')
             return f' {key} '
 
-        source = _QUOTED_COLUMN.sub(replace_column, expression).strip()
+        source = ' '.join(_QUOTED_COLUMN.sub(replace_column, expression).splitlines()).strip()
         pieces = []
         try:
             for token in tokenize.generate_tokens(StringIO(source).readline):
