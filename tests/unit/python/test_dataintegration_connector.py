@@ -29,9 +29,10 @@ class DataIntegrationConnectorTests(unittest.TestCase):
             editor.category.value = 'value'
             value = editor.value_fields
             value.column.value = '数量'
-            value.category.value = 'numeric'
-            value.action.value = 'add'
-            value.fields['number'].value = '10'
+            self.assertEqual([field.description for field in editor._inputs.children[:3]],
+                             ['対象列', '処理分類', '操作'])
+            value.action.value = 'formula'
+            value.fields['expression'].value = '数量 + 10'
             editor.apply.click()
             editor.category.value = 'condition'
             row = editor.row_fields
@@ -52,8 +53,8 @@ class DataIntegrationConnectorTests(unittest.TestCase):
             entry = editor.entries.rows.children[0]
             self.assertEqual([btn.description for btn in entry.children[-2:]], ['編集', '削除'])
             entry.children[-2].click()
-            self.assertEqual(value.fields['number'].value, '10')
-            value.fields['number'].value = '20'
+            self.assertEqual(value.fields['expression'].value, '数量 + 10')
+            value.fields['expression'].value = '数量 + 20'
             editor.apply.click()
             self.assertEqual(result()['数量'].tolist(), [21, 22])
             editor._move(1, 0, after=False)
@@ -208,9 +209,8 @@ class DataIntegrationConnectorTests(unittest.TestCase):
             self.assertIs(editor.settings.children[-1], editor.apply)
             editor.category.value = 'value'
             value = editor.value_fields
-            self.assertTrue(value.category.disabled)
+            self.assertTrue(value.action.disabled)
             value.column.value = '商品'
-            value.category.value = 'text'
             value.action.value = 'extract_regex'
             value.output_mode.value = 'new'
             value.output_name.value = '番号'
@@ -255,9 +255,12 @@ class DataIntegrationConnectorTests(unittest.TestCase):
             value, row = editor.value_fields, editor.row_fields
             value.column.value = 'コード'
             editor.category.value = 'value'
-            self.assertEqual(set(dict(value.category.options).values()), {None, 'text', 'null'})
+            self.assertIn('extract_regex', dict(value.action.options).values())
+            self.assertNotIn('formula', dict(value.action.options).values())
             value.column.value = '数量'
-            self.assertEqual(set(dict(value.category.options).values()), {None, 'numeric', 'null'})
+            self.assertIn('formula', dict(value.action.options).values())
+            self.assertIn('fill_null', dict(value.action.options).values())
+            self.assertNotIn('add', dict(value.action.options).values())
             row.column.value = '有効'
             editor.category.value = 'condition'
             row.action.value = 'keep'
@@ -275,6 +278,49 @@ class DataIntegrationConnectorTests(unittest.TestCase):
             scope = {'df': source}
             exec(compile(form.result, '<typed-conditions>', 'exec'), scope)
             self.assertEqual(scope['processed_df']['コード'].tolist(), ['001'])
+
+    def test_formula_inserts_quoted_column_and_generates_normal_pandas(self):
+        import pandas as pd
+        from zizai.forms import create_form
+
+        data = pd.DataFrame({'数量': [2, 3], '税抜 単価': [50, 80], 'コード': ['001', '002']}, index=[4, 7])
+        shared = source_test_support.REPO / 'connectors'
+        with patch.object(sys, 'path', [str(shared / 'dataintegration'), *sys.path]):
+            form = create_form(shared, namespace={'df': data})
+            self.addCleanup(form.close)
+            form.connector.value = 'dataintegration'
+            form.action.value = 'apply_data_operations'
+            form.field_widgets['input_variable'].value = 'df'
+            editor = form._dataframe_editor
+            value = editor.value_fields
+            editor.column.value = '数量'
+            editor.category.value = 'value'
+            value.action.value = 'formula'
+            entry = value.fields['expression']
+            self.assertEqual(entry.value, '数量')
+            entry.value = '(数量 + 1) *'
+            self.assertNotIn('コード', dict(value.fields['formula_column'].options).values())
+            value.fields['formula_column'].value = '税抜 単価'
+            self.assertEqual(entry.value, '(数量 + 1) * `税抜 単価`')
+            value.output_mode.value = 'new'
+            value.output_name.value = '金額'
+            editor.apply.click()
+            form.generate_button.click()
+            self.assertIn("processed_df['金額'] = (processed_df['数量'] + 1) * processed_df['税抜 単価']", form.result)
+            scope = {'df': data}
+            exec(compile(form.result, '<generated-formula>', 'exec'), scope)
+            self.assertEqual(scope['processed_df']['金額'].to_dict(), {4: 150, 7: 320})
+            self.assertNotIn('金額', data.columns)
+            total = form.result
+
+            for expression in ('数量.sum()', '数量 / 0', '不明列 + 1', '数量 + コード'):
+                entry.value = expression
+                value.output_name.value = '別の列'
+                editor.apply.click()
+                self.assertIn('role="alert"', editor.status.value)
+                self.assertEqual(len(editor.operations), 1)
+                form.generate_button.click()
+                self.assertEqual(form.result, total)
 
     def test_value_operations_join_text_and_reject_zero_division_without_changing_input(self):
         import pandas as pd

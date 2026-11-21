@@ -266,6 +266,21 @@ def _numeric(series):
     return numeric
 
 
+def _formula_result(frame, columns, expression):
+    from zizai.arithmetic_formula import ArithmeticFormula
+    from pandas.api.types import is_bool_dtype, is_complex_dtype, is_numeric_dtype
+
+    def column(name):
+        if name not in columns:
+            raise ValueError(f'計算式の列が見つかりません: {name}')
+        series = frame[columns[name]]
+        if not is_numeric_dtype(series) or is_bool_dtype(series) or is_complex_dtype(series):
+            raise ValueError(f'「{name}」は数値列ではありません。')
+        return series
+
+    return ArithmeticFormula(expression).evaluate(column)
+
+
 def _timestamp(value):
     if not isinstance(value, str) or not value.strip():
         raise ValueError('日付・日時を入力してください。')
@@ -323,6 +338,8 @@ def apply_value_operations(data, *, operations):
                 result = _text_result(frame, columns, series, change, op)
             elif op in _ARITHMETIC or op in ('round', 'abs'):
                 result = _numeric_result(frame, columns, series, change, op)
+            elif op == 'formula':
+                result = _formula_result(frame, columns, change.get('expression'))
             elif op in ('to_null', 'fill_null'):
                 value = change.get('value')
                 if type(value) not in (str, int, float, bool) or (type(value) is float and not isfinite(value)):

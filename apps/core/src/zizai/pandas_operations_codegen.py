@@ -2,6 +2,8 @@
 from itertools import groupby
 from unicodedata import normalize
 
+from .arithmetic_formula import ArithmeticFormula
+
 
 ARITHMETIC = {'add': '+', 'subtract': '-', 'multiply': '*', 'divide': '/'}
 COMPARISONS = {
@@ -47,7 +49,10 @@ class PandasOperationsCode:
         column = self.column(key)
         target = f'{self.output}[{step["output"]!r}]' if 'output' in step else column
         text = f"{column}.astype('string').str"
-        if op in ARITHMETIC:
+        if op == 'formula':
+            expression = ArithmeticFormula(step.get('expression')).to_python(
+                self.column, lambda code, series: self.formula_divisor(key, code, series))
+        elif op in ARITHMETIC:
             other = self.column(step['other_column']) if 'other_column' in step else repr(step['number'])
             if op == 'divide' and 'other_column' in step:
                 self.lines.extend([f'if {other}.eq(0).any():',
@@ -98,6 +103,13 @@ class PandasOperationsCode:
         else:
             raise ValueError('未対応の値加工です。')
         self.lines.append(f'{target} = {expression}')
+
+    def formula_divisor(self, key, code, series):
+        name = self._name('_divisor')
+        zero = f'{name}.eq(0).any()' if series else f'{name} == 0'
+        self.lines.extend([f'{name} = {code}', f'if {zero}:',
+                           f'    raise ValueError({f"「{key}」列: 0で割ることはできません。"!r})'])
+        return name
 
     def timestamp(self, value):
         return f"{self.use('pandas', 'pd')}.Timestamp({value!r})"
