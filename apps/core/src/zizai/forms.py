@@ -206,7 +206,8 @@ class NotebookForm:
                 if vector_search and name == 'collection_name':
                     widget = self._vector_collection_picker(self.model.values['db_folder'], label)
                 elif vector_search and name == 'batch_search':
-                    widget = widgets.ToggleButtons(options=[('検索文', False), ('DataFrame', True)], value=value)
+                    widget = widgets.ToggleButtons(options=[('検索文', False), ('DataFrameで検索', True)],
+                                                    value=value, style={'button_width': 'auto'})
                     widget.add_class('zizai-batch-toggle')
                 elif vector_search and name == 'query_column':
                     widget = self._vector_column_picker(name, label, source_field='query_input_variable')
@@ -267,16 +268,12 @@ class NotebookForm:
                 if vector_build and name in CORRECTION_FIELDS:
                     correction_controls.append(widget)
                 elif name == 'query_text' and query_switch is not None:
-                    caption = widgets.Label(value=self.model.fields[name]['label'])
-                    caption.add_class('zizai-query-caption')
-                    heading = widgets.HBox([caption, query_switch],
-                                           layout=widgets.Layout(align_items='center', flex_flow='row wrap'))
-                    heading.add_class('zizai-query-heading')
+                    query_switch.layout.align_self = 'flex-start'
                     widget.add_class('zizai-query-text')
                     widget.layout.width = '100%'
-                    section = widgets.VBox([heading, widget])
+                    section = widgets.VBox([query_switch, widget])
                     section.add_class('zizai-query-section')
-                    self._dynamic.extend([caption, heading, section])
+                    self._dynamic.append(section)
                     rows.append(section)
                 elif name in self.browse_buttons:
                     widget.layout.flex = '1 1 0'
