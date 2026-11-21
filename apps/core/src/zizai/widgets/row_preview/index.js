@@ -267,5 +267,93 @@ define(["@jupyter-widgets/controls"], function (controls) {
         }
     }
 
-    return { RowContextView, ColumnContextView, ColumnTypeView };
+    const operationDrag = "application/x-zizai-operation";
+
+    class OperationEntryView extends controls.HBoxView {
+        render() {
+            super.render();
+            this.el.draggable = true;
+            for (const type of ["dragstart", "dragover", "dragleave", "drop", "dragend"]) {
+                this.el.addEventListener(type, this);
+            }
+        }
+
+        handleEvent(event) {
+            if (event.type === "dragstart") {
+                if (event.target.closest("button")) {
+                    event.preventDefault();
+                    return;
+                }
+                event.dataTransfer.effectAllowed = "move";
+                event.dataTransfer.setData(operationDrag, JSON.stringify({
+                    source: this.model.get("_entry_id"),
+                    list: this.model.get("_list_id")
+                }));
+            } else if (event.type === "dragover" && event.dataTransfer.types.includes(operationDrag)) {
+                event.preventDefault();
+                event.dataTransfer.dropEffect = "move";
+                const after = this.dropAfter(event);
+                this.el.classList.toggle("zizai-operation-before", !after);
+                this.el.classList.toggle("zizai-operation-after", after);
+            } else if (event.type === "drop") {
+                this.clearDropTarget();
+                const data = event.dataTransfer.getData(operationDrag);
+                if (!data) return;
+                event.preventDefault();
+                let step;
+                try {
+                    step = JSON.parse(data);
+                } catch {
+                    return;
+                }
+                if (step?.list === this.model.get("_list_id") && typeof step.source === "string") {
+                    this.send({ event: "operation-move", source: step.source, after: this.dropAfter(event) });
+                }
+            } else if (event.type === "dragend" || (event.type === "dragleave" && !this.el.contains(event.relatedTarget))) {
+                this.clearDropTarget();
+            }
+        }
+
+        dropAfter(event) {
+            const row = this.el.getBoundingClientRect();
+            return event.clientY >= row.top + row.height / 2;
+        }
+
+        clearDropTarget() {
+            this.el.classList.remove("zizai-operation-before", "zizai-operation-after");
+        }
+    }
+
+    class ReshapeMenuView extends controls.HBoxView {
+        render() {
+            super.render();
+            this.listenTo(this.model, "change:children", this.queueAlignment);
+            this.resizeObserver = new ResizeObserver(() => this.queueAlignment());
+            this.resizeObserver.observe(this.el);
+        }
+
+        queueAlignment() {
+            if (this.alignmentFrame) return;
+            this.alignmentFrame = requestAnimationFrame(() => {
+                this.alignmentFrame = null;
+                const menu = this.el.querySelector(".zizai-column-picker-options");
+                const trigger = this.el.closest(".zizai-reshape-editor")
+                    ?.querySelector(".zizai-column-picker-open .zizai-column-picker-toggle");
+                if (!menu || !trigger) return;
+                const area = this.el.getBoundingClientRect();
+                const left = trigger.getBoundingClientRect().left - area.left;
+                const space = area.width - menu.getBoundingClientRect().width;
+                const offset = Math.max(0, Math.min(left, space));
+                this.el.style.setProperty("--zizai-picker-offset", `${offset}px`);
+            });
+        }
+
+        remove() {
+            this.resizeObserver?.disconnect();
+            if (this.alignmentFrame) cancelAnimationFrame(this.alignmentFrame);
+            return super.remove();
+        }
+    }
+
+    return { RowContextView, ColumnContextView, ColumnTypeView, OperationEntryView, ReshapeMenuView };
 });

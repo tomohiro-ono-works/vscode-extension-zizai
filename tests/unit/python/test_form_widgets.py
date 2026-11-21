@@ -19,6 +19,69 @@ class FormWidgetTests(unittest.TestCase):
         form.connector.value = 'csv'
         form.action.value = action
 
+    def test_windows_cursor_capture_fills_coordinates_after_three_seconds(self):
+        form = self.make_form()
+        form.connector.value = 'windows'
+        form.action.value = 'mouse_click'
+        form.field_widgets['wait_before_seconds'].value = 1
+        form.field_widgets['wait_after_seconds'].value = 2
+        button = form.cursor_capture_button
+
+        with (patch('zizai.forms.get_running_loop') as run_loop,
+              patch('zizai.forms._read_cursor_position', return_value=(-192, 40)) as read):
+            button.click()
+            button.click()
+            schedule = run_loop.return_value.call_later
+            schedule.assert_called_once()
+            self.assertEqual(schedule.call_args.args[0], 3)
+            self.assertTrue(button.disabled)
+            read.assert_not_called()
+            callback, *args = schedule.call_args.args[1:]
+            callback(*args)
+            read.assert_called_once_with()
+
+        self.assertFalse(button.disabled)
+        self.assertEqual(form.field_widgets['x'].value, '-192')
+        self.assertEqual(form.field_widgets['y'].value, '40')
+        self.assertEqual(form.field_widgets['coordinate_mode'].value, '座標指定')
+        form.generate_button.click()
+        self.assertIn('x = -192', form.result)
+        self.assertIn('y = 40', form.result)
+        self.assertIn('wait_before_seconds = 1', form.result)
+        self.assertIn('wait_after_seconds = 2', form.result)
+
+    def test_windows_cursor_capture_failure_and_action_switch_preserve_values(self):
+        form = self.make_form()
+        form.connector.value = 'windows'
+        form.action.value = 'mouse_click'
+        form.field_widgets['coordinate_mode'].value = '座標指定'
+        form.field_widgets['x'].value = '100'
+        form.field_widgets['y'].value = '110'
+        form.generate_button.click()
+        original = form.result
+        button = form.cursor_capture_button
+
+        with (patch('zizai.forms.get_running_loop') as run_loop,
+              patch('zizai.forms._read_cursor_position', side_effect=OSError('unavailable')) as read):
+            schedule = run_loop.return_value.call_later
+            button.click()
+            callback, *args = schedule.call_args.args[1:]
+            callback(*args)
+            self.assertIn('座標を取得できません', form.message.value)
+            self.assertFalse(button.disabled)
+            self.assertEqual(form.field_widgets['x'].value, '100')
+            self.assertEqual(form.field_widgets['y'].value, '110')
+            self.assertEqual(form.result, original)
+            read.reset_mock()
+
+            button.click()
+            stale_callback, *args = schedule.call_args.args[1:]
+            form.action.value = 'input_text'
+            schedule.return_value.cancel.assert_called_once_with()
+            stale_callback(*args)
+            read.assert_not_called()
+            self.assertIsNone(form.cursor_capture_button)
+
     def test_csv_read_browse_selects_file_and_keeps_it_on_cancel(self):
         import ipywidgets as widgets
         from unittest.mock import Mock
@@ -207,6 +270,168 @@ class FormWidgetTests(unittest.TestCase):
                             if isinstance(child, widgets.HBox) and form.field_widgets['encoding'] in child.children), None)
                 self.assertIsNotNone(row)
                 self.assertEqual(row.children, (form.field_widgets['encoding'], form.field_widgets['delimiter']))
+
+    def test_vector_search_lists_collections_in_the_selected_folder_and_pairs_fields(self):
+        import duckdb
+        import ipywidgets as widgets
+
+        def collection(path, metric):
+            with duckdb.connect(str(path)) as db:
+                db.execute('CREATE TABLE vector_settings (singleton BOOLEAN, settings JSON)')
+                db.execute('INSERT INTO vector_settings VALUES (true, ?)', [f'{{"metric":"{metric}"}}'])
+
+        with tempfile.TemporaryDirectory() as directory:
+            first, second, empty = (Path(directory) / name for name in ('first', 'second', 'empty'))
+            for folder in (first, second, empty):
+                folder.mkdir()
+            for name in ('notes.vector.duckdb', 'unrelated.duckdb', 'old.faiss'):
+                (first / name).touch()
+            (first / 'subfolder.vector.duckdb').mkdir()
+            collection(first / 'sales.vector.duckdb', 'l1')
+            collection(second / '新規.vector.duckdb', 'l2')
+            form = self.make_form(picker=lambda _current: first.as_posix())
+            form.connector.value = 'vector'
+            form.action.value = 'search_vector_db'
+            form.browse_buttons['db_folder'].click()
+            picker = form.field_widgets['collection_name']
+            self.assertIsInstance(picker, widgets.Dropdown)
+            self.assertEqual(tuple(value for _, value in picker.options), ('', 'notes', 'sales'))
+            search_method = form.field_widgets['search_mode']
+            self.assertEqual(search_method.description.split(' <')[0], '検索方法')
+            self.assertEqual(search_method.value, 'コサイン類似度')
+            self.assertEqual(tuple(value for _, value in search_method.options if value), (
+                'コサイン類似度', 'ユークリッド距離', 'マンハッタン距離',
+                'コサイン類似度（補正込み）', 'コサイン類似度（補正前後を比較）',
+            ))
+            self.assertNotIn('include_vector', form.field_widgets)
+            self.assertEqual(tuple(form.details.children[1].children),
+                             (picker, form.field_widgets['search_mode']))
+            self.assertEqual(tuple(form.details.children[2].children),
+                             (form.field_widgets['output_variable'], form.field_widgets['top_k']))
+            switch, query = form.details.children[3].children
+            self.assertIs(switch, form.field_widgets['batch_search'])
+            self.assertIs(query, form.field_widgets['query_text'])
+            form.field_widgets['query_text'].value = 'りんご'
+            self.assertTrue(form.generate_button.disabled)
+            picker.value = 'sales'
+            self.assertEqual(search_method.value, 'コサイン類似度')
+            form.generate_button.click()
+            self.assertIn('include_vector = True', form.result)
+            self.assertIn("collection_name = 'sales'", form.result)
+            for label, metric in (('コサイン類似度', 'cosine'), ('ユークリッド距離', 'l2'), ('マンハッタン距離', 'l1')):
+                search_method.value = label
+                form.generate_button.click()
+                self.assertIn(f"metric = '{metric}'", form.result)
+            for label, mode in (('コサイン類似度（補正込み）', 'corrected'), ('コサイン類似度（補正前後を比較）', 'compare')):
+                search_method.value = label
+                form.generate_button.click()
+                self.assertIn(f"search_mode = '{mode}'", form.result)
+
+            form.field_widgets['db_folder'].value = second.as_posix()
+            current = form.field_widgets['collection_name']
+            self.assertEqual(current.value, '新規')
+            self.assertEqual(search_method.value, 'コサイン類似度（補正前後を比較）')
+            self.assertEqual(form.field_widgets['query_text'].value, 'りんご')
+            picker.value = 'notes'
+            self.assertEqual(form.model.values['collection_name'], '新規')
+            form.field_widgets['db_folder'].value = empty.as_posix()
+            self.assertTrue(form.field_widgets['collection_name'].disabled)
+            self.assertTrue(form.generate_button.disabled)
+            form.action.value = 'embedding_vector_db'
+            self.assertIsInstance(form.field_widgets['collection_name'], widgets.Text)
+            self.assertNotIn('metric', form.field_widgets)
+
+    def test_vector_batch_search_selects_dataframe_and_column_and_restores_search_text(self):
+        import ipywidgets as widgets
+        import pandas as pd
+
+        namespace = {
+            'articles': pd.DataFrame({'検索語': ['りんご'], '分類': ['果物']}),
+            'documents': pd.DataFrame({'本文': ['みかん']}),
+        }
+        shared = Path(__file__).resolve().parents[3] / 'connectors'
+        form = create_form(shared, namespace=namespace)
+        self.addCleanup(form.close)
+        form.connector.value = 'vector'
+        form.action.value = 'search_vector_db'
+        fields = form.field_widgets
+        toggle = fields['batch_search']
+        self.assertIsInstance(toggle, widgets.ToggleButtons)
+        self.assertEqual(toggle.options, (('検索文', False), ('DataFrameで検索', True)))
+        self.assertFalse(toggle.value)
+        self.assertEqual(form.details.children[4].layout.display, 'none')
+        with tempfile.TemporaryDirectory() as directory:
+            folder = Path(directory)
+            (folder / 'sample.vector.duckdb').touch()
+            fields['db_folder'].value = folder.as_posix()
+            fields['query_text'].value = '単一検索'
+            self.assertFalse(form.generate_button.disabled)
+            toggle.value = True
+            self.assertIs(form.details.children[3].children[0], toggle)
+            self.assertEqual(fields['query_text'].layout.display, 'none')
+            self.assertEqual(form.details.children[4].layout.display, '')
+            self.assertTrue(form.generate_button.disabled)
+            fields['query_input_variable'].value = 'articles'
+            previous = fields['query_column']
+            self.assertEqual(tuple(value for _, value in previous.options if value), ('検索語', '分類'))
+            previous.value = '検索語'
+            self.assertIn('for ', form.model.generate())
+            fields['query_input_variable'].value = 'documents'
+            self.assertEqual(tuple(value for _, value in fields['query_column'].options if value), ('本文',))
+            self.assertTrue(form.generate_button.disabled)
+            fields['query_column'].value = '本文'
+            self.assertIn("query_column = '本文'", form.model.generate())
+            toggle.value = False
+            self.assertEqual(fields['query_text'].value, '単一検索')
+            self.assertEqual(form.details.children[4].layout.display, 'none')
+            self.assertIn("query_text = '単一検索'", form.model.generate())
+
+    def test_vector_registration_selects_columns_from_the_current_dataframe_and_pairs_fields(self):
+        import ipywidgets as widgets
+        import pandas as pd
+
+        namespace = {
+            'articles': pd.DataFrame({'id': ['a'], 'text': ['苹果'], 'category': ['fruit']}),
+            'documents': pd.DataFrame({'文書ID': ['b'], '本文': ['みかん']}),
+        }
+        shared = Path(__file__).resolve().parents[3] / 'connectors'
+        form = create_form(shared, namespace=namespace)
+        self.addCleanup(form.close)
+        form.connector.value = 'vector'
+        form.action.value = 'embedding_vector_db'
+        fields = form.field_widgets
+        rows = form.details.children
+        self.assertIs(rows[1], fields['collection_name'])
+        self.assertEqual(rows[2].children, (fields['input_variable'], fields['output_variable']))
+        self.assertEqual(rows[3].children, (fields['id_column'], fields['text_column']))
+        self.assertIs(rows[4], fields['model_name'])
+        self.assertIsInstance(rows[5], widgets.Accordion)
+        for field in ('id_column', 'text_column', 'model_name'):
+            self.assertIsInstance(fields[field], widgets.Dropdown)
+        self.assertTrue(fields['id_column'].disabled)
+
+        with tempfile.TemporaryDirectory() as folder:
+            fields['db_folder'].value = Path(folder).as_posix()
+            fields['input_variable'].value = 'articles'
+            previous_id = fields['id_column']
+            self.assertEqual(previous_id.value, 'id')
+            self.assertEqual(fields['text_column'].value, 'text')
+            self.assertEqual(tuple(value for _, value in previous_id.options if value), ('id', 'text', 'category'))
+            self.assertNotIn('model_name =', form.model.generate())
+            fields['input_variable'].value = 'documents'
+            self.assertEqual(tuple(value for _, value in fields['id_column'].options if value), ('文書ID', '本文'))
+            self.assertEqual(fields['id_column'].value, '')
+            self.assertTrue(form.generate_button.disabled)
+            previous_id.value = 'category'
+            self.assertEqual(form.model.values['id_column'], '')
+            fields['id_column'].value = '文書ID'
+            fields['text_column'].value = '本文'
+            fields['model_name'].value = 'cl-nagoya/ruri-v3-30m'
+            code = form.model.generate()
+            self.assertIn("input_data = documents", code)
+            self.assertIn("id_column = '文書ID'", code)
+            self.assertIn("text_column = '本文'", code)
+            self.assertIn("model_name = 'cl-nagoya/ruri-v3-30m'", code)
 
     def test_browse_button_is_beside_its_folder_field_and_keeps_picker_behavior(self):
         import ipywidgets as widgets

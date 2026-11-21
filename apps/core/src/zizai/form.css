@@ -84,6 +84,39 @@
 .zizai-form .zizai-generate { min-width: 138px; }
 .zizai-form .zizai-copy { width: auto; }
 .zizai-form .zizai-pair { gap: 16px; }
+.zizai-form .zizai-query-section { gap: 8px; }
+.zizai-form .zizai-query-text .widget-label {
+  position: absolute;
+  width: 1px !important;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.zizai-form .zizai-batch-toggle button.jupyter-button {
+  border-radius: 0;
+  height: 28px;
+  min-width: 64px;
+  padding: 0 10px;
+  font-size: 12px;
+}
+.zizai-form .zizai-batch-toggle button.jupyter-button:first-of-type {
+  border-radius: 6px 0 0 6px;
+}
+.zizai-form .zizai-batch-toggle button.jupyter-button:last-of-type {
+  border-radius: 0 6px 6px 0;
+}
+.zizai-form .zizai-batch-toggle button.jupyter-button + button.jupyter-button {
+  border-left: 0;
+}
+.zizai-form .zizai-batch-toggle button.jupyter-button:not(.mod-active):not([aria-pressed="true"]) {
+  background: #fff;
+  color: var(--zizai-green);
+}
+.zizai-form .zizai-batch-toggle button.jupyter-button:not(.mod-active):not([aria-pressed="true"]):hover {
+  background: #e9eeeb;
+}
 .zizai-form .zizai-folder-row { gap: 10px; }
 .zizai-form .widget-html { margin: 0; color: inherit; }
 .zizai-form .widget-html-content { width: 100%; }
@@ -152,6 +185,82 @@
 }
 .zizai-form .column-preview-controls {gap:6px}
 .zizai-form .column-preview-controls:empty {display:none}
-.zizai-form .column-preview-controls select[multiple] {
+.zizai-form .column-preview-controls select[multiple], .zizai-form .zizai-operation-fields select[multiple] {
   height:auto !important;min-height:72px;max-height:none;flex:0 0 auto;padding:4px 8px
 }
+
+.zizai-form .zizai-operation-form, .zizai-form .zizai-operation-fields {gap:10px}
+.zizai-form .zizai-operation-form > button {flex:0 0 auto}
+.zizai-form .zizai-operation-fields {padding:3px 3px 4px}
+.zizai-form .zizai-operation-fields > .jupyter-widgets {flex:0 0 140px; min-width:0}
+.zizai-form .zizai-operation-fields > .widget-dropdown {flex-basis:160px}
+.zizai-form .zizai-operation-fields > .zizai-integer {flex-basis:115px}
+.zizai-form .zizai-operation-fields .widget-label {
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis
+}
+.zizai-form .zizai-operation-list {gap:4px}
+.zizai-form .zizai-operation-editor {gap:8px;padding-top:6px}
+.zizai-form .zizai-operation-editor-inline {
+  padding:10px 12px;background:#f4f6f5;border:1px solid var(--zizai-border);border-radius:6px
+}
+.zizai-form .zizai-operation-expression textarea {min-height:82px}
+.zizai-form .zizai-operation-entry {
+  gap:12px;padding:6px 8px;border:1px solid var(--zizai-border);border-radius:6px
+}
+.zizai-form .zizai-operation-summary {
+  display:flex;flex-wrap:wrap;align-items:baseline;gap:3px 10px;margin:0;
+  color:#68736e;font-size:13px;overflow-wrap:anywhere
+}
+.zizai-form .zizai-operation-target {color:#27372f;font-size:15px;font-weight:700}
+.zizai-form .zizai-operation-category {
+  padding:2px 7px;border-radius:6px;background:#e3edf9;color:#324e70;font-size:12px;font-weight:600
+}
+.zizai-form .zizai-operation-category[data-category="value"] {background:#e2f1e8;color:#265541}
+.zizai-form .zizai-operation-edit-actions {gap:6px;align-items:center}
+.zizai-form .zizai-operation-entry button.jupyter-button {padding:0 10px}
+.zizai-form button.zizai-operation-delete {border-color:#b42318;color:#b42318;background:#fff}
+.zizai-form button.zizai-operation-delete:hover:enabled {background:#fff0ee}
+.zizai-form .zizai-operation-handle {cursor:grab;user-select:none;flex:0 0 auto;padding:0 4px;color:#68736e}
+.zizai-form .zizai-operation-entry.zizai-operation-before {box-shadow:inset 0 3px #187a57}
+.zizai-form .zizai-operation-entry.zizai-operation-after {box-shadow:inset 0 -3px #187a57}
+.zizai-form .zizai-table-step-rows, .zizai-form .zizai-table-step-row {gap:8px}
+.zizai-form .row-preview select[multiple] {height:auto !important;min-height:80px;max-height:none}
+.zizai-form .zizai-aggregate-preview {overflow:auto;max-height:340px}
+.zizai-form .zizai-aggregate-preview table {border-collapse:collapse;text-align:left}
+.zizai-form .zizai-aggregate-preview th, .zizai-form .zizai-aggregate-preview td {
+  padding:6px 10px;border:1px solid var(--zizai-border)
+}
+.zizai-form .zizai-aggregate-preview th {background:#e3eee7}
+.zizai-form .zizai-reshape-editor {display:grid;grid-template-columns:minmax(0,1fr)}
+.zizai-form .zizai-reshape-settings {
+  grid-area:1 / 1;display:grid;grid-template-columns:repeat(auto-fill,minmax(min(176px,100%),176px));
+  align-items:start;gap:8px
+}
+.zizai-form .zizai-reshape-results, .zizai-form .zizai-reshape-menu {
+  grid-area:2 / 1;align-self:start;min-width:0
+}
+.zizai-form .zizai-reshape-menu {z-index:1;pointer-events:none}
+.zizai-form .zizai-reshape-menu .zizai-column-picker-options {pointer-events:auto}
+.zizai-form .zizai-reshape-settings > .jupyter-widgets {width:100% !important;min-width:0}
+.zizai-form .zizai-column-picker-label {min-height:19.5px}
+.zizai-form button.zizai-column-picker-toggle {
+  text-align:left;padding:0 10px;color:#27372f;background:#fff;border-color:var(--zizai-border);
+  font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap
+}
+.zizai-form button.zizai-column-picker-toggle:hover:enabled {background:#eef6f1}
+.zizai-form .zizai-column-picker-options {
+  flex:0 0 auto;max-width:min(400px,100%);margin-left:var(--zizai-picker-offset,0);
+  max-height:220px;overflow-y:auto;overflow-x:hidden;padding:4px 8px;
+  background:#fff;border:1px solid var(--zizai-border);border-radius:6px
+}
+.zizai-form .zizai-column-picker-options .widget-checkbox {
+  flex:0 0 auto;height:auto;min-height:28px;margin:0;align-items:flex-start;overflow:visible
+}
+.zizai-form .zizai-column-picker-options .widget-checkbox label {
+  flex:1 1 auto;width:auto;min-width:0;height:auto;margin:0;text-align:left;
+  white-space:normal;overflow-wrap:anywhere
+}
+.zizai-form .zizai-column-picker-options input[type="checkbox"]:focus:not(:focus-visible) {
+  outline:none
+}
+.zizai-form .zizai-reshape-preview table {white-space:nowrap}

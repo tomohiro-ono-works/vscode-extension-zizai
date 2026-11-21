@@ -1,5 +1,6 @@
 """Independent DataFrame column operations and RENAME list processing."""
 import csv
+from itertools import groupby
 from math import isfinite
 import operator
 import re
@@ -265,6 +266,30 @@ def _numeric(series):
     return numeric
 
 
+def _formula_result(frame, columns, expression):
+    from zizai.arithmetic_formula import ArithmeticFormula
+    from pandas.api.types import is_bool_dtype, is_complex_dtype, is_numeric_dtype
+
+    def column(name):
+        if name not in columns:
+            raise ValueError(f'計算式の列が見つかりません: {name}')
+        series = frame[columns[name]]
+        if not is_numeric_dtype(series) or is_bool_dtype(series) or is_complex_dtype(series):
+            raise ValueError(f'「{name}」は数値列ではありません。')
+        return series
+
+    return ArithmeticFormula(expression).evaluate(column)
+
+
+def _timestamp(value):
+    if not isinstance(value, str) or not value.strip():
+        raise ValueError('日付・日時を入力してください。')
+    timestamp = pd.Timestamp(value)
+    if pd.isna(timestamp):
+        raise ValueError('有効な日付・日時を入力してください。')
+    return timestamp
+
+
 def _numeric_result(frame, columns, series, change, op):
     left = _numeric(series)
     if op == 'abs':
@@ -295,17 +320,18 @@ def apply_value_operations(data, *, operations):
         if not isinstance(change, dict):
             raise ValueError('値加工の設定が不正です。')
         columns = dict(zip(map(str, frame.columns), frame.columns))
-        key = change.get('column')
-        if not isinstance(key, str) or key not in columns:
-            raise ValueError(f'対象列が見つかりません: {key}')
         output = change.get('output')
+        key = change.get('column')
+        op = change.get('op')
+        new_formula = op == 'formula' and 'output' in change and key is None
+        if not new_formula and (not isinstance(key, str) or key not in columns):
+            raise ValueError(f'対象列が見つかりません: {key}')
         if 'output' in change and (not isinstance(output, str) or not output.strip()):
             raise ValueError('新しい列名を入力してください。')
         if output in columns:
             raise ValueError(f'同じ列名が既にあります: {output}')
         destination = columns[key] if output is None else output
-        series = frame[columns[key]]
-        op = change.get('op')
+        series = None if new_formula else frame[columns[key]]
         if not isinstance(op, str):
             raise ValueError('値加工の操作を指定してください。')
         try:
@@ -313,16 +339,20 @@ def apply_value_operations(data, *, operations):
                 result = _text_result(frame, columns, series, change, op)
             elif op in _ARITHMETIC or op in ('round', 'abs'):
                 result = _numeric_result(frame, columns, series, change, op)
+            elif op == 'formula':
+                result = _formula_result(frame, columns, change.get('expression'))
             elif op in ('to_null', 'fill_null'):
                 value = change.get('value')
                 if type(value) not in (str, int, float, bool) or (type(value) is float and not isfinite(value)):
                     raise ValueError('文字列、数値、真偽値のいずれかを指定してください。')
+                if change.get('value_type') == 'datetime':
+                    value = _timestamp(value)
                 result = (series.mask(series.eq(value).fillna(False), pd.NA) if op == 'to_null'
                           else series.fillna(value))
             else:
                 raise ValueError('未対応の値加工です。')
         except (TypeError, ValueError, OverflowError) as error:
-            raise ValueError(f'「{key}」列: {error}') from error
+            raise ValueError(f'「{output if new_formula else key}」列: {error}') from error
         frame[destination] = result
         changed.add(str(destination))
 
@@ -338,3 +368,155 @@ def apply_value_operations(data, *, operations):
             schema.append(item)
         frame.attrs['ziz_schema'] = schema
     return frame
+
+
+_ROW_NUMERIC_COMPARISONS = {
+    'number_equal': operator.eq, 'greater': operator.gt, 'greater_equal': operator.ge,
+    'less': operator.lt, 'less_equal': operator.le,
+}
+
+
+def _row_bound(value):
+    if type(value) not in (int, float) or (type(value) is float and not isfinite(value)):
+        raise ValueError('比較値には有限の数値を指定してください。')
+    return value
+
+
+def _row_condition(frame, columns, condition):
+    column = condition.get('column')
+    if not isinstance(column, str) or column not in columns:
+        raise ValueError('対象列を選択してください。')
+    series = frame[columns[column]]
+    comparison = condition.get('comparison')
+    value = condition.get('value')
+    if comparison == 'is_null':
+        return series.isna()
+    if comparison == 'not_null':
+        return series.notna()
+    if comparison == 'bool_equal':
+        if type(value) is not bool:
+            raise ValueError('比較する真偽値を選択してください。')
+        return series.eq(value).fillna(False)
+    if comparison in ('date_equal', 'date_before', 'date_after', 'date_between'):
+        lower = _timestamp(value)
+        if comparison == 'date_between':
+            upper = _timestamp(condition.get('upper'))
+            if upper < lower:
+                raise ValueError('範囲の下限は上限以下にしてください。')
+            return series.between(lower, upper).fillna(False)
+        method = {'date_equal': 'eq', 'date_before': 'lt', 'date_after': 'gt'}[comparison]
+        return getattr(series, method)(lower).fillna(False)
+    if comparison in ('text_equal', 'contains'):
+        if not isinstance(value, str) or (comparison == 'contains' and not value):
+            raise ValueError('比較する文字列を入力してください。')
+        text = series.astype('string')
+        result = text.eq(value) if comparison == 'text_equal' else text.str.contains(value, regex=False, na=False)
+        return result.fillna(False)
+    if not isinstance(comparison, str) or (comparison != 'between' and comparison not in _ROW_NUMERIC_COMPARISONS):
+        raise ValueError('比較方法を選択してください。')
+    try:
+        numeric = _numeric(series)
+    except (ValueError, TypeError, OverflowError) as error:
+        raise ValueError(f'「{column}」列に数値として比較できない値があります。') from error
+    lower = _row_bound(value)
+    if comparison == 'between':
+        upper = _row_bound(condition.get('upper'))
+        if upper < lower:
+            raise ValueError('範囲の下限は上限以下にしてください。')
+        return numeric.between(lower, upper).fillna(False)
+    return _ROW_NUMERIC_COMPARISONS[comparison](numeric, lower).fillna(False)
+
+
+def _row_mask(frame, columns, conditions):
+    if not isinstance(conditions, list) or not conditions or any(not isinstance(item, dict) for item in conditions):
+        raise ValueError('条件を1件以上設定してください。')
+    # Combine AND runs before folding them into the OR result.
+    current = _row_condition(frame, columns, conditions[0])
+    disjunction = None
+    for condition in conditions[1:]:
+        mask = _row_condition(frame, columns, condition)
+        logic = condition.get('logic')
+        if logic == 'and':
+            current = current & mask
+        elif logic == 'or':
+            disjunction = current if disjunction is None else disjunction | current
+            current = mask
+        else:
+            raise ValueError('条件の結合にはANDまたはORを指定してください。')
+    return current if disjunction is None else disjunction | current
+
+
+def _row_steps(operations):
+    pending = None
+    for change in operations:
+        if not isinstance(change, dict):
+            raise ValueError('行の条件の設定が不正です。')
+        if change.get('op') != 'condition':
+            if pending is not None:
+                yield pending
+                pending = None
+            yield change
+            continue
+        mode, rule = change.get('mode'), change.get('condition')
+        if not isinstance(rule, dict):
+            raise ValueError('条件の設定を確認してください。')
+        logic = rule.get('logic')
+        if logic not in (None, 'and', 'or'):
+            raise ValueError('条件の結合にはANDまたはORを指定してください。')
+        if pending is not None and mode == pending['mode'] and logic is not None:
+            pending['conditions'].append(rule)
+        else:
+            if pending is not None:
+                yield pending
+            first = {key: value for key, value in rule.items() if key != 'logic'}
+            pending = {'op': 'filter', 'mode': mode, 'conditions': [first]}
+    if pending is not None:
+        yield pending
+
+
+def filter_rows(data, *, operations):
+    """Select and clean rows in order, preserving the original input and index."""
+    frame = _operation_frame(data, operations, '行の条件')
+    columns = dict(zip(map(str, frame.columns), frame.columns))
+    for change in _row_steps(operations):
+        op = change.get('op')
+        if op == 'filter':
+            mode = change.get('mode')
+            if mode not in ('keep', 'exclude'):
+                raise ValueError('抽出または除外を選択してください。')
+            try:
+                mask = _row_mask(frame, columns, change.get('conditions'))
+            except (TypeError, OverflowError) as error:
+                raise ValueError(f'条件の比較値を確認してください: {error}') from error
+            frame = frame.loc[mask if mode == 'keep' else ~mask]
+        elif op in ('drop_duplicates', 'drop_nulls'):
+            selected = change.get('columns', [])
+            if not isinstance(selected, list) or any(not isinstance(key, str) or key not in columns for key in selected):
+                raise ValueError('判定する列を確認してください。')
+            subset = [columns[key] for key in selected] or None
+            frame = frame.drop_duplicates(subset=subset) if op == 'drop_duplicates' else frame.dropna(subset=subset)
+        elif op in ('head', 'tail'):
+            count = change.get('count')
+            if type(count) is not int or count < 0:
+                raise ValueError('行数は0以上の整数で指定してください。')
+            frame = frame.head(count) if op == 'head' else frame.tail(count)
+        else:
+            raise ValueError('未対応の行操作です。')
+    return frame
+
+
+def apply_data_operations(data, *, operations):
+    """Apply mixed value and row operations in the order supplied."""
+    if not isinstance(operations, (list, tuple)):
+        raise ValueError('処理は操作の一覧で指定してください。')
+    if not operations:
+        return _operation_frame(data, operations, 'データ加工')
+    if any(not isinstance(step, dict) or not isinstance(step.get('operation'), dict) for step in operations):
+        raise ValueError('処理の設定を確認してください。')
+    functions = {'condition': filter_rows, 'value': apply_value_operations}
+    result = data
+    for category, steps in groupby(operations, key=lambda step: step.get('category')):
+        if not isinstance(category, str) or category not in functions:
+            raise ValueError('処理分類を確認してください。')
+        result = functions[category](result, operations=[step['operation'] for step in steps])
+    return result

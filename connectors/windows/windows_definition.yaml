@@ -1,0 +1,79 @@
+version: 1
+output_template: "{connector}.{action}のコードを生成"
+connectors:
+  windows:
+    label: Windows
+    module_file: windows_connector.py
+    actions:
+      search_files_by_name:
+        label: ファイル名検索
+        generation: windows.search_files_by_name
+        fields:
+          root_folder: {label: 検索フォルダー, type: folder, required: true}
+          recursive: {label: サブフォルダーも検索, type: checkbox, default: false}
+          file_name_pattern: {label: ファイル名（正規表現・省略可）, type: text}
+          file_extension_pattern: {label: 拡張子（正規表現・省略可）, type: text}
+          max_elapsed_seconds: {label: 検索時間の目安（秒）, type: integer, minimum: 30, default: 120, required: true}
+          output_variable: {label: 出力変数, type: text, default: df, required: true}
+      search_text_in_files:
+        label: ファイル内の文字列検索
+        generation: windows.search_text_in_files
+        fields:
+          root_folder: {label: 検索フォルダー, type: folder, required: true}
+          recursive: {label: サブフォルダーも検索, type: checkbox, default: false}
+          file_name_pattern: {label: ファイル名（正規表現・省略可）, type: text}
+          file_extension_pattern: {label: 拡張子（正規表現・省略可）, type: text}
+          content_pattern: {label: 検索する文字列（正規表現）, type: text, required: true}
+          context_lines: {label: 一致行の前後行数, type: integer, minimum: 0, default: 0, required: true}
+          max_elapsed_seconds: {label: 検索時間の目安（秒）, type: integer, minimum: 30, default: 120, required: true}
+          output_variable: {label: 出力変数, type: text, default: df, required: true}
+      create_markdown_file:
+        label: Markdown作成
+        generation: windows.create_markdown_file
+        fields:
+          folder: {label: 保存先フォルダー, type: folder, required: true}
+          filename: {label: ファイル名, type: text, default: output.md, required: true}
+          write_mode: {label: 書き込み方法, type: choice, choices: [新規作成, 追記, 上書き], default: 新規作成, required: true}
+          content: {label: Markdownの内容, type: textarea, required: true}
+          output_variable: {label: 出力変数, type: text, default: result, required: true}
+      rename_and_move_file:
+        label: ファイル名の変更・移動
+        generation: windows.rename_and_move_file
+        fields:
+          source_file_path: {label: 対象ファイル, type: file, required: true}
+          destination_folder: {label: 移動先フォルダー（省略可）, type: folder}
+          destination_file_name: {label: 変更後のファイル名（省略可）, type: text}
+          allow_missing_source: {label: 対象ファイルがなければスキップ, type: checkbox, default: false}
+          output_variable: {label: 出力変数, type: text, default: result, required: true}
+      mouse_click:
+        label: クリック
+        generation: windows.mouse_click
+        fields:
+          coordinate_mode: {label: クリック位置, type: choice, choices: [現在のカーソル位置, 座標指定], default: 現在のカーソル位置, required: true}
+          x: {label: X座標（座標指定時）, type: text}
+          y: {label: Y座標（座標指定時）, type: text}
+          button: {label: マウスボタン, type: choice, choices: [左, 右], default: 左, required: true}
+          click_count: {label: クリック回数, type: choice, choices: [シングルクリック, ダブルクリック], default: シングルクリック, required: true}
+          wait_before_seconds: {label: 操作前の待機（秒）, type: integer, minimum: 0, default: 0}
+          wait_after_seconds: {label: 操作後の待機（秒）, type: integer, minimum: 0, default: 0}
+          output_variable: {label: 出力変数, type: text, default: result, required: true}
+      input_text:
+        label: 文字入力
+        generation: windows.input_text
+        fields:
+          input_mode: {label: 入力方法, type: choice, choices: [カーソル位置に入力, 全選択して置換], default: カーソル位置に入力, required: true}
+          text: {label: 入力する文字, type: textarea, required: true}
+          wait_before_seconds: {label: 操作前の待機（秒）, type: integer, minimum: 0, default: 0}
+          wait_after_seconds: {label: 操作後の待機（秒）, type: integer, minimum: 0, default: 0}
+          output_variable: {label: 出力変数, type: text, default: result, required: true}
+      send_keys:
+        label: キー入力
+        generation: windows.send_keys
+        fields:
+          key: {label: キー（例 Enter・F5・A）, type: text, required: true}
+          ctrl: {label: Ctrl, type: checkbox, default: false}
+          shift: {label: Shift, type: checkbox, default: false}
+          alt: {label: Alt, type: checkbox, default: false}
+          wait_before_seconds: {label: 操作前の待機（秒）, type: integer, minimum: 0, default: 0}
+          wait_after_seconds: {label: 操作後の待機（秒）, type: integer, minimum: 0, default: 0}
+          output_variable: {label: 出力変数, type: text, default: result, required: true}

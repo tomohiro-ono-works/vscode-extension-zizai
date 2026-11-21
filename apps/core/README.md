@@ -1,5 +1,13 @@
 # ZizAI Python最小基盤
 
+## Windowsのファイル操作（TASK-027）
+
+Notebookのカーネルに `[forms,windows]` 付きのwheelを導入します。[Windows資産](../../connectors/windows/)のPythonとYAMLを共通フォルダーの `windows/` へ置き、`configure_connectors` で登録します。
+
+`%form` の「Windows」から、ファイル名検索、ファイル内の文字列検索、Markdown作成、ファイル名の変更・移動を選べます。生成したコードをNotebookのPythonセルで実行すると、検索結果は `df`、保存や移動の結果は `result` に入ります。移動先に同名ファイルがあると停止します。Markdownは既定で新規作成し、追記・上書きは書き込み方法で選びます。
+
+「クリック」「文字入力」「キー入力」には操作の前後それぞれに待機秒数を指定できます（既定は0秒）。ローカルWindowsで生成コードを実行すると、指定座標や操作時点のカーソル位置・入力先が対象になります。アプリを切り替える場合は、操作前の待機中に切り替えてください。
+
 ## Windowsバッチファイル実行（TASK-018）
 
 `[forms,shell]` 付きのwheelを導入し、[Shell資産](../../connectors/shell/)を共通フォルダーへ登録します。`%form` の「Shell」→「バッチファイル実行」で、`参照…` から `.bat` を選びます。引数が必要な場合は `["入力 1", "入力 2"]` のようなJSON配列を入力します。生成コードを実行すると標準出力・標準エラー・終了コードを受け取れます。
@@ -22,9 +30,13 @@ origin_name,replaced_name,description,ziz_datatype
 
 変換結果の列名が重複する場合はエラーになります。必要なクレンジング項目だけを選択してください。
 
-## DataFrameの値加工（TASK-021）
+## DataFrameの条件・値加工（TASK-021・TASK-022）
 
-`%form` の「データ統合 → 値加工」で入力DataFrameを選びます。表の上で対象列、処理分類（文字列・NULL処理・数値）、操作を順に選び、加工結果を対象列に書くか新しい列へ出すかを指定します。「変更を追加」で先頭30行に反映され、「コード生成」で全行用のコードを生成します。
+`%form` の「データ統合 → 条件・値加工」で入力DataFrameを選びます。処理一覧の下のフォームで対象列、処理分類、操作の順に選びます。「編集」を押すと、その処理の直下にフォームが表示されます。
+
+生成コードは一覧の上から順に全行を処理し、元表を保持したまま結果を `processed_df` に返します。例えば、値を加算してから条件を設定すると、加算後の値で抽出します。
+
+「新しく作る」を対象列で選ぶと、新しい列名を入力できます。「計算式」は選択欄の下の複数行入力欄に `数量 + 1` や `数量 * 単価` と記述します。空白などを含む列名はバッククォートで囲みます。
 
 たとえば `東京-001` から `001` を取り出すには、「正規表現で抽出」で `-(\d+)$` とグループ番号 `1` を指定します。「区切って取り出す」では区切り文字 `-` と位置 `2` でも同じ結果になります。
 
@@ -226,3 +238,9 @@ python -c 'from setuptools.build_meta import build_wheel; build_wheel("dist")'
 この最小基盤のPython要件は3.12以降です。製品全体の正式な最低版・対応範囲とは区別します。初回検証基準候補のWindows／Python3.14、選択Jupyterカーネル、VSIX／ZIP全体、個別処理・SDK・認証の適合は別途確認します。
 
 [設計](https://github.com/tomohiro-ono-works/vscode-extension-zizai/blob/65631504f146a4dfa2ab52d557e58db53c2e6a00/docs/research/python-import/TASK-003-02.md)と[最小実装計画](https://github.com/tomohiro-ono-works/vscode-extension-zizai/blob/65631504f146a4dfa2ab52d557e58db53c2e6a00/docs/research/python-import/TASK-003-03-plan.md)を参照してください。
+
+### Vectorの登録・検索
+
+Notebookのカーネル環境に開発版のwheelを `[forms,vector]` 付きで導入し、[Vector資産](../../connectors/vector/) のPythonとYAMLを共通フォルダーの `vector/` に置いて `configure_connectors` で登録します。`%form` の「Vector」から「ベクトルDB構築・更新」または「ベクトル検索」を選べます。初回実行時に埋め込みモデルがローカルにない場合は、モデルの取得が発生します。アクセス先とモデルは利用する環境で確認してください。
+
+ベクトルを登録したあと、検索フォームの「検索方法」でコサイン類似度・ユークリッド距離・マンハッタン距離をその都度選びます。登録の「補正検索の詳細設定」で補正を有効にすると、「コサイン類似度（補正込み）」と「コサイン類似度（補正前後を比較）」も使えます。

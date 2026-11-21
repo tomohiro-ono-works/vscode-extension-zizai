@@ -8,11 +8,14 @@ from .duckdb_codegen import generate_duckdb
 from .excel_codegen import generate_excel
 from .python_codegen import generate_python
 from .shell_codegen import generate_shell
+from .vector_codegen import generate_vector
+from .windows_codegen import generate_windows
 
 
 GENERATORS = {
     'bigquery': generate_bigquery, 'csv': generate_csv, 'dataintegration': generate_dataintegration,
     'duckdb': generate_duckdb, 'excel': generate_excel, 'python': generate_python, 'shell': generate_shell,
+    'vector': generate_vector, 'windows': generate_windows,
 }
 
 
@@ -58,6 +61,17 @@ class FormModel:
         if action is not None and action not in self.actions:
             raise ValueError('候補からアクションを選んでください。')
         fields, values = self.fields, self.values
+        if self.connector == 'vector' and action != self.action:
+            if 'output_variable' in fields and values['output_variable'] == fields['output_variable'].get('default'):
+                values = {key: value for key, value in values.items() if key != 'output_variable'}
+            if values.get('collection_name') == '':
+                values = {key: value for key, value in values.items() if key != 'collection_name'}
+        if self.connector == 'windows' and action != self.action:
+            reset_fields = {'wait_before_seconds', 'wait_after_seconds'}
+            previous_default = fields.get('output_variable', {}).get('default')
+            if values.get('output_variable') == previous_default:
+                reset_fields.add('output_variable')
+            values = {name: value for name, value in values.items() if name not in reset_fields}
         self.action = action
         self._restore_fields(fields, values)
 

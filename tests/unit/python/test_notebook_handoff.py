@@ -4,6 +4,7 @@ import hashlib
 import json
 import unittest
 import zipfile
+from email.parser import Parser
 
 from package_test_support import PackageArtifactTestCase, REPO
 
@@ -49,12 +50,13 @@ class NotebookHandoffTests(PackageArtifactTestCase):
         self.assertEqual(report["phase"], "before_restart")
         self.assertEqual(report["distribution"]["name"], "zizai-runtime")
         self.assertEqual(report["distribution"]["version"], "0.0.3.dev0")
-        # Legacy diagnostic counts all declared Requires-Dist, including extras.
-        # Base import remains dependency-free; the optional marker is checked separately.
-        self.assertEqual(report["distribution"]["runtime_dependency_count"], 21)
         self.assertTrue(report["checks"]["imports_match_distribution"])
         self.assertTrue(report["checks"]["import_preserved_process_state"])
         with zipfile.ZipFile(wheel) as archive:
+            metadata_path = next(name for name in archive.namelist() if name.endswith(".dist-info/METADATA"))
+            metadata = Parser().parsestr(archive.read(metadata_path).decode("utf-8"))
+            # This diagnostic counts every declared dependency, including extras.
+            self.assertEqual(report["distribution"]["runtime_dependency_count"], len(metadata.get_all("Requires-Dist", [])))
             expected = {
                 name: hashlib.sha256(archive.read(path)).hexdigest()
                 for name, path in [

@@ -10,6 +10,20 @@
 
 ## 新方式のTask
 
+- [TASK-028 / #116：Windows画面入力とアクション前後の待機を追加する](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/116)
+
+- [TASK-027 / #114：Windowsのファイル操作をNotebookフォームへ追加する](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/114)
+
+- [TASK-026 / #111：DataFrameのピボット・アンピボットをNotebookフォームへ追加する](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/111)
+
+- [TASK-025 / #109：DataFrameの結合・差集合をNotebookフォームへ追加する](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/109)
+
+- [TASK-024 / #108：DataFrameの集計をNotebookフォームへ追加する](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/108)
+
+- [TASK-023 / #107：DataFrameの行並べ替えをNotebookフォームへ追加する](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/107)
+
+- [TASK-022 / #105：DataFrameの行条件をNotebookフォームへ追加する](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/105)
+
 - [TASK-021 / #103：DataFrameの値加工をNotebookフォームへ追加する](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/103)
 
 - [TASK-020 / #101：DataFrameの列操作をNotebookフォームへ追加する](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/101)
