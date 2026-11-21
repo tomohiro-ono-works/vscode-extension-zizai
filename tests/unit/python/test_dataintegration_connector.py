@@ -1,5 +1,6 @@
 """Exercise RENAME lists with generated CSV and Excel workflows."""
 from pathlib import Path
+import re
 import sys
 import tempfile
 import unittest
@@ -8,6 +9,10 @@ from unittest.mock import Mock, patch
 import source_test_support
 from zizai.form_definition import load_definition
 from zizai.form_model import FormModel
+
+
+def operation_label(row):
+    return re.sub(r'<[^>]+>', '', row.children[1].value)
 
 
 class DataIntegrationConnectorTests(unittest.TestCase):
@@ -51,15 +56,22 @@ class DataIntegrationConnectorTests(unittest.TestCase):
 
             self.assertEqual(result()['数量'].tolist(), [12])
             entry = editor.entries.items[0]
-            self.assertEqual(entry.children[1].value, '<p>数量　値加工　計算式　数量 + 10</p>')
-            self.assertEqual(editor.entries.items[1].children[1].value,
-                             '<p>数量　条件　条件に合う行だけ残す　より大きい 11</p>')
+            self.assertEqual(operation_label(entry), '数量 値加工 計算式 数量 + 10')
+            self.assertIn('<strong class="zizai-operation-target">数量</strong>', entry.children[1].value)
+            self.assertIn('data-category="value">値加工</span>', entry.children[1].value)
+            self.assertEqual(operation_label(editor.entries.items[1]), '数量 条件 条件に合う行だけ残す より大きい 11')
             self.assertEqual([btn.description for btn in entry.children[-2:]], ['編集', '削除'])
             entry.children[-2].click()
+            self.assertEqual([btn.description for btn in entry.children[-2].children],
+                             ['編集をキャンセル', '編集を保存'])
+            self.assertEqual(editor._settings_row.children, (editor._inputs,))
+            self.assertIn('zizai-operation-delete', entry.children[-1]._dom_classes)
             self.assertEqual(value.fields['expression'].value, '数量 + 10')
             value.fields['expression'].value = '数量 + 20'
             editor.apply.click()
             self.assertEqual(result()['数量'].tolist(), [21, 22])
+            self.assertEqual(editor.entries.items[0].children[-2].description, '編集')
+            self.assertNotIn('zizai-operation-editor-inline', editor.settings._dom_classes)
             editor._move(1, 0, after=False)
             self.assertTrue(result().empty)
             self.assertEqual(source['数量'].tolist(), [1, 2])
@@ -149,7 +161,7 @@ class DataIntegrationConnectorTests(unittest.TestCase):
             row.action.value = 'tail'
             row.count.value = 2
             editor.apply.click()
-            self.assertEqual(editor.entries.items[0].children[1].value, '<p>表全体　条件　末尾から指定行数を残す　2行</p>')
+            self.assertEqual(operation_label(editor.entries.items[0]), '表全体 条件 末尾から指定行数を残す 2行')
             form.generate_button.click()
             namespace = {'df': source}
             exec(compile(form.result, '<generated-tail>', 'exec'), namespace)
@@ -226,7 +238,7 @@ class DataIntegrationConnectorTests(unittest.TestCase):
             value.fields['group'].value = 1
             editor.apply.click()
             self.assertNotIn('番号', source.columns)
-            self.assertIn('番号（新規）　値加工　正規表現で抽出　入力列 商品', editor.entries.items[0].children[1].value)
+            self.assertIn('番号（新規） 値加工 正規表現で抽出 入力列 商品', operation_label(editor.entries.items[0]))
             self.assertIn('番号', dict(value.column.options).values())
             value.column.value = '番号'
             value.action.value = 'trim'
@@ -335,6 +347,7 @@ class DataIntegrationConnectorTests(unittest.TestCase):
             self.assertEqual(value.fields['expression'].value, '(数量 + 1) *\n    `税抜 単価`')
             editor.cancel.click()
             self.assertEqual(editor.entries.rows.children, (first, second, editor.settings))
+            self.assertEqual(first.children[-2].description, '編集')
 
     def test_value_operations_join_text_and_reject_zero_division_without_changing_input(self):
         import pandas as pd

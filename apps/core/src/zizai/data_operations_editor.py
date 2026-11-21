@@ -37,29 +37,41 @@ class OperationEntry(widgets.HBox):
 
 
 class OperationList:
-    def __init__(self, on_edit, on_remove, on_move):
+    def __init__(self, on_edit, on_remove, on_move, edit_controls):
         self._on_edit, self._on_remove, self._on_move = on_edit, on_remove, on_move
+        self._edit_controls = edit_controls
         self._title = widgets.HTML('<h3>処理一覧</h3>')
         self.rows = widgets.VBox()
         self.rows.add_class('zizai-operation-list')
         self.root = widgets.VBox([self._title, self.rows])
         self.items = ()
 
-    def render(self, descriptions, form, index=None):
+    def render(self, descriptions, form, editing_index=None):
         previous = self.items
         rows = []
-        for index, description in enumerate(descriptions):
+        for index, (target, category, action, details) in enumerate(descriptions):
             handle = widgets.HTML('<span title="ドラッグして順番を変更">↕</span>')
             handle.add_class('zizai-operation-handle')
-            label = widgets.HTML(f'<p>{escape(description)}</p>', layout=widgets.Layout(flex='1 1 0', min_width='0'))
+            category_label = CATEGORIES[category]
+            description = '　'.join(part for part in (target, category_label, action, details) if part)
+            fields = [
+                f'<strong class="zizai-operation-target">{escape(target)}</strong>',
+                f'<span class="zizai-operation-category" data-category="{category}">{category_label}</span>',
+                f'<span>{escape(action)}</span>',
+            ]
+            if details:
+                fields.append(f'<span>{escape(details)}</span>')
+            label = widgets.HTML(f'<p class="zizai-operation-summary">{" ".join(fields)}</p>',
+                                 layout=widgets.Layout(flex='1 1 0', min_width='0'))
             edit = widgets.Button(description='編集', tooltip=description,
                                   layout=widgets.Layout(width='auto', flex='0 0 auto'))
             remove = widgets.Button(description='削除', tooltip=description,
                                     layout=widgets.Layout(width='auto', flex='0 0 auto'))
-            for button in (edit, remove):
-                button.add_class('row-preview-cancel')
+            edit.add_class('row-preview-cancel')
+            remove.add_class('zizai-operation-delete')
             row = OperationEntry([handle, label, edit, remove], _list_id=self.rows.model_id,
                                  layout=widgets.Layout(width='100%', align_items='center'))
+            row.edit_button = edit
             row._entry_id = row.model_id
             row.add_class('zizai-operation-entry')
             edit.on_click(lambda _, index=index, row=row: self._dispatch(self._on_edit, index, row))
@@ -67,7 +79,7 @@ class OperationList:
             row.on_msg(self._handle_drop)
             rows.append(row)
         self.items = tuple(rows)
-        self.place_form(form, index)
+        self.place_form(form, editing_index)
         self._close_rows(previous)
 
     def place_form(self, form, index=None):
@@ -75,6 +87,11 @@ class OperationList:
         form.remove_class('zizai-operation-editor-inline')
         if index is not None:
             form.add_class('zizai-operation-editor-inline')
+        for row_index, row in enumerate(self.items):
+            handle, label, current, remove = row.children
+            actions = self._edit_controls if row_index == index else row.edit_button
+            if current is not actions:
+                row.children = (handle, label, actions, remove)
         self.rows.children = (*self.items[:position], form, *self.items[position:])
 
     def _dispatch(self, callback, index, row):
@@ -93,7 +110,8 @@ class OperationList:
     @staticmethod
     def _close_rows(rows):
         for row in rows:
-            _close_widgets([*row.children, row])
+            handle, label, _, remove = row.children
+            _close_widgets([handle, label, row.edit_button, remove, row])
 
     def close(self):
         self._close_rows(self.items)
@@ -116,15 +134,16 @@ class DataOperationsEditor:
                                   value=mode)
         self.apply = widgets.Button(description='処理を追加', disabled=True, layout=widgets.Layout(width='auto'))
         self.apply.on_click(self._submit)
-        self.cancel = widgets.Button(description='編集をキャンセル', layout=widgets.Layout(width='auto', display='none'))
+        self.cancel = widgets.Button(description='編集をキャンセル', layout=widgets.Layout(width='auto', flex='0 0 auto'))
         self.cancel.add_class('row-preview-cancel')
         self.cancel.on_click(self._cancel_edit)
+        self._edit_controls = widgets.HBox([self.cancel, self.apply], layout=widgets.Layout(flex='0 0 auto'))
+        self._edit_controls.add_class('zizai-operation-edit-actions')
         self._settings_row, self._inputs = _operation_form(self.apply)
-        self._settings_row.children = (self._inputs, self.cancel, self.apply)
         self.status = widgets.HTML()
         self.settings = widgets.VBox([self._settings_row, self.status], layout=widgets.Layout(width='100%'))
         self.settings.add_class('zizai-operation-editor')
-        self.entries = OperationList(self._edit, self._remove, self._move)
+        self.entries = OperationList(self._edit, self._remove, self._move, self._edit_controls)
         self.value_fields = ValueFields(self.column, self._refresh_inputs)
         self.row_fields = RowFields(self.column, self._refresh_inputs)
         self.root = self.entries.root
@@ -184,15 +203,13 @@ class DataOperationsEditor:
         self.settings.children = (self._settings_row, *((expression,) if expression is not None else ()), self.status)
         enabled = self.column.value is not None and active is not None and active.action.value is not None
         self.apply.disabled = not enabled
-        self.cancel.layout.display = '' if self._editing is not None else 'none'
         if self._editing is not None:
+            self._settings_row.children = (self._inputs,)
             self.apply.description = '編集を保存'
-        elif self.category.value == 'value':
-            self.apply.description = '変数を追加'
-        elif self.category.value == 'condition':
-            self.apply.description = '条件を追加'
         else:
-            self.apply.description = '処理を追加'
+            self._settings_row.children = (self._inputs, self.apply)
+            self.apply.description = {'value': '変数を追加', 'condition': '条件を追加'}.get(
+                self.category.value, '処理を追加')
 
     def _change_category(self, _change):
         self.status.value = ''
@@ -290,7 +307,7 @@ class DataOperationsEditor:
                 target, action, details = self.value_fields.describe(operation)
             else:
                 target, action, details = self.row_fields.describe(operation, self._previous_condition(steps, index))
-            descriptions.append('　'.join(part for part in (target, CATEGORIES[category], action, details) if part))
+            descriptions.append((target, category, action, details))
         self.entries.render(descriptions, self.settings, self._position() if self._editing is not None else None)
         if self._lookup_labels and not self._mode and payload:
             payload = [{**payload[0], 'lookup_labels': True}, *payload[1:]]
@@ -304,4 +321,4 @@ class DataOperationsEditor:
         self.value_fields.close()
         self.row_fields.close()
         _close_widgets([self.column, self.category, self.apply, self.cancel, self._inputs,
-                        self._settings_row, self.settings, self.status])
+                        self._settings_row, self._edit_controls, self.settings, self.status])

@@ -12,7 +12,7 @@
 
 ## TASK-021・TASK-022：DataFrameの条件・値加工
 
-「データ統合 → 条件・値加工」の入力フォームは処理一覧の下に置き、編集時は選んだ処理の直下に表示する。入力順は **対象列 → 処理分類 → 操作 → 詳細設定**。処理分類は「条件」「値加工」から選び、対象列の型に適した操作を表示する。「表全体」は重複・NULL行削除や先頭・末尾抽出に使用する。設定は右端から追加し、一覧の「編集」「削除」やドラッグ＆ドロップで調整する。[値加工 Issue #103](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/103) · [行の条件 Issue #105](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/105)
+「データ統合 → 条件・値加工」の入力フォームは処理一覧の下に置き、編集時は選んだ処理の直下に表示する。「編集をキャンセル」「編集を保存」はその行の「編集」と同じ位置に表示する。入力順は **対象列 → 処理分類 → 操作 → 詳細設定**。処理分類は「条件」「値加工」から選び、対象列の型に適した操作を表示する。「表全体」は重複・NULL行削除や先頭・末尾抽出に使用する。設定は右端から追加し、一覧の「編集」「削除」やドラッグ＆ドロップで調整する。[値加工 Issue #103](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/103) · [行の条件 Issue #105](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/105)
 
 ### 条件
 
