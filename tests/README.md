@@ -1,6 +1,6 @@
-# 残した調査用の確認資産
+# テストと調査用の確認資産
 
-新方式の[候補選択の文字列編集確認](unit/extension/selection.test.cjs)を追加しています。実行方法と現在の対象は[拡張ソースの案内](../apps/extension/README.md)を参照してください。これはCLIでのロジック確認であり、実画面の操作確認ではありません。
+現行アプリは[Pythonの単体・結合・配布確認](unit/python/README.md)と、下記のNotebookフォーム用サンプルを参照してください。
 
 旧フォーム・サイドバーの試験資料と試作は、2026-11-08の設計作り直しで撤去しました。残した資産は過去の観測を追跡するもので、新方式の製品受入条件ではありません。
 
@@ -9,7 +9,7 @@
 - [Python import調査](python-import-research/README.md)と[Python確認](unit/python/README.md)：独立したPython基盤の参照・配布確認。
 - [選択カーネルでの過去の手順](manual/TASK-003-05-python.md)と[Notebook APIの過去の手順](manual/TASK-002-01-notebook-host.md)。
 
-既存の[契約検証コード](contracts/README.md)はコード保護のため変更していません。旧フォーム契約の検証であり、新方式の必須条件にしません。
+旧アプリの[候補選択とVS Code拡張の検証](https://github.com/tomohiro-ono-works/vscode-extension-zizai/blob/52795b5a28ebb032e87f12ebfbc32940acb962ac/apps/extension/README.md)および[旧フォーム契約の検証](https://github.com/tomohiro-ono-works/vscode-extension-zizai/blob/52795b5a28ebb032e87f12ebfbc32940acb962ac/tests/contracts/README.md)は、撤去前の固定版を参照してください。
 
 ## Pythonフォームの専用実機サンプル（TASK-010）
 

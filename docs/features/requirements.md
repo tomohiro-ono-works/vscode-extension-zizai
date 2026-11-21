@@ -241,7 +241,7 @@ Jupyter標準カーネルがPythonコードを実行することを確認済み�
 - 利用者の追加条件「Pythonライブラリも、運営元が個人のものは使わずにおねがいします。」に対し、その後「jupyterほどのライブラリが公認ならOKとしたいです」と補足を受領。Jupyter等の信頼できる公式プロジェクトが採用・正式に依存していることを確認できるライブラリは、個人名義の管理を含んでも利用可とする。無関係な個人製ライブラリの独自追加へは拡大しない。ここでの公認は、一律の安全認証があるという意味ではなく公式採用・依存の確認を指す。
 - `ipywidgets`とIPythonはJupyter公式サブプロジェクトであり、この基準の採用対象とする。ipywidgets 8.1.9とPyYAML 6.0.3をフォーム用extraへ分離し、専用venvへ導入・CLI確認済み。採用根拠と具体的な依存版は下記の検証証跡へ記録する。実機確認済みではない。
 - 完了済みTASK-009の成果・実機結果・main収録は当時の成果として保持する。旧サイドバーフォーム・metadata同期を復活させる変更ではない。
-- 以下のTASK-009の開発範囲・拡張実装・UI比較は履歴と再利用元である。Pythonフォームの実装・検証完了、具体的なライブラリ／定義schema／生成APIの承認を意味しない。
+- 以下のTASK-009の開発範囲・拡張実装・UI比較は履歴である。2026-11-22に[TASK-029](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/119)で、旧入力支援拡張と旧フォーム契約の実装を現行ソースから撤去し、[削除前の固定版](https://github.com/tomohiro-ono-works/vscode-extension-zizai/tree/52795b5a28ebb032e87f12ebfbc32940acb962ac)と既存の検証証跡を参照できるようにした。
 
 確定した採用基準に従い、フォームのライブラリの版・具体的API／定義schema・仮表示を下記のとおり実装した。CLI／API・配布確認、専用Windows／VS Code InsidersでのPlaywright確認と、利用者による実フォルダー選択・取消保持・表示文字列の選択とコピーを実施済みで、[検証証跡](../research/notebook-ui/evidence/python-form-preview-20261112.json)へ記録する。他環境や実業務コード生成の確認へ拡大解釈しない。セルメニュー追加、公式`set_next_input`によるセル作成・入力、自動実行、Kiro連携は相談・調査段階であり、今回の実装範囲へ自動追加しない。
 
@@ -407,7 +407,7 @@ S12により、ローカルfile URIの絶対パスを、二重引用符の文字
 
 2026-11-10の追加自動確認7試行は、同じ0.0.2で親子候補・保持／消去・保存・単一Undo／Redo・YAML再読込を通過した。専用Insidersで利用者から「問題なく操作できました！」を受領し、終了承認後にログ・未保存Notebookのバックアップを保護して専用環境を終了した。[追加観測と実機確認](../research/notebook-ui/evidence/hover-events-20261110.json)を参照。現在の確認範囲で通常操作は成功している。利用者から記録訂正と安全なmain統合の指示を受け、過去の原因未特定だけを理由に追加調査を必須の停止条件にしない。過去の失敗は保持し、未報告ケースの成功・根本原因の特定・正式対応版の採用へは拡張しない。
 
-実装済みの候補選択・親子候補とパス選択を内部プレビューVSIXへ梱包する。正本は`apps/extension`、生成手順と入力例は同階層README、作業状態・受入条件は[Issue #80](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/80)で管理する。公式vsceの固定版とlockfileを用い、YAMLパーサの必要な実行時ファイルとLICENSEを同梱する。開発依存・検証Notebook・ログを配布物へ含めない。Marketplace公開・正式対応版の採用は含まない。
+候補選択・親子候補とパス選択は内部プレビューVSIXへ梱包した。当時の実装と生成手順は[固定版の拡張README](https://github.com/tomohiro-ono-works/vscode-extension-zizai/blob/52795b5a28ebb032e87f12ebfbc32940acb962ac/apps/extension/README.md)、作業状態・受入条件は[Issue #80](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/80)を参照する。公式vsceの固定版とlockfileを用い、YAMLパーサの必要な実行時ファイルとLICENSEを同梱した。開発依存・検証Notebook・ログを配布物へ含めない範囲で検証した。Marketplace公開と正式対応版の採用は当時の対象外だった。
 
 専用1.146.0-insiderへVSIXをCLI導入し、開発用パス指定なしの起動を確認する。候補／パスの通常操作、保存・Undo／Redo、対象外セル保持を確認するが、確認中に一度発生したパスのホバー消失は原因未確定として残す。この0.0.1時点の確認では外部定義・親子候補は未実装だった。その後のYAML対応は上記#78節に区別して記録し、当時の検証結果を遡って変更しない。この段落は0.0.1時点の履歴であり、最新の通常操作の成功を取り消すものではない。対応版・配布の未決U08は維持し、今回のmain収録を正式対応版の採用や完成版配布と混同しない。
 
