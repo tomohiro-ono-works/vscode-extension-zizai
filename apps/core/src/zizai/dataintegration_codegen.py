@@ -10,10 +10,12 @@ PRE_FLAGS = ('remove_spaces', 'remove_newlines', 'to_halfwidth_alnum', 'symbols_
 COLUMN_OPERATIONS = 'dataintegration.apply_column_operations'
 VALUE_OPERATIONS = 'dataintegration.apply_value_operations'
 ROW_OPERATIONS = 'dataintegration.filter_rows'
+DATA_OPERATIONS = 'dataintegration.apply_data_operations'
 DATAFRAME_OPERATIONS = {
     COLUMN_OPERATIONS: 'apply_column_operations',
     VALUE_OPERATIONS: 'apply_value_operations',
     ROW_OPERATIONS: 'filter_rows',
+    DATA_OPERATIONS: 'apply_data_operations',
 }
 GENERATION_FIELDS = {
     **{kind: {'input_variable', 'output_variable', 'operations'} for kind in DATAFRAME_OPERATIONS},
@@ -30,7 +32,8 @@ def generate_dataintegration(kind, values, module_path):
     incoming = _identifier(values, 'input_variable')
     output = _identifier(values, 'output_variable')
     if kind in DATAFRAME_OPERATIONS:
-        label = {COLUMN_OPERATIONS: '列操作', VALUE_OPERATIONS: '値加工', ROW_OPERATIONS: '行の条件'}[kind]
+        label = {COLUMN_OPERATIONS: '列操作', VALUE_OPERATIONS: '値加工', ROW_OPERATIONS: '行の条件',
+                 DATA_OPERATIONS: '処理'}[kind]
         if unicodedata.normalize('NFKC', incoming) == unicodedata.normalize('NFKC', output):
             raise ValueError('入力と出力には別の変数名を指定してください。')
         try:

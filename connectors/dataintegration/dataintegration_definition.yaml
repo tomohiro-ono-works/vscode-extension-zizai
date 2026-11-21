@@ -12,20 +12,13 @@ connectors:
           input_variable: {label: 入力DataFrame, type: text, required: true}
           output_variable: {label: 出力変数, type: text, default: processed_df, required: true}
           operations: {label: 列操作, type: textarea, required: true}
-      apply_value_operations:
-        label: 値加工
-        generation: dataintegration.apply_value_operations
+      apply_data_operations:
+        label: 条件・値加工
+        generation: dataintegration.apply_data_operations
         fields:
           input_variable: {label: 入力DataFrame, type: text, required: true}
           output_variable: {label: 出力変数, type: text, default: processed_df, required: true}
-          operations: {label: 値加工, type: textarea, required: true}
-      filter_rows:
-        label: 行の条件
-        generation: dataintegration.filter_rows
-        fields:
-          input_variable: {label: 入力DataFrame, type: text, required: true}
-          output_variable: {label: 出力変数, type: text, default: filtered_df, required: true}
-          operations: {label: 行の条件, type: textarea, required: true}
+          operations: {label: 処理, type: textarea, required: true}
       replace_fields_forrenamelist:
         label: RENAMEリストで列名変更
         generation: dataintegration.replace_fields_forrenamelist

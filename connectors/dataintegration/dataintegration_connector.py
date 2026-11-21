@@ -1,5 +1,6 @@
 """Independent DataFrame column operations and RENAME list processing."""
 import csv
+from itertools import groupby
 from math import isfinite
 import operator
 import re
@@ -403,13 +404,39 @@ def _row_mask(frame, columns, conditions):
     return current if disjunction is None else disjunction | current
 
 
+def _row_steps(operations):
+    pending = None
+    for change in operations:
+        if not isinstance(change, dict):
+            raise ValueError('行の条件の設定が不正です。')
+        if change.get('op') != 'condition':
+            if pending is not None:
+                yield pending
+                pending = None
+            yield change
+            continue
+        mode, rule = change.get('mode'), change.get('condition')
+        if not isinstance(rule, dict):
+            raise ValueError('条件の設定を確認してください。')
+        logic = rule.get('logic')
+        if logic not in (None, 'and', 'or'):
+            raise ValueError('条件の結合にはANDまたはORを指定してください。')
+        if pending is not None and mode == pending['mode'] and logic is not None:
+            pending['conditions'].append(rule)
+        else:
+            if pending is not None:
+                yield pending
+            first = {key: value for key, value in rule.items() if key != 'logic'}
+            pending = {'op': 'filter', 'mode': mode, 'conditions': [first]}
+    if pending is not None:
+        yield pending
+
+
 def filter_rows(data, *, operations):
     """Select and clean rows in order, preserving the original input and index."""
     frame = _operation_frame(data, operations, '行の条件')
     columns = dict(zip(map(str, frame.columns), frame.columns))
-    for change in operations:
-        if not isinstance(change, dict):
-            raise ValueError('行の条件の設定が不正です。')
+    for change in _row_steps(operations):
         op = change.get('op')
         if op == 'filter':
             mode = change.get('mode')
@@ -431,3 +458,20 @@ def filter_rows(data, *, operations):
         else:
             raise ValueError('未対応の行操作です。')
     return frame
+
+
+def apply_data_operations(data, *, operations):
+    """Apply mixed value and row operations in the order supplied."""
+    if not isinstance(operations, (list, tuple)):
+        raise ValueError('処理は操作の一覧で指定してください。')
+    if not operations:
+        return _operation_frame(data, operations, 'データ加工')
+    if any(not isinstance(step, dict) or not isinstance(step.get('operation'), dict) for step in operations):
+        raise ValueError('処理の設定を確認してください。')
+    functions = {'condition': filter_rows, 'value': apply_value_operations}
+    result = data
+    for category, steps in groupby(operations, key=lambda step: step.get('category')):
+        if not isinstance(category, str) or category not in functions:
+            raise ValueError('処理分類を確認してください。')
+        result = functions[category](result, operations=[step['operation'] for step in steps])
+    return result

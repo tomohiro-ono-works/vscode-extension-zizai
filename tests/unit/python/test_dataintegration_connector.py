@@ -11,6 +11,52 @@ from zizai.form_model import FormModel
 
 
 class DataIntegrationConnectorTests(unittest.TestCase):
+    def test_unified_form_edits_and_reorders_steps_in_generated_code(self):
+        import pandas as pd
+        from zizai.forms import create_form
+
+        shared = source_test_support.REPO / 'connectors'
+        source = pd.DataFrame({'数量': [1, 2]}, index=[7, 9])
+        with patch.object(sys, 'path', [str(shared / 'dataintegration'), *sys.path]):
+            form = create_form(shared, namespace={'df': source})
+            self.addCleanup(form.close)
+            form.connector.value = 'dataintegration'
+            form.action.value = 'apply_data_operations'
+            form.field_widgets['input_variable'].value = 'df'
+            editor = form._dataframe_editor
+            editor.category.value = 'value'
+            value = editor.value_fields
+            value.column.value = '数量'
+            value.category.value = 'numeric'
+            value.action.value = 'add'
+            value.fields['number'].value = '10'
+            editor.apply.click()
+            editor.category.value = 'condition'
+            row = editor.row_fields
+            row.action.value = 'keep'
+            row.column.value = '数量'
+            row.comparison.value = 'greater'
+            row.value.value = '11'
+            editor.apply.click()
+
+            def result():
+                form.generate_button.click()
+                scope = {'df': source}
+                exec(compile(form.result, '<mixed-operations>', 'exec'), scope)
+                return scope['processed_df']
+
+            self.assertEqual(result()['数量'].tolist(), [12])
+            entry = editor.entries.rows.children[0]
+            self.assertEqual([btn.description for btn in entry.children[-2:]], ['編集', '削除'])
+            entry.children[-2].click()
+            self.assertEqual(value.fields['number'].value, '10')
+            value.fields['number'].value = '20'
+            editor.apply.click()
+            self.assertEqual(result()['数量'].tolist(), [21, 22])
+            editor._move(1, 0, after=False)
+            self.assertTrue(result().empty)
+            self.assertEqual(source['数量'].tolist(), [1, 2])
+
     def test_row_operations_generate_mixed_conditions_then_apply_row_cleanup(self):
         import json
         import pandas as pd
@@ -32,14 +78,16 @@ class DataIntegrationConnectorTests(unittest.TestCase):
         ]
         form = FormModel(load_definition(shared))
         form.set_connector('dataintegration')
-        form.set_action('filter_rows')
+        form.set_action('apply_data_operations')
         form.set_value('input_variable', 'source')
-        form.set_value('operations', json.dumps(operations, ensure_ascii=False))
+        form.set_value('operations', json.dumps([
+            {'category': 'condition', 'operation': operation} for operation in operations
+        ], ensure_ascii=False))
         with patch.object(sys, 'path', [str(shared / 'dataintegration'), *sys.path]):
             namespace = {'source': source}
             exec(compile(form.generate(), '<generated-row-operations>', 'exec'), namespace)
             from dataintegration_connector import filter_rows
-        self.assertEqual(namespace['filtered_df'].index.tolist(), [32, 33])
+        self.assertEqual(namespace['processed_df'].index.tolist(), [32, 33])
         preceding_or = filter_rows(source, operations=[{'op': 'filter', 'mode': 'keep', 'conditions': [
             {'column': '商品', 'comparison': 'contains', 'value': 'B-'},
             {'logic': 'or', 'column': '商品', 'comparison': 'is_null'},
@@ -66,34 +114,37 @@ class DataIntegrationConnectorTests(unittest.TestCase):
             form = create_form(shared, namespace={'df': source})
             self.addCleanup(form.close)
             form.connector.value = 'dataintegration'
-            form.action.value = 'filter_rows'
+            form.action.value = 'apply_data_operations'
             form.field_widgets['input_variable'].value = 'df'
             editor = form._dataframe_editor
             self.assertFalse(hasattr(editor, 'grid'))
             self.assertIs(editor.settings.children[-1], editor.apply)
-            editor.action.value = 'keep'
-            editor.column.value = '数量'
-            editor.comparison.value = 'greater_equal'
-            editor.value.value = '10'
+            editor.category.value = 'condition'
+            row = editor.row_fields
+            row.action.value = 'keep'
+            row.column.value = '数量'
+            row.comparison.value = 'greater_equal'
+            row.value.value = '10'
             editor.apply.click()
-            editor.logic.value = 'or'
-            editor.comparison.value = 'less'
-            editor.value.value = '3'
+            row.logic.value = 'or'
+            row.comparison.value = 'less'
+            row.value.value = '3'
             editor.apply.click()
             self.assertEqual(len(editor.entries.rows.children), 2)
             editor.entries.rows.children[0].children[-1].click()
-            self.assertEqual(editor.operations[0]['conditions'], [
-                {'column': '数量', 'comparison': 'less', 'value': 3},
-            ])
+            form.generate_button.click()
+            namespace = {'df': source}
+            exec(compile(form.result, '<generated-remaining-condition>', 'exec'), namespace)
+            self.assertEqual(namespace['processed_df']['数量'].tolist(), [0, 1, 2])
             editor.entries.rows.children[0].children[-1].click()
             self.assertTrue(form.generate_button.disabled)
-            editor.action.value = 'tail'
-            editor.count.value = 2
+            row.action.value = 'tail'
+            row.count.value = 2
             editor.apply.click()
             form.generate_button.click()
             namespace = {'df': source}
             exec(compile(form.result, '<generated-tail>', 'exec'), namespace)
-            self.assertEqual(namespace['filtered_df']['数量'].tolist(), [38, 39])
+            self.assertEqual(namespace['processed_df']['数量'].tolist(), [38, 39])
             editor.entries.rows.children[0].children[-1].click()
             self.assertTrue(form.generate_button.disabled)
 
@@ -120,9 +171,11 @@ class DataIntegrationConnectorTests(unittest.TestCase):
         ]
         form = FormModel(load_definition(shared))
         form.set_connector('dataintegration')
-        form.set_action('apply_value_operations')
+        form.set_action('apply_data_operations')
         form.set_value('input_variable', 'source')
-        form.set_value('operations', json.dumps(operations, ensure_ascii=False))
+        form.set_value('operations', json.dumps([
+            {'category': 'value', 'operation': operation} for operation in operations
+        ], ensure_ascii=False))
         with patch.object(sys, 'path', [str(shared / 'dataintegration'), *sys.path]):
             scope = {'source': source}
             exec(compile(form.generate(), '<generated-value-operations>', 'exec'), scope)
@@ -144,36 +197,38 @@ class DataIntegrationConnectorTests(unittest.TestCase):
             form = create_form(shared, namespace={'df': source})
             self.addCleanup(form.close)
             form.connector.value = 'dataintegration'
-            form.action.value = 'apply_value_operations'
+            form.action.value = 'apply_data_operations'
             form.field_widgets['input_variable'].value = 'df'
             editor = form._dataframe_editor
             self.assertFalse(hasattr(editor, 'grid'))
-            self.assertIs(editor.settings.children[-1], editor.add)
-            self.assertTrue(editor.category.disabled)
-            editor.column.value = '商品'
-            editor.category.value = 'text'
-            editor.action.value = 'extract_regex'
-            editor.output_mode.value = 'new'
-            editor.output_name.value = '番号'
-            editor.fields['pattern'].value = '('
-            editor.add.click()
+            self.assertIs(editor.settings.children[-1], editor.apply)
+            editor.category.value = 'value'
+            value = editor.value_fields
+            self.assertTrue(value.category.disabled)
+            value.column.value = '商品'
+            value.category.value = 'text'
+            value.action.value = 'extract_regex'
+            value.output_mode.value = 'new'
+            value.output_name.value = '番号'
+            value.fields['pattern'].value = '('
+            editor.apply.click()
             self.assertIn('正規表現', editor.status.value)
             self.assertTrue(form.generate_button.disabled)
-            editor.fields['pattern'].value = r'-(\d+)$'
-            editor.fields['group'].value = 1
-            editor.add.click()
+            value.fields['pattern'].value = r'-(\d+)$'
+            value.fields['group'].value = 1
+            editor.apply.click()
             self.assertNotIn('番号', source.columns)
-            self.assertIn('番号', dict(editor.column.options).values())
-            editor.column.value = '番号'
-            editor.action.value = 'trim'
-            editor.output_mode.value = 'existing'
-            editor.add.click()
+            self.assertIn('番号', dict(value.column.options).values())
+            value.column.value = '番号'
+            value.action.value = 'trim'
+            value.output_mode.value = 'existing'
+            editor.apply.click()
             self.assertEqual(len(editor.entries.rows.children), 2)
             editor.entries.rows.children[0].children[-1].click()
             self.assertIn('削除できません', editor.status.value)
             self.assertEqual(len(editor.operations), 2)
             form.generate_button.click()
-            self.assertIn('apply_value_operations', form.result)
+            self.assertIn('apply_data_operations', form.result)
             editor.entries.rows.children[1].children[-1].click()
             editor.entries.rows.children[0].children[-1].click()
             self.assertTrue(form.generate_button.disabled)

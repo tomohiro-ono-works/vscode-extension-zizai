@@ -1,10 +1,9 @@
 """Configure ordered value transformations before generating Notebook code."""
-from html import escape
 from math import isfinite
 
 import ipywidgets as widgets
 
-from .row_preview import MAX_ROWS, _close_widgets
+from .row_preview import _close_widgets
 
 
 VALUE_CATEGORIES = {
@@ -66,79 +65,50 @@ def _operation_form(button):
     return row, fields
 
 
-class _OperationList:
-    def __init__(self, title, on_remove):
-        self._on_remove = on_remove
-        self._title = widgets.HTML(f'<h3>{escape(title)}</h3>')
-        self.rows = widgets.VBox()
-        self.rows.add_class('zizai-operation-list')
-        self.root = widgets.VBox([self._title, self.rows])
-
-    def render(self, entries):
-        previous = self.rows.children
-        rows = []
-        for key, description in entries:
-            label = widgets.HTML(f'<p>{escape(description)}</p>', layout=widgets.Layout(flex='1 1 0', min_width='0'))
-            button = widgets.Button(description='削除', tooltip=description,
-                                    layout=widgets.Layout(width='auto', flex='0 0 auto'))
-            button.add_class('row-preview-cancel')
-            row = widgets.HBox([label, button], layout=widgets.Layout(width='100%', align_items='center'))
-            row.add_class('zizai-operation-entry')
-            button.on_click(lambda _, key=key, row=row: self._remove(key, row))
-            rows.append(row)
-        self.rows.children = tuple(rows)
-        self._close_rows(previous)
-
-    def _remove(self, key, row):
-        if row in self.rows.children:
-            self._on_remove(key)
-
-    @staticmethod
-    def _close_rows(rows):
-        for row in rows:
-            _close_widgets([*row.children, row])
-
-    def close(self):
-        self._close_rows(self.rows.children)
-        _close_widgets([self._title, self.rows, self.root])
-
-
-class ValueEditor:
-    def __init__(self, data, apply_operations, on_change):
-        self._apply_operations = apply_operations
-        self._on_change = on_change
-        self._sample = data.head(MAX_ROWS).copy()
-        self.operations = []
-        self._sample_result = apply_operations(self._sample, operations=[])
-        self.fields = {}
+class ValueFields:
+    def __init__(self, on_layout):
+        self._on_layout = on_layout
+        self._columns = []
         self._syncing_columns = False
+        self.fields = {}
         self.column = _dropdown('対象列', self._column_options())
-        self.category = _dropdown('処理分類', [('選択してください', None)] + [
+        self.category = _dropdown('加工種別', [('選択してください', None)] + [
             (label, key) for key, (label, _) in VALUE_CATEGORIES.items()])
         self.action = _dropdown('操作', [('選択してください', None)])
         self.category.disabled = self.action.disabled = True
-        self.column.observe(self._select_column, names='value')
-        self.category.observe(self._select_category, names='value')
-        self.action.observe(self._select_action, names='value')
-
         self.output_mode = _dropdown(
             '加工結果', [('対象列を更新', 'existing'), ('新しい列へ出力', 'new')], value='existing')
         self.output_mode.layout.display = 'none'
         self.output_name = widgets.Text(description='新しい列名', layout=widgets.Layout(width='auto', display='none'))
         self.output_name.style.description_width = 'initial'
+        self.column.observe(self._select_column, names='value')
+        self.category.observe(self._select_category, names='value')
+        self.action.observe(self._select_action, names='value')
         self.output_mode.observe(self._toggle_output, names='value')
-        self.add = widgets.Button(description='変数を追加', disabled=True, layout=widgets.Layout(width='auto'))
-        self.add.on_click(self._add_current)
-        self.settings, self._inputs = _operation_form(self.add)
-        self.status = widgets.HTML()
-        self.entries = _OperationList('変数一覧', self._remove)
-        self.root = widgets.VBox([self.settings, self.status, self.entries.root])
-        self.root.add_class('row-preview')
-        self._select_action(None)
-        self._render()
+
+    def controls(self):
+        return (self.column, self.category, self.action, *self.fields.values(), self.output_mode, self.output_name)
 
     def _column_options(self):
-        return [('選択してください', None), *((str(column), str(column)) for column in self._sample_result.columns)]
+        return [('選択してください', None), *((name, name) for name in self._columns)]
+
+    def set_columns(self, names):
+        if self._columns == names:
+            return
+        self._columns = names
+        previous = self.column.value
+        self._syncing_columns = True
+        try:
+            self.column.options = self._column_options()
+            self.column.value = previous if previous in names else None
+        finally:
+            self._syncing_columns = False
+        self._select_column(None)
+        if 'other_column' in self.fields:
+            field = self.fields['other_column']
+            previous = field.value
+            field.options = self._column_options()
+            field.value = previous if previous in names else None
 
     def _select_column(self, _change):
         if self._syncing_columns:
@@ -146,7 +116,7 @@ class ValueEditor:
         self.category.disabled = self.column.value is None
         if self.category.disabled:
             self.category.value = None
-        self.status.value = ''
+        self._on_layout()
 
     def _select_category(self, _change):
         choice = self.category.value
@@ -157,19 +127,14 @@ class ValueEditor:
 
     def _select_action(self, _change):
         previous = self.fields
-        self.fields = {}
-        self.status.value = ''
-        self.add.disabled = self.action.value is None
+        self.fields = {name: self._make_field(name) for name in ACTION_FIELDS.get(self.action.value, ())}
         self.output_mode.layout.display = '' if self.action.value else 'none'
-        for name in ACTION_FIELDS.get(self.action.value, ()):
-            self.fields[name] = self._make_field(name)
-        self._inputs.children = (self.column, self.category, self.action, *self.fields.values(),
-                                 self.output_mode, self.output_name)
-        _close_widgets(previous.values())
         self._toggle_output(None)
         if 'operand' in self.fields:
             self.fields['operand'].observe(self._toggle_operand, names='value')
             self._toggle_operand(None)
+        self._on_layout()
+        _close_widgets(previous.values())
 
     def _make_field(self, name):
         if name == 'operand':
@@ -196,8 +161,10 @@ class ValueEditor:
     def _toggle_output(self, _change):
         self.output_name.layout.display = '' if self.action.value and self.output_mode.value == 'new' else 'none'
 
-    def _operation(self):
+    def operation(self):
         op = self.action.value
+        if self.column.value is None or op is None:
+            raise ValueError('対象列と操作を選択してください。')
         change = {'op': op, 'column': self.column.value}
         if self.output_mode.value == 'new':
             change['output'] = self.output_name.value
@@ -220,56 +187,29 @@ class ValueEditor:
             change.update((key, widget.value) for key, widget in self.fields.items())
         return change
 
-    def _add_current(self, _button):
-        if self.column.value is None or self.action.value is None:
-            return
-        try:
-            operations = [*self.operations, self._operation()]
-            self._update(operations)
-        except ValueError as error:
-            self.status.value = f'<p role="alert">{escape(str(error))}</p>'
+    def load(self, operation):
+        action = operation['op']
+        self.column.value = operation['column']
+        self.category.value = next(key for key, (_, ops) in VALUE_CATEGORIES.items() if action in ops)
+        self.action.value = action
+        self.output_mode.value = 'new' if 'output' in operation else 'existing'
+        self.output_name.value = operation.get('output', '')
+        if 'operand' in self.fields:
+            self.fields['operand'].value = 'other_column' if 'other_column' in operation else 'number'
+        if 'value_type' in self.fields:
+            raw = operation.get('value')
+            self.fields['value_type'].value = 'bool' if type(raw) is bool else 'number' if type(raw) in (int, float) else 'text'
+        for name, widget in self.fields.items():
+            if name in operation:
+                widget.value = str(operation[name]) if isinstance(widget, widgets.Text) else operation[name]
 
-    def _remove(self, index):
-        try:
-            self._update(self.operations[:index] + self.operations[index + 1:])
-        except ValueError as error:
-            self.status.value = f'<p role="alert">削除できません。{escape(str(error))}</p>'
-
-    def _update(self, operations):
-        self._sample_result = self._apply_operations(self._sample, operations=operations)
-        self.operations = operations
-        self.status.value = ''
-        self._render()
-        self._on_change(operations)
-
-    def _render(self):
-        column_options = self._column_options()
-        if tuple(column_options) != self.column.options:
-            previous = self.column.value
-            self._syncing_columns = True
-            try:
-                self.column.options = column_options
-                self.column.value = previous if previous in dict(column_options).values() else None
-            finally:
-                self._syncing_columns = False
-            self._select_column(None)
-        if 'other_column' in self.fields:
-            field = self.fields['other_column']
-            if field.options != tuple(column_options):
-                previous = field.value
-                field.options = column_options
-                field.value = previous if previous in dict(column_options).values() else None
-        entries = []
-        for index, change in enumerate(self.operations):
-            label = f'{change["column"]}　{ACTION_LABELS[change["op"]]}'
-            if 'output' in change:
-                label += f' → {change["output"]}'
-            details = [f'{FIELD_LABELS[key]} {value!r}' for key, value in change.items() if key in FIELD_LABELS]
-            if details:
-                label += '　' + '、'.join(details)
-            entries.append((index, label))
-        self.entries.render(entries)
+    @staticmethod
+    def describe(change):
+        label = f'{change["column"]}　{ACTION_LABELS[change["op"]]}'
+        if 'output' in change:
+            label += f' → {change["output"]}'
+        details = [f'{FIELD_LABELS[key]} {value!r}' for key, value in change.items() if key in FIELD_LABELS]
+        return label + ('　' + '、'.join(details) if details else '')
 
     def close(self):
-        self.entries.close()
-        _close_widgets([*self._inputs.children, self._inputs, self.add, self.settings, self.status, self.root])
+        _close_widgets(self.controls())

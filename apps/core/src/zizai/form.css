@@ -157,6 +157,7 @@
 }
 
 .zizai-form .zizai-operation-form, .zizai-form .zizai-operation-fields {gap:10px}
+.zizai-form .zizai-operation-form > button {flex:0 0 auto}
 .zizai-form .zizai-operation-fields {padding:3px 3px 4px}
 .zizai-form .zizai-operation-fields > .jupyter-widgets {flex:0 0 140px; min-width:0}
 .zizai-form .zizai-operation-fields > .widget-dropdown {flex-basis:160px}
@@ -168,3 +169,6 @@
 .zizai-form .zizai-operation-entry {
   gap:12px;padding:6px 8px;border:1px solid var(--zizai-border);border-radius:6px
 }
+.zizai-form .zizai-operation-handle {cursor:grab;user-select:none;flex:0 0 auto;padding:0 4px}
+.zizai-form .zizai-operation-entry.zizai-operation-before {box-shadow:inset 0 3px #187a57}
+.zizai-form .zizai-operation-entry.zizai-operation-after {box-shadow:inset 0 -3px #187a57}
