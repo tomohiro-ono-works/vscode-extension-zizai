@@ -1,7 +1,7 @@
 """Generate standalone pandas code for sorting, aggregation and joins."""
 from unicodedata import normalize
 
-from .connector_codegen import _identifier
+from ...connector_codegen import _identifier
 
 
 SORT_ROWS = 'dataintegration.sort_rows'

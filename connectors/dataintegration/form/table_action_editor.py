@@ -8,7 +8,7 @@ from .pandas_table_codegen import (
     AGGREGATE_ROWS, AGGREGATIONS, COMBINE_FRAMES, JOIN_TYPES, RESHAPE_ROWS, SET_OPERATIONS, SORT_ROWS,
     aggregate_sample, column_names, reshape_sample,
 )
-from .row_preview import MAX_ROWS, _close_widgets
+from ...row_preview import MAX_ROWS, _close_widgets
 from .value_editor import _dropdown
 
 

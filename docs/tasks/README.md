@@ -10,6 +10,8 @@
 
 ## 新方式のTask
 
+- [TASK-032 / #125：コネクタ固有のコード生成とフォーム部品を移管する](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/125)
+
 - [TASK-031 / #123：ZizAIの環境構築Notebookを追加する](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/123)
 
 - [TASK-030 / #121：ZizAIのソースをsrcへまとめ、空フォルダーを整理する](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/121)

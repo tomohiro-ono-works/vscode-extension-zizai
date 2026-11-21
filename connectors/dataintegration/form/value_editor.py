@@ -4,7 +4,7 @@ from math import isfinite
 import ipywidgets as widgets
 
 from .arithmetic_formula import format_column
-from .row_preview import _close_widgets
+from ...row_preview import _close_widgets
 
 
 VALUE_ACTIONS = {

@@ -1,7 +1,7 @@
 """Generate safe Python calls for the three Excel form actions."""
 import ast
 from pathlib import Path
-from .connector_codegen import _identifier, _integer, _text, form_file_path, form_input_file_path, module_name_for, render_call
+from ...connector_codegen import _identifier, _integer, _text, form_file_path, form_input_file_path, module_name_for, render_call
 
 
 COMMON_FIELDS = {'folder', 'filename', 'sheet_name', 'schema'}

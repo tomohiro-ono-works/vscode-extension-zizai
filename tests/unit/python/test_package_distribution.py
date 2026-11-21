@@ -154,9 +154,19 @@ print(json.dumps({"unchanged": before == after}))
         self.install(python, wheels[0])
         result = self.probe(python, """
 import json, zizai, zizai.core, zizai.connectors
-print(json.dumps({"imports": [zizai.__name__, zizai.core.__name__, zizai.connectors.__name__]}))
+from zizai.arithmetic_formula import ArithmeticFormula
+from zizai.connector_forms.csv.csv_codegen import generate_csv
+print(json.dumps({
+    "imports": [zizai.__name__, zizai.core.__name__, zizai.connectors.__name__],
+    "codegen": generate_csv.__module__,
+    "formula": ArithmeticFormula.__module__,
+}))
 """)
-        self.assertEqual(result, {"imports": ["zizai", "zizai.core", "zizai.connectors"]})
+        self.assertEqual(result, {
+            "imports": ["zizai", "zizai.core", "zizai.connectors"],
+            "codegen": "zizai.connector_forms.csv.csv_codegen",
+            "formula": "zizai.connector_forms.dataintegration.arithmetic_formula",
+        })
 
 
 if __name__ == "__main__":

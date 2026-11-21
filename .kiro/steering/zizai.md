@@ -21,6 +21,6 @@ df = csv_connector.read_csv(file_path=input_path)
 
 ## 変更箇所と確認
 
-- `src/` は配布時に `zizai` としてインストールされる。フォーム、コード生成、コネクタ登録、行プレビューの正本はここにある。
-- ルートの `connectors/` はコネクタ本体と隣接するフォーム定義YAMLの正本。生成コードからは `import csv_connector` などの通常importを使う。
+- `src/` は共通フォーム、行プレビューUI、コネクタ登録と共通処理の正本。配布時は `zizai` パッケージになる。
+- `connectors/<id>/` はコネクタ本体とフォーム定義YAMLの正本。専用のコード生成・フォーム補助は同じフォルダーの `form/` にあり、`zizai.connector_forms.<id>` として配布される。生成コードやPythonスクリプトからは `import csv_connector` などの通常importを使う。
 - [テスト手順](../../tests/unit/python/README.md)を参照し、開発用環境にインストールした状態で確認する。フォームの検証はCLI/APIと合意した範囲のPlaywrightを使う。利用者が開いているNotebookや未保存変更を保護する。

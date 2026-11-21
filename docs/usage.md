@@ -214,8 +214,9 @@ distributionは`zizai-runtime`、importは`zizai`です。当時の`0.0.0.dev0`�
 | `src/__init__.py` | `zizai/__init__.py` |
 | `src/core/__init__.py` | `zizai/core/__init__.py` |
 | `src/connectors.py` | `zizai/connectors.py` |
+| `connectors/<id>/form/` のコード生成・フォーム補助 | `zizai/connector_forms/<id>/` |
 
-rootの`pyproject.toml`がpackage一覧とソースの対応を明示します。生成されたwheelやsdistのコピーを直接編集せず、上記正本を更新して再ビルドします。Python側でHost・UI・他コネクタ・SDKを自動読込しません。
+rootの`pyproject.toml`がpackage一覧とソースの対応を明示します。生成されたwheelやsdistのコピーを直接編集せず、上記正本を更新して再ビルドします。基本APIのimportは、Host・UI・個別コネクタ・追加SDKの読込を伴いません。共通フォルダーには業務モジュールの `*_connector.py` と定義の `*_definition.yaml` を配置します。フォーム補助はwheelまたはソースインストールから読み込まれます。
 
 実行依存は最小基盤では空です。個別アクションを追加した際に必要な直接依存を宣言します。この開発版を、全コネクタに必要な依存や契約資産が揃った製品版として扱いません。共通関数は実際に複数の利用箇所が必要になった時点で追加します。
 

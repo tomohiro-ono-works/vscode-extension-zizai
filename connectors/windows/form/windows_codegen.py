@@ -2,7 +2,7 @@
 import ast
 from pathlib import Path
 
-from .connector_codegen import _identifier, absolute_file_path, module_name_for, render_call
+from ...connector_codegen import _identifier, absolute_file_path, module_name_for, render_call
 
 
 SEARCH_FIELDS = {

@@ -1,7 +1,7 @@
 """Generate normal Python calls from the BigQuery form."""
 import ast
 
-from .connector_codegen import _identifier, _text, absolute_file_path, module_name_for, render_call
+from ...connector_codegen import _identifier, _text, absolute_file_path, module_name_for, render_call
 
 
 COMMON_FIELDS = {'project_id', 'output_variable'}

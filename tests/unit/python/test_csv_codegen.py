@@ -14,7 +14,7 @@ from zizai.form_model import FormModel
 
 class CsvCodegenTests(unittest.TestCase):
     def setUp(self):
-        from zizai.csv_codegen import generate_csv
+        from zizai.connector_forms.csv.csv_codegen import generate_csv
         self.module_path = str(source_test_support.REPO / 'connectors/csv/csv_connector.py')
         self.generate = lambda kind, values: generate_csv(kind, values, self.module_path)
         self.temp = tempfile.TemporaryDirectory(prefix='zizai-code-')
