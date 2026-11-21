@@ -86,7 +86,7 @@ UIのenv_path既定はdefult。新設計のoutput型選択は現行paramsには�
 ## 根拠・未確認事項
 
 - 実装: [python_connector.py](../../../apps/connectors/python_connector.py)。共通表処理: [BaseConnector](../../../apps/core/base_connector.py)。
-- UI宣言: [config.js](../../../apps/gui/config/config.js)のactions／forms。専用欄なしの引数は実装から補足。
+- UI宣言: [config.js](https://github.com/tomohiro-ono-works/zizai/blob/64a1be160c06f4a6924b2fcdb6d007f22b1fce78/apps/gui/config.js)のactions／forms。専用欄なしの引数は実装から補足。
 - 共通仕様: [Connector契約](../../features/connectors.md)、[データ契約](../../features/data-contract.md)。
 - 結果登録・template・loop・report: [WorkflowEngine](../../../apps/core/workflow_engine.py)。
 - 調査Task: [TASK-053](../../tasks/done/TASK-053/TASK-053.md)。
