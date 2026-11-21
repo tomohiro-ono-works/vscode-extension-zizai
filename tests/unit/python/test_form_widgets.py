@@ -245,8 +245,10 @@ class FormWidgetTests(unittest.TestCase):
                              (picker, form.field_widgets['search_mode']))
             self.assertEqual(tuple(form.details.children[2].children),
                              (form.field_widgets['output_variable'], form.field_widgets['top_k']))
-            self.assertEqual(form.details.children[3].children,
-                             (form.field_widgets['query_text'], form.field_widgets['batch_search']))
+            heading, query = form.details.children[3].children
+            self.assertEqual(heading.children[0].value, '検索文')
+            self.assertIs(heading.children[1], form.field_widgets['batch_search'])
+            self.assertIs(query, form.field_widgets['query_text'])
             form.field_widgets['query_text'].value = 'りんご'
             self.assertTrue(form.generate_button.disabled)
             picker.value = 'sales'
@@ -295,6 +297,7 @@ class FormWidgetTests(unittest.TestCase):
         self.assertIsInstance(toggle, widgets.ToggleButtons)
         self.assertEqual(toggle.options, (('検索文', False), ('DataFrame', True)))
         self.assertFalse(toggle.value)
+        heading = form.details.children[3].children[0]
         self.assertEqual(form.details.children[4].layout.display, 'none')
         with tempfile.TemporaryDirectory() as directory:
             folder = Path(directory)
@@ -303,6 +306,7 @@ class FormWidgetTests(unittest.TestCase):
             fields['query_text'].value = '単一検索'
             self.assertFalse(form.generate_button.disabled)
             toggle.value = True
+            self.assertIs(form.details.children[3].children[0], heading)
             self.assertEqual(fields['query_text'].layout.display, 'none')
             self.assertEqual(form.details.children[4].layout.display, '')
             self.assertTrue(form.generate_button.disabled)

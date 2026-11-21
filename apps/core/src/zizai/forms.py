@@ -248,6 +248,7 @@ class NotebookForm:
                     self._dynamic.append(button)
             self.toolbar.children = [self.connector, self.action]
             rows = []
+            query_switch = self.field_widgets.get('batch_search') if vector_search else None
             pairs = [('encoding', 'delimiter')]
             if dataframe_mode:
                 pairs.append(('input_variable', 'output_variable'))
@@ -255,7 +256,7 @@ class NotebookForm:
                 pairs.extend([('input_variable', 'output_variable'), ('id_column', 'text_column')])
             if vector_search:
                 pairs.extend([('collection_name', 'search_mode'), ('output_variable', 'top_k')])
-                pairs.extend([('query_text', 'batch_search'), ('query_input_variable', 'query_column')])
+                pairs.append(('query_input_variable', 'query_column'))
             if (self.model.connector, self.model.action) in {
                 ('csv', 'import'), ('excel', 'read_excel'), ('excel', 'read_excel_range'),
             }:
@@ -265,6 +266,18 @@ class NotebookForm:
             for name, widget in self.field_widgets.items():
                 if vector_build and name in CORRECTION_FIELDS:
                     correction_controls.append(widget)
+                elif name == 'query_text' and query_switch is not None:
+                    caption = widgets.Label(value=self.model.fields[name]['label'])
+                    caption.add_class('zizai-query-caption')
+                    heading = widgets.HBox([caption, query_switch],
+                                           layout=widgets.Layout(align_items='center', flex_flow='row wrap'))
+                    heading.add_class('zizai-query-heading')
+                    widget.add_class('zizai-query-text')
+                    widget.layout.width = '100%'
+                    section = widgets.VBox([heading, widget])
+                    section.add_class('zizai-query-section')
+                    self._dynamic.extend([caption, heading, section])
+                    rows.append(section)
                 elif name in self.browse_buttons:
                     widget.layout.flex = '1 1 0'
                     widget.layout.min_width = '0'
@@ -287,14 +300,10 @@ class NotebookForm:
                         item.layout.flex = '1 1 240px'
                         item.layout.min_width = '0'
                     row = widgets.HBox(pair, layout=widgets.Layout(flex_flow='row wrap', width='100%'))
-                    if name == 'query_text':
-                        row.layout.align_items = 'flex-start'
-                        row.layout.justify_content = 'flex-end'
-                        pair[1].layout.flex = '0 1 auto'
                     row.add_class('zizai-pair')
                     self._dynamic.append(row)
                     rows.append(row)
-                elif name not in paired_fields.values():
+                elif name not in paired_fields.values() and widget is not query_switch:
                     rows.append(widget)
             if correction_controls:
                 settings = widgets.VBox(correction_controls)
