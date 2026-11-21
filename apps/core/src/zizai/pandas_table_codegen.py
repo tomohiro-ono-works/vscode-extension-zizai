@@ -7,7 +7,8 @@ from .connector_codegen import _identifier
 SORT_ROWS = 'dataintegration.sort_rows'
 AGGREGATE_ROWS = 'dataintegration.aggregate_rows'
 COMBINE_FRAMES = 'dataintegration.combine_frames'
-TABLE_ACTIONS = {SORT_ROWS, AGGREGATE_ROWS, COMBINE_FRAMES}
+RESHAPE_ROWS = 'dataintegration.reshape_rows'
+TABLE_ACTIONS = {SORT_ROWS, AGGREGATE_ROWS, COMBINE_FRAMES, RESHAPE_ROWS}
 
 AGGREGATIONS = {
     'sum': '合計', 'mean': '平均', 'min': '最小', 'max': '最大', 'count': 'カウント（非NULL）',
@@ -77,6 +78,67 @@ def aggregate_sample(data, settings):
         output: _first_mode(data[names[col]]) if method == 'mode' else data[names[col]].agg(method)
         for col, method, output in aggregations
     }])
+
+
+def _pivot_spec(settings):
+    keep = _columns(settings.get('keep'))
+    pivot_by = _columns(settings.get('pivot_by'))
+    values = _columns(settings.get('values'))
+    _columns([*keep, *pivot_by, *values])
+    method = settings.get('method')
+    if method is not None and method not in AGGREGATIONS:
+        raise ValueError('集計方法を選択してください。')
+    return keep, pivot_by, values, method
+
+
+def _unpivot_spec(settings):
+    keep = _columns(settings.get('keep', []), allow_empty=True)
+    unpivot_by = _columns(settings.get('unpivot_by'))
+    _columns([*keep, *unpivot_by])
+    key, value = settings.get('key_name'), settings.get('value_name')
+    if not all(isinstance(name, str) and name.strip() for name in (key, value)):
+        raise ValueError('キー名とバリュー名を入力してください。')
+    if key == value or key in keep or value in keep:
+        raise ValueError('キー名・バリュー名・残す列の名前は重複なく指定してください。')
+    return keep, unpivot_by, key, value
+
+
+def _melt_value_label(keep, unpivot_by, key, value):
+    label = value
+    while label in keep or label in unpivot_by or label == key:
+        label += '_'
+    return label
+
+
+def reshape_sample(data, settings):
+    """Apply the requested reshape to the caller's bounded sample."""
+    names = column_names(data)
+    mode = settings.get('mode')
+    if mode == 'pivot':
+        keep, pivot_by, values, method = _pivot_spec(settings)
+        index = [names[column] for column in keep]
+        columns = [names[column] for column in pivot_by]
+        measures = [names[column] for column in values]
+        keys = [*index, *columns]
+        if method is not None:
+            data = data.groupby(keys, as_index=False, dropna=False, observed=True, sort=False)[measures].agg(
+                _first_mode if method == 'mode' else method)
+        elif data.duplicated(keys).any():
+            raise ValueError('残す列とピボットする列の組み合わせが重複しています。集計方法を選択してください。')
+        result = data.pivot(index=index, columns=columns, values=measures[0] if len(measures) == 1 else measures)
+        if result.columns.nlevels > 1:
+            result.columns = ['_'.join(map(str, levels)) for levels in result.columns]
+        result = result.reset_index().rename_axis(columns=None)
+        column_names(result)
+        return result
+    if mode == 'unpivot':
+        keep, unpivot_by, key, value = _unpivot_spec(settings)
+        label = _melt_value_label(keep, unpivot_by, key, value)
+        ids = [names[column] for column in keep]
+        measures = [names[column] for column in unpivot_by]
+        result = data.loc[:, [*ids, *measures]].melt(id_vars=ids, value_vars=measures, var_name=key, value_name=label)
+        return result.rename(columns={label: value}) if label != value else result
+    raise ValueError('構造変更の操作を選択してください。')
 
 
 class TableCode:
@@ -180,6 +242,47 @@ class TableCode:
             '.reset_index(drop=True)',
         ])
 
+    def reshape(self, settings):
+        lookup = settings.get('lookup_labels') is True
+        mode = settings.get('mode')
+        if mode == 'pivot':
+            keep, pivot_by, values, method = _pivot_spec(settings)
+            index = self.labels(self.incoming, keep, lookup=lookup)
+            columns = self.labels(self.incoming, pivot_by, lookup=lookup)
+            measures = self.labels(self.incoming, values, lookup=lookup)
+            pivot_values = self.label(self.incoming, values[0], lookup=lookup) if len(values) == 1 else measures
+            source = self.incoming
+            if method is not None:
+                keys = self.labels(source, [*keep, *pivot_by], lookup=lookup)
+                function = '(lambda values: values.mode().reindex([0]).iloc[0])' if method == 'mode' else repr(method)
+                grouped = self.unique('_pivot_values')
+                self.lines.append(f'{grouped} = {source}.groupby({keys}, as_index=False, dropna=False, '
+                                  f'observed=True, sort=False)[{measures}].agg({function})')
+                source = grouped
+            self.lines.extend([
+                f'{self.output} = {source}.pivot(index={index}, columns={columns}, values={pivot_values})',
+                f'if {self.output}.columns.nlevels > 1:',
+                f'    {self.output}.columns = ["_".join(f"{{level!s}}" for level in levels) for levels in {self.output}.columns]',
+                f'{self.output} = {self.output}.reset_index().rename_axis(columns=None)',
+                f'if {self.output}.columns.map(lambda label: f"{{label!s}}").has_duplicates:',
+                '    raise ValueError("ピボット後の列名が重複しています。")',
+            ])
+        elif mode == 'unpivot':
+            keep, unpivot_by, key, value = _unpivot_spec(settings)
+            label = _melt_value_label(keep, unpivot_by, key, value)
+            ids = self.labels(self.incoming, keep, lookup=lookup)
+            measures = self.labels(self.incoming, unpivot_by, lookup=lookup)
+            selected = self.labels(self.incoming, [*keep, *unpivot_by], lookup=lookup)
+            self.lines.extend([
+                f'{self.output} = {self.incoming}.loc[:, {selected}].melt(',
+                f'    id_vars={ids}, value_vars={measures}, var_name={key!r}, value_name={label!r},',
+                ')',
+            ])
+            if label != value:
+                self.lines.append(f'{self.output} = {self.output}.rename(columns={{{label!r}: {value!r}}})')
+        else:
+            raise ValueError('構造変更の操作を選択してください。')
+
     def render(self):
         before = [*self.imports, ''] if self.imports else []
         return '\n'.join([*before, *self.lines, self.output])
@@ -191,7 +294,8 @@ def generate_table_action(kind, incoming, output, settings):
         raise ValueError('入力と出力には別の変数名を指定してください。')
     code = TableCode(incoming, output, right)
     try:
-        {SORT_ROWS: code.sort, AGGREGATE_ROWS: code.aggregate, COMBINE_FRAMES: code.combine}[kind](settings)
+        {SORT_ROWS: code.sort, AGGREGATE_ROWS: code.aggregate,
+         COMBINE_FRAMES: code.combine, RESHAPE_ROWS: code.reshape}[kind](settings)
     except (KeyError, TypeError) as error:
         raise ValueError('処理の設定を確認してください。') from error
     return code.render()
