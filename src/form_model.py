@@ -1,15 +1,15 @@
 """Selection and placeholder generation; no GUI, kernel or business execution."""
 from copy import deepcopy
 from .form_definition import valid_value
-from .bigquery_codegen import generate_bigquery
-from .csv_codegen import generate_csv
-from .dataintegration_codegen import generate_dataintegration
-from .duckdb_codegen import generate_duckdb
-from .excel_codegen import generate_excel
-from .python_codegen import generate_python
-from .shell_codegen import generate_shell
-from .vector_codegen import generate_vector
-from .windows_codegen import generate_windows
+from .connector_forms.bigquery.bigquery_codegen import generate_bigquery
+from .connector_forms.csv.csv_codegen import generate_csv
+from .connector_forms.dataintegration.dataintegration_codegen import generate_dataintegration
+from .connector_forms.duckdb.duckdb_codegen import generate_duckdb
+from .connector_forms.excel.excel_codegen import generate_excel
+from .connector_forms.python.python_codegen import generate_python
+from .connector_forms.shell.shell_codegen import generate_shell
+from .connector_forms.vector.vector_codegen import generate_vector
+from .connector_forms.windows.windows_codegen import generate_windows
 
 
 GENERATORS = {

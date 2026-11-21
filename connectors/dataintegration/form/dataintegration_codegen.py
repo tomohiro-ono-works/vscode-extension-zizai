@@ -3,7 +3,7 @@ import ast
 import json
 import unicodedata
 
-from .connector_codegen import _identifier, _text, form_input_file_path, module_name_for, render_call
+from ...connector_codegen import _identifier, _text, form_input_file_path, module_name_for, render_call
 from .pandas_operations_codegen import generate_pandas_operations
 from .pandas_table_codegen import TABLE_ACTIONS, generate_table_action
 

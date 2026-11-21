@@ -6,7 +6,7 @@ from pandas import isna
 from pandas.api.types import is_datetime64_any_dtype, is_float_dtype, is_integer_dtype, is_scalar, is_string_dtype
 from traitlets import Bool, Dict, Unicode
 
-from .row_preview import CELL_WIDTH, MAX_ROWS, _close_widgets
+from ...row_preview import CELL_WIDTH, MAX_ROWS, _close_widgets
 
 
 OPERATIONS = {

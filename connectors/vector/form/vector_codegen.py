@@ -3,7 +3,7 @@ import ast
 import math
 from pathlib import Path
 
-from .connector_codegen import (
+from ...connector_codegen import (
     _identifier, _integer, _prepare_connector_call, _reserve_name, _text, module_name_for, render_call,
 )
 

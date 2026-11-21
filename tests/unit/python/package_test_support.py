@@ -13,37 +13,40 @@ import zipfile
 
 REPO = Path(__file__).resolve().parents[3]
 RUNTIME = os.environ.get("ZIZAI_TEST_PYTHON", sys.executable)
+FORM_MODULES = {
+    "bigquery": {"bigquery_codegen"},
+    "csv": {"csv_codegen", "preview"},
+    "dataintegration": {
+        "arithmetic_formula", "column_editor", "data_operations_editor", "dataintegration_codegen",
+        "pandas_operations_codegen", "pandas_table_codegen", "row_filter_editor", "table_action_editor", "value_editor",
+    },
+    "duckdb": {"duckdb_codegen"},
+    "excel": {"excel_codegen", "preview"},
+    "python": {"python_codegen"},
+    "shell": {"shell_codegen"},
+    "vector": {"collection_names", "vector_codegen"},
+    "windows": {"cursor", "windows_codegen"},
+}
 PACKAGE_FILES = {
     "zizai/__init__.py",
     "zizai/core/__init__.py",
     "zizai/connectors.py",
+    "zizai/connector_forms/__init__.py",
     "zizai/form_definition.py",
     "zizai/form_model.py",
     "zizai/forms.py",
     "zizai/forms.yaml",
     "zizai/form.css",
     "zizai/row_preview.py",
-    "zizai/column_editor.py",
-    "zizai/value_editor.py",
-    "zizai/data_operations_editor.py",
-    "zizai/row_filter_editor.py",
-    "zizai/csv_codegen.py",
-    "zizai/bigquery_codegen.py",
-    "zizai/duckdb_codegen.py",
-    "zizai/dataintegration_codegen.py",
-    "zizai/pandas_operations_codegen.py",
-    "zizai/pandas_table_codegen.py",
-    "zizai/table_action_editor.py",
     "zizai/arithmetic_formula.py",
-    "zizai/python_codegen.py",
-    "zizai/shell_codegen.py",
-    "zizai/vector_codegen.py",
-    "zizai/windows_codegen.py",
     "zizai/connector_codegen.py",
-    "zizai/excel_codegen.py",
     "zizai/core/tabular.py",
     "zizai/core/type_registry.py",
     "zizai/core/connector_config.py",
+} | {
+    f"zizai/connector_forms/{connector}/{module}.py"
+    for connector, modules in FORM_MODULES.items()
+    for module in {"__init__", *modules}
 }
 
 
@@ -92,6 +95,9 @@ class PackageArtifactTestCase(unittest.TestCase):
                 REPO / "src", self.source / "src",
                 ignore=shutil.ignore_patterns("__pycache__", "*.egg-info", "node_modules", "*.vsix"),
             )
+            for connector in FORM_MODULES:
+                folder = Path("connectors") / connector / "form"
+                shutil.copytree(REPO / folder, self.source / folder, ignore=shutil.ignore_patterns("__pycache__"))
             unrelated = self.source / "unrelated" / "__init__.py"
             unrelated.parent.mkdir(parents=True, exist_ok=True)
             unrelated.write_text("raise RuntimeError('not a Python package asset')\n")

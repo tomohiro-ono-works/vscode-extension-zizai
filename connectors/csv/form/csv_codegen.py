@@ -1,6 +1,6 @@
 """Pure CSV call generation. Never import a connector, evaluate input, or do IO."""
 import ast
-from .connector_codegen import _text, _identifier, _integer, form_file_path, form_input_file_path, module_name_for, render_call
+from ...connector_codegen import _text, _identifier, _integer, form_file_path, form_input_file_path, module_name_for, render_call
 
 GENERATION_KINDS = frozenset({'csv.read_csv', 'csv.write_csv'})
 

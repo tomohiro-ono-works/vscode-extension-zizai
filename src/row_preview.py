@@ -1,12 +1,13 @@
 """Bounded CSV and Excel previews for selecting rows in the notebook form."""
 import csv
 from html import escape
-from itertools import islice
 from string import ascii_uppercase
 from zipfile import BadZipFile
 
 import ipywidgets as w
 from traitlets import Unicode
+from .connector_forms.csv.preview import read_preview_rows as read_csv_preview
+from .connector_forms.excel.preview import read_preview_rows as read_excel_preview, sheet_names
 from .form_definition import valid_value
 
 
@@ -18,30 +19,8 @@ COLUMN_LABELS = (*ascii_uppercase, *('A' + letter for letter in ascii_uppercase)
 
 
 def _preview_rows(path, connector, settings):
-    if connector == 'csv':
-        delimiter = settings['delimiter'] or ','
-        if delimiter in (r'\t', 'tab', 'TAB'):
-            delimiter = '\t'
-        encoding = settings['encoding']
-        with path.open(encoding='utf-8-sig' if encoding == 'utf-8' else encoding, newline='') as handle:
-            return [row[:MAX_COLS] for row in islice(csv.reader(handle, delimiter=delimiter), MAX_ROWS)]
-    from openpyxl import load_workbook
-    workbook = load_workbook(path, read_only=True, data_only=True)
-    try:
-        sheet = workbook[settings['sheet_name']]
-        return list(sheet.iter_rows(max_row=min(sheet.max_row or MAX_ROWS, MAX_ROWS),
-                                    max_col=min(sheet.max_column or MAX_COLS, MAX_COLS), values_only=True))
-    finally:
-        workbook.close()
-
-
-def _sheet_names(path):
-    from openpyxl import load_workbook
-    workbook = load_workbook(path, read_only=True, data_only=True)
-    try:
-        return workbook.sheetnames
-    finally:
-        workbook.close()
+    read_rows = read_csv_preview if connector == 'csv' else read_excel_preview
+    return read_rows(path, settings, max_rows=MAX_ROWS, max_cols=MAX_COLS)
 
 
 def _close_widgets(widgets):
@@ -102,7 +81,7 @@ class RowPreview:
                 'delimiter': w.Text(description='区切り文字', value=fields['delimiter'].value,
                                     continuous_update=False),
             }
-        sheets = _sheet_names(self.path)
+        sheets = sheet_names(self.path)
         current = fields['sheet_name'].value
         return {'sheet_name': w.Dropdown(description='シート', options=sheets,
                                         value=current if current in sheets else sheets[0])}

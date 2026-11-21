@@ -1,7 +1,7 @@
 """Generate a standard connector call for a Python script."""
 import ast
 
-from .connector_codegen import _identifier, absolute_file_path, module_name_for, render_call
+from ...connector_codegen import _identifier, absolute_file_path, module_name_for, render_call
 
 
 GENERATION_FIELDS = {'python.execute_python_file': {'file_path', 'output_variable'}}

@@ -2,7 +2,7 @@
 import ast
 import json
 
-from .connector_codegen import _identifier, _text, form_input_file_path, module_name_for, render_call
+from ...connector_codegen import _identifier, _text, form_input_file_path, module_name_for, render_call
 
 
 GENERATION_FIELDS = {'shell.execute_bat': {'folder', 'filename', 'args', 'output_variable'}}

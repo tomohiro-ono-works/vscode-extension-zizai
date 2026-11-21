@@ -7,37 +7,22 @@ from importlib.util import find_spec
 import json
 from keyword import iskeyword
 from pathlib import Path
-import re
 import shlex
 import sys
 from .connector_codegen import module_name_for
-from .dataintegration_codegen import COLUMN_OPERATIONS, DATAFRAME_OPERATIONS, ROW_OPERATIONS, VALUE_OPERATIONS
-from .pandas_table_codegen import TABLE_ACTIONS
+from .connector_forms.dataintegration.dataintegration_codegen import COLUMN_OPERATIONS, DATAFRAME_OPERATIONS, ROW_OPERATIONS, VALUE_OPERATIONS
+from .connector_forms.dataintegration.pandas_table_codegen import TABLE_ACTIONS
+from .connector_forms.vector.collection_names import _vector_collection_names
+from .connector_forms.vector.vector_codegen import BUILD as VECTOR_BUILD, CORRECTION_FIELDS, SEARCH as VECTOR_SEARCH
+from .connector_forms.windows.cursor import _read_cursor_position
 from .form_definition import load_definition
 from .form_model import FormModel
-from .vector_codegen import BUILD as VECTOR_BUILD, CORRECTION_FIELDS, SEARCH as VECTOR_SEARCH
 
 
 _ROW_PREVIEW_FIELDS = {
     ('csv', 'import'): {'encoding': 'choice', 'delimiter': 'text'},
     ('excel', 'read_excel'): {'sheet_name': 'text'},
 }
-
-_VECTOR_COLLECTION_SUFFIX = '.vector.duckdb'
-
-
-def _vector_collection_names(folder):
-    if not folder or not Path(folder).is_absolute():
-        return []
-    try:
-        names = []
-        for entry in Path(folder).iterdir():
-            name = entry.name.removesuffix(_VECTOR_COLLECTION_SUFFIX)
-            if name != entry.name and re.fullmatch(r'[\w-]+', name) and entry.is_file():
-                names.append(name)
-        return sorted(names, key=lambda name: (name.casefold(), name))
-    except (OSError, ValueError):
-        return []
 
 
 def _show_native_picker(choose, **options):
@@ -68,21 +53,6 @@ def _select_file(current, extension):
     return _show_native_picker(askopenfilename, title='ファイルを選択', filetypes=patterns,
                                initialdir=str(path.parent) if absolute else None,
                                initialfile=path.name if absolute else None)
-
-
-def _read_cursor_position():
-    if sys.platform != 'win32':
-        raise OSError('Windowsのローカルカーネルが必要です。')
-    import ctypes
-    from ctypes import wintypes
-
-    read_position = ctypes.WinDLL('user32.dll', use_last_error=True).GetCursorPos
-    read_position.argtypes = (ctypes.POINTER(wintypes.POINT),)
-    read_position.restype = wintypes.BOOL
-    point = wintypes.POINT()
-    if not read_position(ctypes.byref(point)):
-        raise ctypes.WinError(ctypes.get_last_error())
-    return point.x, point.y
 
 
 def _copy_to_clipboard(text):
@@ -475,7 +445,7 @@ class NotebookForm:
         try:
             generation = self.model.actions[self.model.action]['generation']
             if generation in TABLE_ACTIONS:
-                from .table_action_editor import create_table_editor
+                from .connector_forms.dataintegration.table_action_editor import create_table_editor
                 candidates = {candidate: self._namespace[candidate] for candidate in self._dataframe_names()}
                 self._dataframe_editor = create_table_editor(
                     generation, self._namespace[name], self._set_dataframe_operations, candidates=candidates)
@@ -497,9 +467,9 @@ class NotebookForm:
             raise ValueError('データ統合コネクタを更新し、カーネルを再起動してください。')
         args = self._namespace[name], apply_operations, self._set_dataframe_operations
         if generation == COLUMN_OPERATIONS:
-            from .column_editor import ColumnEditor
+            from .connector_forms.dataintegration.column_editor import ColumnEditor
             return ColumnEditor(*args)
-        from .data_operations_editor import DataOperationsEditor
+        from .connector_forms.dataintegration.data_operations_editor import DataOperationsEditor
         mode = {VALUE_OPERATIONS: 'value', ROW_OPERATIONS: 'condition'}.get(generation)
         return DataOperationsEditor(*args, mode=mode)
 

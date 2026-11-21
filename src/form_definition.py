@@ -4,15 +4,15 @@ from pathlib import Path
 import keyword
 import re
 from string import Formatter
-from .bigquery_codegen import GENERATION_FIELDS as BIGQUERY_GENERATION_FIELDS
-from .csv_codegen import GENERATION_KINDS
-from .dataintegration_codegen import GENERATION_FIELDS as DATAINTEGRATION_GENERATION_FIELDS
-from .duckdb_codegen import GENERATION_FIELDS as DUCKDB_GENERATION_FIELDS
-from .excel_codegen import GENERATION_FIELDS as EXCEL_GENERATION_FIELDS
-from .python_codegen import GENERATION_FIELDS as PYTHON_GENERATION_FIELDS
-from .shell_codegen import GENERATION_FIELDS as SHELL_GENERATION_FIELDS
-from .vector_codegen import GENERATION_FIELDS as VECTOR_GENERATION_FIELDS
-from .windows_codegen import GENERATION_FIELDS as WINDOWS_GENERATION_FIELDS
+from .connector_forms.bigquery.bigquery_codegen import GENERATION_FIELDS as BIGQUERY_GENERATION_FIELDS
+from .connector_forms.csv.csv_codegen import GENERATION_KINDS
+from .connector_forms.dataintegration.dataintegration_codegen import GENERATION_FIELDS as DATAINTEGRATION_GENERATION_FIELDS
+from .connector_forms.duckdb.duckdb_codegen import GENERATION_FIELDS as DUCKDB_GENERATION_FIELDS
+from .connector_forms.excel.excel_codegen import GENERATION_FIELDS as EXCEL_GENERATION_FIELDS
+from .connector_forms.python.python_codegen import GENERATION_FIELDS as PYTHON_GENERATION_FIELDS
+from .connector_forms.shell.shell_codegen import GENERATION_FIELDS as SHELL_GENERATION_FIELDS
+from .connector_forms.vector.vector_codegen import GENERATION_FIELDS as VECTOR_GENERATION_FIELDS
+from .connector_forms.windows.windows_codegen import GENERATION_FIELDS as WINDOWS_GENERATION_FIELDS
 from .core.connector_config import get_connector_directory
 
 MAX_BYTES = 1024 * 1024

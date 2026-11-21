@@ -1,7 +1,7 @@
 """Configure ordered row conditions and cleanup before generating Notebook code."""
 import ipywidgets as widgets
 
-from .row_preview import _close_widgets
+from ...row_preview import _close_widgets
 from .value_editor import _dropdown, _number
 
 

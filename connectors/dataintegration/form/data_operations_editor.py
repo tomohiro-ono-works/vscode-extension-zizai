@@ -7,7 +7,7 @@ from pandas.api.types import infer_dtype, is_bool_dtype, is_complex_dtype, is_da
 from traitlets import Unicode
 
 from .row_filter_editor import WHOLE_TABLE, RowFields
-from .row_preview import MAX_ROWS, _close_widgets
+from ...row_preview import MAX_ROWS, _close_widgets
 from .value_editor import NEW_COLUMN, ValueFields, _dropdown, _operation_form
 
 
