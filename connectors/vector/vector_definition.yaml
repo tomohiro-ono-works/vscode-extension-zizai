@@ -39,6 +39,6 @@ connectors:
           output_variable: {label: 出力変数, type: text, default: df, required: true}
           top_k: {label: 取得件数, type: integer, minimum: 1, default: 5, required: true}
           query_text: {label: 検索文, type: textarea}
-          batch_search: {label: DataFrameで複数行検索, type: checkbox, default: false}
+          batch_search: {label: 検索入力, type: checkbox, default: false}
           query_input_variable: {label: 検索元DataFrame, type: text}
           query_column: {label: 検索列, type: text}

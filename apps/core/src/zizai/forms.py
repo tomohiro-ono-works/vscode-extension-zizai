@@ -206,7 +206,7 @@ class NotebookForm:
                 if vector_search and name == 'collection_name':
                     widget = self._vector_collection_picker(self.model.values['db_folder'], label)
                 elif vector_search and name == 'batch_search':
-                    widget = widgets.ToggleButton(description=field['label'], value=value)
+                    widget = widgets.ToggleButtons(options=[('検索文', False), ('DataFrame', True)], value=value)
                     widget.add_class('zizai-batch-toggle')
                 elif vector_search and name == 'query_column':
                     widget = self._vector_column_picker(name, label, source_field='query_input_variable')

@@ -84,11 +84,25 @@
 .zizai-form .zizai-generate { min-width: 138px; }
 .zizai-form .zizai-copy { width: auto; }
 .zizai-form .zizai-pair { gap: 16px; }
-.zizai-form button.jupyter-button.zizai-batch-toggle:not(.mod-active):not([aria-pressed="true"]) {
+.zizai-form .zizai-batch-toggle button.jupyter-button {
+  border-radius: 0;
+  min-width: 108px;
+  padding: 0 12px;
+}
+.zizai-form .zizai-batch-toggle button.jupyter-button:first-of-type {
+  border-radius: 6px 0 0 6px;
+}
+.zizai-form .zizai-batch-toggle button.jupyter-button:last-of-type {
+  border-radius: 0 6px 6px 0;
+}
+.zizai-form .zizai-batch-toggle button.jupyter-button + button.jupyter-button {
+  border-left: 0;
+}
+.zizai-form .zizai-batch-toggle button.jupyter-button:not(.mod-active):not([aria-pressed="true"]) {
   background: #fff;
   color: var(--zizai-green);
 }
-.zizai-form button.jupyter-button.zizai-batch-toggle:not(.mod-active):not([aria-pressed="true"]):hover {
+.zizai-form .zizai-batch-toggle button.jupyter-button:not(.mod-active):not([aria-pressed="true"]):hover {
   background: #e9eeeb;
 }
 .zizai-form .zizai-folder-row { gap: 10px; }

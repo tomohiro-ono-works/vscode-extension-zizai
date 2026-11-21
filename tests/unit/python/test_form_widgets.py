@@ -292,7 +292,9 @@ class FormWidgetTests(unittest.TestCase):
         form.action.value = 'search_vector_db'
         fields = form.field_widgets
         toggle = fields['batch_search']
-        self.assertIsInstance(toggle, widgets.ToggleButton)
+        self.assertIsInstance(toggle, widgets.ToggleButtons)
+        self.assertEqual(toggle.options, (('検索文', False), ('DataFrame', True)))
+        self.assertFalse(toggle.value)
         self.assertEqual(form.details.children[4].layout.display, 'none')
         with tempfile.TemporaryDirectory() as directory:
             folder = Path(directory)
