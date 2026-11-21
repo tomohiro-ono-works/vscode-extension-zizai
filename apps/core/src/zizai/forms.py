@@ -205,9 +205,15 @@ class NotebookForm:
                     continue  # Older connector definitions may still declare the former checkbox.
                 if vector_search and name == 'collection_name':
                     widget = self._vector_collection_picker(self.model.values['db_folder'], label)
+                elif vector_search and name == 'batch_search':
+                    widget = widgets.ToggleButton(description=field['label'], value=value)
+                    widget.add_class('zizai-batch-toggle')
+                elif vector_search and name == 'query_column':
+                    widget = self._vector_column_picker(name, label, source_field='query_input_variable')
                 elif vector_build and name in {'id_column', 'text_column'}:
                     widget = self._vector_column_picker(name, label)
-                elif (dataframe_mode or vector_build) and name == 'input_variable':
+                elif ((dataframe_mode or vector_build) and name == 'input_variable'
+                      or vector_search and name == 'query_input_variable'):
                     options = [('選択してください', '')] + [(name, name) for name in self._dataframe_names()]
                     if value not in dict(options).values():
                         value = ''
@@ -249,6 +255,7 @@ class NotebookForm:
                 pairs.extend([('input_variable', 'output_variable'), ('id_column', 'text_column')])
             if vector_search:
                 pairs.extend([('collection_name', 'search_mode'), ('output_variable', 'top_k')])
+                pairs.extend([('query_text', 'batch_search'), ('query_input_variable', 'query_column')])
             if (self.model.connector, self.model.action) in {
                 ('csv', 'import'), ('excel', 'read_excel'), ('excel', 'read_excel_range'),
             }:
@@ -280,6 +287,10 @@ class NotebookForm:
                         item.layout.flex = '1 1 240px'
                         item.layout.min_width = '0'
                     row = widgets.HBox(pair, layout=widgets.Layout(flex_flow='row wrap', width='100%'))
+                    if name == 'query_text':
+                        row.layout.align_items = 'flex-start'
+                        row.layout.justify_content = 'flex-end'
+                        pair[1].layout.flex = '0 1 auto'
                     row.add_class('zizai-pair')
                     self._dynamic.append(row)
                     rows.append(row)
@@ -297,6 +308,8 @@ class NotebookForm:
                 rows.append(self._dataframe_slot)
                 self._show_dataframe_editor(self.model.values['input_variable'])
             self.details.children = rows
+            if vector_search and 'batch_search' in self.field_widgets:
+                self._show_vector_query_mode()
             self.message.value = ''
             self._clear_result()
             self._refresh_generate()
@@ -318,6 +331,13 @@ class NotebookForm:
         if name == 'db_folder' and generation == VECTOR_SEARCH:
             name_field = self.field_widgets['collection_name']
             self._replace_vector_picker('collection_name', self._vector_collection_picker(value, name_field.description))
+        if generation == VECTOR_SEARCH:
+            if name == 'batch_search':
+                self._show_vector_query_mode()
+            elif name == 'query_input_variable':
+                label = self.field_widgets['query_column'].description
+                picker = self._vector_column_picker('query_column', label, source_field=name)
+                self._replace_vector_picker('query_column', picker)
         if name == 'input_variable' and generation == VECTOR_BUILD:
             for column_field in ('id_column', 'text_column'):
                 label = self.field_widgets[column_field].description
@@ -338,6 +358,14 @@ class NotebookForm:
                     self.message.value = escape(str(error))
         self._refresh_generate()
 
+    def _show_vector_query_mode(self):
+        batch = self.model.values['batch_search']
+        fields = self.field_widgets
+        fields['query_text'].layout.display = 'none' if batch else ''
+        row = next(row for row in self.details.children
+                   if fields['query_input_variable'] in getattr(row, 'children', ()))
+        row.layout.display = '' if batch else 'none'
+
     def _vector_collection_picker(self, folder, label):
         names = _vector_collection_names(folder)
         current = self.model.values['collection_name']
@@ -351,10 +379,15 @@ class NotebookForm:
         picker.style.description_width = 'initial'
         return picker
 
-    def _vector_column_picker(self, name, label):
-        source = self.model.values.get('input_variable')
+    def _vector_column_picker(self, name, label, *, source_field='input_variable'):
+        source = self.model.values.get(source_field)
         data = self._namespace.get(source)
-        columns = tuple(dict.fromkeys(column for column in getattr(data, 'columns', ())
+        labels = getattr(data, 'columns', None)
+        if labels is None:
+            labels = ()
+        elif name == 'query_column':
+            labels = labels[~labels.duplicated(keep=False)]
+        columns = tuple(dict.fromkeys(column for column in labels
                                       if isinstance(column, str) and column.strip()))
         selected = self.model.values[name]
         if selected not in columns:

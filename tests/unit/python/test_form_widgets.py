@@ -245,7 +245,8 @@ class FormWidgetTests(unittest.TestCase):
                              (picker, form.field_widgets['search_mode']))
             self.assertEqual(tuple(form.details.children[2].children),
                              (form.field_widgets['output_variable'], form.field_widgets['top_k']))
-            self.assertIs(form.details.children[3], form.field_widgets['query_text'])
+            self.assertEqual(form.details.children[3].children,
+                             (form.field_widgets['query_text'], form.field_widgets['batch_search']))
             form.field_widgets['query_text'].value = 'りんご'
             self.assertTrue(form.generate_button.disabled)
             picker.value = 'sales'
@@ -275,6 +276,48 @@ class FormWidgetTests(unittest.TestCase):
             form.action.value = 'embedding_vector_db'
             self.assertIsInstance(form.field_widgets['collection_name'], widgets.Text)
             self.assertNotIn('metric', form.field_widgets)
+
+    def test_vector_batch_search_selects_dataframe_and_column_and_restores_search_text(self):
+        import ipywidgets as widgets
+        import pandas as pd
+
+        namespace = {
+            'articles': pd.DataFrame({'検索語': ['りんご'], '分類': ['果物']}),
+            'documents': pd.DataFrame({'本文': ['みかん']}),
+        }
+        shared = Path(__file__).resolve().parents[3] / 'connectors'
+        form = create_form(shared, namespace=namespace)
+        self.addCleanup(form.close)
+        form.connector.value = 'vector'
+        form.action.value = 'search_vector_db'
+        fields = form.field_widgets
+        toggle = fields['batch_search']
+        self.assertIsInstance(toggle, widgets.ToggleButton)
+        self.assertEqual(form.details.children[4].layout.display, 'none')
+        with tempfile.TemporaryDirectory() as directory:
+            folder = Path(directory)
+            (folder / 'sample.vector.duckdb').touch()
+            fields['db_folder'].value = folder.as_posix()
+            fields['query_text'].value = '単一検索'
+            self.assertFalse(form.generate_button.disabled)
+            toggle.value = True
+            self.assertEqual(fields['query_text'].layout.display, 'none')
+            self.assertEqual(form.details.children[4].layout.display, '')
+            self.assertTrue(form.generate_button.disabled)
+            fields['query_input_variable'].value = 'articles'
+            previous = fields['query_column']
+            self.assertEqual(tuple(value for _, value in previous.options if value), ('検索語', '分類'))
+            previous.value = '検索語'
+            self.assertIn('for ', form.model.generate())
+            fields['query_input_variable'].value = 'documents'
+            self.assertEqual(tuple(value for _, value in fields['query_column'].options if value), ('本文',))
+            self.assertTrue(form.generate_button.disabled)
+            fields['query_column'].value = '本文'
+            self.assertIn("query_column = '本文'", form.model.generate())
+            toggle.value = False
+            self.assertEqual(fields['query_text'].value, '単一検索')
+            self.assertEqual(form.details.children[4].layout.display, 'none')
+            self.assertIn("query_text = '単一検索'", form.model.generate())
 
     def test_vector_registration_selects_columns_from_the_current_dataframe_and_pairs_fields(self):
         import ipywidgets as widgets

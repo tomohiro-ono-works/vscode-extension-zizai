@@ -12,6 +12,39 @@ from zizai.form_model import FormModel
 
 
 class VectorConnectorTests(unittest.TestCase):
+    def test_generated_batch_loops_over_query_rows_using_the_single_search(self):
+        import ast
+        import pandas as pd
+
+        shared = source_test_support.REPO / 'connectors'
+        form = FormModel(load_definition(shared))
+        form.set_connector('vector')
+        form.set_action('search_vector_db')
+        queries = pd.DataFrame({'検索語': [' りんご ', pd.NA, '  ', 'みかん']}, index=[9, 9, 3, 3])
+        # Use names that collide with generated helper variables.
+        namespace = {'pd': queries}
+        with tempfile.TemporaryDirectory() as folder, patch.object(sys, 'path', [str(shared / 'vector'), *sys.path]):
+            import vector_connector
+
+            for name, value in {
+                'db_folder': folder, 'batch_search': True, 'query_input_variable': 'pd',
+                'query_column': '検索語', 'output_variable': 'results', 'top_k': 2, 'search_mode': 'ユークリッド距離',
+            }.items():
+                form.set_value(name, value)
+            source = form.generate()
+            self.assertTrue(any(isinstance(node, ast.For) for node in ast.parse(source).body))
+            with patch.object(vector_connector, 'search_vector_db') as search:
+                search.side_effect = lambda **options: pd.DataFrame({'id': [options['query_text'] + 'の結果']})
+                exec(compile(source, '<batch-search>', 'exec'), namespace)
+                self.assertEqual([call.kwargs['query_text'] for call in search.call_args_list], ['りんご', 'みかん'])
+                self.assertTrue(all(call.kwargs['top_k'] == 2 and call.kwargs['metric'] == 'l2'
+                                    for call in search.call_args_list))
+            self.assertIs(namespace['pd'], queries)
+            self.assertEqual(namespace['results'].to_dict('records'), [
+                {'query_row': 1, 'query_text': 'りんご', 'id': 'りんごの結果'},
+                {'query_row': 4, 'query_text': 'みかん', 'id': 'みかんの結果'},
+            ])
+
     def test_generated_registration_search_and_comparison(self):
         import numpy as np
         import pandas as pd

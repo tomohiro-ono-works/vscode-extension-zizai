@@ -84,6 +84,13 @@
 .zizai-form .zizai-generate { min-width: 138px; }
 .zizai-form .zizai-copy { width: auto; }
 .zizai-form .zizai-pair { gap: 16px; }
+.zizai-form button.jupyter-button.zizai-batch-toggle:not(.mod-active):not([aria-pressed="true"]) {
+  background: #fff;
+  color: var(--zizai-green);
+}
+.zizai-form button.jupyter-button.zizai-batch-toggle:not(.mod-active):not([aria-pressed="true"]):hover {
+  background: #e9eeeb;
+}
 .zizai-form .zizai-folder-row { gap: 10px; }
 .zizai-form .widget-html { margin: 0; color: inherit; }
 .zizai-form .widget-html-content { width: 100%; }
