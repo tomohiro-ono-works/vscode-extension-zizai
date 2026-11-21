@@ -18,7 +18,14 @@ METRICS = {
     'コレクションに従う（新規はコサイン）': None, 'コサイン類似度': 'cosine',
     'ユークリッド距離': 'l2', '内積': 'inner_product', 'マンハッタン距離': 'l1',
 }
-SEARCH_MODES = {'通常検索': 'standard', '補正あり': 'corrected', '通常コサインと比較': 'compare'}
+METRIC_LABELS = {metric: label for label, metric in METRICS.items() if metric is not None}
+SEARCH_MODES = {
+    'コレクションに登録した検索方式': 'standard',
+    'コサイン類似度（補正込み）': 'corrected',
+    'コサイン類似度（補正前後を比較）': 'compare',
+    # Shared folders can still carry a definition from the previous form.
+    '通常検索': 'standard', '補正あり': 'corrected', '通常コサインと比較': 'compare',
+}
 
 
 def _correction_parameters(values):

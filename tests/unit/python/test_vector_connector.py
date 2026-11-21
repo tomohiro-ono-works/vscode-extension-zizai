@@ -53,7 +53,7 @@ class VectorConnectorTests(unittest.TestCase):
                 self.assertEqual(namespace['df']['id'].iat[0], 'a')
                 self.assertAlmostEqual(namespace['df']['score'].iat[0], 1.5)
                 self.assertEqual(namespace['df']['vector'].iat[0], '[0.0,0.5]')
-                form.set_value('search_mode', '通常コサインと比較')
+                form.set_value('search_mode', 'コサイン類似度（補正前後を比較）')
                 exec(compile(form.generate(), '<comparison>', 'exec'), namespace)
                 self.assertEqual(namespace['df']['cosine_id'].iat[0], 'c')
                 self.assertEqual(set(namespace['df']['corrected_id']), set(source['id']))

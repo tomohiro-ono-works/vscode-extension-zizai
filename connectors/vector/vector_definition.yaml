@@ -27,7 +27,12 @@ connectors:
         fields:
           db_folder: {label: ベクトルDBのフォルダー, type: folder, required: true}
           collection_name: {label: コレクション名, type: text, default: default, required: true}
-          search_mode: {label: 検索モード, type: choice, choices: [通常検索, 補正あり, 通常コサインと比較], default: 通常検索, required: true}
+          search_mode:
+            label: 検索方法
+            type: choice
+            choices: [コレクションに登録した検索方式, コサイン類似度（補正込み）, コサイン類似度（補正前後を比較）]
+            default: コレクションに登録した検索方式
+            required: true
           output_variable: {label: 出力変数, type: text, default: df, required: true}
           top_k: {label: 取得件数, type: integer, minimum: 1, default: 5, required: true}
           query_text: {label: 検索文, type: textarea, required: true}

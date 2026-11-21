@@ -209,16 +209,23 @@ class FormWidgetTests(unittest.TestCase):
                 self.assertEqual(row.children, (form.field_widgets['encoding'], form.field_widgets['delimiter']))
 
     def test_vector_search_lists_collections_in_the_selected_folder_and_pairs_fields(self):
+        import duckdb
         import ipywidgets as widgets
+
+        def collection(path, metric):
+            with duckdb.connect(str(path)) as db:
+                db.execute('CREATE TABLE vector_settings (singleton BOOLEAN, settings JSON)')
+                db.execute('INSERT INTO vector_settings VALUES (true, ?)', [f'{{"metric":"{metric}"}}'])
 
         with tempfile.TemporaryDirectory() as directory:
             first, second, empty = (Path(directory) / name for name in ('first', 'second', 'empty'))
             for folder in (first, second, empty):
                 folder.mkdir()
-            for name in ('sales.vector.duckdb', 'notes.vector.duckdb', 'unrelated.duckdb', 'old.faiss'):
+            for name in ('notes.vector.duckdb', 'unrelated.duckdb', 'old.faiss'):
                 (first / name).touch()
             (first / 'subfolder.vector.duckdb').mkdir()
-            (second / '新規.vector.duckdb').touch()
+            collection(first / 'sales.vector.duckdb', 'l1')
+            collection(second / '新規.vector.duckdb', 'l2')
             form = self.make_form(picker=lambda _current: first.as_posix())
             form.connector.value = 'vector'
             form.action.value = 'search_vector_db'
@@ -226,6 +233,12 @@ class FormWidgetTests(unittest.TestCase):
             picker = form.field_widgets['collection_name']
             self.assertIsInstance(picker, widgets.Dropdown)
             self.assertEqual(tuple(value for _, value in picker.options), ('', 'notes', 'sales'))
+            search_method = form.field_widgets['search_mode']
+            self.assertEqual(search_method.description.split(' <')[0], '検索方法')
+            self.assertEqual(search_method.value, 'コレクションに登録した検索方式')
+            self.assertEqual(tuple(value for _, value in search_method.options if value), (
+                'コレクションに登録した検索方式', 'コサイン類似度（補正込み）', 'コサイン類似度（補正前後を比較）',
+            ))
             self.assertNotIn('include_vector', form.field_widgets)
             self.assertEqual(tuple(form.details.children[1].children),
                              (picker, form.field_widgets['search_mode']))
@@ -235,13 +248,20 @@ class FormWidgetTests(unittest.TestCase):
             form.field_widgets['query_text'].value = 'りんご'
             self.assertTrue(form.generate_button.disabled)
             picker.value = 'sales'
+            self.assertEqual(search_method.options[1][0], 'マンハッタン距離')
             form.generate_button.click()
             self.assertIn('include_vector = True', form.result)
             self.assertIn("collection_name = 'sales'", form.result)
+            for label, mode in (('コサイン類似度（補正込み）', 'corrected'), ('コサイン類似度（補正前後を比較）', 'compare')):
+                search_method.value = label
+                form.generate_button.click()
+                self.assertIn(f"search_mode = '{mode}'", form.result)
 
             form.field_widgets['db_folder'].value = second.as_posix()
             current = form.field_widgets['collection_name']
             self.assertEqual(current.value, '新規')
+            self.assertEqual(search_method.options[1][0], 'ユークリッド距離')
+            self.assertEqual(search_method.value, 'コサイン類似度（補正前後を比較）')
             self.assertEqual(form.field_widgets['query_text'].value, 'りんご')
             picker.value = 'notes'
             self.assertEqual(form.model.values['collection_name'], '新規')
