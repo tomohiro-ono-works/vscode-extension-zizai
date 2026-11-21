@@ -19,6 +19,7 @@ duckdb = ["duckdb==2.0.0", "pandas==3.1.1", "numpy==2.5.4"]
 excel = ["pandas==3.1.1", "numpy==2.5.4", "openpyxl==3.1.5", "defusedxml==0.7.1"]
 python = ["pandas==3.1.1", "numpy==2.5.4"]
 shell = ["pandas==3.1.1", "numpy==2.5.4"]
+windows = ["pandas==3.1.1", "numpy==2.5.4"]
 
 [tool.setuptools]
 packages = ["zizai", "zizai.core", "zizai.connectors"]

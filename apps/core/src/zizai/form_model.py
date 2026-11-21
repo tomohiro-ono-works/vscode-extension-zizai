@@ -8,11 +8,13 @@ from .duckdb_codegen import generate_duckdb
 from .excel_codegen import generate_excel
 from .python_codegen import generate_python
 from .shell_codegen import generate_shell
+from .windows_codegen import generate_windows
 
 
 GENERATORS = {
     'bigquery': generate_bigquery, 'csv': generate_csv, 'dataintegration': generate_dataintegration,
     'duckdb': generate_duckdb, 'excel': generate_excel, 'python': generate_python, 'shell': generate_shell,
+    'windows': generate_windows,
 }
 
 
@@ -58,6 +60,10 @@ class FormModel:
         if action is not None and action not in self.actions:
             raise ValueError('候補からアクションを選んでください。')
         fields, values = self.fields, self.values
+        if self.connector == 'windows' and action != self.action:
+            previous_default = fields.get('output_variable', {}).get('default')
+            if values.get('output_variable') == previous_default:
+                values = {name: value for name, value in values.items() if name != 'output_variable'}
         self.action = action
         self._restore_fields(fields, values)
 
