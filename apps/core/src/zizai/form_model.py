@@ -67,9 +67,11 @@ class FormModel:
             if values.get('collection_name') == '':
                 values = {key: value for key, value in values.items() if key != 'collection_name'}
         if self.connector == 'windows' and action != self.action:
+            reset_fields = {'wait_before_seconds', 'wait_after_seconds'}
             previous_default = fields.get('output_variable', {}).get('default')
             if values.get('output_variable') == previous_default:
-                values = {name: value for name, value in values.items() if name != 'output_variable'}
+                reset_fields.add('output_variable')
+            values = {name: value for name, value in values.items() if name not in reset_fields}
         self.action = action
         self._restore_fields(fields, values)
 

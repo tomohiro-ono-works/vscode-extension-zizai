@@ -19,6 +19,69 @@ class FormWidgetTests(unittest.TestCase):
         form.connector.value = 'csv'
         form.action.value = action
 
+    def test_windows_cursor_capture_fills_coordinates_after_three_seconds(self):
+        form = self.make_form()
+        form.connector.value = 'windows'
+        form.action.value = 'mouse_click'
+        form.field_widgets['wait_before_seconds'].value = 1
+        form.field_widgets['wait_after_seconds'].value = 2
+        button = form.cursor_capture_button
+
+        with (patch('zizai.forms.get_running_loop') as run_loop,
+              patch('zizai.forms._read_cursor_position', return_value=(-192, 40)) as read):
+            button.click()
+            button.click()
+            schedule = run_loop.return_value.call_later
+            schedule.assert_called_once()
+            self.assertEqual(schedule.call_args.args[0], 3)
+            self.assertTrue(button.disabled)
+            read.assert_not_called()
+            callback, *args = schedule.call_args.args[1:]
+            callback(*args)
+            read.assert_called_once_with()
+
+        self.assertFalse(button.disabled)
+        self.assertEqual(form.field_widgets['x'].value, '-192')
+        self.assertEqual(form.field_widgets['y'].value, '40')
+        self.assertEqual(form.field_widgets['coordinate_mode'].value, '座標指定')
+        form.generate_button.click()
+        self.assertIn('x = -192', form.result)
+        self.assertIn('y = 40', form.result)
+        self.assertIn('wait_before_seconds = 1', form.result)
+        self.assertIn('wait_after_seconds = 2', form.result)
+
+    def test_windows_cursor_capture_failure_and_action_switch_preserve_values(self):
+        form = self.make_form()
+        form.connector.value = 'windows'
+        form.action.value = 'mouse_click'
+        form.field_widgets['coordinate_mode'].value = '座標指定'
+        form.field_widgets['x'].value = '100'
+        form.field_widgets['y'].value = '110'
+        form.generate_button.click()
+        original = form.result
+        button = form.cursor_capture_button
+
+        with (patch('zizai.forms.get_running_loop') as run_loop,
+              patch('zizai.forms._read_cursor_position', side_effect=OSError('unavailable')) as read):
+            schedule = run_loop.return_value.call_later
+            button.click()
+            callback, *args = schedule.call_args.args[1:]
+            callback(*args)
+            self.assertIn('座標を取得できません', form.message.value)
+            self.assertFalse(button.disabled)
+            self.assertEqual(form.field_widgets['x'].value, '100')
+            self.assertEqual(form.field_widgets['y'].value, '110')
+            self.assertEqual(form.result, original)
+            read.reset_mock()
+
+            button.click()
+            stale_callback, *args = schedule.call_args.args[1:]
+            form.action.value = 'input_text'
+            schedule.return_value.cancel.assert_called_once_with()
+            stale_callback(*args)
+            read.assert_not_called()
+            self.assertIsNone(form.cursor_capture_button)
+
     def test_csv_read_browse_selects_file_and_keeps_it_on_cancel(self):
         import ipywidgets as widgets
         from unittest.mock import Mock

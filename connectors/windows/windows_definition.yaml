@@ -45,3 +45,35 @@ connectors:
           destination_file_name: {label: 変更後のファイル名（省略可）, type: text}
           allow_missing_source: {label: 対象ファイルがなければスキップ, type: checkbox, default: false}
           output_variable: {label: 出力変数, type: text, default: result, required: true}
+      mouse_click:
+        label: クリック
+        generation: windows.mouse_click
+        fields:
+          coordinate_mode: {label: クリック位置, type: choice, choices: [現在のカーソル位置, 座標指定], default: 現在のカーソル位置, required: true}
+          x: {label: X座標（座標指定時）, type: text}
+          y: {label: Y座標（座標指定時）, type: text}
+          button: {label: マウスボタン, type: choice, choices: [左, 右], default: 左, required: true}
+          click_count: {label: クリック回数, type: choice, choices: [シングルクリック, ダブルクリック], default: シングルクリック, required: true}
+          wait_before_seconds: {label: 操作前の待機（秒）, type: integer, minimum: 0, default: 0}
+          wait_after_seconds: {label: 操作後の待機（秒）, type: integer, minimum: 0, default: 0}
+          output_variable: {label: 出力変数, type: text, default: result, required: true}
+      input_text:
+        label: 文字入力
+        generation: windows.input_text
+        fields:
+          input_mode: {label: 入力方法, type: choice, choices: [カーソル位置に入力, 全選択して置換], default: カーソル位置に入力, required: true}
+          text: {label: 入力する文字, type: textarea, required: true}
+          wait_before_seconds: {label: 操作前の待機（秒）, type: integer, minimum: 0, default: 0}
+          wait_after_seconds: {label: 操作後の待機（秒）, type: integer, minimum: 0, default: 0}
+          output_variable: {label: 出力変数, type: text, default: result, required: true}
+      send_keys:
+        label: キー入力
+        generation: windows.send_keys
+        fields:
+          key: {label: キー（例 Enter・F5・A）, type: text, required: true}
+          ctrl: {label: Ctrl, type: checkbox, default: false}
+          shift: {label: Shift, type: checkbox, default: false}
+          alt: {label: Alt, type: checkbox, default: false}
+          wait_before_seconds: {label: 操作前の待機（秒）, type: integer, minimum: 0, default: 0}
+          wait_after_seconds: {label: 操作後の待機（秒）, type: integer, minimum: 0, default: 0}
+          output_variable: {label: 出力変数, type: text, default: result, required: true}

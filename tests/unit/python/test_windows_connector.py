@@ -90,3 +90,55 @@ class WindowsFileActionsTests(unittest.TestCase):
         self.model.set_value('output_variable', 'my_result')
         self.model.set_action('search_text_in_files')
         self.assertEqual(self.model.values['output_variable'], 'my_result')
+
+
+class WindowsScreenActionTests(unittest.TestCase):
+    def setUp(self):
+        shared = source_test_support.REPO / 'connectors'
+        self.model = FormModel(load_definition(shared))
+        self.model.set_connector('windows')
+        self.enterContext(patch.object(sys, 'path', [str(shared / 'windows'), *sys.path]))
+        self.enterContext(patch('windows_connector._user32'))
+
+    def test_generated_actions_wait_before_and_after_one_input_batch(self):
+        cases = (
+            ('mouse_click', {'coordinate_mode': '座標指定', 'x': '-100', 'y': '80',
+                             'click_count': 'ダブルクリック'}, 4),
+            ('input_text', {'text': '日本語'}, 6),
+            ('send_keys', {'key': 'Enter', 'ctrl': True}, 4),
+        )
+        import windows_connector
+
+        for action, inputs, expected_count in cases:
+            with self.subTest(action=action):
+                self.model.set_action(action)
+                self.assertEqual(self.model.values['wait_before_seconds'], 0)
+                self.assertEqual(self.model.values['wait_after_seconds'], 0)
+                self.model.set_value('wait_before_seconds', 2)
+                self.model.set_value('wait_after_seconds', 3)
+                for key, value in inputs.items():
+                    self.model.set_value(key, value)
+                events = []
+                with (patch.object(windows_connector.time, 'sleep', side_effect=lambda seconds: events.append(seconds)),
+                      patch.object(windows_connector, '_set_coordinates',
+                                   side_effect=lambda x, y: events.append((x, y))),
+                      patch.object(windows_connector, '_send_inputs',
+                                   side_effect=lambda inputs: events.append(('input', len(inputs))))):
+                    code = self.model.generate()
+                    self.assertEqual(events, [])
+                    namespace = {}
+                    exec(compile(code, '<generated-screen-action>', 'exec'), namespace)
+                operation = [(-100, 80)] if action == 'mouse_click' else []
+                self.assertEqual(events, [2, *operation, ('input', expected_count), 3])
+                self.assertEqual(namespace['result'].iloc[0]['status'], 'success')
+
+    def test_zero_wait_skips_sleep_and_failed_input_skips_the_after_wait(self):
+        import windows_connector
+
+        with (patch.object(windows_connector.time, 'sleep') as sleep,
+              patch.object(windows_connector, '_send_inputs', side_effect=[None, OSError('input blocked')])):
+            windows_connector.send_keys('Tab')
+            self.assertEqual(sleep.call_count, 0)
+            with self.assertRaisesRegex(OSError, 'input blocked'):
+                windows_connector.send_keys('Enter', wait_before_seconds=1, wait_after_seconds=2)
+            sleep.assert_called_once_with(1)
