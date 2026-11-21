@@ -14,11 +14,12 @@ class PackageDistributionTests(PackageArtifactTestCase):
             name = next(n for n in archive.namelist() if n.endswith('.dist-info/METADATA'))
             metadata = Parser().parsestr(archive.read(name).decode('utf-8'))
         requirements = metadata.get_all('Requires-Dist')
-        self.assertEqual(len(requirements), 27)
+        self.assertEqual(len(requirements), 29)
         forms = [item for item in requirements if 'extra == "forms"' in item]
         csv = [item for item in requirements if 'extra == "csv"' in item]
         python_extra = [item for item in requirements if 'extra == "python"' in item]
         shell = [item for item in requirements if 'extra == "shell"' in item]
+        windows = [item for item in requirements if 'extra == "windows"' in item]
         dataintegration = [item for item in requirements if 'extra == "dataintegration"' in item]
         bigquery = [item for item in requirements if 'extra == "bigquery"' in item]
         duckdb = [item for item in requirements if 'extra == "duckdb"' in item]
@@ -32,6 +33,9 @@ class PackageDistributionTests(PackageArtifactTestCase):
             'pandas==3.1.1', 'numpy==2.5.4',
         })
         self.assertEqual({item.split(';')[0].strip() for item in shell}, {
+            'pandas==3.1.1', 'numpy==2.5.4',
+        })
+        self.assertEqual({item.split(';')[0].strip() for item in windows}, {
             'pandas==3.1.1', 'numpy==2.5.4',
         })
         self.assertEqual({item.split(';')[0].strip() for item in dataintegration}, {

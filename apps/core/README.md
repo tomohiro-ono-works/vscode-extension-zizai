@@ -1,5 +1,11 @@
 # ZizAI Python最小基盤
 
+## Windowsのファイル操作（TASK-027）
+
+Notebookのカーネルに `[forms,windows]` 付きのwheelを導入します。[Windows資産](../../connectors/windows/)のPythonとYAMLを共通フォルダーの `windows/` へ置き、`configure_connectors` で登録します。
+
+`%form` の「Windows」から、ファイル名検索、ファイル内の文字列検索、Markdown作成、ファイル名の変更・移動を選べます。生成したコードをNotebookのPythonセルで実行すると、検索結果は `df`、保存や移動の結果は `result` に入ります。移動先に同名ファイルがあると停止します。Markdownは既定で新規作成し、追記・上書きは書き込み方法で選びます。
+
 ## Windowsバッチファイル実行（TASK-018）
 
 `[forms,shell]` 付きのwheelを導入し、[Shell資産](../../connectors/shell/)を共通フォルダーへ登録します。`%form` の「Shell」→「バッチファイル実行」で、`参照…` から `.bat` を選びます。引数が必要な場合は `["入力 1", "入力 2"]` のようなJSON配列を入力します。生成コードを実行すると標準出力・標準エラー・終了コードを受け取れます。

@@ -23,6 +23,7 @@ vector = [
     "duckdb==2.0.0", "pandas==3.1.1", "numpy==2.5.4",
     "sentence-transformers==6.3.0", "torch==2.15.0", "transformers==5.23.0",
 ]
+windows = ["pandas==3.1.1", "numpy==2.5.4"]
 
 [tool.setuptools]
 packages = ["zizai", "zizai.core", "zizai.connectors"]
