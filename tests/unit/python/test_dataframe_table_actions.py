@@ -137,19 +137,24 @@ class DataFrameTableActionsTests(unittest.TestCase):
         data = pd.DataFrame({'店': ['東京'] * 3, '部門': ['食品'] * 3, '年': [2026] * 3,
                              '月': ['4月', '4月', '5月'], '売上': [100, 20, 150], '件数': [1, 1, 3]})
         form, editor = self.open_form('reshape_rows', left=data)
+        fields = editor.settings_row.children
         for picker, selected in (
             (editor.keep, ('店', '部門')), (editor.pivot_by, ('年', '月')), (editor.measures, ('売上', '件数'))
         ):
+            self.assertEqual(picker.root.children[0].value, picker.label)
             self.assertEqual(picker.options.layout.display, 'none')
             picker.toggle.value = True
             self.assertEqual(picker.options.layout.display, '')
             self.assertIn('zizai-column-picker-open', picker.root._dom_classes)
+            self.assertEqual(editor.settings_row.children, fields)
+            self.assertEqual(editor.menu_row.children, (picker.options,))
             options = {option.description: option for option in picker.options.children}
             for name in selected:
                 self.assertIsInstance(options[name], Checkbox)
                 options[name].value = True
             picker.toggle.value = False
             self.assertNotIn('zizai-column-picker-open', picker.root._dom_classes)
+            self.assertFalse(editor.menu_row.children)
             self.assertEqual(picker.value, selected)
             picker.toggle.value = True
             self.assertTrue(all(options[name].value for name in selected))

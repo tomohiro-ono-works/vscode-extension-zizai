@@ -2,6 +2,7 @@
 from html import escape
 
 import ipywidgets as widgets
+from traitlets import Unicode
 
 from .pandas_table_codegen import (
     AGGREGATE_ROWS, AGGREGATIONS, COMBINE_FRAMES, JOIN_TYPES, RESHAPE_ROWS, SET_OPERATIONS, SORT_ROWS,
@@ -271,13 +272,16 @@ class MultiColumnDropdown:
         self.label = label
         self._columns = tuple(columns)
         self._on_change = on_change
+        self.heading = widgets.Label(value=label)
+        self.heading.add_class('widget-label')
+        self.heading.add_class('zizai-column-picker-label')
         self.toggle = widgets.ToggleButton(
-            description=label, icon='chevron-down', tooltip=f'{label}を選択',
+            description='選択してください', icon='chevron-down', tooltip=f'{label}を選択',
             layout=widgets.Layout(width='100%'))
         self.toggle.add_class('zizai-column-picker-toggle')
         self.options = widgets.VBox(layout=widgets.Layout(width='100%', display='none'))
         self.options.add_class('zizai-column-picker-options')
-        self.root = widgets.VBox([self.toggle, self.options], layout=widgets.Layout(width='auto'))
+        self.root = widgets.VBox([self.heading, self.toggle])
         self.root.add_class('zizai-column-picker')
         self.toggle.observe(self._toggle, names='value')
 
@@ -303,17 +307,22 @@ class MultiColumnDropdown:
     def _summarize(self, _change):
         choices = self.value
         if len(choices) == 1:
-            self.toggle.description = f'{self.label}　{choices[0]}'
+            self.toggle.description = choices[0]
         elif choices:
-            self.toggle.description = f'{self.label}　{len(choices)}列'
+            self.toggle.description = f'{len(choices)}列を選択'
         else:
-            self.toggle.description = self.label
-        suffix = f'　選択済み: {"、".join(choices)}' if choices else ''
-        self.toggle.tooltip = f'{self.label}を選択' + suffix
+            self.toggle.description = '選択してください'
+        self.toggle.tooltip = f'{self.label}　{"、".join(choices)}' if choices else f'{self.label}を選択'
         self._on_change()
 
     def close(self):
-        _close_widgets([*self.options.children, self.options, self.toggle, self.root])
+        _close_widgets([*self.options.children, self.options, self.heading, self.toggle, self.root])
+
+
+class ReshapeMenuRow(widgets.HBox):
+    _view_name = Unicode('ReshapeMenuView').tag(sync=True)
+    _view_module = Unicode('zizai-row-preview').tag(sync=True)
+    _view_module_version = Unicode('1.0.0').tag(sync=True)
 
 
 class ReshapeEditor(TableEditor):
@@ -335,22 +344,32 @@ class ReshapeEditor(TableEditor):
         self.preview = widgets.HTML()
         self.preview.add_class('zizai-aggregate-preview')
         self.preview.add_class('zizai-reshape-preview')
-        self.settings_row = widgets.HBox(layout=widgets.Layout(flex_flow='row wrap', align_items='flex-start'))
-        self.settings_row.add_class('zizai-table-step-row')
-        self._owned.extend([self.mode, self.method, self.key_name, self.value_name, self.preview, self.settings_row])
+        self.settings_row = widgets.Box(layout=widgets.Layout(width='100%'))
+        self.settings_row.add_class('zizai-reshape-settings')
+        self.menu_row = ReshapeMenuRow(layout=widgets.Layout(width='100%', display='none'))
+        self.menu_row.add_class('zizai-reshape-menu')
+        self.root.add_class('zizai-reshape-editor')
+        self._owned.extend([self.mode, self.method, self.key_name, self.value_name, self.preview,
+                            self.settings_row, self.menu_row])
         for picker in self.pickers:
-            picker.toggle.observe(self._close_other_pickers, names='value')
+            picker.toggle.observe(self._show_picker, names='value')
         for field in (self.method, self.key_name, self.value_name):
             field.observe(self.refresh, names='value')
         self.mode.observe(self._show_mode, names='value')
-        self.root.children = (self.settings_row, self.status, self.preview)
+        self.root.children = (self.settings_row, self.menu_row, self.status, self.preview)
         self._show_mode()
 
-    def _close_other_pickers(self, change):
+    def _show_picker(self, change):
+        selected = next(picker for picker in self.pickers if picker.toggle is change['owner'])
         if change['new']:
             for picker in self.pickers:
-                if picker.toggle is not change['owner']:
+                if picker is not selected:
                     picker.toggle.value = False
+            self.menu_row.children = (selected.options,)
+            self.menu_row.layout.display = ''
+        elif self.menu_row.children == (selected.options,):
+            self.menu_row.children = ()
+            self.menu_row.layout.display = 'none'
 
     def _show_mode(self, _change=None):
         for picker in self.pickers:

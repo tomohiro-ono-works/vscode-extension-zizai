@@ -324,5 +324,36 @@ define(["@jupyter-widgets/controls"], function (controls) {
         }
     }
 
-    return { RowContextView, ColumnContextView, ColumnTypeView, OperationEntryView };
+    class ReshapeMenuView extends controls.HBoxView {
+        render() {
+            super.render();
+            this.listenTo(this.model, "change:children", this.queueAlignment);
+            this.resizeObserver = new ResizeObserver(() => this.queueAlignment());
+            this.resizeObserver.observe(this.el);
+        }
+
+        queueAlignment() {
+            if (this.alignmentFrame) return;
+            this.alignmentFrame = requestAnimationFrame(() => {
+                this.alignmentFrame = null;
+                const menu = this.el.querySelector(".zizai-column-picker-options");
+                const trigger = this.el.closest(".zizai-reshape-editor")
+                    ?.querySelector(".zizai-column-picker-open .zizai-column-picker-toggle");
+                if (!menu || !trigger) return;
+                const area = this.el.getBoundingClientRect();
+                const left = trigger.getBoundingClientRect().left - area.left;
+                const space = area.width - menu.getBoundingClientRect().width;
+                const offset = Math.max(0, Math.min(left, space));
+                this.el.style.setProperty("--zizai-picker-offset", `${offset}px`);
+            });
+        }
+
+        remove() {
+            this.resizeObserver?.disconnect();
+            if (this.alignmentFrame) cancelAnimationFrame(this.alignmentFrame);
+            return super.remove();
+        }
+    }
+
+    return { RowContextView, ColumnContextView, ColumnTypeView, OperationEntryView, ReshapeMenuView };
 });
