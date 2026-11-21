@@ -198,10 +198,16 @@
   padding:6px 10px;border:1px solid var(--zizai-border)
 }
 .zizai-form .zizai-aggregate-preview th {background:#e3eee7}
+.zizai-form .zizai-reshape-editor {display:grid;grid-template-columns:minmax(0,1fr)}
 .zizai-form .zizai-reshape-settings {
-  display:grid;grid-template-columns:repeat(auto-fill,minmax(min(176px,100%),176px));
+  grid-area:1 / 1;display:grid;grid-template-columns:repeat(auto-fill,minmax(min(176px,100%),176px));
   align-items:start;gap:8px
 }
+.zizai-form .zizai-reshape-results, .zizai-form .zizai-reshape-menu {
+  grid-area:2 / 1;align-self:start;min-width:0
+}
+.zizai-form .zizai-reshape-menu {z-index:1;pointer-events:none}
+.zizai-form .zizai-reshape-menu .zizai-column-picker-options {pointer-events:auto}
 .zizai-form .zizai-reshape-settings > .jupyter-widgets {width:100% !important;min-width:0}
 .zizai-form .zizai-column-picker-label {min-height:19.5px}
 .zizai-form button.zizai-column-picker-toggle {
@@ -220,5 +226,8 @@
 .zizai-form .zizai-column-picker-options .widget-checkbox label {
   flex:1 1 auto;width:auto;min-width:0;height:auto;margin:0;text-align:left;
   white-space:normal;overflow-wrap:anywhere
+}
+.zizai-form .zizai-column-picker-options input[type="checkbox"]:focus:not(:focus-visible) {
+  outline:none
 }
 .zizai-form .zizai-reshape-preview table {white-space:nowrap}

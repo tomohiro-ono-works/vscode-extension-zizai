@@ -344,19 +344,21 @@ class ReshapeEditor(TableEditor):
         self.preview = widgets.HTML()
         self.preview.add_class('zizai-aggregate-preview')
         self.preview.add_class('zizai-reshape-preview')
+        self.results = widgets.VBox([self.status, self.preview])
+        self.results.add_class('zizai-reshape-results')
         self.settings_row = widgets.Box(layout=widgets.Layout(width='100%'))
         self.settings_row.add_class('zizai-reshape-settings')
         self.menu_row = ReshapeMenuRow(layout=widgets.Layout(width='100%', display='none'))
         self.menu_row.add_class('zizai-reshape-menu')
         self.root.add_class('zizai-reshape-editor')
         self._owned.extend([self.mode, self.method, self.key_name, self.value_name, self.preview,
-                            self.settings_row, self.menu_row])
+                            self.results, self.settings_row, self.menu_row])
         for picker in self.pickers:
             picker.toggle.observe(self._show_picker, names='value')
         for field in (self.method, self.key_name, self.value_name):
             field.observe(self.refresh, names='value')
         self.mode.observe(self._show_mode, names='value')
-        self.root.children = (self.settings_row, self.menu_row, self.status, self.preview)
+        self.root.children = (self.settings_row, self.results, self.menu_row)
         self._show_mode()
 
     def _show_picker(self, change):
