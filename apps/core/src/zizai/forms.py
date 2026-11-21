@@ -11,6 +11,7 @@ from .connector_codegen import module_name_for
 from .dataintegration_codegen import DATAFRAME_OPERATIONS, VALUE_OPERATIONS
 from .form_definition import load_definition
 from .form_model import FormModel
+from .vector_codegen import BUILD as VECTOR_BUILD, CORRECTION_FIELDS
 
 
 _ROW_PREVIEW_FIELDS = {
@@ -173,6 +174,7 @@ class NotebookForm:
             self.row_preview_button = None
             self._invalid_fields.clear()
             dataframe_mode = self._has_dataframe_editor()
+            vector_build = self.model.actions.get(self.model.action, {}).get('generation') == VECTOR_BUILD
             self.root.layout.max_width = 'none' if dataframe_mode else self._form_width
             for name, field in self.model.fields.items():
                 value = self.model.values[name]
@@ -180,7 +182,7 @@ class NotebookForm:
                 if dataframe_mode and name == 'operations':
                     self.model.set_value(name, '')
                     continue
-                if dataframe_mode and name == 'input_variable':
+                if (dataframe_mode or vector_build) and name == 'input_variable':
                     options = [('選択してください', '')] + [(name, name) for name in self._dataframe_names()]
                     if value not in dict(options).values():
                         value = ''
@@ -220,8 +222,11 @@ class NotebookForm:
             }:
                 pairs.extend([('output_variable', 'chunk_size'), ('header_row', 'data_start_row')])
             paired_fields = {left: right for left, right in pairs if left in self.field_widgets and right in self.field_widgets}
+            correction_controls = []
             for name, widget in self.field_widgets.items():
-                if name in self.browse_buttons:
+                if vector_build and name in CORRECTION_FIELDS:
+                    correction_controls.append(widget)
+                elif name in self.browse_buttons:
                     widget.layout.flex = '1 1 0'
                     widget.layout.min_width = '0'
                     controls = [widget, self.browse_buttons[name]]
@@ -248,6 +253,12 @@ class NotebookForm:
                     rows.append(row)
                 elif name not in paired_fields.values():
                     rows.append(widget)
+            if correction_controls:
+                settings = widgets.VBox(correction_controls)
+                advanced = widgets.Accordion(children=[settings], selected_index=None)
+                advanced.set_title(0, '補正検索の詳細設定')
+                self._dynamic.extend([settings, advanced])
+                rows.append(advanced)
             if dataframe_mode:
                 self._dataframe_slot = widgets.VBox()
                 self._dynamic.append(self._dataframe_slot)

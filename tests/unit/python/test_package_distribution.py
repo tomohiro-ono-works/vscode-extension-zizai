@@ -14,7 +14,7 @@ class PackageDistributionTests(PackageArtifactTestCase):
             name = next(n for n in archive.namelist() if n.endswith('.dist-info/METADATA'))
             metadata = Parser().parsestr(archive.read(name).decode('utf-8'))
         requirements = metadata.get_all('Requires-Dist')
-        self.assertEqual(len(requirements), 21)
+        self.assertEqual(len(requirements), 27)
         forms = [item for item in requirements if 'extra == "forms"' in item]
         csv = [item for item in requirements if 'extra == "csv"' in item]
         python_extra = [item for item in requirements if 'extra == "python"' in item]
@@ -23,6 +23,7 @@ class PackageDistributionTests(PackageArtifactTestCase):
         bigquery = [item for item in requirements if 'extra == "bigquery"' in item]
         duckdb = [item for item in requirements if 'extra == "duckdb"' in item]
         excel = [item for item in requirements if 'extra == "excel"' in item]
+        vector = [item for item in requirements if 'extra == "vector"' in item]
         self.assertEqual(len(forms), 2)
         self.assertEqual(len(csv), 2)
         self.assertTrue(any(item.startswith('pandas==3.1.1') for item in csv))
@@ -45,13 +46,18 @@ class PackageDistributionTests(PackageArtifactTestCase):
         self.assertEqual({item.split(';')[0].strip() for item in excel}, {
             'pandas==3.1.1', 'numpy==2.5.4', 'openpyxl==3.1.5', 'defusedxml==0.7.1',
         })
+        self.assertEqual({item.split(';')[0].strip() for item in vector}, {
+            'duckdb==2.0.0', 'pandas==3.1.1', 'numpy==2.5.4', 'sentence-transformers==6.3.0',
+            'torch==2.15.0', 'transformers==5.23.0',
+        })
         python = self.fresh_python()
         self.install(python, self.wheel())
         result = self.probe(python, '''
 import json, sys
 import zizai, zizai.forms
 print(json.dumps({'loaded': sorted(set(sys.modules) & {'ipywidgets', 'yaml', 'tkinter', 'pandas', 'numpy',
-                                                      'openpyxl', 'defusedxml', 'duckdb', 'google', 'pyarrow'})}))
+                                                      'openpyxl', 'defusedxml', 'duckdb', 'google', 'pyarrow',
+                                                      'sentence_transformers', 'torch', 'transformers'})}))
 ''')
         self.assertEqual(result, {'loaded': []})
 
