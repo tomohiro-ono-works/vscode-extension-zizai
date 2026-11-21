@@ -198,3 +198,10 @@
   padding:6px 10px;border:1px solid var(--zizai-border)
 }
 .zizai-form .zizai-aggregate-preview th {background:#e3eee7}
+.zizai-form .zizai-column-picker {min-width:165px;gap:4px}
+.zizai-form button.zizai-column-picker-toggle {
+  text-align:left;padding:0 10px;color:#27372f;background:#fff;border-color:var(--zizai-border);font-weight:500
+}
+.zizai-form button.zizai-column-picker-toggle:hover:enabled {background:#eef6f1}
+.zizai-form .zizai-column-picker select[multiple] {min-height:116px}
+.zizai-form .zizai-reshape-preview table {white-space:nowrap}

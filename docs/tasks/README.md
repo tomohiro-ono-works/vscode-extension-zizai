@@ -10,6 +10,8 @@
 
 ## 新方式のTask
 
+- [TASK-026 / #111：DataFrameのピボット・アンピボットをNotebookフォームへ追加する](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/111)
+
 - [TASK-025 / #109：DataFrameの結合・差集合をNotebookフォームへ追加する](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/109)
 
 - [TASK-024 / #108：DataFrameの集計をNotebookフォームへ追加する](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/108)

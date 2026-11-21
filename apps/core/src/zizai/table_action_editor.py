@@ -4,8 +4,8 @@ from html import escape
 import ipywidgets as widgets
 
 from .pandas_table_codegen import (
-    AGGREGATE_ROWS, AGGREGATIONS, COMBINE_FRAMES, JOIN_TYPES, SET_OPERATIONS, SORT_ROWS,
-    aggregate_sample, column_names,
+    AGGREGATE_ROWS, AGGREGATIONS, COMBINE_FRAMES, JOIN_TYPES, RESHAPE_ROWS, SET_OPERATIONS, SORT_ROWS,
+    aggregate_sample, column_names, reshape_sample,
 )
 from .row_preview import MAX_ROWS, _close_widgets
 from .value_editor import _dropdown
@@ -95,6 +95,7 @@ class TableEditor:
         self.on_change = on_change
         self.status = widgets.HTML()
         self.root = widgets.VBox()
+        self.rules = None
         self.root.add_class('row-preview')
         self._owned = [self.status, self.root]
         self._updating = False
@@ -127,7 +128,8 @@ class TableEditor:
         pass
 
     def close(self):
-        self.rules.close()
+        if self.rules is not None:
+            self.rules.close()
         _close_widgets(self._owned)
 
 
@@ -264,7 +266,120 @@ class CombineEditor(TableEditor):
         return settings
 
 
+class MultiColumnDropdown:
+    def __init__(self, label, columns):
+        self.label = label
+        self.toggle = widgets.ToggleButton(
+            description=label, icon='chevron-down', tooltip='CtrlまたはShiftで複数選択',
+            layout=widgets.Layout(width='100%'))
+        self.toggle.add_class('zizai-column-picker-toggle')
+        self.selection = widgets.SelectMultiple(
+            description=label, options=list(columns), rows=6, layout=widgets.Layout(width='100%', display='none'))
+        self.selection.style.description_width = 'initial'
+        self.root = widgets.VBox([self.toggle, self.selection], layout=widgets.Layout(width='auto'))
+        self.root.add_class('zizai-column-picker')
+        self.toggle.observe(self._toggle, names='value')
+        self.selection.observe(self._summarize, names='value')
+
+    def _toggle(self, change):
+        is_open = change['new']
+        self.selection.layout.display = '' if is_open else 'none'
+        self.toggle.icon = 'chevron-up' if is_open else 'chevron-down'
+
+    def _summarize(self, change):
+        choices = change['new']
+        if len(choices) == 1:
+            self.toggle.description = f'{self.label}　{choices[0]}'
+        elif choices:
+            self.toggle.description = f'{self.label}　{len(choices)}列'
+        else:
+            self.toggle.description = self.label
+        suffix = f'　選択済み: {"、".join(choices)}' if choices else ''
+        self.toggle.tooltip = 'CtrlまたはShiftで複数選択' + suffix
+
+    def close(self):
+        _close_widgets([self.selection, self.toggle, self.root])
+
+
+class ReshapeEditor(TableEditor):
+    def __init__(self, source, on_change):
+        super().__init__(source, on_change)
+        self._sample = source.head(MAX_ROWS).copy()
+        self.mode = _dropdown('操作', [('ピボット', 'pivot'), ('アンピボット', 'unpivot')], value='pivot')
+        self.keep = MultiColumnDropdown('残す列', self.columns)
+        self.pivot_by = MultiColumnDropdown('ピボットする列', self.columns)
+        self.measures = MultiColumnDropdown('集計列', self.columns)
+        self.unpivot_by = MultiColumnDropdown('アンピボットする列', self.columns)
+        self.pickers = (self.keep, self.pivot_by, self.measures, self.unpivot_by)
+        self.method = _dropdown('集計方法', [('集計なし', 'none'),
+                                          *((label, method) for method, label in AGGREGATIONS.items())], value='none')
+        self.key_name = widgets.Text(description='キー名', value='項目', layout=widgets.Layout(width='auto'))
+        self.value_name = widgets.Text(description='バリュー名', value='値', layout=widgets.Layout(width='auto'))
+        for field in (self.key_name, self.value_name):
+            field.style.description_width = 'initial'
+        self.preview = widgets.HTML()
+        self.preview.add_class('zizai-aggregate-preview')
+        self.preview.add_class('zizai-reshape-preview')
+        self.settings_row = widgets.HBox(layout=widgets.Layout(flex_flow='row wrap', align_items='flex-start'))
+        self.settings_row.add_class('zizai-table-step-row')
+        self._owned.extend([self.mode, self.method, self.key_name, self.value_name, self.preview, self.settings_row])
+        for picker in self.pickers:
+            picker.selection.observe(self.refresh, names='value')
+            picker.toggle.observe(self._close_other_pickers, names='value')
+        for field in (self.method, self.key_name, self.value_name):
+            field.observe(self.refresh, names='value')
+        self.mode.observe(self._show_mode, names='value')
+        self.root.children = (self.settings_row, self.status, self.preview)
+        self._show_mode()
+
+    def _close_other_pickers(self, change):
+        if change['new']:
+            for picker in self.pickers:
+                if picker.toggle is not change['owner']:
+                    picker.toggle.value = False
+
+    def _show_mode(self, _change=None):
+        for picker in self.pickers:
+            picker.toggle.value = False
+        if self.mode.value == 'pivot':
+            rest = (self.pivot_by.root, self.measures.root, self.method)
+        else:
+            rest = (self.unpivot_by.root, self.key_name, self.value_name)
+        self.settings_row.children = (self.mode, self.keep.root, *rest)
+        self.refresh()
+
+    def settings(self):
+        keep = list(self.keep.selection.value)
+        if self.mode.value == 'pivot':
+            pivot_by, values = list(self.pivot_by.selection.value), list(self.measures.selection.value)
+            if not (keep and pivot_by and values):
+                return None
+            return {'mode': 'pivot', 'keep': keep, 'pivot_by': pivot_by,
+                    'values': values, 'method': None if self.method.value == 'none' else self.method.value}
+        columns = list(self.unpivot_by.selection.value)
+        if not columns:
+            return None
+        return {'mode': 'unpivot', 'keep': keep, 'unpivot_by': columns,
+                'key_name': self.key_name.value.strip(), 'value_name': self.value_name.value.strip()}
+
+    def show_preview(self, settings):
+        if not settings:
+            self.preview.value = ''
+            return
+        result = reshape_sample(self._sample, settings)
+        caption = f'入力の先頭{len(self._sample)}行を変換した結果'
+        if len(result) > MAX_ROWS:
+            caption += f'（先頭{MAX_ROWS}行を表示）'
+        preview = result.head(MAX_ROWS).to_html(index=False, escape=True, border=0, na_rep='')
+        self.preview.value = f'<p>{caption}</p>{preview}'
+
+    def close(self):
+        for picker in self.pickers:
+            picker.close()
+        super().close()
+
+
 def create_table_editor(kind, source, on_change, *, candidates):
     if kind == COMBINE_FRAMES:
         return CombineEditor(source, candidates, on_change)
-    return {SORT_ROWS: SortEditor, AGGREGATE_ROWS: AggregateEditor}[kind](source, on_change)
+    return {SORT_ROWS: SortEditor, AGGREGATE_ROWS: AggregateEditor, RESHAPE_ROWS: ReshapeEditor}[kind](source, on_change)

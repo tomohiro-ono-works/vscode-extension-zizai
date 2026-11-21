@@ -129,3 +129,53 @@ class DataFrameTableActionsTests(unittest.TestCase):
         namespace = {'left': left, 'right': right}
         exec(form.result, namespace)
         self.assertEqual(namespace['combined_df'].to_dict('records'), [{'ID': 1}, {'ID': 2}])
+
+    def test_pivot_previews_multiple_columns_and_aggregates_repeated_keys(self):
+        import pandas as pd
+
+        data = pd.DataFrame({'店': ['東京'] * 3, '部門': ['食品'] * 3, '年': [2026] * 3,
+                             '月': ['4月', '4月', '5月'], '売上': [100, 20, 150], '件数': [1, 1, 3]})
+        form, editor = self.open_form('reshape_rows', left=data)
+        for picker, selected in (
+            (editor.keep, ('店', '部門')), (editor.pivot_by, ('年', '月')), (editor.measures, ('売上', '件数'))
+        ):
+            self.assertEqual(picker.selection.layout.display, 'none')
+            picker.toggle.value = True
+            self.assertEqual(picker.selection.layout.display, '')
+            picker.selection.value = selected
+            picker.toggle.value = False
+        self.assertTrue(form.generate_button.disabled)
+        self.assertIn('集計方法を選択', editor.status.value)
+        editor.method.value = 'sum'
+        self.assertIn('入力の先頭3行', editor.preview.value)
+        self.assertIn('売上_2026_4月', editor.preview.value)
+        form.generate_button.click()
+        scope = {'left': data}
+        exec(form.result, scope)
+        result = scope['reshaped_df']
+        self.assertEqual(result.loc[0, ['店', '部門', '売上_2026_4月', '件数_2026_5月']].tolist(),
+                         ['東京', '食品', 120, 3])
+        self.assertEqual(result.columns.nlevels, 1)
+        self.assertEqual(data['売上'].tolist(), [100, 20, 150])
+
+    def test_unpivot_preserves_selected_ids_and_names_key_and_value(self):
+        import pandas as pd
+
+        data = pd.DataFrame({'店舗': ['東京'] * 35, '部門': ['食品'] * 35,
+                             '4月': list(range(35)), '5月': [99] * 35, 'メモ': ['対象外'] * 35})
+        form, editor = self.open_form('reshape_rows', left=data)
+        editor.mode.value = 'unpivot'
+        editor.keep.selection.value = ('店舗', '部門')
+        editor.unpivot_by.selection.value = ('4月', '5月')
+        editor.key_name.value = '月'
+        editor.value_name.value = '金額'
+        self.assertIn('入力の先頭30行', editor.preview.value)
+        self.assertNotIn('対象外', editor.preview.value)
+        form.generate_button.click()
+        scope = {'left': data}
+        exec(form.result, scope)
+        result = scope['reshaped_df']
+        self.assertEqual(result.columns.tolist(), ['店舗', '部門', '月', '金額'])
+        self.assertEqual(len(result), 70)
+        self.assertEqual(result.iloc[34].tolist(), ['東京', '食品', '4月', 34])
+        self.assertEqual(result.iloc[-1].tolist(), ['東京', '食品', '5月', 99])
