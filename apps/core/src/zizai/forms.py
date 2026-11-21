@@ -1,4 +1,5 @@
 """Notebook output forms. Import does not register magics or open any windows."""
+from asyncio import get_running_loop
 from html import escape
 from importlib import import_module
 from importlib.resources import files
@@ -7,6 +8,7 @@ import json
 from keyword import iskeyword
 from pathlib import Path
 import shlex
+import sys
 from .connector_codegen import module_name_for
 from .dataintegration_codegen import DATAFRAME_OPERATIONS, VALUE_OPERATIONS
 from .form_definition import load_definition
@@ -49,8 +51,22 @@ def _select_file(current, extension):
                                initialfile=path.name if absolute else None)
 
 
+def _read_cursor_position():
+    if sys.platform != 'win32':
+        raise OSError('Windowsのローカルカーネルが必要です。')
+    import ctypes
+    from ctypes import wintypes
+
+    read_position = ctypes.WinDLL('user32.dll', use_last_error=True).GetCursorPos
+    read_position.argtypes = (ctypes.POINTER(wintypes.POINT),)
+    read_position.restype = wintypes.BOOL
+    point = wintypes.POINT()
+    if not read_position(ctypes.byref(point)):
+        raise ctypes.WinError(ctypes.get_last_error())
+    return point.x, point.y
+
+
 def _copy_to_clipboard(text):
-    import sys
     if sys.platform == 'win32':
         # Use persistent Windows text storage rather than a temporary Tk owner.
         # The command is fixed; generated code is stdin data, never shell code.
@@ -89,6 +105,8 @@ class NotebookForm:
         self.result = ''
         self.field_widgets = {}
         self.browse_buttons = {}
+        self.cursor_capture_button = None
+        self._cursor_capture_timer = None
         self.row_preview_button = None
         self._row_preview = None
         self._dataframe_editor = None
@@ -147,6 +165,8 @@ class NotebookForm:
             self._sync()
 
     def _sync(self):
+        self._cancel_cursor_capture()
+        self.cursor_capture_button = None
         self._dismiss_row_preview()
         self._close_dataframe_editor()
         self._dataframe_slot = None
@@ -244,6 +264,14 @@ class NotebookForm:
                     for item in pair:
                         item.layout.flex = '1 1 240px'
                         item.layout.min_width = '0'
+                    if name == 'x' and self.model.actions.get(self.model.action, {}).get('generation') == 'windows.mouse_click':
+                        button = widgets.Button(description='3秒後に座標取得',
+                                                layout=widgets.Layout(width='auto', flex='0 0 auto',
+                                                                      align_self='flex-end'))
+                        button.on_click(self._schedule_cursor_capture)
+                        self.cursor_capture_button = button
+                        self._dynamic.append(button)
+                        pair.append(button)
                     row = widgets.HBox(pair, layout=widgets.Layout(flex_flow='row wrap', width='100%'))
                     row.add_class('zizai-pair')
                     self._dynamic.append(row)
@@ -383,6 +411,39 @@ class NotebookForm:
             kind = 'ファイル' if is_file else 'フォルダー'
             self.message.value = kind + '選択を開けません。ローカルPythonのTk環境を確認してください。(' + escape(type(error).__name__) + ')'
 
+    def _schedule_cursor_capture(self, button):
+        if button is not self.cursor_capture_button or self._cursor_capture_timer is not None:
+            return
+        try:
+            self._cursor_capture_timer = get_running_loop().call_later(3, self._capture_cursor, button)
+        except RuntimeError:
+            self.message.value = '座標取得にはNotebookのカーネルが必要です。'
+            return
+        button.disabled = True
+        button.description = '取得中…'
+        self.message.value = '取得したい位置にマウスを移動してください。'
+
+    def _capture_cursor(self, button):
+        if button is not self.cursor_capture_button or self._cursor_capture_timer is None:
+            return
+        self._cursor_capture_timer = None
+        button.description = '3秒後に座標取得'
+        button.disabled = False
+        try:
+            x, y = _read_cursor_position()
+        except OSError:
+            self.message.value = '座標を取得できません。ローカルWindowsの画面で試してください。'
+            return
+        self.field_widgets['x'].value = str(x)
+        self.field_widgets['y'].value = str(y)
+        self.field_widgets['coordinate_mode'].value = '座標指定'
+        self.message.value = f'座標を取得しました。X = {x}、Y = {y}'
+
+    def _cancel_cursor_capture(self):
+        if self._cursor_capture_timer is not None:
+            self._cursor_capture_timer.cancel()
+            self._cursor_capture_timer = None
+
     def _generate(self, _):
         if self._invalid_fields:
             return
@@ -407,6 +468,7 @@ class NotebookForm:
             self.message.value = 'コピーできません。コード欄を選択してコピーしてください。(' + escape(type(error).__name__) + ')'
 
     def close(self):
+        self._cancel_cursor_capture()
         self._dismiss_row_preview()
         self._close_dataframe_editor()
         for widget in [*self._dynamic, self.connector, self.action, self.generate_button, self.copy_button,
