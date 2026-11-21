@@ -4,6 +4,8 @@
 
 [環境構築Notebook](../examples/setup-zizai.ipynb)を開き、冒頭のPowerShell手順で先に `.venv` を作成して `ipykernel` を導入します。Notebook右上で `.venv\Scripts\python.exe` をカーネルに選んでから、0のコードセルを実行してください。コネクタ登録後は同じカーネルを再起動し、0と④を実行します。
 
+セットアップ手順⑤でVS Codeに `@zizai_form` を登録できます。Pythonセルで入力し、候補を選んでからセルを実行するとフォームが開きます。
+
 ## Windowsのファイル操作（TASK-027）
 
 Notebookのカーネルに `[forms,windows]` 付きのwheelを導入します。[Windows資産](../connectors/windows/)のPythonとYAMLを共通フォルダーの `windows/` へ置き、`configure_connectors` で登録します。

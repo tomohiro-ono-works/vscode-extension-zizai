@@ -1,0 +1,11 @@
+{
+  "ZizAIフォームを開く": {
+    "scope": "python",
+    "prefix": "@zizai_form",
+    "body": [
+      "%load_ext zizai.forms",
+      "%form"
+    ],
+    "description": "ZizAIフォームを開く"
+  }
+}
