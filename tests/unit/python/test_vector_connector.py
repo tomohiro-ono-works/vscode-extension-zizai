@@ -36,23 +36,28 @@ class VectorConnectorTests(unittest.TestCase):
             })
             namespace = {'source': source}
             form.set_action('embedding_vector_db')
-            for name, value in dict(db_folder=str(folder), input_variable='source', metric='マンハッタン距離',
+            for name, value in dict(db_folder=str(folder), input_variable='source',
                                     enable_correction=True, density_k='2', penalty_weight='0.25').items():
                 form.set_value(name, value)
             registration = form.generate()
             self.assertFalse(folder.exists())
             self.assertIn('import vector_connector', registration)
             self.assertIn('input_data = source', registration)
+            self.assertNotIn('metric', registration)
             with patch.object(vector_connector, '_encode', side_effect=embed):
                 exec(compile(registration, '<registration>', 'exec'), namespace)
                 self.assertEqual(namespace['result']['registered_records'].iat[0], 4)
+                self.assertNotIn('metric', namespace['result'])
                 form.set_action('search_vector_db')
                 form.set_value('query_text', 'query')
+                form.set_value('search_mode', 'マンハッタン距離')
                 self.assertEqual(form.values['output_variable'], 'df')
                 exec(compile(form.generate(), '<search>', 'exec'), namespace)
                 self.assertEqual(namespace['df']['id'].iat[0], 'a')
                 self.assertAlmostEqual(namespace['df']['score'].iat[0], 1.5)
                 self.assertEqual(namespace['df']['vector'].iat[0], '[0.0,0.5]')
+                default_result = vector_connector.search_vector_db(folder, 'default', 'query')
+                self.assertEqual(default_result['id'].iat[0], 'c')
                 form.set_value('search_mode', 'コサイン類似度（補正前後を比較）')
                 exec(compile(form.generate(), '<comparison>', 'exec'), namespace)
                 self.assertEqual(namespace['df']['cosine_id'].iat[0], 'c')
@@ -114,3 +119,11 @@ class VectorConnectorTests(unittest.TestCase):
                     vector_connector.embedding_vector_db(folder, 'l1', source, metric='cosine')
                 with self.assertRaises(ValueError):
                     vector_connector.search_vector_db(folder, 'l1', 'query', search_mode='corrected')
+                legacy_path = Path(folder) / 'l1.vector.duckdb'
+                before = legacy_path.read_bytes()
+                for metric, expected in (('cosine', 'aligned'), ('l2', 'spread'), ('l1', 'near')):
+                    explicit = vector_connector.search_vector_db(folder, 'l1', 'query', top_k=1, metric=metric)
+                    self.assertEqual(explicit['id'].iat[0], expected)
+                default = vector_connector.search_vector_db(folder, 'l1', 'query', top_k=1)
+                self.assertEqual(default['id'].iat[0], 'near')
+                self.assertEqual(legacy_path.read_bytes(), before)

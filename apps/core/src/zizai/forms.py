@@ -12,7 +12,7 @@ from .connector_codegen import module_name_for
 from .dataintegration_codegen import DATAFRAME_OPERATIONS, VALUE_OPERATIONS
 from .form_definition import load_definition
 from .form_model import FormModel
-from .vector_codegen import BUILD as VECTOR_BUILD, CORRECTION_FIELDS, METRIC_LABELS, SEARCH as VECTOR_SEARCH, SEARCH_MODES
+from .vector_codegen import BUILD as VECTOR_BUILD, CORRECTION_FIELDS, SEARCH as VECTOR_SEARCH
 
 
 _ROW_PREVIEW_FIELDS = {
@@ -35,24 +35,6 @@ def _vector_collection_names(folder):
         return sorted(names, key=lambda name: (name.casefold(), name))
     except (OSError, ValueError):
         return []
-
-
-def _vector_metric_label(folder, collection):
-    if not collection:
-        return None
-    try:
-        import duckdb
-    except ImportError:
-        return None
-    path = Path(folder) / (collection + _VECTOR_COLLECTION_SUFFIX)
-    config = {'enable_external_access': 'false', 'autoinstall_known_extensions': 'false',
-              'autoload_known_extensions': 'false', 'allow_community_extensions': 'false'}
-    try:
-        with duckdb.connect(str(path), read_only=True, config=config) as db:
-            row = db.execute("SELECT json_extract_string(settings, '$.metric') FROM vector_settings WHERE singleton").fetchone()
-    except (OSError, duckdb.Error):
-        return None
-    return METRIC_LABELS.get(row[0]) if row else None
 
 
 def _show_native_picker(choose, **options):
@@ -223,8 +205,6 @@ class NotebookForm:
                     continue  # Older connector definitions may still declare the former checkbox.
                 if vector_search and name == 'collection_name':
                     widget = self._vector_collection_picker(self.model.values['db_folder'], label)
-                elif vector_search and name == 'search_mode':
-                    widget = widgets.Dropdown(description=label, options=self._vector_search_options(), value=value)
                 elif (dataframe_mode or vector_build) and name == 'input_variable':
                     options = [('選択してください', '')] + [(name, name) for name in self._dataframe_names()]
                     if value not in dict(options).values():
@@ -327,11 +307,8 @@ class NotebookForm:
             self._invalid_fields.discard(name)
         except ValueError:
             self._invalid_fields.add(name)
-        if self.model.actions.get(self.model.action, {}).get('generation') == VECTOR_SEARCH:
-            if name == 'db_folder':
-                self._refresh_vector_collections(value)
-            if name in {'db_folder', 'collection_name'}:
-                self._refresh_vector_search_options()
+        if name == 'db_folder' and self.model.actions.get(self.model.action, {}).get('generation') == VECTOR_SEARCH:
+            self._refresh_vector_collections(value)
         if name == 'input_variable' and self._dataframe_slot is not None:
             self.model.set_value('operations', '')
             self._show_dataframe_editor(value)
@@ -372,27 +349,6 @@ class NotebookForm:
         self._dynamic[self._dynamic.index(previous)] = picker
         previous.unobserve_all('value')
         previous.close()
-
-    def _vector_search_options(self):
-        values = self.model.values
-        metric = _vector_metric_label(values['db_folder'], values['collection_name'])
-        return [('選択してください', None), *(
-            (metric if metric and SEARCH_MODES.get(choice) == 'standard' else choice, choice)
-            for choice in self.model.fields['search_mode']['choices']
-        )]
-
-    def _refresh_vector_search_options(self):
-        picker = self.field_widgets['search_mode']
-        options = self._vector_search_options()
-        if picker.options == tuple(options):
-            return
-        self._syncing = True
-        try:
-            with picker.hold_sync():
-                picker.options = options
-                picker.value = self.model.values['search_mode']
-        finally:
-            self._syncing = False
 
     def _has_dataframe_editor(self):
         action = self.model.actions.get(self.model.action, {})
