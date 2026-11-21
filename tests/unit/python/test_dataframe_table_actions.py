@@ -143,11 +143,13 @@ class DataFrameTableActionsTests(unittest.TestCase):
             self.assertEqual(picker.options.layout.display, 'none')
             picker.toggle.value = True
             self.assertEqual(picker.options.layout.display, '')
+            self.assertIn('zizai-column-picker-open', picker.root._dom_classes)
             options = {option.description: option for option in picker.options.children}
             for name in selected:
                 self.assertIsInstance(options[name], Checkbox)
                 options[name].value = True
             picker.toggle.value = False
+            self.assertNotIn('zizai-column-picker-open', picker.root._dom_classes)
             self.assertEqual(picker.value, selected)
             picker.toggle.value = True
             self.assertTrue(all(options[name].value for name in selected))

@@ -293,6 +293,10 @@ class MultiColumnDropdown:
             for option in options:
                 option.observe(self._summarize, names='value')
             self.options.children = tuple(options)
+        if is_open:
+            self.root.add_class('zizai-column-picker-open')
+        else:
+            self.root.remove_class('zizai-column-picker-open')
         self.options.layout.display = '' if is_open else 'none'
         self.toggle.icon = 'chevron-up' if is_open else 'chevron-down'
 

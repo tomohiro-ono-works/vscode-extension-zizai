@@ -199,9 +199,15 @@
 }
 .zizai-form .zizai-aggregate-preview th {background:#e3eee7}
 .zizai-form .zizai-column-picker {
+  --zizai-column-toggle-width:176px;
+  flex:0 1 var(--zizai-column-toggle-width);min-width:min(var(--zizai-column-toggle-width),100%);
+  max-width:min(var(--zizai-column-toggle-width),100%);gap:4px
+}
+.zizai-form .zizai-column-picker-open {
   flex:1 1 260px;min-width:min(260px,100%);max-width:min(400px,100%);gap:4px
 }
 .zizai-form button.zizai-column-picker-toggle {
+  align-self:flex-start;max-width:var(--zizai-column-toggle-width);
   text-align:left;padding:0 10px;color:#27372f;background:#fff;border-color:var(--zizai-border);
   font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap
 }
