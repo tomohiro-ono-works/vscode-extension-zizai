@@ -165,15 +165,21 @@ class RowFields:
             rule, mode = operation['condition'], operation['mode']
             comparison = rule['comparison']
             logic = rule.get('logic') if RowFields.can_join(previous, mode) else None
-            prefix = logic.upper() if logic else OP_LABELS[mode]
-            text = f'{prefix}　{rule["column"]} {COMPARISONS[comparison]}'
+            details = COMPARISONS[comparison]
             if 'value' in rule:
-                text += f' {rule["value"]!r}'
+                details += f' {rule["value"]!r}'
             if 'upper' in rule:
-                text += f' 〜 {rule["upper"]}'
-            return text
-        details = f'{operation["count"]}行' if op in ('head', 'tail') else '、'.join(operation['columns']) or '全列'
-        return f'{OP_LABELS[op]}　{details}'
+                details += f' 〜 {rule["upper"]!r}'
+            if logic:
+                details += f'、結合 {logic.upper()}'
+            return rule['column'], OP_LABELS[mode], details
+        if op in ('head', 'tail'):
+            return '表全体', OP_LABELS[op], f'{operation["count"]}行'
+        columns = operation['columns']
+        if len(columns) == 1:
+            return columns[0], OP_LABELS[op], ''
+        details = f'判定列 {"、".join(columns)}' if columns else ''
+        return '表全体', OP_LABELS[op], details
 
     def close(self):
         _close_widgets(self.controls())

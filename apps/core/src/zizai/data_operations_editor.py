@@ -285,11 +285,12 @@ class DataOperationsEditor:
         descriptions = []
         for index, step in enumerate(steps):
             operation = step['operation']
-            if step['category'] == 'value':
-                label = self.value_fields.describe(operation)
+            category = step['category']
+            if category == 'value':
+                target, action, details = self.value_fields.describe(operation)
             else:
-                label = self.row_fields.describe(operation, self._previous_condition(steps, index))
-            descriptions.append(f'{CATEGORIES[step["category"]]}　{label}')
+                target, action, details = self.row_fields.describe(operation, self._previous_condition(steps, index))
+            descriptions.append('　'.join(part for part in (target, CATEGORIES[category], action, details) if part))
         self.entries.render(descriptions, self.settings, self._position() if self._editing is not None else None)
         if self._lookup_labels and not self._mode and payload:
             payload = [{**payload[0], 'lookup_labels': True}, *payload[1:]]

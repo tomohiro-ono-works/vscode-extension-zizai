@@ -51,6 +51,9 @@ class DataIntegrationConnectorTests(unittest.TestCase):
 
             self.assertEqual(result()['数量'].tolist(), [12])
             entry = editor.entries.items[0]
+            self.assertEqual(entry.children[1].value, '<p>数量　値加工　計算式　数量 + 10</p>')
+            self.assertEqual(editor.entries.items[1].children[1].value,
+                             '<p>数量　条件　条件に合う行だけ残す　より大きい 11</p>')
             self.assertEqual([btn.description for btn in entry.children[-2:]], ['編集', '削除'])
             entry.children[-2].click()
             self.assertEqual(value.fields['expression'].value, '数量 + 10')
@@ -146,6 +149,7 @@ class DataIntegrationConnectorTests(unittest.TestCase):
             row.action.value = 'tail'
             row.count.value = 2
             editor.apply.click()
+            self.assertEqual(editor.entries.items[0].children[1].value, '<p>表全体　条件　末尾から指定行数を残す　2行</p>')
             form.generate_button.click()
             namespace = {'df': source}
             exec(compile(form.result, '<generated-tail>', 'exec'), namespace)
@@ -222,6 +226,7 @@ class DataIntegrationConnectorTests(unittest.TestCase):
             value.fields['group'].value = 1
             editor.apply.click()
             self.assertNotIn('番号', source.columns)
+            self.assertIn('番号（新規）　値加工　正規表現で抽出　入力列 商品', editor.entries.items[0].children[1].value)
             self.assertIn('番号', dict(value.column.options).values())
             value.column.value = '番号'
             value.action.value = 'trim'

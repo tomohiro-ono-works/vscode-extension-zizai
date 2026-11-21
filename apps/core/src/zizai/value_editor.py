@@ -221,12 +221,17 @@ class ValueFields:
 
     @staticmethod
     def describe(change):
-        label = f'{change.get("column", change.get("output"))}　{ACTION_LABELS[change["op"]]}'
+        op = change['op']
+        target = f'{change["output"]}（新規）' if 'output' in change else change['column']
+        details = []
         if 'output' in change and 'column' in change:
-            label += f' → {change["output"]}'
-        details = [f'{FIELD_LABELS[key]} {" ".join(value.splitlines()) if key == "expression" else repr(value)}'
-                   for key, value in change.items() if key in FIELD_LABELS]
-        return label + ('　' + '、'.join(details) if details else '')
+            details.append(f'入力列 {change["column"]}')
+        for key in ACTION_FIELDS.get(op, ()):
+            if key == 'expression':
+                details.append(' '.join(line.strip() for line in change[key].splitlines()))
+            elif key in FIELD_LABELS and key in change:
+                details.append(f'{FIELD_LABELS[key]} {change[key]!r}')
+        return target, ACTION_LABELS[op], '、'.join(details)
 
     def close(self):
         _close_widgets([self.action, self.new_column, self.source, *self.fields.values()])
