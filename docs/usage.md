@@ -6,6 +6,45 @@
 
 セットアップ手順⑤でスニペットを登録できます。カーネルを起動・再起動したら `@zizai_load` で読み込み、フォームを開くときに `@zizai_form` を使います。
 
+<a id="connector-magics"></a>
+## コネクタ別に開く・SQLを実行する
+
+カーネルを起動したら `@zizai_load` の `%load_ext zizai.forms` を1回実行します。
+
+| スニペット | マジック | 動作 |
+| --- | --- | --- |
+| `@zizai_bq` | `%zizai_bq` | BigQueryを選択したフォームを開く |
+| `@zizai_duck` | `%zizai_duck` | DuckDBを選択したフォームを開く |
+| `@zizai_csv` | `%zizai_csv` | CSVを選択したフォームを開く |
+| `@zizai_excel` | `%zizai_excel` | Excelを選択したフォームを開く |
+| `@zizai_bq_sql` | `%%zizai_bq` | BigQueryのSQLを実行する |
+| `@zizai_duck_sql` | `%%zizai_duck` | DuckDBのSQLを実行する |
+
+BigQueryには追加ライブラリ `bigquery` と既存のApplication Default Credentials、DuckDBには `duckdb` と既存のDBファイルが必要です。SQLの前にPythonセルで接続先を指定します。
+
+```python
+zizai_bq_project = "YOUR_GCP_PROJECT"
+zizai_duck_db = "C:/data/local.duckdb"
+```
+
+BigQueryでセルに結果を表示する例です。
+
+```sql
+%%zizai_bq
+SELECT 1 AS value
+```
+
+DuckDBで結果を `df` に代入する例です。接続先の既存DB内で実行します。
+
+```sql
+%%zizai_duck > df
+SELECT 1 AS value
+```
+
+両方のSQLマジックで `> result.csv` または `> result.xlsx` を指定すると、新規ファイルに保存します。相対パスはカーネルの作業フォルダーから解決します。空白を含むパスは `> "sales result.xlsx"` のように指定できます。`.xlsx` の出力には `excel` の追加ライブラリが必要です。
+
+CSVとExcelのフォーム表示は `%zizai_csv` と `%zizai_excel` で行えます。`%%` で書く場合は、IPythonのセルマジックに必要な本文として次の行にコメントを置きます。
+
 ## Windowsのファイル操作（TASK-027）
 
 Notebookのカーネルに `[forms,windows]` 付きのwheelを導入します。[Windows資産](../connectors/windows/)のPythonとYAMLを共通フォルダーの `windows/` へ置き、`configure_connectors` で登録します。

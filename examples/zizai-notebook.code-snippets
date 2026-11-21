@@ -14,5 +14,55 @@
       "%zizai_form"
     ],
     "description": "ZizAIのフォームを表示する"
+  },
+  "BigQueryフォームを開く": {
+    "scope": "python",
+    "prefix": "@zizai_bq",
+    "body": [
+      "%zizai_bq"
+    ],
+    "description": "BigQueryを選択したフォームを開く"
+  },
+  "DuckDBフォームを開く": {
+    "scope": "python",
+    "prefix": "@zizai_duck",
+    "body": [
+      "%zizai_duck"
+    ],
+    "description": "DuckDBを選択したフォームを開く"
+  },
+  "CSVフォームを開く": {
+    "scope": "python",
+    "prefix": "@zizai_csv",
+    "body": [
+      "%zizai_csv"
+    ],
+    "description": "CSVを選択したフォームを開く"
+  },
+  "Excelフォームを開く": {
+    "scope": "python",
+    "prefix": "@zizai_excel",
+    "body": [
+      "%zizai_excel"
+    ],
+    "description": "Excelを選択したフォームを開く"
+  },
+  "BigQueryでSQLを実行する": {
+    "scope": "python",
+    "prefix": "@zizai_bq_sql",
+    "body": [
+      "%%zizai_bq",
+      "$0"
+    ],
+    "description": "BigQueryでセル内のSQLを実行する"
+  },
+  "DuckDBでSQLを実行する": {
+    "scope": "python",
+    "prefix": "@zizai_duck_sql",
+    "body": [
+      "%%zizai_duck",
+      "$0"
+    ],
+    "description": "DuckDBでセル内のSQLを実行する"
   }
 }

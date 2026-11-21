@@ -35,6 +35,7 @@ PACKAGE_FILES = {
     "zizai/form_definition.py",
     "zizai/form_model.py",
     "zizai/forms.py",
+    "zizai/sql_magic.py",
     "zizai/forms.yaml",
     "zizai/form.css",
     "zizai/row_preview.py",
