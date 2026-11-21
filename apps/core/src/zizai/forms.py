@@ -9,6 +9,7 @@ from pathlib import Path
 import shlex
 from .connector_codegen import module_name_for
 from .dataintegration_codegen import COLUMN_OPERATIONS, DATAFRAME_OPERATIONS, ROW_OPERATIONS, VALUE_OPERATIONS
+from .pandas_table_codegen import TABLE_ACTIONS
 from .form_definition import load_definition
 from .form_model import FormModel
 
@@ -289,7 +290,8 @@ class NotebookForm:
 
     def _has_dataframe_editor(self):
         action = self.model.actions.get(self.model.action, {})
-        return action.get('generation') in DATAFRAME_OPERATIONS
+        generation = action.get('generation')
+        return generation in DATAFRAME_OPERATIONS or generation in TABLE_ACTIONS
 
     def _dataframe_names(self):
         try:
@@ -308,28 +310,36 @@ class NotebookForm:
                          else 'NotebookでDataFrameを作成してから、フォームを再表示してください。')
             self._dataframe_slot.children = (widgets.HTML(f'<p>{help_text}</p>'),)
             return
-        path = self.model.definition['connectors'][self.model.connector].get('module_path')
         try:
-            module = module_name_for(path)
-            spec = find_spec(module)
-            if spec is None or spec.origin is None or Path(spec.origin).resolve() != Path(path).resolve():
-                raise ValueError('設定したデータ統合コネクタをカーネルに登録してください。')
             generation = self.model.actions[self.model.action]['generation']
-            apply_operations = getattr(import_module(module), DATAFRAME_OPERATIONS[generation], None)
-            if not callable(apply_operations):
-                raise ValueError('データ統合コネクタを更新し、カーネルを再起動してください。')
-            args = self._namespace[name], apply_operations, self._set_dataframe_operations
-            if generation == COLUMN_OPERATIONS:
-                from .column_editor import ColumnEditor
-                self._dataframe_editor = ColumnEditor(*args)
+            if generation in TABLE_ACTIONS:
+                from .table_action_editor import create_table_editor
+                candidates = {candidate: self._namespace[candidate] for candidate in self._dataframe_names()}
+                self._dataframe_editor = create_table_editor(
+                    generation, self._namespace[name], self._set_dataframe_operations, candidates=candidates)
             else:
-                from .data_operations_editor import DataOperationsEditor
-                mode = {VALUE_OPERATIONS: 'value', ROW_OPERATIONS: 'condition'}.get(generation)
-                self._dataframe_editor = DataOperationsEditor(*args, mode=mode)
+                self._dataframe_editor = self._create_connector_editor(name, generation)
         except (ImportError, TypeError, ValueError, KeyError, OSError) as error:
             self._dataframe_slot.children = (widgets.HTML(f'<p role="alert">{escape(str(error))}</p>'),)
             return
         self._dataframe_slot.children = (self._dataframe_editor.root,)
+
+    def _create_connector_editor(self, name, generation):
+        path = self.model.definition['connectors'][self.model.connector].get('module_path')
+        module = module_name_for(path)
+        spec = find_spec(module)
+        if spec is None or spec.origin is None or Path(spec.origin).resolve() != Path(path).resolve():
+            raise ValueError('設定したデータ統合コネクタをカーネルに登録してください。')
+        apply_operations = getattr(import_module(module), DATAFRAME_OPERATIONS[generation], None)
+        if not callable(apply_operations):
+            raise ValueError('データ統合コネクタを更新し、カーネルを再起動してください。')
+        args = self._namespace[name], apply_operations, self._set_dataframe_operations
+        if generation == COLUMN_OPERATIONS:
+            from .column_editor import ColumnEditor
+            return ColumnEditor(*args)
+        from .data_operations_editor import DataOperationsEditor
+        mode = {VALUE_OPERATIONS: 'value', ROW_OPERATIONS: 'condition'}.get(generation)
+        return DataOperationsEditor(*args, mode=mode)
 
     def _set_dataframe_operations(self, operations):
         self._value_changed('operations', json.dumps(operations, ensure_ascii=False) if operations else '')

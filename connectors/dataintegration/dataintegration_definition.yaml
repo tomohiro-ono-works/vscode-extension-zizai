@@ -19,6 +19,27 @@ connectors:
           input_variable: {label: 入力DataFrame, type: text, required: true}
           output_variable: {label: 出力変数, type: text, default: processed_df, required: true}
           operations: {label: 処理, type: textarea, required: true}
+      sort_rows:
+        label: 行の並べ替え
+        generation: dataintegration.sort_rows
+        fields:
+          input_variable: {label: 入力DataFrame, type: text, required: true}
+          output_variable: {label: 出力変数, type: text, default: sorted_df, required: true}
+          operations: {label: 並べ替えの設定, type: textarea, required: true}
+      aggregate_rows:
+        label: 集計
+        generation: dataintegration.aggregate_rows
+        fields:
+          input_variable: {label: 入力DataFrame, type: text, required: true}
+          output_variable: {label: 出力変数, type: text, default: aggregated_df, required: true}
+          operations: {label: 集計の設定, type: textarea, required: true}
+      combine_frames:
+        label: 結合・差集合
+        generation: dataintegration.combine_frames
+        fields:
+          input_variable: {label: 左のDataFrame, type: text, required: true}
+          output_variable: {label: 出力変数, type: text, default: combined_df, required: true}
+          operations: {label: 結合の設定, type: textarea, required: true}
       replace_fields_forrenamelist:
         label: RENAMEリストで列名変更
         generation: dataintegration.replace_fields_forrenamelist
