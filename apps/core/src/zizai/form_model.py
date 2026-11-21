@@ -8,11 +8,13 @@ from .duckdb_codegen import generate_duckdb
 from .excel_codegen import generate_excel
 from .python_codegen import generate_python
 from .shell_codegen import generate_shell
+from .vector_codegen import generate_vector
 
 
 GENERATORS = {
     'bigquery': generate_bigquery, 'csv': generate_csv, 'dataintegration': generate_dataintegration,
     'duckdb': generate_duckdb, 'excel': generate_excel, 'python': generate_python, 'shell': generate_shell,
+    'vector': generate_vector,
 }
 
 
@@ -58,6 +60,11 @@ class FormModel:
         if action is not None and action not in self.actions:
             raise ValueError('候補からアクションを選んでください。')
         fields, values = self.fields, self.values
+        if self.connector == 'vector' and action != self.action:
+            if 'output_variable' in fields and values['output_variable'] == fields['output_variable'].get('default'):
+                values = {key: value for key, value in values.items() if key != 'output_variable'}
+            if values.get('collection_name') == '':
+                values = {key: value for key, value in values.items() if key != 'collection_name'}
         self.action = action
         self._restore_fields(fields, values)
 

@@ -1,0 +1,44 @@
+version: 1
+output_template: "{connector}.{action}のコードを生成"
+connectors:
+  vector:
+    label: Vector
+    module_file: vector_connector.py
+    actions:
+      embedding_vector_db:
+        label: ベクトルDB構築・更新
+        generation: vector.embedding_vector_db
+        fields:
+          db_folder: {label: ベクトルDBのフォルダー, type: folder, required: true}
+          collection_name: {label: コレクション名, type: text, default: default, required: true}
+          input_variable: {label: 入力DataFrame, type: text, required: true}
+          output_variable: {label: 出力DataFrame, type: text, default: result, required: true}
+          id_column: {label: ID列, type: text, default: id, required: true}
+          text_column: {label: テキスト列, type: text, default: text, required: true}
+          model_name:
+            label: 埋め込みモデル
+            type: choice
+            choices: [cl-nagoya/ruri-v3-30m, cl-nagoya/ruri-v3-130m]
+            default: null
+          enable_correction: {label: 補正検索を有効にする, type: checkbox, default: false}
+          regularization: {label: 正則化係数（既定 0.001）, type: text}
+          density_k: {label: 近傍件数（既定 10）, type: text}
+          penalty_weight: {label: ペナルティ係数（既定 0.25）, type: text}
+      search_vector_db:
+        label: ベクトル検索
+        generation: vector.search_vector_db
+        fields:
+          db_folder: {label: ベクトルDBのフォルダー, type: folder, required: true}
+          collection_name: {label: コレクション名, type: text, default: default, required: true}
+          search_mode:
+            label: 検索方法
+            type: choice
+            choices: [コサイン類似度, ユークリッド距離, マンハッタン距離, コサイン類似度（補正込み）, コサイン類似度（補正前後を比較）]
+            default: コサイン類似度
+            required: true
+          output_variable: {label: 出力変数, type: text, default: df, required: true}
+          top_k: {label: 取得件数, type: integer, minimum: 1, default: 5, required: true}
+          query_text: {label: 検索文, type: textarea}
+          batch_search: {label: 検索入力, type: checkbox, default: false}
+          query_input_variable: {label: 検索元DataFrame, type: text}
+          query_column: {label: 検索列, type: text}

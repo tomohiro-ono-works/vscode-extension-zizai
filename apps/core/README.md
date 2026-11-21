@@ -230,3 +230,9 @@ python -c 'from setuptools.build_meta import build_wheel; build_wheel("dist")'
 この最小基盤のPython要件は3.12以降です。製品全体の正式な最低版・対応範囲とは区別します。初回検証基準候補のWindows／Python3.14、選択Jupyterカーネル、VSIX／ZIP全体、個別処理・SDK・認証の適合は別途確認します。
 
 [設計](https://github.com/tomohiro-ono-works/vscode-extension-zizai/blob/65631504f146a4dfa2ab52d557e58db53c2e6a00/docs/research/python-import/TASK-003-02.md)と[最小実装計画](https://github.com/tomohiro-ono-works/vscode-extension-zizai/blob/65631504f146a4dfa2ab52d557e58db53c2e6a00/docs/research/python-import/TASK-003-03-plan.md)を参照してください。
+
+### Vectorの登録・検索
+
+Notebookのカーネル環境に開発版のwheelを `[forms,vector]` 付きで導入し、[Vector資産](../../connectors/vector/) のPythonとYAMLを共通フォルダーの `vector/` に置いて `configure_connectors` で登録します。`%form` の「Vector」から「ベクトルDB構築・更新」または「ベクトル検索」を選べます。初回実行時に埋め込みモデルがローカルにない場合は、モデルの取得が発生します。アクセス先とモデルは利用する環境で確認してください。
+
+ベクトルを登録したあと、検索フォームの「検索方法」でコサイン類似度・ユークリッド距離・マンハッタン距離をその都度選びます。登録の「補正検索の詳細設定」で補正を有効にすると、「コサイン類似度（補正込み）」と「コサイン類似度（補正前後を比較）」も使えます。

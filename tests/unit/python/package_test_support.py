@@ -37,6 +37,7 @@ PACKAGE_FILES = {
     "zizai/arithmetic_formula.py",
     "zizai/python_codegen.py",
     "zizai/shell_codegen.py",
+    "zizai/vector_codegen.py",
     "zizai/connector_codegen.py",
     "zizai/excel_codegen.py",
     "zizai/core/tabular.py",

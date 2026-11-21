@@ -57,8 +57,17 @@ def form_input_file_path(values):
     return absolute_file_path(values, 'file_path')
 
 
-def render_call(module_name, function, arguments, variable, *, reading, direct_variables=False, temporary_prefix=''):
-    reserved = {variable}
+def _reserve_name(base, reserved):
+    name = base
+    suffix = 2
+    while name in reserved:
+        name = f'{base}_{suffix}'
+        suffix += 1
+    reserved.add(name)
+    return name
+
+
+def _prepare_connector_call(module_name, function, arguments, reserved, *, direct_variables=False, temporary_prefix=''):
     reserved.update(argument.value.id for argument in arguments if isinstance(argument.value, ast.Name))
     handle = '_zizai_' + module_name if module_name in reserved else module_name
     while handle in reserved:
@@ -68,17 +77,17 @@ def render_call(module_name, function, arguments, variable, *, reading, direct_v
     for argument in arguments:
         if direct_variables and isinstance(argument.value, ast.Name):
             continue
-        base = temporary_prefix + argument.arg
-        name = base
-        suffix = 2
-        while name in reserved:
-            name = f'{base}_{suffix}'
-            suffix += 1
-        reserved.add(name)
+        name = _reserve_name(temporary_prefix + argument.arg, reserved)
         body.append(ast.Assign(targets=[ast.Name(id=name, ctx=ast.Store())], value=argument.value))
         argument.value = ast.Name(id=name, ctx=ast.Load())
     call = ast.Call(func=ast.Attribute(value=ast.Name(id=handle, ctx=ast.Load()), attr=function, ctx=ast.Load()),
                     args=[], keywords=arguments)
+    return body, call
+
+
+def render_call(module_name, function, arguments, variable, *, reading, direct_variables=False, temporary_prefix=''):
+    body, call = _prepare_connector_call(module_name, function, arguments, {variable},
+                                         direct_variables=direct_variables, temporary_prefix=temporary_prefix)
     if reading:
         body.extend([ast.Assign(targets=[ast.Name(id=variable, ctx=ast.Store())], value=call),
                      ast.Expr(value=ast.Name(id=variable, ctx=ast.Load()))])

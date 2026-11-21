@@ -84,6 +84,39 @@
 .zizai-form .zizai-generate { min-width: 138px; }
 .zizai-form .zizai-copy { width: auto; }
 .zizai-form .zizai-pair { gap: 16px; }
+.zizai-form .zizai-query-section { gap: 8px; }
+.zizai-form .zizai-query-text .widget-label {
+  position: absolute;
+  width: 1px !important;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.zizai-form .zizai-batch-toggle button.jupyter-button {
+  border-radius: 0;
+  height: 28px;
+  min-width: 64px;
+  padding: 0 10px;
+  font-size: 12px;
+}
+.zizai-form .zizai-batch-toggle button.jupyter-button:first-of-type {
+  border-radius: 6px 0 0 6px;
+}
+.zizai-form .zizai-batch-toggle button.jupyter-button:last-of-type {
+  border-radius: 0 6px 6px 0;
+}
+.zizai-form .zizai-batch-toggle button.jupyter-button + button.jupyter-button {
+  border-left: 0;
+}
+.zizai-form .zizai-batch-toggle button.jupyter-button:not(.mod-active):not([aria-pressed="true"]) {
+  background: #fff;
+  color: var(--zizai-green);
+}
+.zizai-form .zizai-batch-toggle button.jupyter-button:not(.mod-active):not([aria-pressed="true"]):hover {
+  background: #e9eeeb;
+}
 .zizai-form .zizai-folder-row { gap: 10px; }
 .zizai-form .widget-html { margin: 0; color: inherit; }
 .zizai-form .widget-html-content { width: 100%; }

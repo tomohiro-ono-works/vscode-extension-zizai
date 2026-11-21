@@ -6,18 +6,36 @@ from importlib.util import find_spec
 import json
 from keyword import iskeyword
 from pathlib import Path
+import re
 import shlex
 from .connector_codegen import module_name_for
 from .dataintegration_codegen import COLUMN_OPERATIONS, DATAFRAME_OPERATIONS, ROW_OPERATIONS, VALUE_OPERATIONS
 from .pandas_table_codegen import TABLE_ACTIONS
 from .form_definition import load_definition
 from .form_model import FormModel
+from .vector_codegen import BUILD as VECTOR_BUILD, CORRECTION_FIELDS, SEARCH as VECTOR_SEARCH
 
 
 _ROW_PREVIEW_FIELDS = {
     ('csv', 'import'): {'encoding': 'choice', 'delimiter': 'text'},
     ('excel', 'read_excel'): {'sheet_name': 'text'},
 }
+
+_VECTOR_COLLECTION_SUFFIX = '.vector.duckdb'
+
+
+def _vector_collection_names(folder):
+    if not folder or not Path(folder).is_absolute():
+        return []
+    try:
+        names = []
+        for entry in Path(folder).iterdir():
+            name = entry.name.removesuffix(_VECTOR_COLLECTION_SUFFIX)
+            if name != entry.name and re.fullmatch(r'[\w-]+', name) and entry.is_file():
+                names.append(name)
+        return sorted(names, key=lambda name: (name.casefold(), name))
+    except (OSError, ValueError):
+        return []
 
 
 def _show_native_picker(choose, **options):
@@ -174,6 +192,9 @@ class NotebookForm:
             self.row_preview_button = None
             self._invalid_fields.clear()
             dataframe_mode = self._has_dataframe_editor()
+            generation = self.model.actions.get(self.model.action, {}).get('generation')
+            vector_build = generation == VECTOR_BUILD
+            vector_search = generation == VECTOR_SEARCH
             self.root.layout.max_width = 'none' if dataframe_mode else self._form_width
             for name, field in self.model.fields.items():
                 value = self.model.values[name]
@@ -181,14 +202,30 @@ class NotebookForm:
                 if dataframe_mode and name == 'operations':
                     self.model.set_value(name, '')
                     continue
-                if dataframe_mode and name == 'input_variable':
+                if vector_search and name == 'include_vector':
+                    continue  # Older connector definitions may still declare the former checkbox.
+                if vector_search and name == 'collection_name':
+                    widget = self._vector_collection_picker(self.model.values['db_folder'], label)
+                elif vector_search and name == 'batch_search':
+                    widget = widgets.ToggleButtons(options=[('検索文', False), ('DataFrameで検索', True)],
+                                                    value=value, style={'button_width': 'auto'})
+                    widget.add_class('zizai-batch-toggle')
+                elif vector_search and name == 'query_column':
+                    widget = self._vector_column_picker(name, label, source_field='query_input_variable')
+                elif vector_build and name in {'id_column', 'text_column'}:
+                    widget = self._vector_column_picker(name, label)
+                elif ((dataframe_mode or vector_build) and name == 'input_variable'
+                      or vector_search and name == 'query_input_variable'):
                     options = [('選択してください', '')] + [(name, name) for name in self._dataframe_names()]
                     if value not in dict(options).values():
                         value = ''
                         self.model.set_value(name, value)
                     widget = widgets.Dropdown(description=label, options=options, value=value)
                 elif field['type'] == 'choice':
-                    widget = widgets.Dropdown(description=label, options=[('選択してください', None)] + [(x, x) for x in field['choices']], value=value)
+                    placeholder = ('既存DBのモデルを使用（新規は130m）'
+                                   if vector_build and name == 'model_name' else '選択してください')
+                    options = [(placeholder, None), *((choice, choice) for choice in field['choices'])]
+                    widget = widgets.Dropdown(description=label, options=options, value=value)
                 elif field['type'] == 'integer':
                     widget = widgets.IntText(description=label, value=value)
                     widget.add_class('zizai-integer')
@@ -213,16 +250,33 @@ class NotebookForm:
                     self._dynamic.append(button)
             self.toolbar.children = [self.connector, self.action]
             rows = []
+            query_switch = self.field_widgets.get('batch_search') if vector_search else None
             pairs = [('encoding', 'delimiter')]
             if dataframe_mode:
                 pairs.append(('input_variable', 'output_variable'))
+            if vector_build:
+                pairs.extend([('input_variable', 'output_variable'), ('id_column', 'text_column')])
+            if vector_search:
+                pairs.extend([('collection_name', 'search_mode'), ('output_variable', 'top_k')])
+                pairs.append(('query_input_variable', 'query_column'))
             if (self.model.connector, self.model.action) in {
                 ('csv', 'import'), ('excel', 'read_excel'), ('excel', 'read_excel_range'),
             }:
                 pairs.extend([('output_variable', 'chunk_size'), ('header_row', 'data_start_row')])
             paired_fields = {left: right for left, right in pairs if left in self.field_widgets and right in self.field_widgets}
+            correction_controls = []
             for name, widget in self.field_widgets.items():
-                if name in self.browse_buttons:
+                if vector_build and name in CORRECTION_FIELDS:
+                    correction_controls.append(widget)
+                elif name == 'query_text' and query_switch is not None:
+                    query_switch.layout.align_self = 'flex-start'
+                    widget.add_class('zizai-query-text')
+                    widget.layout.width = '100%'
+                    section = widgets.VBox([query_switch, widget])
+                    section.add_class('zizai-query-section')
+                    self._dynamic.append(section)
+                    rows.append(section)
+                elif name in self.browse_buttons:
                     widget.layout.flex = '1 1 0'
                     widget.layout.min_width = '0'
                     controls = [widget, self.browse_buttons[name]]
@@ -247,14 +301,22 @@ class NotebookForm:
                     row.add_class('zizai-pair')
                     self._dynamic.append(row)
                     rows.append(row)
-                elif name not in paired_fields.values():
+                elif name not in paired_fields.values() and widget is not query_switch:
                     rows.append(widget)
+            if correction_controls:
+                settings = widgets.VBox(correction_controls)
+                advanced = widgets.Accordion(children=[settings], selected_index=None)
+                advanced.set_title(0, '補正検索の詳細設定')
+                self._dynamic.extend([settings, advanced])
+                rows.append(advanced)
             if dataframe_mode:
                 self._dataframe_slot = widgets.VBox()
                 self._dynamic.append(self._dataframe_slot)
                 rows.append(self._dataframe_slot)
                 self._show_dataframe_editor(self.model.values['input_variable'])
             self.details.children = rows
+            if vector_search and 'batch_search' in self.field_widgets:
+                self._show_vector_query_mode()
             self.message.value = ''
             self._clear_result()
             self._refresh_generate()
@@ -272,6 +334,21 @@ class NotebookForm:
             self._invalid_fields.discard(name)
         except ValueError:
             self._invalid_fields.add(name)
+        generation = self.model.actions.get(self.model.action, {}).get('generation')
+        if name == 'db_folder' and generation == VECTOR_SEARCH:
+            name_field = self.field_widgets['collection_name']
+            self._replace_vector_picker('collection_name', self._vector_collection_picker(value, name_field.description))
+        if generation == VECTOR_SEARCH:
+            if name == 'batch_search':
+                self._show_vector_query_mode()
+            elif name == 'query_input_variable':
+                label = self.field_widgets['query_column'].description
+                picker = self._vector_column_picker('query_column', label, source_field=name)
+                self._replace_vector_picker('query_column', picker)
+        if name == 'input_variable' and generation == VECTOR_BUILD:
+            for column_field in ('id_column', 'text_column'):
+                label = self.field_widgets[column_field].description
+                self._replace_vector_picker(column_field, self._vector_column_picker(column_field, label))
         if name == 'input_variable' and self._dataframe_slot is not None:
             self.model.set_value('operations', '')
             self._show_dataframe_editor(value)
@@ -287,6 +364,61 @@ class NotebookForm:
                 except ValueError as error:
                     self.message.value = escape(str(error))
         self._refresh_generate()
+
+    def _show_vector_query_mode(self):
+        batch = self.model.values['batch_search']
+        fields = self.field_widgets
+        fields['query_text'].layout.display = 'none' if batch else ''
+        row = next(row for row in self.details.children
+                   if fields['query_input_variable'] in getattr(row, 'children', ()))
+        row.layout.display = '' if batch else 'none'
+
+    def _vector_collection_picker(self, folder, label):
+        names = _vector_collection_names(folder)
+        current = self.model.values['collection_name']
+        selected = current if current in names else (names[0] if len(names) == 1 else '')
+        self.model.set_value('collection_name', selected)
+        placeholder = ('選択してください' if names else
+                       'コレクションがありません' if folder else 'フォルダーを選択してください')
+        options = [(placeholder, ''), *((name, name) for name in names)]
+        picker = self._widgets.Dropdown(description=label, options=options, value=selected, disabled=not names,
+                                        description_allow_html=True)
+        picker.style.description_width = 'initial'
+        return picker
+
+    def _vector_column_picker(self, name, label, *, source_field='input_variable'):
+        source = self.model.values.get(source_field)
+        data = self._namespace.get(source)
+        labels = getattr(data, 'columns', None)
+        if labels is None:
+            labels = ()
+        elif name == 'query_column':
+            labels = labels[~labels.duplicated(keep=False)]
+        columns = tuple(dict.fromkeys(column for column in labels
+                                      if isinstance(column, str) and column.strip()))
+        selected = self.model.values[name]
+        if selected not in columns:
+            default = self.model.fields[name].get('default')
+            selected = default if default in columns else ''
+        self.model.set_value(name, selected)
+        placeholder = ('選択してください' if columns else
+                       '選択できる列がありません' if source else '入力DataFrameを選択してください')
+        options = [(placeholder, ''), *((column, column) for column in columns)]
+        picker = self._widgets.Dropdown(description=label, options=options, value=selected, disabled=not columns,
+                                        description_allow_html=True)
+        picker.style.description_width = 'initial'
+        return picker
+
+    def _replace_vector_picker(self, name, picker):
+        previous = self.field_widgets[name]
+        picker.layout = previous.layout
+        picker.observe(lambda change: self._value_changed(name, change['new']), names='value')
+        row = next(row for row in self.details.children if previous in getattr(row, 'children', ()))
+        row.children = tuple(picker if item is previous else item for item in row.children)
+        self.field_widgets[name] = picker
+        self._dynamic[self._dynamic.index(previous)] = picker
+        previous.unobserve_all('value')
+        previous.close()
 
     def _has_dataframe_editor(self):
         action = self.model.actions.get(self.model.action, {})
