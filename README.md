@@ -3,6 +3,7 @@
 ZizAIは、Jupyter Notebookのフォームで処理を選び、実行用のPythonコードを生成するアプリケーションです。VS Codeでは標準のPython／Jupyter拡張を使います。
 
 - [インストールとフォームの使い方](docs/usage.md)
+- [環境構築Notebook（手順書・設定スクリプト）](examples/setup-zizai.ipynb)
 - [サンプルNotebook](examples/python-form.ipynb)・[CSVサンプル](examples/csv-form.ipynb)
 - [現行要件](docs/features/requirements.md)・[Taskの入口](docs/tasks/README.md)
 - [開発手順](docs/development.md)・[コーディングルール](coding-rules.md)

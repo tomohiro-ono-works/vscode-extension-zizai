@@ -10,6 +10,8 @@
 
 ## 新方式のTask
 
+- [TASK-031 / #123：ZizAIの環境構築Notebookを追加する](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/123)
+
 - [TASK-030 / #121：ZizAIのソースをsrcへまとめ、空フォルダーを整理する](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/121)
 
 - [TASK-029 / #119：現行アプリが使用しない旧入力支援・契約実装を撤去する](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/119)
