@@ -190,3 +190,11 @@
 .zizai-form .zizai-operation-handle {cursor:grab;user-select:none;flex:0 0 auto;padding:0 4px;color:#68736e}
 .zizai-form .zizai-operation-entry.zizai-operation-before {box-shadow:inset 0 3px #187a57}
 .zizai-form .zizai-operation-entry.zizai-operation-after {box-shadow:inset 0 -3px #187a57}
+.zizai-form .zizai-table-step-rows, .zizai-form .zizai-table-step-row {gap:8px}
+.zizai-form .row-preview select[multiple] {height:auto !important;min-height:80px;max-height:none}
+.zizai-form .zizai-aggregate-preview {overflow:auto;max-height:340px}
+.zizai-form .zizai-aggregate-preview table {border-collapse:collapse;text-align:left}
+.zizai-form .zizai-aggregate-preview th, .zizai-form .zizai-aggregate-preview td {
+  padding:6px 10px;border:1px solid var(--zizai-border)
+}
+.zizai-form .zizai-aggregate-preview th {background:#e3eee7}

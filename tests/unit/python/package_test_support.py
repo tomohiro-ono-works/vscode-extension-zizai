@@ -32,6 +32,8 @@ PACKAGE_FILES = {
     "zizai/duckdb_codegen.py",
     "zizai/dataintegration_codegen.py",
     "zizai/pandas_operations_codegen.py",
+    "zizai/pandas_table_codegen.py",
+    "zizai/table_action_editor.py",
     "zizai/arithmetic_formula.py",
     "zizai/python_codegen.py",
     "zizai/shell_codegen.py",

@@ -5,6 +5,7 @@ import unicodedata
 
 from .connector_codegen import _identifier, _text, form_input_file_path, module_name_for, render_call
 from .pandas_operations_codegen import generate_pandas_operations
+from .pandas_table_codegen import TABLE_ACTIONS, generate_table_action
 
 
 PRE_FLAGS = ('remove_spaces', 'remove_newlines', 'to_halfwidth_alnum', 'symbols_to_snake')
@@ -19,7 +20,7 @@ DATAFRAME_OPERATIONS = {
     DATA_OPERATIONS: 'apply_data_operations',
 }
 GENERATION_FIELDS = {
-    **{kind: {'input_variable', 'output_variable', 'operations'} for kind in DATAFRAME_OPERATIONS},
+    **{kind: {'input_variable', 'output_variable', 'operations'} for kind in {*DATAFRAME_OPERATIONS, *TABLE_ACTIONS}},
     'dataintegration.replace_fields_forrenamelist': {
         'folder', 'filename', 'input_variable', 'output_variable', 'exclude_japanese_columns', *PRE_FLAGS,
     },
@@ -31,6 +32,14 @@ def generate_dataintegration(kind, values, module_path):
         raise ValueError('未対応のデータ統合操作です。')
     incoming = _identifier(values, 'input_variable')
     output = _identifier(values, 'output_variable')
+    if kind in TABLE_ACTIONS:
+        try:
+            settings = json.loads(_text(values, 'operations', required=True))
+        except json.JSONDecodeError as error:
+            raise ValueError('処理の設定を確認してください。') from error
+        if not isinstance(settings, dict):
+            raise ValueError('処理の設定を確認してください。')
+        return generate_table_action(kind, incoming, output, settings)
     if kind in DATAFRAME_OPERATIONS:
         label = {COLUMN_OPERATIONS: '列操作', VALUE_OPERATIONS: '値加工', ROW_OPERATIONS: '行の条件',
                  DATA_OPERATIONS: '処理'}[kind]
