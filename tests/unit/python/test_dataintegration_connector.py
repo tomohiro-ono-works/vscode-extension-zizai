@@ -56,7 +56,7 @@ class DataIntegrationConnectorTests(unittest.TestCase):
         self.assertEqual(result.index.tolist(), [32, 35])
         self.assertTrue(source.equals(before))
 
-    def test_row_form_uses_sample_and_generates_for_all_rows(self):
+    def test_row_form_adds_and_deletes_individual_conditions_and_generates_for_all_rows(self):
         import pandas as pd
         from zizai.forms import create_form
 
@@ -69,16 +69,32 @@ class DataIntegrationConnectorTests(unittest.TestCase):
             form.action.value = 'filter_rows'
             form.field_widgets['input_variable'].value = 'df'
             editor = form._dataframe_editor
-            self.assertLess(editor.root.children.index(editor.settings), editor.root.children.index(editor.grid))
+            self.assertFalse(hasattr(editor, 'grid'))
+            self.assertIs(editor.settings.children[-1], editor.apply)
+            editor.action.value = 'keep'
+            editor.column.value = '数量'
+            editor.comparison.value = 'greater_equal'
+            editor.value.value = '10'
+            editor.apply.click()
+            editor.logic.value = 'or'
+            editor.comparison.value = 'less'
+            editor.value.value = '3'
+            editor.apply.click()
+            self.assertEqual(len(editor.entries.rows.children), 2)
+            editor.entries.rows.children[0].children[-1].click()
+            self.assertEqual(editor.operations[0]['conditions'], [
+                {'column': '数量', 'comparison': 'less', 'value': 3},
+            ])
+            editor.entries.rows.children[0].children[-1].click()
+            self.assertTrue(form.generate_button.disabled)
             editor.action.value = 'tail'
             editor.count.value = 2
             editor.apply.click()
-            self.assertEqual(editor.preview['数量'].tolist(), [28, 29])
             form.generate_button.click()
             namespace = {'df': source}
             exec(compile(form.result, '<generated-tail>', 'exec'), namespace)
             self.assertEqual(namespace['filtered_df']['数量'].tolist(), [38, 39])
-            editor.undo.click()
+            editor.entries.rows.children[0].children[-1].click()
             self.assertTrue(form.generate_button.disabled)
 
     def test_value_operations_generated_code_preserves_input_and_applies_steps(self):
@@ -118,7 +134,7 @@ class DataIntegrationConnectorTests(unittest.TestCase):
         self.assertEqual(result.index.tolist(), [9, 6, 4, 2])
         self.assertTrue(source.equals(before))
 
-    def test_value_form_selectors_above_preview_keep_valid_settings_after_invalid_regex(self):
+    def test_value_form_adds_settings_in_one_row_and_guards_dependent_deletion(self):
         import pandas as pd
         from zizai.forms import create_form
 
@@ -131,7 +147,8 @@ class DataIntegrationConnectorTests(unittest.TestCase):
             form.action.value = 'apply_value_operations'
             form.field_widgets['input_variable'].value = 'df'
             editor = form._dataframe_editor
-            self.assertLess(editor.root.children.index(editor.selectors), editor.root.children.index(editor.grid))
+            self.assertFalse(hasattr(editor, 'grid'))
+            self.assertIs(editor.settings.children[-1], editor.add)
             self.assertTrue(editor.category.disabled)
             editor.column.value = '商品'
             editor.category.value = 'text'
@@ -145,13 +162,20 @@ class DataIntegrationConnectorTests(unittest.TestCase):
             editor.fields['pattern'].value = r'-(\d+)$'
             editor.fields['group'].value = 1
             editor.add.click()
-            self.assertEqual(len(editor.preview), 30)
-            self.assertEqual(editor.preview['番号'].iloc[0], '001')
             self.assertNotIn('番号', source.columns)
             self.assertIn('番号', dict(editor.column.options).values())
+            editor.column.value = '番号'
+            editor.action.value = 'trim'
+            editor.output_mode.value = 'existing'
+            editor.add.click()
+            self.assertEqual(len(editor.entries.rows.children), 2)
+            editor.entries.rows.children[0].children[-1].click()
+            self.assertIn('削除できません', editor.status.value)
+            self.assertEqual(len(editor.operations), 2)
             form.generate_button.click()
             self.assertIn('apply_value_operations', form.result)
-            editor.undo.click()
+            editor.entries.rows.children[1].children[-1].click()
+            editor.entries.rows.children[0].children[-1].click()
             self.assertTrue(form.generate_button.disabled)
 
     def test_value_operations_join_text_and_reject_zero_division_without_changing_input(self):

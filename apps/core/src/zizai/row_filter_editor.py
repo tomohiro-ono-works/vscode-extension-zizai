@@ -1,11 +1,10 @@
-"""Configure row selection and cleanup before generating Notebook code."""
+"""Configure ordered row conditions and cleanup before generating Notebook code."""
 from html import escape
 
 import ipywidgets as widgets
 
-from .column_editor import DataFramePreview
 from .row_preview import MAX_ROWS, _close_widgets
-from .value_editor import _dropdown, _number, _settings_row
+from .value_editor import _dropdown, _number, _operation_form, _OperationList
 
 
 OP_LABELS = {
@@ -21,42 +20,7 @@ COMPARISONS = {
 }
 NULL_COMPARISONS = {'is_null', 'not_null'}
 TEXT_COMPARISONS = {'text_equal', 'contains'}
-
-
-class RowCondition:
-    def __init__(self, columns, *, first):
-        self.logic = None if first else _dropdown('結合', [('AND', 'and'), ('OR', 'or')], value='and')
-        self.column = _dropdown('対象列', [('選択してください', None), *((name, name) for name in columns)])
-        self.comparison = _dropdown('比較', [('選択してください', None), *((label, key) for key, label in COMPARISONS.items())])
-        self.value = widgets.Text(description='比較値', layout=widgets.Layout(width='auto', display='none'))
-        self.upper = widgets.Text(description='上限', layout=widgets.Layout(width='auto', display='none'))
-        for control in (self.value, self.upper):
-            control.style.description_width = 'initial'
-        self.comparison.observe(self._toggle_comparison, names='value')
-        controls = [self.column, self.comparison, self.value, self.upper]
-        self.root = _settings_row(controls if first else [self.logic, *controls])
-
-    def _toggle_comparison(self, _change):
-        comparison = self.comparison.value
-        self.value.layout.display = '' if comparison and comparison not in NULL_COMPARISONS else 'none'
-        self.value.description = '下限' if comparison == 'between' else '比較値'
-        self.upper.layout.display = '' if comparison == 'between' else 'none'
-
-    def build(self):
-        column, comparison = self.column.value, self.comparison.value
-        if not column or not comparison:
-            raise ValueError('各条件の対象列と比較方法を選択してください。')
-        data = {'column': column, 'comparison': comparison}
-        if self.logic is not None:
-            data['logic'] = self.logic.value
-        if comparison not in NULL_COMPARISONS:
-            data['value'] = self.value.value if comparison in TEXT_COMPARISONS else _number(self.value.value)
-        if comparison == 'between':
-            data['upper'] = _number(self.upper.value)
-        return data
-
-    def close(self):
-        _close_widgets([*self.root.children, self.root])
+CONDITIONAL = {'keep', 'exclude'}
 
 
 class RowFilterEditor:
@@ -64,136 +28,138 @@ class RowFilterEditor:
         self._apply_operations = apply_operations
         self._on_change = on_change
         self._sample = data.head(MAX_ROWS).copy()
-        self.preview = apply_operations(self._sample, operations=[])
+        apply_operations(self._sample, operations=[])
         self.operations = []
-        self._columns = list(map(str, self._sample.columns))
-        self.conditions = []
+        columns = list(map(str, self._sample.columns))
 
         self.action = _dropdown('操作', [('選択してください', None), *((label, key) for key, label in OP_LABELS.items())])
-        self._operation_row = _settings_row([self.action])
-        self._rows = widgets.VBox()
-        self.add_condition = widgets.Button(description='条件を追加', layout=widgets.Layout(width='auto'))
-        self.add_condition.on_click(lambda _: self._append_condition())
-        self.remove_condition = widgets.Button(description='最後の条件を外す', layout=widgets.Layout(width='auto'))
-        self.remove_condition.on_click(self._remove_condition)
-        self._condition_actions = _settings_row([self.add_condition, self.remove_condition])
-        self._precedence = widgets.HTML('<p>ANDを先に評価します。</p>')
-        self._condition_settings = widgets.VBox([self._rows, self._condition_actions, self._precedence],
-                                                 layout=widgets.Layout(display='none'))
-        self.subset = widgets.SelectMultiple(description='判定列（未選択は全列）', options=self._columns,
-                                             rows=min(5, max(1, len(self._columns))),
-                                             layout=widgets.Layout(width='min(100%, 420px)'))
-        self.subset.style.description_width = 'initial'
-        self._subset_row = _settings_row([self.subset])
-        self._subset_row.layout.display = 'none'
-        self.count = widgets.IntText(description='行数', value=1, layout=widgets.Layout(width='auto', display='none'))
-        self.count.style.description_width = 'initial'
+        self.logic = _dropdown('結合', [('AND', 'and'), ('OR', 'or'), ('新しいグループ', 'new')], value='and')
+        self.column = _dropdown('対象列', [('選択してください', None), *((name, name) for name in columns)])
+        self.comparison = _dropdown('比較', [('選択してください', None), *((label, key) for key, label in COMPARISONS.items())])
+        self.value = widgets.Text(description='比較値', layout=widgets.Layout(width='auto'))
+        self.upper = widgets.Text(description='上限', layout=widgets.Layout(width='auto'))
+        self.subset = widgets.SelectMultiple(description='判定列（未選択は全列）', options=columns,
+                                             rows=min(3, max(1, len(columns))), layout=widgets.Layout(width='auto'))
+        self.count = widgets.IntText(description='行数', value=1, layout=widgets.Layout(width='auto'))
         self.count.add_class('zizai-integer')
-        self.apply = widgets.Button(description='変更を追加', disabled=True, layout=widgets.Layout(width='auto'))
+        for control in (self.value, self.upper, self.subset, self.count):
+            control.style.description_width = 'initial'
+        self.apply = widgets.Button(description='条件を追加', disabled=True, layout=widgets.Layout(width='auto'))
         self.apply.on_click(self._add_current)
-        self.settings = widgets.VBox([
-            self._operation_row, self._condition_settings, self._subset_row, self.count, self.apply,
-        ])
+        self.settings, self._inputs = _operation_form(self.apply)
+        self._inputs.children = (self.action, self.logic, self.column, self.comparison,
+                                 self.value, self.upper, self.subset, self.count)
         self.status = widgets.HTML()
-        self._table = DataFramePreview()
-        self.grid = self._table.root
-        self.summary = widgets.HTML()
-        self.changes = widgets.HTML()
-        self.undo = widgets.Button(description='最後の変更を取り消す', layout=widgets.Layout(width='auto'))
-        self.undo.on_click(self._undo_last)
-        self.root = widgets.VBox([self.settings, self.status, self.summary, self.grid, self.changes, self.undo])
+        self.entries = _OperationList('条件一覧', self._remove)
+        self.root = widgets.VBox([self.settings, self.status, self.entries.root])
         self.root.add_class('row-preview')
-        self.action.observe(self._select_action, names='value')
-        self._render()
+        self.action.observe(self._show_fields, names='value')
+        self.comparison.observe(self._show_fields, names='value')
+        self._show_fields(None)
 
-    def _select_action(self, _change):
-        action = self.action.value
+    def _same_group(self):
+        return bool(self.operations and self.operations[-1].get('mode') == self.action.value
+                    and self.action.value in CONDITIONAL)
+
+    def _show_fields(self, _change):
+        action, comparison = self.action.value, self.comparison.value
+        conditional = action in CONDITIONAL
         self.status.value = ''
-        conditional = action in ('keep', 'exclude')
-        self._condition_settings.layout.display = '' if conditional else 'none'
-        self._subset_row.layout.display = '' if action in ('drop_duplicates', 'drop_nulls') else 'none'
+        self.logic.layout.display = '' if self._same_group() else 'none'
+        self.column.layout.display = self.comparison.layout.display = '' if conditional else 'none'
+        self.value.layout.display = '' if conditional and comparison and comparison not in NULL_COMPARISONS else 'none'
+        self.value.description = '下限' if comparison == 'between' else '比較値'
+        self.upper.layout.display = '' if conditional and comparison == 'between' else 'none'
+        self.subset.layout.display = '' if action in ('drop_duplicates', 'drop_nulls') else 'none'
         self.count.layout.display = '' if action in ('head', 'tail') else 'none'
+        self.apply.description = '条件を追加' if conditional or action is None else '操作を追加'
         self.apply.disabled = action is None
-        if conditional and not self.conditions:
-            self._append_condition()
 
-    def _append_condition(self):
-        self.conditions.append(RowCondition(self._columns, first=not self.conditions))
-        self._render_conditions()
+    def _condition(self):
+        column, comparison = self.column.value, self.comparison.value
+        if column is None or comparison is None:
+            raise ValueError('対象列と比較方法を選択してください。')
+        condition = {'column': column, 'comparison': comparison}
+        if comparison not in NULL_COMPARISONS:
+            condition['value'] = self.value.value if comparison in TEXT_COMPARISONS else _number(self.value.value)
+        if comparison == 'between':
+            condition['upper'] = _number(self.upper.value)
+        return condition
 
-    def _remove_condition(self, _button):
-        if len(self.conditions) > 1:
-            condition = self.conditions.pop()
-            self._render_conditions()
-            condition.close()
-
-    def _render_conditions(self):
-        self._rows.children = tuple(condition.root for condition in self.conditions)
-        self.remove_condition.disabled = len(self.conditions) < 2
-        self._precedence.layout.display = '' if len(self.conditions) > 2 else 'none'
-
-    def _operation(self):
+    def _operations_with_current(self):
         action = self.action.value
-        if action in ('keep', 'exclude'):
-            return {'op': 'filter', 'mode': action, 'conditions': [condition.build() for condition in self.conditions]}
-        if action in ('head', 'tail'):
-            return {'op': action, 'count': self.count.value}
-        return {'op': action, 'columns': list(self.subset.value)}
+        if action in CONDITIONAL:
+            condition = self._condition()
+            if self._same_group() and self.logic.value != 'new':
+                previous = self.operations[-1]
+                condition['logic'] = self.logic.value
+                return [*self.operations[:-1], {**previous, 'conditions': [*previous['conditions'], condition]}]
+            operation = {'op': 'filter', 'mode': action, 'conditions': [condition]}
+        elif action in ('head', 'tail'):
+            operation = {'op': action, 'count': self.count.value}
+        else:
+            operation = {'op': action, 'columns': list(self.subset.value)}
+        return [*self.operations, operation]
 
     def _add_current(self, _button):
         if self.action.value is None:
             return
         try:
-            self._update([*self.operations, self._operation()])
+            self._update(self._operations_with_current())
         except ValueError as error:
             self.status.value = f'<p role="alert">{escape(str(error))}</p>'
+            return
+        if self.logic.value == 'new':
+            self.logic.value = 'and'
 
-    def _undo_last(self, _button):
-        if self.operations:
-            self._update(self.operations[:-1])
+    def _remove(self, key):
+        index, condition_index = key
+        operations = self.operations.copy()
+        if condition_index is None:
+            operations.pop(index)
+        else:
+            operation = operations[index]
+            conditions = operation['conditions'][:condition_index] + operation['conditions'][condition_index + 1:]
+            if not conditions:
+                operations.pop(index)
+            else:
+                conditions[0] = {name: value for name, value in conditions[0].items() if name != 'logic'}
+                operations[index] = {**operation, 'conditions': conditions}
+        try:
+            self._update(operations)
+        except ValueError as error:
+            self.status.value = f'<p role="alert">削除できません。{escape(str(error))}</p>'
 
     def _update(self, operations):
-        preview = self._apply_operations(self._sample, operations=operations)
-        self.preview, self.operations = preview, operations
-        self.status.value = ''
-        self._render()
+        self._apply_operations(self._sample, operations=operations)
+        self.operations = operations
+        self._show_fields(None)
+        self._render_entries()
         self._on_change(operations)
 
     @staticmethod
-    def _describe(operation):
-        op = operation['op']
-        if op == 'filter':
-            conditions = operation['conditions']
-            descriptions = []
-            for condition in conditions:
-                comparison = condition['comparison']
-                text = f'{condition["column"]} {COMPARISONS[comparison]}'
-                if 'value' in condition:
-                    text += f' {condition["value"]!r}'
-                if 'upper' in condition:
-                    text += f' 〜 {condition["upper"]}'
-                if 'logic' in condition:
-                    text = f'{condition["logic"].upper()} {text}'
-                descriptions.append(text)
-            return OP_LABELS[operation['mode']] + '　' + ' '.join(descriptions)
-        if op in ('head', 'tail'):
-            return f'{OP_LABELS[op]}　{operation["count"]}行'
-        return OP_LABELS[op] + '　' + ('、'.join(operation['columns']) or '全列')
+    def _describe_condition(mode, condition):
+        comparison = condition['comparison']
+        prefix = condition.get('logic', '').upper() or OP_LABELS[mode]
+        text = f'{prefix}　{condition["column"]} {COMPARISONS[comparison]}'
+        if 'value' in condition:
+            text += f' {condition["value"]!r}'
+        if 'upper' in condition:
+            text += f' 〜 {condition["upper"]}'
+        return text
 
-    def _render(self):
-        self._table.render(self.preview)
-        self.summary.value = (f'<h3>行のプレビュー</h3><p>元の表の先頭{len(self._sample)}行で試行し、'
-                              f'{len(self.preview)}行が残ります。</p>')
-        entries = ''.join(f'<li>{escape(self._describe(change))}</li>' for change in self.operations)
-        self.changes.value = '<h3>変更一覧</h3>' + (f'<ol>{entries}</ol>' if entries else
-                                                '<p>設定した操作はここに表示します。</p>')
-        self.undo.disabled = not self.operations
+    def _render_entries(self):
+        entries = []
+        for index, operation in enumerate(self.operations):
+            op = operation['op']
+            if op == 'filter':
+                entries.extend(((index, offset), self._describe_condition(operation['mode'], condition))
+                               for offset, condition in enumerate(operation['conditions']))
+            else:
+                details = f'{operation["count"]}行' if op in ('head', 'tail') else '、'.join(operation['columns']) or '全列'
+                entries.append(((index, None), f'{OP_LABELS[op]}　{details}'))
+        self.entries.render(entries)
 
     def close(self):
-        for condition in self.conditions:
-            condition.close()
-        self._table.close()
-        _close_widgets([self.action, self._operation_row, self._rows, self.add_condition, self.remove_condition,
-                        self._condition_actions, self._precedence, self._condition_settings, self.subset,
-                        self._subset_row, self.count, self.apply, self.settings, self.status, self.summary,
-                        self.changes, self.undo, self.root])
+        self.entries.close()
+        _close_widgets([*self._inputs.children, self._inputs, self.apply, self.settings, self.status, self.root])
