@@ -212,7 +212,9 @@ class NotebookForm:
                     self._dynamic.append(button)
             self.toolbar.children = [self.connector, self.action]
             rows = []
-            pairs = [('encoding', 'delimiter')]
+            pairs = [('encoding', 'delimiter'), ('wait_before_seconds', 'wait_after_seconds')]
+            if self.model.connector == 'windows':
+                pairs.append(('x', 'y'))
             if dataframe_mode:
                 pairs.append(('input_variable', 'output_variable'))
             if (self.model.connector, self.model.action) in {

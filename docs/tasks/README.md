@@ -10,6 +10,8 @@
 
 ## 新方式のTask
 
+- [TASK-028 / #116：Windows画面入力とアクション前後の待機を追加する](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/116)
+
 - [TASK-027 / #114：Windowsのファイル操作をNotebookフォームへ追加する](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/114)
 
 - [TASK-021 / #103：DataFrameの値加工をNotebookフォームへ追加する](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/103)
