@@ -23,18 +23,11 @@ htmlcov/
 .env
 .env.*
 !.env.example
-config/*
-!config/README.md
-!config/*.example.json
-!config/*.example.yaml
-!config/*.example.yml
-!config/.gitkeep
+config/
 
 # Runtime data
-results/*
-!results/.gitkeep
-logs/*
-!logs/.gitkeep
+results/
+logs/
 
 # Operating system metadata
 .DS_Store

@@ -10,6 +10,8 @@
 
 ## 新方式のTask
 
+- [TASK-030 / #121：ZizAIのソースをsrcへまとめ、空フォルダーを整理する](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/121)
+
 - [TASK-029 / #119：現行アプリが使用しない旧入力支援・契約実装を撤去する](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/119)
 
 - [TASK-028 / #116：Windows画面入力とアクション前後の待機を追加する](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/116)
@@ -49,4 +51,4 @@
 
 仕様の正本は[新方式の要件仕様書](../features/requirements.md)。Taskの状態・結果はIssueで管理します。TASK-009はVS Code拡張のみを対象とし、3作業の各段階で必要な仕様確認・実装・検証を行います。残した[技術調査](../README.md)を再利用し、全詳細設計を先に完成させる進め方にはしません。
 
-[Task・Subtask運用ルール](task-rules.md)・[Taskひな形](../../template/task.md)・[Subtaskひな形](../../template/subtask.md)
+[Task・Subtask運用ルール](task-rules.md)・[Taskひな形](templates/task.md)・[Subtaskひな形](templates/subtask.md)

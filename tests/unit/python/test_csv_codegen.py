@@ -115,7 +115,7 @@ class CsvCodegenTests(unittest.TestCase):
         form.set_action('export')
         form.set_value('folder', str(self.directory))
         self.assertIn('write_csv', form.generate())
-        fallback = FormModel(load_definition(source_test_support.REPO / 'apps/core/src/zizai/forms.yaml'))
+        fallback = FormModel(load_definition(source_test_support.REPO / 'src/forms.yaml'))
         fallback.set_connector('excel')
         fallback.set_action('export')
         fallback.set_value('folder', str(self.directory))

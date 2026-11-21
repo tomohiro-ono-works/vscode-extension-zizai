@@ -4,7 +4,7 @@
 
 ## 作業開始前
 
-担当Issue・親Issueと関係する現行仕様・設計を確認し、ゴール、スコープ、制約、完了条件を作業の基準にします。Task を作成・分割する場合は [Task・Subtask の作成ルール](tasks/task-rules.md) に従い、ユーザーの依頼に基づいて領域、工程、開始条件、依存関係を記録します。[Task のひな形](../template/task.md) と [Subtask のひな形](../template/subtask.md) をIssue本文へコピーして利用できます。進捗・判断・結果はIssueで更新し、既存のTask Markdownには二重記録しません。
+担当Issue・親Issueと関係する現行仕様・設計を確認し、ゴール、スコープ、制約、完了条件を作業の基準にします。Task を作成・分割する場合は [Task・Subtask の作成ルール](tasks/task-rules.md) に従い、ユーザーの依頼に基づいて領域、工程、開始条件、依存関係を記録します。[Task のひな形](tasks/templates/task.md) と [Subtask のひな形](tasks/templates/subtask.md) をIssue本文へコピーして利用できます。進捗・判断・結果はIssueで更新し、既存のTask Markdownには二重記録しません。
 
 仕様変更が含まれる場合は、その Task や適用されるルールで必要とされる承認を確認してから正本の仕様へ反映します。未承認の提案と決定済みの内容を区別し、承認の事実を推測で記録しません。
 

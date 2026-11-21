@@ -1,11 +1,9 @@
 """Real widget backend and magic wiring; not browser/native-dialog UI tests."""
 from pathlib import Path
-import sys
 import tempfile
 import unittest
 from unittest.mock import patch
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[3] / 'apps/core/src'))
 from zizai.forms import create_form, load_ipython_extension
 
 
@@ -457,7 +455,7 @@ class FormWidgetTests(unittest.TestCase):
     def test_csv_read_form_pairs_row_and_chunk_settings_without_date_control(self):
         import ipywidgets as widgets
         repo = Path(__file__).resolve().parents[3]
-        definitions = (repo / 'connectors', repo / 'apps/core/src/zizai/forms.yaml')
+        definitions = (repo / 'connectors', repo / 'src/forms.yaml')
         for definition in definitions:
             with self.subTest(definition=definition.name):
                 form = create_form(definition, folder_picker=lambda current: 'C:/選択先')

@@ -65,7 +65,7 @@ print(json.dumps({'loaded': sorted(set(sys.modules) & {'ipywidgets', 'yaml', 'tk
 ''')
         self.assertEqual(result, {'loaded': []})
 
-    def test_wheel_contains_both_source_roots_without_unrelated_assets(self):
+    def test_wheel_contains_the_runtime_without_unrelated_assets(self):
         # A missing connectors mapping or broad package discovery breaks this boundary.
         self.assert_package_contents(self.wheel())
 
