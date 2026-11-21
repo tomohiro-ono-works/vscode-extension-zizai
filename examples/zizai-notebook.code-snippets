@@ -46,23 +46,5 @@
       "%zizai_excel"
     ],
     "description": "Excelを選択したフォームを開く"
-  },
-  "BigQueryでSQLを実行する": {
-    "scope": "python",
-    "prefix": "@zizai_bq_sql",
-    "body": [
-      "%%zizai_bq",
-      "$0"
-    ],
-    "description": "BigQueryでセル内のSQLを実行する"
-  },
-  "DuckDBでSQLを実行する": {
-    "scope": "python",
-    "prefix": "@zizai_duck_sql",
-    "body": [
-      "%%zizai_duck",
-      "$0"
-    ],
-    "description": "DuckDBでセル内のSQLを実行する"
   }
 }
