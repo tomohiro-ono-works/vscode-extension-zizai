@@ -10,6 +10,8 @@
 
 ## 新方式のTask
 
+- [TASK-022 / #105：DataFrameの行条件をNotebookフォームへ追加する](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/105)
+
 - [TASK-021 / #103：DataFrameの値加工をNotebookフォームへ追加する](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/103)
 
 - [TASK-020 / #101：DataFrameの列操作をNotebookフォームへ追加する](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/101)

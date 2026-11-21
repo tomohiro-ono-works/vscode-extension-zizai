@@ -8,7 +8,7 @@ from keyword import iskeyword
 from pathlib import Path
 import shlex
 from .connector_codegen import module_name_for
-from .dataintegration_codegen import DATAFRAME_OPERATIONS, VALUE_OPERATIONS
+from .dataintegration_codegen import COLUMN_OPERATIONS, DATAFRAME_OPERATIONS, ROW_OPERATIONS, VALUE_OPERATIONS
 from .form_definition import load_definition
 from .form_model import FormModel
 
@@ -318,11 +318,14 @@ class NotebookForm:
             apply_operations = getattr(import_module(module), DATAFRAME_OPERATIONS[generation], None)
             if not callable(apply_operations):
                 raise ValueError('データ統合コネクタを更新し、カーネルを再起動してください。')
-            if generation == VALUE_OPERATIONS:
-                from .value_editor import ValueEditor as editor_class
+            args = self._namespace[name], apply_operations, self._set_dataframe_operations
+            if generation == COLUMN_OPERATIONS:
+                from .column_editor import ColumnEditor
+                self._dataframe_editor = ColumnEditor(*args)
             else:
-                from .column_editor import ColumnEditor as editor_class
-            self._dataframe_editor = editor_class(self._namespace[name], apply_operations, self._set_dataframe_operations)
+                from .data_operations_editor import DataOperationsEditor
+                mode = {VALUE_OPERATIONS: 'value', ROW_OPERATIONS: 'condition'}.get(generation)
+                self._dataframe_editor = DataOperationsEditor(*args, mode=mode)
         except (ImportError, TypeError, ValueError, KeyError, OSError) as error:
             self._dataframe_slot.children = (widgets.HTML(f'<p role="alert">{escape(str(error))}</p>'),)
             return
