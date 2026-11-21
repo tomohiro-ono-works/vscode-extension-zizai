@@ -36,6 +36,9 @@ FIELD_LABELS = {
     'pattern': '正規表現', 'value': '指定値', 'number': '固定値', 'other_column': '相手列',
     'position': '取り出す位置', 'group': 'グループ番号（0は一致全体）', 'digits': '小数点以下の桁数',
 }
+NULL_VALUE_TYPES = {
+    'text': '文字列', 'numeric': '数値', 'bool': '真偽値', 'datetime': '日付・日時',
+}
 
 
 def _dropdown(description, options, *, value=None):
@@ -66,14 +69,12 @@ def _operation_form(button):
 
 
 class ValueFields:
-    def __init__(self, on_layout):
+    def __init__(self, column, on_layout):
         self._on_layout = on_layout
-        self._columns = []
-        self._syncing_columns = False
+        self._columns = {}
         self.fields = {}
-        self.column = _dropdown('対象列', self._column_options())
-        self.category = _dropdown('加工種別', [('選択してください', None)] + [
-            (label, key) for key, (label, _) in VALUE_CATEGORIES.items()])
+        self.column = column
+        self.category = _dropdown('加工種別', [('選択してください', None)])
         self.action = _dropdown('操作', [('選択してください', None)])
         self.category.disabled = self.action.disabled = True
         self.output_mode = _dropdown(
@@ -81,42 +82,43 @@ class ValueFields:
         self.output_mode.layout.display = 'none'
         self.output_name = widgets.Text(description='新しい列名', layout=widgets.Layout(width='auto', display='none'))
         self.output_name.style.description_width = 'initial'
-        self.column.observe(self._select_column, names='value')
         self.category.observe(self._select_category, names='value')
         self.action.observe(self._select_action, names='value')
         self.output_mode.observe(self._toggle_output, names='value')
 
     def controls(self):
-        return (self.column, self.category, self.action, *self.fields.values(), self.output_mode, self.output_name)
+        return (self.category, self.action, *self.fields.values(), self.output_mode, self.output_name)
 
     def _column_options(self):
-        return [('選択してください', None), *((name, name) for name in self._columns)]
+        numeric = self.action.value in ARITHMETIC
+        return [('選択してください', None), *((name, name) for name, kind in self._columns.items()
+                                          if not numeric or kind == 'numeric')]
 
-    def set_columns(self, names):
-        if self._columns == names:
-            return
-        self._columns = names
-        previous = self.column.value
-        self._syncing_columns = True
-        try:
-            self.column.options = self._column_options()
-            self.column.value = previous if previous in names else None
-        finally:
-            self._syncing_columns = False
-        self._select_column(None)
-        if 'other_column' in self.fields:
-            field = self.fields['other_column']
-            previous = field.value
-            field.options = self._column_options()
-            field.value = previous if previous in names else None
+    def set_columns(self, columns):
+        self._columns = columns
 
-    def _select_column(self, _change):
-        if self._syncing_columns:
-            return
-        self.category.disabled = self.column.value is None
-        if self.category.disabled:
-            self.category.value = None
+    def select_column(self):
+        kind = self._columns.get(self.column.value)
+        options = (('選択してください', None), *((label, key) for key, (label, _) in VALUE_CATEGORIES.items()
+                                                if kind is not None and key in ('null', kind)))
+        if options != self.category.options:
+            previous = self.category.value
+            self.category.options = options
+            self.category.value = previous if previous in dict(options).values() else None
+        self.category.disabled = kind is None
+        for name, choices in [('other_column', self._column_options()), ('value_type', self._null_value_options())]:
+            if name in self.fields:
+                field = self.fields[name]
+                if tuple(choices) != field.options:
+                    previous = field.value
+                    field.options = choices
+                    field.value = previous if previous in dict(choices).values() else choices[0][1]
         self._on_layout()
+
+    def _null_value_options(self):
+        kind = self._columns.get(self.column.value)
+        types = (kind,) if kind in NULL_VALUE_TYPES else ('text', 'numeric', 'bool')
+        return [(NULL_VALUE_TYPES[key], key) for key in types]
 
     def _select_category(self, _change):
         choice = self.category.value
@@ -142,7 +144,8 @@ class ValueFields:
         if name == 'other_column':
             return _dropdown(FIELD_LABELS[name], self._column_options())
         if name == 'value_type':
-            return _dropdown('指定値の型', [('文字列', 'text'), ('数値', 'number'), ('真偽値', 'bool')], value='text')
+            options = self._null_value_options()
+            return _dropdown('指定値の型', options, value=options[0][1])
         layout = widgets.Layout(width='auto')
         if name in ('position', 'group', 'digits'):
             widget = widgets.IntText(description=FIELD_LABELS[name], value=1 if name == 'position' else 0, layout=layout)
@@ -175,13 +178,15 @@ class ValueFields:
         elif 'value_type' in self.fields:
             kind = self.fields['value_type'].value
             value = self.fields['value'].value
-            if kind == 'number':
+            if kind == 'numeric':
                 value = _number(value)
             elif kind == 'bool':
                 normalized = value.strip().lower()
                 if normalized not in ('true', 'false'):
                     raise ValueError('真偽値には true または false を入力してください。')
                 value = normalized == 'true'
+            elif kind == 'datetime':
+                change['value_type'] = 'datetime'
             change['value'] = value
         else:
             change.update((key, widget.value) for key, widget in self.fields.items())
@@ -198,7 +203,10 @@ class ValueFields:
             self.fields['operand'].value = 'other_column' if 'other_column' in operation else 'number'
         if 'value_type' in self.fields:
             raw = operation.get('value')
-            self.fields['value_type'].value = 'bool' if type(raw) is bool else 'number' if type(raw) in (int, float) else 'text'
+            kind = operation.get('value_type') or (
+                'bool' if type(raw) is bool else 'numeric' if type(raw) in (int, float) else 'text')
+            if kind in dict(self.fields['value_type'].options).values():
+                self.fields['value_type'].value = kind
         for name, widget in self.fields.items():
             if name in operation:
                 widget.value = str(operation[name]) if isinstance(widget, widgets.Text) else operation[name]

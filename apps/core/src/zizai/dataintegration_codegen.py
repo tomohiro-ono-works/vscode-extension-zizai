@@ -4,6 +4,7 @@ import json
 import unicodedata
 
 from .connector_codegen import _identifier, _text, form_input_file_path, module_name_for, render_call
+from .pandas_operations_codegen import generate_pandas_operations
 
 
 PRE_FLAGS = ('remove_spaces', 'remove_newlines', 'to_halfwidth_alnum', 'symbols_to_snake')
@@ -28,7 +29,6 @@ GENERATION_FIELDS = {
 def generate_dataintegration(kind, values, module_path):
     if kind not in GENERATION_FIELDS:
         raise ValueError('未対応のデータ統合操作です。')
-    module = module_name_for(module_path)
     incoming = _identifier(values, 'input_variable')
     output = _identifier(values, 'output_variable')
     if kind in DATAFRAME_OPERATIONS:
@@ -42,10 +42,14 @@ def generate_dataintegration(kind, values, module_path):
             raise ValueError(f'{label}の設定を確認してください。') from error
         if not isinstance(operations, list) or not operations or any(not isinstance(op, dict) for op in operations):
             raise ValueError(f'{label}を1件以上設定してください。')
+        if kind == DATA_OPERATIONS:
+            return generate_pandas_operations(incoming, output, operations)
+        module = module_name_for(module_path)
         arguments = [ast.keyword(arg='data', value=ast.Name(id=incoming, ctx=ast.Load())),
                      ast.keyword(arg='operations', value=ast.parse(repr(operations), mode='eval').body)]
         return render_call(module, DATAFRAME_OPERATIONS[kind], arguments, output, reading=True,
                            direct_variables=True, temporary_prefix='_zizai_')
+    module = module_name_for(module_path)
     arguments = [
         ast.keyword(arg='data', value=ast.Name(id=incoming, ctx=ast.Load())),
         ast.keyword(arg='rename_list_path', value=ast.Constant(form_input_file_path(values))),

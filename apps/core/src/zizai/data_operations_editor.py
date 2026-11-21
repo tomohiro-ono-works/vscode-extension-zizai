@@ -2,14 +2,30 @@
 from html import escape
 
 import ipywidgets as widgets
+from pandas import CategoricalDtype, StringDtype
+from pandas.api.types import infer_dtype, is_bool_dtype, is_complex_dtype, is_datetime64_any_dtype, is_numeric_dtype
 from traitlets import Unicode
 
-from .row_filter_editor import RowFields
+from .row_filter_editor import WHOLE_TABLE, RowFields
 from .row_preview import MAX_ROWS, _close_widgets
 from .value_editor import ValueFields, _dropdown, _operation_form
 
 
 CATEGORIES = {'condition': '条件', 'value': '値加工'}
+
+
+def _column_kind(series):
+    dtype = series.dtype
+    if is_bool_dtype(dtype):
+        return 'bool'
+    if is_datetime64_any_dtype(dtype):
+        return 'datetime'
+    if is_numeric_dtype(dtype) and not is_complex_dtype(dtype):
+        return 'numeric'
+    values = series.cat.categories if isinstance(dtype, CategoricalDtype) else series
+    if isinstance(dtype, StringDtype) or infer_dtype(values, skipna=True) in ('string', 'unicode'):
+        return 'text'
+    return 'mixed'
 
 
 class OperationEntry(widgets.HBox):
@@ -81,8 +97,12 @@ class DataOperationsEditor:
         self._mode = mode
         self._sample = data.head(MAX_ROWS).copy()
         self._result = apply_operations(self._sample, operations=[])
+        self._column_kinds = {str(name): _column_kind(series) for name, series in data.items()}
+        self._lookup_labels = any(not isinstance(name, str) for name in data.columns)
         self.operations = []
         self._editing = None
+        self._updating_column = False
+        self.column = _dropdown('対象列', [('選択してください', None)])
         self.category = _dropdown('処理分類', [('選択してください', None), *((label, key) for key, label in CATEGORIES.items())],
                                   value=mode)
         self.apply = widgets.Button(description='処理を追加', disabled=True, layout=widgets.Layout(width='auto'))
@@ -94,11 +114,12 @@ class DataOperationsEditor:
         self.settings.children = (self._inputs, self.cancel, self.apply)
         self.status = widgets.HTML()
         self.entries = OperationList(self._edit, self._remove, self._move)
-        self.value_fields = ValueFields(self._refresh_inputs)
-        self.row_fields = RowFields(self._refresh_inputs)
+        self.value_fields = ValueFields(self.column, self._refresh_inputs)
+        self.row_fields = RowFields(self.column, self._refresh_inputs)
         self.root = widgets.VBox([self.settings, self.status, self.entries.root])
         self.root.add_class('row-preview')
         self.category.observe(self._change_category, names='value')
+        self.column.observe(self._change_column, names='value')
         self._refresh_context()
 
     def _active_fields(self):
@@ -120,17 +141,31 @@ class DataOperationsEditor:
         position = self._position()
         frame = self._result if self._editing is None else self._apply_operations(
             self._sample, operations=self._payload(self.operations[:position]))
-        columns = list(map(str, frame.columns))
+        changed = {step['operation'].get('output', step['operation']['column'])
+                   for step in self.operations[:position] if step['category'] == 'value'}
+        columns = {str(name): _column_kind(series) if str(name) in changed else self._column_kinds.get(str(name), 'mixed')
+                   for name, series in frame.items()}
+        options = [('選択してください', None), *((name, name) for name in columns)]
+        if self._mode != 'value':
+            options.append(('表全体', WHOLE_TABLE))
+        if tuple(options) != self.column.options:
+            previous = self.column.value
+            self._updating_column = True
+            try:
+                self.column.options = options
+                self.column.value = previous if previous in dict(options).values() else None
+            finally:
+                self._updating_column = False
         self.value_fields.set_columns(columns)
         self.row_fields.set_columns(columns)
         self.row_fields.set_previous(self._previous_condition(self.operations, position))
-        self._refresh_inputs()
+        self._change_column(None)
 
     def _refresh_inputs(self):
         active = self._active_fields()
         category_controls = () if self._mode else (self.category,)
-        self._inputs.children = (*category_controls, *(active.controls() if active else ()))
-        enabled = active is not None and active.action.value is not None
+        self._inputs.children = (self.column, *category_controls, *(active.controls() if active else ()))
+        enabled = self.column.value is not None and active is not None and active.action.value is not None
         self.apply.disabled = not enabled
         self.cancel.layout.display = '' if self._editing is not None else 'none'
         if self._editing is not None:
@@ -146,12 +181,31 @@ class DataOperationsEditor:
         self.status.value = ''
         self._refresh_inputs()
 
+    def _change_column(self, _change):
+        if self._updating_column:
+            return
+        self.value_fields.select_column()
+        self.row_fields.select_column()
+        if not self._mode:
+            categories = CATEGORIES if self.column.value is not WHOLE_TABLE else {'condition': CATEGORIES['condition']}
+            options = (('選択してください', None), *((label, key) for key, label in categories.items()))
+            if options != self.category.options:
+                previous = self.category.value
+                self.category.options = options
+                self.category.value = previous if previous in categories else None
+            self.category.disabled = self.column.value is None
+        if _change is not None:
+            self.status.value = ''
+        self._refresh_inputs()
+
     def _edit(self, index):
         self._editing = self.operations[index]
         self.status.value = ''
-        self.category.value = self._editing['category']
         self._refresh_context()
-        self._active_fields().load(self._editing['operation'])
+        category = self._editing['category']
+        fields = self.value_fields if category == 'value' else self.row_fields
+        fields.load(self._editing['operation'])
+        self.category.value = category
         self._refresh_inputs()
 
     def _cancel_edit(self, _button):
@@ -213,6 +267,8 @@ class DataOperationsEditor:
                 label = self.row_fields.describe(operation, self._previous_condition(steps, index))
             descriptions.append(f'{CATEGORIES[step["category"]]}　{label}')
         self.entries.render(descriptions)
+        if self._lookup_labels and not self._mode and payload:
+            payload = [{**payload[0], 'lookup_labels': True}, *payload[1:]]
         self._on_change(payload)
 
     def _error(self, error, *, prefix=''):
@@ -222,4 +278,4 @@ class DataOperationsEditor:
         self.entries.close()
         self.value_fields.close()
         self.row_fields.close()
-        _close_widgets([self.category, self.apply, self.cancel, self._inputs, self.settings, self.status, self.root])
+        _close_widgets([self.column, self.category, self.apply, self.cancel, self._inputs, self.settings, self.status, self.root])

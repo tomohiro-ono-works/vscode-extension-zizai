@@ -266,6 +266,15 @@ def _numeric(series):
     return numeric
 
 
+def _timestamp(value):
+    if not isinstance(value, str) or not value.strip():
+        raise ValueError('日付・日時を入力してください。')
+    timestamp = pd.Timestamp(value)
+    if pd.isna(timestamp):
+        raise ValueError('有効な日付・日時を入力してください。')
+    return timestamp
+
+
 def _numeric_result(frame, columns, series, change, op):
     left = _numeric(series)
     if op == 'abs':
@@ -318,6 +327,8 @@ def apply_value_operations(data, *, operations):
                 value = change.get('value')
                 if type(value) not in (str, int, float, bool) or (type(value) is float and not isfinite(value)):
                     raise ValueError('文字列、数値、真偽値のいずれかを指定してください。')
+                if change.get('value_type') == 'datetime':
+                    value = _timestamp(value)
                 result = (series.mask(series.eq(value).fillna(False), pd.NA) if op == 'to_null'
                           else series.fillna(value))
             else:
@@ -364,6 +375,19 @@ def _row_condition(frame, columns, condition):
         return series.isna()
     if comparison == 'not_null':
         return series.notna()
+    if comparison == 'bool_equal':
+        if type(value) is not bool:
+            raise ValueError('比較する真偽値を選択してください。')
+        return series.eq(value).fillna(False)
+    if comparison in ('date_equal', 'date_before', 'date_after', 'date_between'):
+        lower = _timestamp(value)
+        if comparison == 'date_between':
+            upper = _timestamp(condition.get('upper'))
+            if upper < lower:
+                raise ValueError('範囲の下限は上限以下にしてください。')
+            return series.between(lower, upper).fillna(False)
+        method = {'date_equal': 'eq', 'date_before': 'lt', 'date_after': 'gt'}[comparison]
+        return getattr(series, method)(lower).fillna(False)
     if comparison in ('text_equal', 'contains'):
         if not isinstance(value, str) or (comparison == 'contains' and not value):
             raise ValueError('比較する文字列を入力してください。')
@@ -442,7 +466,10 @@ def filter_rows(data, *, operations):
             mode = change.get('mode')
             if mode not in ('keep', 'exclude'):
                 raise ValueError('抽出または除外を選択してください。')
-            mask = _row_mask(frame, columns, change.get('conditions'))
+            try:
+                mask = _row_mask(frame, columns, change.get('conditions'))
+            except (TypeError, OverflowError) as error:
+                raise ValueError(f'条件の比較値を確認してください: {error}') from error
             frame = frame.loc[mask if mode == 'keep' else ~mask]
         elif op in ('drop_duplicates', 'drop_nulls'):
             selected = change.get('columns', [])

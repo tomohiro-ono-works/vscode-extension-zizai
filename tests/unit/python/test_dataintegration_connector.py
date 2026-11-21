@@ -24,6 +24,8 @@ class DataIntegrationConnectorTests(unittest.TestCase):
             form.action.value = 'apply_data_operations'
             form.field_widgets['input_variable'].value = 'df'
             editor = form._dataframe_editor
+            self.assertEqual(editor._inputs.children[0].description, '対象列')
+            editor._inputs.children[0].value = '数量'
             editor.category.value = 'value'
             value = editor.value_fields
             value.column.value = '数量'
@@ -33,14 +35,15 @@ class DataIntegrationConnectorTests(unittest.TestCase):
             editor.apply.click()
             editor.category.value = 'condition'
             row = editor.row_fields
-            row.action.value = 'keep'
             row.column.value = '数量'
+            row.action.value = 'keep'
             row.comparison.value = 'greater'
             row.value.value = '11'
             editor.apply.click()
 
             def result():
                 form.generate_button.click()
+                self.assertNotIn('dataintegration_connector', form.result)
                 scope = {'df': source}
                 exec(compile(form.result, '<mixed-operations>', 'exec'), scope)
                 return scope['processed_df']
@@ -121,8 +124,8 @@ class DataIntegrationConnectorTests(unittest.TestCase):
             self.assertIs(editor.settings.children[-1], editor.apply)
             editor.category.value = 'condition'
             row = editor.row_fields
-            row.action.value = 'keep'
             row.column.value = '数量'
+            row.action.value = 'keep'
             row.comparison.value = 'greater_equal'
             row.value.value = '10'
             editor.apply.click()
@@ -138,6 +141,7 @@ class DataIntegrationConnectorTests(unittest.TestCase):
             self.assertEqual(namespace['processed_df']['数量'].tolist(), [0, 1, 2])
             editor.entries.rows.children[0].children[-1].click()
             self.assertTrue(form.generate_button.disabled)
+            row.column.value = False
             row.action.value = 'tail'
             row.count.value = 2
             editor.apply.click()
@@ -228,10 +232,49 @@ class DataIntegrationConnectorTests(unittest.TestCase):
             self.assertIn('削除できません', editor.status.value)
             self.assertEqual(len(editor.operations), 2)
             form.generate_button.click()
-            self.assertIn('apply_data_operations', form.result)
+            self.assertIn('.str.strip()', form.result)
             editor.entries.rows.children[1].children[-1].click()
             editor.entries.rows.children[0].children[-1].click()
             self.assertTrue(form.generate_button.disabled)
+
+    def test_unified_form_keeps_numeric_looking_codes_as_text(self):
+        import pandas as pd
+        from zizai.forms import create_form
+
+        source = pd.DataFrame({'コード': ['001', '002'], '数量': [1, 2],
+                               '有効': pd.array([True, None], dtype='boolean'),
+                               '日付': pd.to_datetime(['2026-11-20', '2026-11-21'])})
+        shared = source_test_support.REPO / 'connectors'
+        with patch.object(sys, 'path', [str(shared / 'dataintegration'), *sys.path]):
+            form = create_form(shared, namespace={'df': source})
+            self.addCleanup(form.close)
+            form.connector.value = 'dataintegration'
+            form.action.value = 'apply_data_operations'
+            form.field_widgets['input_variable'].value = 'df'
+            editor = form._dataframe_editor
+            value, row = editor.value_fields, editor.row_fields
+            value.column.value = 'コード'
+            editor.category.value = 'value'
+            self.assertEqual(set(dict(value.category.options).values()), {None, 'text', 'null'})
+            value.column.value = '数量'
+            self.assertEqual(set(dict(value.category.options).values()), {None, 'numeric', 'null'})
+            row.column.value = '有効'
+            editor.category.value = 'condition'
+            row.action.value = 'keep'
+            self.assertIn('bool_equal', dict(row.comparison.options).values())
+            row.comparison.value = 'bool_equal'
+            row.value.value = 'true'
+            editor.apply.click()
+            row.column.value = '日付'
+            self.assertIn('date_between', dict(row.comparison.options).values())
+            self.assertNotIn('greater', dict(row.comparison.options).values())
+            row.comparison.value = 'date_equal'
+            row.value.value = '2026-11-20'
+            editor.apply.click()
+            form.generate_button.click()
+            scope = {'df': source}
+            exec(compile(form.result, '<typed-conditions>', 'exec'), scope)
+            self.assertEqual(scope['processed_df']['コード'].tolist(), ['001'])
 
     def test_value_operations_join_text_and_reject_zero_division_without_changing_input(self):
         import pandas as pd
