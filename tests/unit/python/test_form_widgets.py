@@ -183,12 +183,12 @@ class FormWidgetTests(unittest.TestCase):
         self.assertIn('data = df', form.result)
         self.assertIn('write_csv(data=data', form.result)
 
-    def test_duckdb_form_browses_for_db_and_sql_files_without_direct_sql(self):
+    def test_duckdb_file_sql_form_browses_for_db_and_sql_files(self):
         from unittest.mock import Mock
 
         form = self.make_form()
         form.connector.value = 'duckdb'
-        self.assertEqual(set(form.model.actions), {'create_db_file', 'execute_sql_file', 'create_table'})
+        self.assertEqual(set(form.model.actions), {'create_db_file', 'execute_sql', 'execute_sql_file', 'create_table'})
         form.action.value = 'execute_sql_file'
         self.assertEqual(form.field_widgets['output_variable'].value, 'result')
         self.assertTrue(form.generate_button.disabled)

@@ -12,6 +12,13 @@ connectors:
           db_folder: {label: DBファイルの場所, type: folder, required: true}
           db_file_name: {label: DBファイル名, type: text, default: sample.duckdb, required: true}
           output_variable: {label: 出力変数, type: text, default: result, required: true}
+      execute_sql:
+        label: SQL実行（直接入力）
+        generation: duckdb.execute_sql
+        fields:
+          db_file: {label: DBファイル, type: file, required: true, extension: .duckdb}
+          sql: {label: SQL本文, type: textarea, required: true}
+          output_target: {label: 出力先（変数名・CSV/Excelファイル名・空欄でセル表示）, type: text, default: result}
       execute_sql_file:
         label: SQL実行（ファイル）
         generation: duckdb.execute_sql_file

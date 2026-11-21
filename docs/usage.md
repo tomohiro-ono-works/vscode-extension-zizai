@@ -43,6 +43,13 @@ SELECT 1 AS value
 
 両方のSQLマジックで `> result.csv` または `> result.xlsx` を指定すると、新規ファイルに保存します。相対パスはカーネルの作業フォルダーから解決します。空白を含むパスは `> "sales result.xlsx"` のように指定できます。`.xlsx` の出力には `excel` の追加ライブラリが必要です。
 
+フォームの「SQL実行（直接入力）」では、接続先、SQL本文、出力先を入力して「コード生成」を押します。生成結果をPythonセルの先頭から貼り付けて実行します。接続先はBigQueryの `--project-id` またはDuckDBの `--db-file` に入り、出力先は `>` の後に入ります。出力先を空欄にするとセルに結果を表示します。
+
+```sql
+%%zizai_bq --project-id "YOUR_GCP_PROJECT" > result
+SELECT 1 AS value
+```
+
 CSVとExcelのフォーム表示は `%zizai_csv` と `%zizai_excel` で行えます。`%%` で書く場合は、IPythonのセルマジックに必要な本文として次の行にコメントを置きます。
 
 ## Windowsのファイル操作（TASK-027）

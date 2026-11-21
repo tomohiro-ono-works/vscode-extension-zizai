@@ -46,6 +46,32 @@ class ConnectorMagicTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'フォーム'):
             self.shell.run_cell_magic('zizai_csv', '', 'SELECT 1')
 
+    def test_direct_sql_form_generates_a_runnable_magic_with_its_own_connection(self):
+        query = "SELECT 1 AS value\n-- notebook query\n"
+        database = (self.root / "sample db.duckdb").as_posix()
+        cases = (
+            ('bigquery', 'project_id', 'test-project', 'zizai_bq', '--project-id', 'zizai_bq_project'),
+            ('duckdb', 'db_file', database, 'zizai_duck', '--db-file', 'zizai_duck_db'),
+        )
+        for connector, field, target, magic, option, namespace_name in cases:
+            with self.subTest(connector=connector):
+                form = create_form(CONNECTORS, connector=connector)
+                self.addCleanup(form.close)
+                form.action.value = 'execute_sql'
+                form.field_widgets[field].value = target
+                form.field_widgets['sql'].value = query
+                form.field_widgets['output_target'].value = 'df'
+                run = Mock(return_value=self.frame)
+                self.shell.user_ns[namespace_name] = 'unrelated-target'
+                with patch.dict(sys.modules, {connector + '_connector': SimpleNamespace(execute_sql=run)}):
+                    form.generate_button.click()
+                    self.assertEqual(form.result, f'%%{magic} {option} "{target}" > df\n' + query)
+                    run.assert_not_called()
+                    self.shell.run_cell(form.result).raise_error()
+                    run.assert_called_once_with(target, query)
+                self.assertIs(self.shell.user_ns['df'], self.frame)
+                self.assertEqual(self.shell.user_ns[namespace_name], 'unrelated-target')
+
     def test_bigquery_displays_assigns_and_exports(self):
         query = 'SELECT 1 AS value\n'
         run = Mock(return_value=self.frame)
