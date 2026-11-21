@@ -2,7 +2,7 @@
 
 ## 初回セットアップ
 
-[環境構築Notebook](../examples/setup-zizai.ipynb)をVS Codeで開きます。Python環境の準備、pipまたはuvでの導入、コネクタ登録、カーネルの切り替え、マジック登録とフォーム表示を順に実行できます。既定では `.venv` にフォームとCSV用の依存を導入します。追加コネクタや既存カーネルの利用はNotebookの最初の設定セルで選べます。
+[環境構築Notebook](../examples/setup-zizai.ipynb)を開き、冒頭のPowerShell手順で先に `.venv` を作成して `ipykernel` を導入します。Notebook右上で `.venv\Scripts\python.exe` をカーネルに選んでから、0のコードセルを実行してください。コネクタ登録後は同じカーネルを再起動し、0と④を実行します。
 
 ## Windowsのファイル操作（TASK-027）
 
