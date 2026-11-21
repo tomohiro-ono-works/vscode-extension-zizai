@@ -205,6 +205,8 @@ class NotebookForm:
                     continue  # Older connector definitions may still declare the former checkbox.
                 if vector_search and name == 'collection_name':
                     widget = self._vector_collection_picker(self.model.values['db_folder'], label)
+                elif vector_build and name in {'id_column', 'text_column'}:
+                    widget = self._vector_column_picker(name, label)
                 elif (dataframe_mode or vector_build) and name == 'input_variable':
                     options = [('選択してください', '')] + [(name, name) for name in self._dataframe_names()]
                     if value not in dict(options).values():
@@ -212,7 +214,10 @@ class NotebookForm:
                         self.model.set_value(name, value)
                     widget = widgets.Dropdown(description=label, options=options, value=value)
                 elif field['type'] == 'choice':
-                    widget = widgets.Dropdown(description=label, options=[('選択してください', None)] + [(x, x) for x in field['choices']], value=value)
+                    placeholder = ('既存DBのモデルを使用（新規は130m）'
+                                   if vector_build and name == 'model_name' else '選択してください')
+                    options = [(placeholder, None), *((choice, choice) for choice in field['choices'])]
+                    widget = widgets.Dropdown(description=label, options=options, value=value)
                 elif field['type'] == 'integer':
                     widget = widgets.IntText(description=label, value=value)
                     widget.add_class('zizai-integer')
@@ -240,6 +245,8 @@ class NotebookForm:
             pairs = [('encoding', 'delimiter')]
             if dataframe_mode:
                 pairs.append(('input_variable', 'output_variable'))
+            if vector_build:
+                pairs.extend([('input_variable', 'output_variable'), ('id_column', 'text_column')])
             if vector_search:
                 pairs.extend([('collection_name', 'search_mode'), ('output_variable', 'top_k')])
             if (self.model.connector, self.model.action) in {
@@ -307,8 +314,14 @@ class NotebookForm:
             self._invalid_fields.discard(name)
         except ValueError:
             self._invalid_fields.add(name)
-        if name == 'db_folder' and self.model.actions.get(self.model.action, {}).get('generation') == VECTOR_SEARCH:
-            self._refresh_vector_collections(value)
+        generation = self.model.actions.get(self.model.action, {}).get('generation')
+        if name == 'db_folder' and generation == VECTOR_SEARCH:
+            name_field = self.field_widgets['collection_name']
+            self._replace_vector_picker('collection_name', self._vector_collection_picker(value, name_field.description))
+        if name == 'input_variable' and generation == VECTOR_BUILD:
+            for column_field in ('id_column', 'text_column'):
+                label = self.field_widgets[column_field].description
+                self._replace_vector_picker(column_field, self._vector_column_picker(column_field, label))
         if name == 'input_variable' and self._dataframe_slot is not None:
             self.model.set_value('operations', '')
             self._show_dataframe_editor(value)
@@ -338,14 +351,31 @@ class NotebookForm:
         picker.style.description_width = 'initial'
         return picker
 
-    def _refresh_vector_collections(self, folder):
-        previous = self.field_widgets['collection_name']
-        picker = self._vector_collection_picker(folder, previous.description)
+    def _vector_column_picker(self, name, label):
+        source = self.model.values.get('input_variable')
+        data = self._namespace.get(source)
+        columns = tuple(dict.fromkeys(column for column in getattr(data, 'columns', ())
+                                      if isinstance(column, str) and column.strip()))
+        selected = self.model.values[name]
+        if selected not in columns:
+            default = self.model.fields[name].get('default')
+            selected = default if default in columns else ''
+        self.model.set_value(name, selected)
+        placeholder = ('選択してください' if columns else
+                       '選択できる列がありません' if source else '入力DataFrameを選択してください')
+        options = [(placeholder, ''), *((column, column) for column in columns)]
+        picker = self._widgets.Dropdown(description=label, options=options, value=selected, disabled=not columns,
+                                        description_allow_html=True)
+        picker.style.description_width = 'initial'
+        return picker
+
+    def _replace_vector_picker(self, name, picker):
+        previous = self.field_widgets[name]
         picker.layout = previous.layout
-        picker.observe(lambda change: self._value_changed('collection_name', change['new']), names='value')
-        row = next(row for row in self.details.children if getattr(row, 'children', ())[:1] == (previous,))
-        row.children = (picker, *row.children[1:])
-        self.field_widgets['collection_name'] = picker
+        picker.observe(lambda change: self._value_changed(name, change['new']), names='value')
+        row = next(row for row in self.details.children if previous in getattr(row, 'children', ()))
+        row.children = tuple(picker if item is previous else item for item in row.children)
+        self.field_widgets[name] = picker
         self._dynamic[self._dynamic.index(previous)] = picker
         previous.unobserve_all('value')
         previous.close()

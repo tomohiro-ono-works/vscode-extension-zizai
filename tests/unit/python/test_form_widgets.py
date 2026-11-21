@@ -276,6 +276,53 @@ class FormWidgetTests(unittest.TestCase):
             self.assertIsInstance(form.field_widgets['collection_name'], widgets.Text)
             self.assertNotIn('metric', form.field_widgets)
 
+    def test_vector_registration_selects_columns_from_the_current_dataframe_and_pairs_fields(self):
+        import ipywidgets as widgets
+        import pandas as pd
+
+        namespace = {
+            'articles': pd.DataFrame({'id': ['a'], 'text': ['苹果'], 'category': ['fruit']}),
+            'documents': pd.DataFrame({'文書ID': ['b'], '本文': ['みかん']}),
+        }
+        shared = Path(__file__).resolve().parents[3] / 'connectors'
+        form = create_form(shared, namespace=namespace)
+        self.addCleanup(form.close)
+        form.connector.value = 'vector'
+        form.action.value = 'embedding_vector_db'
+        fields = form.field_widgets
+        rows = form.details.children
+        self.assertIs(rows[1], fields['collection_name'])
+        self.assertEqual(rows[2].children, (fields['input_variable'], fields['output_variable']))
+        self.assertEqual(rows[3].children, (fields['id_column'], fields['text_column']))
+        self.assertIs(rows[4], fields['model_name'])
+        self.assertIsInstance(rows[5], widgets.Accordion)
+        for field in ('id_column', 'text_column', 'model_name'):
+            self.assertIsInstance(fields[field], widgets.Dropdown)
+        self.assertTrue(fields['id_column'].disabled)
+
+        with tempfile.TemporaryDirectory() as folder:
+            fields['db_folder'].value = Path(folder).as_posix()
+            fields['input_variable'].value = 'articles'
+            previous_id = fields['id_column']
+            self.assertEqual(previous_id.value, 'id')
+            self.assertEqual(fields['text_column'].value, 'text')
+            self.assertEqual(tuple(value for _, value in previous_id.options if value), ('id', 'text', 'category'))
+            self.assertNotIn('model_name =', form.model.generate())
+            fields['input_variable'].value = 'documents'
+            self.assertEqual(tuple(value for _, value in fields['id_column'].options if value), ('文書ID', '本文'))
+            self.assertEqual(fields['id_column'].value, '')
+            self.assertTrue(form.generate_button.disabled)
+            previous_id.value = 'category'
+            self.assertEqual(form.model.values['id_column'], '')
+            fields['id_column'].value = '文書ID'
+            fields['text_column'].value = '本文'
+            fields['model_name'].value = 'cl-nagoya/ruri-v3-30m'
+            code = form.model.generate()
+            self.assertIn("input_data = documents", code)
+            self.assertIn("id_column = '文書ID'", code)
+            self.assertIn("text_column = '本文'", code)
+            self.assertIn("model_name = 'cl-nagoya/ruri-v3-30m'", code)
+
     def test_browse_button_is_beside_its_folder_field_and_keeps_picker_behavior(self):
         import ipywidgets as widgets
         from unittest.mock import Mock

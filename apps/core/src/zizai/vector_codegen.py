@@ -58,7 +58,7 @@ def generate_vector(kind, values, module_path):
         metric = ({**METRICS, '内積': 'inner_product'}).get(values.get('metric'))
         if metric is not None:
             parameters['metric'] = metric
-        model = _text(values, 'model_name').strip()
+        model = _text(values, 'model_name').strip() if values.get('model_name') is not None else ''
         if model:
             parameters['model_name'] = model
         parameters.update(_correction_parameters(values))
