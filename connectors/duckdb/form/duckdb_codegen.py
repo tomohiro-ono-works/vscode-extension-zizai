@@ -1,12 +1,14 @@
-"""Generate ordinary Python calls from DuckDB form values."""
+"""Generate code from the DuckDB form."""
 import ast
 from pathlib import Path
 
 from ...connector_codegen import _identifier, _text, absolute_file_path, module_name_for, render_call
+from ...sql_magic import render_sql_magic
 
 
 DATABASE_FIELDS = {'db_file', 'output_variable'}
 GENERATION_FIELDS = {
+    'duckdb.execute_sql': {'db_file', 'sql', 'output_target'},
     'duckdb.create_db_file': {'db_folder', 'db_file_name', 'output_variable'},
     'duckdb.execute_sql_file': DATABASE_FIELDS | {'sql_file', 'encoding'},
     'duckdb.create_table': DATABASE_FIELDS | {'input_variable', 'table_name', 'mode'},
@@ -16,6 +18,9 @@ GENERATION_FIELDS = {
 def generate_duckdb(kind, values, module_path):
     if kind not in GENERATION_FIELDS:
         raise ValueError('未対応のDuckDB生成種別です。')
+    if kind == 'duckdb.execute_sql':
+        return render_sql_magic('duckdb', absolute_file_path(values, 'db_file'),
+                                _text(values, 'sql', required=True), _text(values, 'output_target'))
     module_name = module_name_for(module_path)
     variable = _identifier(values, 'output_variable')
     function = kind.split('.', 1)[1]

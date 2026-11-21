@@ -5,6 +5,13 @@ connectors:
     label: BigQuery
     module_file: bigquery_connector.py
     actions:
+      execute_sql:
+        label: SQL実行（直接入力）
+        generation: bigquery.execute_sql
+        fields:
+          project_id: {label: プロジェクトID, type: text, required: true}
+          sql: {label: SQL本文, type: textarea, required: true}
+          output_target: {label: 出力先（変数名・CSV/Excelファイル名・空欄でセル表示）, type: text, default: result}
       execute_sql_file:
         label: SQL実行（ファイル）
         generation: bigquery.execute_sql_file

@@ -36,7 +36,7 @@ class BigQueryConnectorTests(unittest.TestCase):
         rows.to_dataframe.return_value = pd.DataFrame({'f0_': [1]})
 
         with patch.object(bigquery, 'Client', return_value=client) as factory:
-            self.assertEqual(set(self.model.actions), {'execute_sql_file', 'load_data'})
+            self.assertEqual(set(self.model.actions), {'execute_sql', 'execute_sql_file', 'load_data'})
             self.model.set_action('execute_sql_file')
             self.model.set_value('project_id', 'fixture-project')
             self.assertEqual(self.model.values['output_variable'], 'result')

@@ -2,14 +2,15 @@
 
 from importlib import import_module
 from importlib.util import find_spec
+import json
 from keyword import iskeyword
 from pathlib import Path
 from unicodedata import normalize
 
 
 _CONNECTIONS = {
-    'bigquery': 'zizai_bq_project',
-    'duckdb': 'zizai_duck_db',
+    'bigquery': ('zizai_bq', '--project-id', 'zizai_bq_project'),
+    'duckdb': ('zizai_duck', '--db-file', 'zizai_duck_db'),
 }
 
 
@@ -32,19 +33,50 @@ def _destination(line):
     if extension:
         if extension not in {'.csv', '.xlsx'}:
             raise ValueError('出力ファイルの拡張子には .csv または .xlsx を指定してください。')
-        path = path.absolute()
-        if path.exists() or path.is_symlink():
-            raise FileExistsError(f'出力先が既にあります: {path}')
-        if not path.parent.is_dir():
-            raise FileNotFoundError(f'出力先フォルダーがありません: {path.parent}')
-        if extension == '.xlsx' and find_spec('openpyxl') is None:
-            raise ModuleNotFoundError('Excel出力にはZizAIの excel 追加ライブラリが必要です。')
         return path
 
     name = normalize('NFKC', target)
     if not name.isidentifier() or iskeyword(name):
         raise ValueError('出力先はPythonの変数名、または .csv / .xlsx ファイルにしてください。')
     return name
+
+
+def render_sql_magic(connector, connection, sql, output):
+    magic, option, _ = _CONNECTIONS[connector]
+    target = output.strip()
+    if any(character in target for character in '\r\n\0'):
+        raise ValueError('出力先は1行で指定してください。')
+    redirect = f' > {target}' if target else ''
+    _destination(redirect)
+    header = f'%%{magic} {option} {json.dumps(connection, ensure_ascii=False)}{redirect}'
+    return f'{header}\n{sql}' + ('' if sql.endswith('\n') else '\n')
+
+
+def _read_arguments(connector, line, namespace):
+    _, option, variable = _CONNECTIONS[connector]
+    line = line.strip()
+    if not line.startswith('--'):
+        return namespace.get(variable), _destination(line)
+    parts = line.split(maxsplit=1)
+    if len(parts) != 2 or parts[0] != option:
+        raise ValueError(f'接続先は {option} "接続先" の形式で指定してください。')
+    argument = parts[1]
+    try:
+        connection, end = json.JSONDecoder().raw_decode(argument)
+    except json.JSONDecodeError as error:
+        raise ValueError(f'{option} の接続先は二重引用符で囲んでください。') from error
+    if not isinstance(connection, str) or not connection.strip():
+        raise ValueError(f'{option} に接続先を指定してください。')
+    return connection, _destination(argument[end:])
+
+
+def _check_file_destination(path):
+    if path.exists() or path.is_symlink():
+        raise FileExistsError(f'出力先が既にあります: {path}')
+    if not path.parent.is_dir():
+        raise FileNotFoundError(f'出力先フォルダーがありません: {path.parent}')
+    if path.suffix.lower() == '.xlsx' and find_spec('openpyxl') is None:
+        raise ModuleNotFoundError('Excel出力にはZizAIの excel 追加ライブラリが必要です。')
 
 
 def _write_table(frame, path):
@@ -70,14 +102,16 @@ def _write_table(frame, path):
 def run_sql_cell(connector, line, sql, namespace):
     if not sql.strip():
         raise ValueError('マジックの次の行にSQLを入力してください。')
-    destination = _destination(line)
-    name = _CONNECTIONS[connector]
-    connection = namespace.get(name)
+    connection, destination = _read_arguments(connector, line, namespace)
     if isinstance(connection, str):
         connection = connection.strip()
-    if not (connection and (isinstance(connection, str) or
-                            (connector == 'duckdb' and isinstance(connection, Path)))):
-        raise ValueError(f'先にPythonセルで {name} に接続先を指定してください。')
+    if not ((isinstance(connection, str) and connection) or
+            (connector == 'duckdb' and isinstance(connection, Path))):
+        _, _, variable = _CONNECTIONS[connector]
+        raise ValueError(f'先にPythonセルで {variable} に接続先を指定してください。')
+    if isinstance(destination, Path):
+        destination = destination.absolute()
+        _check_file_destination(destination)
     module = import_module(connector + '_connector')
     frame = module.execute_sql(connection, sql)
     if isinstance(destination, Path):
