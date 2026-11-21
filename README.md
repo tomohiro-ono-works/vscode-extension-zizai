@@ -9,7 +9,7 @@ ZizAIは、Jupyter Notebookのフォームで処理を選び、実行用のPytho
 - [開発手順](docs/development.md)・[コーディングルール](coding-rules.md)
 - [Kiro向けの作業ガイド](.kiro/steering/zizai.md)
 
-`%load_ext zizai.forms` でフォームを登録し、`%form` で表示します。フォームで生成したPythonコードを、Notebookのコードセルに貼り付けて実行します。コネクタの配置と登録は導入手順を参照してください。
+`%load_ext zizai.forms` でフォームを登録し、`%zizai_form` で表示します。フォームで生成したPythonコードを、Notebookのコードセルに貼り付けて実行します。コネクタの配置と登録は導入手順を参照してください。
 
 Pythonアプリのソースは `src/`、個別コネクタのPython実装とフォーム定義はルートの `connectors/` にあります。PythonスクリプトやKiroは、登録済みのコネクタを通常のimportで直接使えます。
 

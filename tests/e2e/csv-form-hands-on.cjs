@@ -133,7 +133,7 @@ async function main() {
       await expect(widget.getByRole("cell", { name: "りんご", exact: true })).toBeVisible({ timeout: 20000 });
     });
     await step("generate-and-run-write", async () => {
-      await nextCode("%form", "%form");
+      await nextCode("%zizai_form", "%zizai_form");
       await expect(widget.getByRole("combobox", { name: "コネクタ", exact: true })).toHaveCount(2, { timeout: 15000 });
       await chooseAction(1, "書き出し");
       await expect(widget.getByRole("textbox", { name: "入力変数 *", exact: true })).toHaveValue("df");

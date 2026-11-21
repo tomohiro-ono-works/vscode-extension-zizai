@@ -641,17 +641,24 @@ class FormWidgetTests(unittest.TestCase):
         with tempfile.TemporaryDirectory(prefix='zizai-magic-') as directory:
             shell = InteractiveShell(ipython_dir=directory, config=Config({'HistoryManager': {'hist_file': ':memory:'}}))
             try:
+                self.assertIsNone(shell.find_line_magic('zizai_form'))
                 load_ipython_extension(shell)
                 load_ipython_extension(shell)
                 with patch('zizai.forms.show_form') as show:
-                    shell.run_line_magic('form', '')
+                    shell.run_line_magic('zizai_form', '')
                     show.assert_called_once_with(None)
                     show.reset_mock()
                     shell.run_line_magic('form', '"C:/設定/form.yaml"')
                     show.assert_called_once_with('C:/設定/form.yaml')
-                shell.register_magic_function(lambda line: None, magic_kind='line', magic_name='form')
-                with self.assertRaises(ValueError):
-                    load_ipython_extension(shell)
+                for name in ('zizai_form', 'form'):
+                    with self.subTest(name=name):
+                        original = shell.find_line_magic(name)
+                        foreign = lambda line: None
+                        shell.register_magic_function(foreign, magic_kind='line', magic_name=name)
+                        with self.assertRaises(ValueError):
+                            load_ipython_extension(shell)
+                        self.assertIs(shell.find_line_magic(name), foreign)
+                        shell.register_magic_function(original, magic_kind='line', magic_name=name)
             finally:
                 shell.history_manager.end_session()
 

@@ -609,23 +609,30 @@ def show_form(config_path=None):
 
 
 def load_ipython_extension(ipython):
-    """Register %form only when the user explicitly loads this extension."""
+    """Register the ZizAI magic and its compatibility name on explicit load."""
     from IPython.core.magic import Magics, magics_class, line_magic
-    existing = ipython.find_line_magic('form')
-    if existing:
-        if getattr(getattr(existing, '__self__', None), '_zizai_form_magic', False):
-            return
-        raise ValueError('別の%formが登録済みのため上書きしません。')
+
+    names = ('zizai_form', 'form')
+    existing = {name: ipython.find_line_magic(name) for name in names}
+    for name, magic in existing.items():
+        if magic and not getattr(getattr(magic, '__self__', None), '_zizai_form_magic', False):
+            raise ValueError(f'別の%{name}が登録済みのため上書きしません。')
+    if all(existing.values()):
+        return
 
     @magics_class
     class FormMagics(Magics):
         _zizai_form_magic = True
 
         @line_magic
-        def form(self, line):
+        def zizai_form(self, line):
             args = shlex.split(line)
             if len(args) > 1:
-                raise ValueError('%form または %form "設定ファイルのパス" を指定してください。')
+                raise ValueError('%zizai_form または %zizai_form "設定ファイルのパス" を指定してください。')
             show_form(args[0] if args else None)
+
+        @line_magic
+        def form(self, line):
+            return self.zizai_form(line)
 
     ipython.register_magics(FormMagics)
