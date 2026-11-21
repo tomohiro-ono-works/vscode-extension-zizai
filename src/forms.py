@@ -592,31 +592,39 @@ class NotebookForm:
         self.styles.close()
 
 
-def create_form(config_path=None, *, folder_picker=None, clipboard_writer=None, namespace=None):
+def create_form(config_path=None, *, folder_picker=None, clipboard_writer=None, namespace=None, connector=None):
     """Return a controller with .root, .model and .result for explicit Python use."""
     if namespace is None:
         from IPython import get_ipython
         shell = get_ipython()
         namespace = shell.user_ns if shell is not None else None
-    return NotebookForm(load_definition(config_path), folder_picker=folder_picker, clipboard_writer=clipboard_writer,
-                        namespace=namespace)
+    definition = load_definition(config_path)
+    if connector is not None and connector not in definition['connectors']:
+        raise ValueError(f'{connector} コネクタを共通フォルダーに登録してください。')
+    form = NotebookForm(definition, folder_picker=folder_picker, clipboard_writer=clipboard_writer, namespace=namespace)
+    if connector is not None:
+        form.connector.value = connector
+    return form
 
 
-def show_form(config_path=None):
+def show_form(config_path=None, *, connector=None):
     """Display in the current cell output; do not insert or run notebook cells."""
     from IPython.display import display
-    display(create_form(config_path).root)
+    display(create_form(config_path, connector=connector).root)
 
 
 def load_ipython_extension(ipython):
     """Register the ZizAI magic and its compatibility name on explicit load."""
-    from IPython.core.magic import Magics, magics_class, line_magic
+    from IPython.core.magic import Magics, line_cell_magic, line_magic, magics_class, no_var_expand
 
-    names = ('zizai_form', 'form')
-    existing = {name: ipython.find_line_magic(name) for name in names}
+    connectors = ('zizai_bq', 'zizai_duck', 'zizai_csv', 'zizai_excel')
+    existing = {
+        **{f'%{name}': ipython.find_line_magic(name) for name in ('zizai_form', 'form', *connectors)},
+        **{f'%%{name}': ipython.find_cell_magic(name) for name in connectors},
+    }
     for name, magic in existing.items():
         if magic and not getattr(getattr(magic, '__self__', None), '_zizai_form_magic', False):
-            raise ValueError(f'別の%{name}が登録済みのため上書きしません。')
+            raise ValueError(f'別の{name}が登録済みのため上書きしません。')
     if all(existing.values()):
         return
 
@@ -634,5 +642,35 @@ def load_ipython_extension(ipython):
         @line_magic
         def form(self, line):
             return self.zizai_form(line)
+
+        def _connector_form(self, connector, line, cell=None):
+            if line.strip() or (cell and any(
+                    entry.strip() and not entry.lstrip().startswith('#') for entry in cell.splitlines())):
+                raise ValueError('フォーム表示には引数やコードを指定しないでください。')
+            show_form(connector=connector)
+
+        @line_cell_magic
+        @no_var_expand
+        def zizai_bq(self, line, cell=None):
+            if cell is None:
+                return self._connector_form('bigquery', line)
+            from .sql_magic import run_sql_cell
+            return run_sql_cell('bigquery', line, cell, self.shell.user_ns)
+
+        @line_cell_magic
+        @no_var_expand
+        def zizai_duck(self, line, cell=None):
+            if cell is None:
+                return self._connector_form('duckdb', line)
+            from .sql_magic import run_sql_cell
+            return run_sql_cell('duckdb', line, cell, self.shell.user_ns)
+
+        @line_cell_magic
+        def zizai_csv(self, line, cell=None):
+            return self._connector_form('csv', line, cell)
+
+        @line_cell_magic
+        def zizai_excel(self, line, cell=None):
+            return self._connector_form('excel', line, cell)
 
     ipython.register_magics(FormMagics)

@@ -10,6 +10,8 @@
 
 ## 新方式のTask
 
+- [TASK-033 / #130：コネクタ別フォームとSQL実行マジックを追加する](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/130)
+
 - [TASK-032 / #125：コネクタ固有のコード生成とフォーム部品を移管する](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/125)
 
 - [TASK-031 / #123：ZizAIの環境構築Notebookを追加する](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/123)

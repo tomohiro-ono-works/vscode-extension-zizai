@@ -85,6 +85,12 @@
 
 変更前の空白・改行削除、全角英数字の半角化、半角記号のアンダースコア化、変更後の日本語を含む列の除外は、フォームで選んだ項目だけ適用する。初期値はすべてオフ。入力表の内容と、出力内の型指定のない列の値・型を保持する。変更による列名衝突や矛盾する定義はエラーとする。出力の列名・説明・型は `attrs["ziz_schema"]` に記録する。
 
+## TASK-033：コネクタ別マジック
+
+- `%zizai_bq`、`%zizai_duck`、`%zizai_csv`、`%zizai_excel` は各コネクタを選択した状態のフォームを表示する。
+- `%%zizai_bq` と `%%zizai_duck` は本文を既存の `execute_sql` に渡す。接続先は各Notebookで `zizai_bq_project` または `zizai_duck_db` として明示する。BigQueryの認証とDuckDBの外部アクセス制限は既存コネクタに従う。
+- SQL結果は標準のセル出力、`> 変数名` でDataFrameの代入、`> ファイル名.csv/.xlsx` で既存ファイルを保護した新規保存。CSVとExcelのマジックの責務はフォーム表示とする。
+
 ## TASK-014：BigQueryフォーム
 
 [Issue #88](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/88)のSQLファイル実行とデータロードを外部共通フォルダーの `bigquery_connector.py` と `bigquery_definition.yaml` で提供する。出力変数の初期値は `result`。コード生成時はファイル読込・認証・接続を行わない。実行時はフォームで指定したプロジェクトと、Python環境のApplication Default Credentialsを使用する。
