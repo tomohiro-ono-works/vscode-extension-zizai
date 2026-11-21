@@ -1,5 +1,9 @@
 # ZizAI Python最小基盤
 
+## 初回セットアップ
+
+[環境構築Notebook](../examples/setup-zizai.ipynb)をVS Codeで開きます。Python環境の準備、pipまたはuvでの導入、コネクタ登録、カーネルの切り替え、マジック登録とフォーム表示を順に実行できます。既定では `.venv` にフォームとCSV用の依存を導入します。追加コネクタや既存カーネルの利用はNotebookの最初の設定セルで選べます。
+
 ## Windowsのファイル操作（TASK-027）
 
 Notebookのカーネルに `[forms,windows]` 付きのwheelを導入します。[Windows資産](../connectors/windows/)のPythonとYAMLを共通フォルダーの `windows/` へ置き、`configure_connectors` で登録します。
