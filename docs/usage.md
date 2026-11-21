@@ -17,8 +17,8 @@
 | `@zizai_duck` | `%zizai_duck` | DuckDBを選択したフォームを開く |
 | `@zizai_csv` | `%zizai_csv` | CSVを選択したフォームを開く |
 | `@zizai_excel` | `%zizai_excel` | Excelを選択したフォームを開く |
-| `@zizai_bq_sql` | `%%zizai_bq` | BigQueryのSQLを実行する |
-| `@zizai_duck_sql` | `%%zizai_duck` | DuckDBのSQLを実行する |
+
+BigQueryとDuckDBでSQLを実行するときは、フォーム用スニペットで入った `%zizai_bq` または `%zizai_duck` に `%` を1つ足して、`%%zizai_bq` または `%%zizai_duck` にします。SQLはその次の行に書きます。
 
 BigQueryには追加ライブラリ `bigquery` と既存のApplication Default Credentials、DuckDBには `duckdb` と既存のDBファイルが必要です。SQLの前にPythonセルで接続先を指定します。
 
