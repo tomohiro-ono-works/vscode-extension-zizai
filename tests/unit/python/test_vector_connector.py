@@ -48,7 +48,6 @@ class VectorConnectorTests(unittest.TestCase):
                 self.assertEqual(namespace['result']['registered_records'].iat[0], 4)
                 form.set_action('search_vector_db')
                 form.set_value('query_text', 'query')
-                form.set_value('include_vector', True)
                 self.assertEqual(form.values['output_variable'], 'df')
                 exec(compile(form.generate(), '<search>', 'exec'), namespace)
                 self.assertEqual(namespace['df']['id'].iat[0], 'a')
@@ -59,6 +58,7 @@ class VectorConnectorTests(unittest.TestCase):
                 self.assertEqual(namespace['df']['cosine_id'].iat[0], 'c')
                 self.assertEqual(set(namespace['df']['corrected_id']), set(source['id']))
                 self.assertEqual(namespace['df']['rank'].tolist(), [1, 2, 3, 4])
+                self.assertTrue({'cosine_vector', 'corrected_vector'} <= set(namespace['df'].columns))
                 # The reference compares centered vectors using the inverse covariance directly.
                 originals = embed(vector_connector.DEFAULT_MODEL_NAME, source['text'].tolist(), query=False)
                 centered = originals - originals.mean(axis=0)

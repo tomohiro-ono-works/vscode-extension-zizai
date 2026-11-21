@@ -6,18 +6,35 @@ from importlib.util import find_spec
 import json
 from keyword import iskeyword
 from pathlib import Path
+import re
 import shlex
 from .connector_codegen import module_name_for
 from .dataintegration_codegen import DATAFRAME_OPERATIONS, VALUE_OPERATIONS
 from .form_definition import load_definition
 from .form_model import FormModel
-from .vector_codegen import BUILD as VECTOR_BUILD, CORRECTION_FIELDS
+from .vector_codegen import BUILD as VECTOR_BUILD, CORRECTION_FIELDS, SEARCH as VECTOR_SEARCH
 
 
 _ROW_PREVIEW_FIELDS = {
     ('csv', 'import'): {'encoding': 'choice', 'delimiter': 'text'},
     ('excel', 'read_excel'): {'sheet_name': 'text'},
 }
+
+_VECTOR_COLLECTION_SUFFIX = '.vector.duckdb'
+
+
+def _vector_collection_names(folder):
+    if not folder or not Path(folder).is_absolute():
+        return []
+    try:
+        names = []
+        for entry in Path(folder).iterdir():
+            name = entry.name.removesuffix(_VECTOR_COLLECTION_SUFFIX)
+            if name != entry.name and re.fullmatch(r'[\w-]+', name) and entry.is_file():
+                names.append(name)
+        return sorted(names, key=lambda name: (name.casefold(), name))
+    except (OSError, ValueError):
+        return []
 
 
 def _show_native_picker(choose, **options):
@@ -174,7 +191,9 @@ class NotebookForm:
             self.row_preview_button = None
             self._invalid_fields.clear()
             dataframe_mode = self._has_dataframe_editor()
-            vector_build = self.model.actions.get(self.model.action, {}).get('generation') == VECTOR_BUILD
+            generation = self.model.actions.get(self.model.action, {}).get('generation')
+            vector_build = generation == VECTOR_BUILD
+            vector_search = generation == VECTOR_SEARCH
             self.root.layout.max_width = 'none' if dataframe_mode else self._form_width
             for name, field in self.model.fields.items():
                 value = self.model.values[name]
@@ -182,7 +201,11 @@ class NotebookForm:
                 if dataframe_mode and name == 'operations':
                     self.model.set_value(name, '')
                     continue
-                if (dataframe_mode or vector_build) and name == 'input_variable':
+                if vector_search and name == 'include_vector':
+                    continue  # Older connector definitions may still declare the former checkbox.
+                if vector_search and name == 'collection_name':
+                    widget = self._vector_collection_picker(self.model.values['db_folder'], label)
+                elif (dataframe_mode or vector_build) and name == 'input_variable':
                     options = [('選択してください', '')] + [(name, name) for name in self._dataframe_names()]
                     if value not in dict(options).values():
                         value = ''
@@ -217,6 +240,8 @@ class NotebookForm:
             pairs = [('encoding', 'delimiter')]
             if dataframe_mode:
                 pairs.append(('input_variable', 'output_variable'))
+            if vector_search:
+                pairs.extend([('collection_name', 'search_mode'), ('output_variable', 'top_k')])
             if (self.model.connector, self.model.action) in {
                 ('csv', 'import'), ('excel', 'read_excel'), ('excel', 'read_excel_range'),
             }:
@@ -282,6 +307,8 @@ class NotebookForm:
             self._invalid_fields.discard(name)
         except ValueError:
             self._invalid_fields.add(name)
+        if name == 'db_folder' and self.model.actions.get(self.model.action, {}).get('generation') == VECTOR_SEARCH:
+            self._refresh_vector_collections(value)
         if name == 'input_variable' and self._dataframe_slot is not None:
             self.model.set_value('operations', '')
             self._show_dataframe_editor(value)
@@ -297,6 +324,31 @@ class NotebookForm:
                 except ValueError as error:
                     self.message.value = escape(str(error))
         self._refresh_generate()
+
+    def _vector_collection_picker(self, folder, label):
+        names = _vector_collection_names(folder)
+        current = self.model.values['collection_name']
+        selected = current if current in names else (names[0] if len(names) == 1 else '')
+        self.model.set_value('collection_name', selected)
+        placeholder = ('選択してください' if names else
+                       'コレクションがありません' if folder else 'フォルダーを選択してください')
+        options = [(placeholder, ''), *((name, name) for name in names)]
+        picker = self._widgets.Dropdown(description=label, options=options, value=selected, disabled=not names,
+                                        description_allow_html=True)
+        picker.style.description_width = 'initial'
+        return picker
+
+    def _refresh_vector_collections(self, folder):
+        previous = self.field_widgets['collection_name']
+        picker = self._vector_collection_picker(folder, previous.description)
+        picker.layout = previous.layout
+        picker.observe(lambda change: self._value_changed('collection_name', change['new']), names='value')
+        row = next(row for row in self.details.children if getattr(row, 'children', ())[:1] == (previous,))
+        row.children = (picker, *row.children[1:])
+        self.field_widgets['collection_name'] = picker
+        self._dynamic[self._dynamic.index(previous)] = picker
+        previous.unobserve_all('value')
+        previous.close()
 
     def _has_dataframe_editor(self):
         action = self.model.actions.get(self.model.action, {})

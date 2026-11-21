@@ -208,6 +208,49 @@ class FormWidgetTests(unittest.TestCase):
                 self.assertIsNotNone(row)
                 self.assertEqual(row.children, (form.field_widgets['encoding'], form.field_widgets['delimiter']))
 
+    def test_vector_search_lists_collections_in_the_selected_folder_and_pairs_fields(self):
+        import ipywidgets as widgets
+
+        with tempfile.TemporaryDirectory() as directory:
+            first, second, empty = (Path(directory) / name for name in ('first', 'second', 'empty'))
+            for folder in (first, second, empty):
+                folder.mkdir()
+            for name in ('sales.vector.duckdb', 'notes.vector.duckdb', 'unrelated.duckdb', 'old.faiss'):
+                (first / name).touch()
+            (first / 'subfolder.vector.duckdb').mkdir()
+            (second / '新規.vector.duckdb').touch()
+            form = self.make_form(picker=lambda _current: first.as_posix())
+            form.connector.value = 'vector'
+            form.action.value = 'search_vector_db'
+            form.browse_buttons['db_folder'].click()
+            picker = form.field_widgets['collection_name']
+            self.assertIsInstance(picker, widgets.Dropdown)
+            self.assertEqual(tuple(value for _, value in picker.options), ('', 'notes', 'sales'))
+            self.assertNotIn('include_vector', form.field_widgets)
+            self.assertEqual(tuple(form.details.children[1].children),
+                             (picker, form.field_widgets['search_mode']))
+            self.assertEqual(tuple(form.details.children[2].children),
+                             (form.field_widgets['output_variable'], form.field_widgets['top_k']))
+            self.assertIs(form.details.children[3], form.field_widgets['query_text'])
+            form.field_widgets['query_text'].value = 'りんご'
+            self.assertTrue(form.generate_button.disabled)
+            picker.value = 'sales'
+            form.generate_button.click()
+            self.assertIn('include_vector = True', form.result)
+            self.assertIn("collection_name = 'sales'", form.result)
+
+            form.field_widgets['db_folder'].value = second.as_posix()
+            current = form.field_widgets['collection_name']
+            self.assertEqual(current.value, '新規')
+            self.assertEqual(form.field_widgets['query_text'].value, 'りんご')
+            picker.value = 'notes'
+            self.assertEqual(form.model.values['collection_name'], '新規')
+            form.field_widgets['db_folder'].value = empty.as_posix()
+            self.assertTrue(form.field_widgets['collection_name'].disabled)
+            self.assertTrue(form.generate_button.disabled)
+            form.action.value = 'embedding_vector_db'
+            self.assertIsInstance(form.field_widgets['collection_name'], widgets.Text)
+
     def test_browse_button_is_beside_its_folder_field_and_keeps_picker_behavior(self):
         import ipywidgets as widgets
         from unittest.mock import Mock

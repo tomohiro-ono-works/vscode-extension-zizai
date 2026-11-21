@@ -12,7 +12,7 @@ CORRECTION_FIELDS = {'enable_correction', 'regularization', 'density_k', 'penalt
 COMMON_FIELDS = {'db_folder', 'collection_name', 'output_variable'}
 GENERATION_FIELDS = {
     BUILD: COMMON_FIELDS | CORRECTION_FIELDS | {'input_variable', 'id_column', 'text_column', 'metric', 'model_name'},
-    SEARCH: COMMON_FIELDS | {'query_text', 'top_k', 'include_vector', 'search_mode'},
+    SEARCH: COMMON_FIELDS | {'query_text', 'top_k', 'search_mode'},
 }
 METRICS = {
     'コレクションに従う（新規はコサイン）': None, 'コサイン類似度': 'cosine',
@@ -62,7 +62,7 @@ def generate_vector(kind, values, module_path):
         parameters.update(query_text=_text(values, 'query_text', required=True),
                           top_k=_integer(values, 'top_k', 1),
                           search_mode=SEARCH_MODES[values['search_mode']],
-                          include_vector=values['include_vector'])
+                          include_vector=True)
     arguments = [ast.keyword(arg=name, value=ast.Constant(value)) for name, value in parameters.items()]
     if kind == BUILD:
         arguments.insert(2, ast.keyword(arg='input_data', value=ast.Name(id=_identifier(values, 'input_variable'), ctx=ast.Load())))

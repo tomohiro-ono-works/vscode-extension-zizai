@@ -63,6 +63,8 @@ class FormModel:
         if self.connector == 'vector' and action != self.action:
             if 'output_variable' in fields and values['output_variable'] == fields['output_variable'].get('default'):
                 values = {key: value for key, value in values.items() if key != 'output_variable'}
+            if values.get('collection_name') == '':
+                values = {key: value for key, value in values.items() if key != 'collection_name'}
         self.action = action
         self._restore_fields(fields, values)
 
