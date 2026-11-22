@@ -567,6 +567,8 @@ class DataIntegrationConnectorTests(unittest.TestCase):
                 patch('tkinter.filedialog.askopenfilename', return_value='C:/選択先/RENAME.csv') as file:
             form.browse_buttons['file_path'].click()
             self.assertEqual(file.call_args.kwargs['filetypes'][0][1], '*.csv')
+            self.assertEqual(Path(file.call_args.kwargs['initialdir']),
+                             source_test_support.REPO / 'connectors/dataintegration/references')
             folder.assert_not_called()
         checkbox = form.field_widgets['remove_newlines']
         self.assertIsInstance(checkbox, Checkbox)

@@ -8,6 +8,16 @@ from zizai.forms import create_form, load_ipython_extension
 
 
 class FormWidgetTests(unittest.TestCase):
+    def test_vector_actions_use_the_connector_owned_database_folder(self):
+        form = self.make_form()
+        form.connector.value = 'vector'
+        form.action.value = 'embedding_vector_db'
+        folder = form.field_widgets['db_folder']
+        expected = Path(__file__).resolve().parents[3] / 'connectors/vector/config/vector-db'
+        self.assertEqual(Path(folder.value), expected)
+        form.action.value = 'search_vector_db'
+        self.assertEqual(Path(form.field_widgets['db_folder'].value), expected)
+
     def make_form(self, picker=lambda current: 'C:/選択先'):
         form = create_form(Path(__file__).resolve().parents[3] / 'connectors', folder_picker=picker)
         self.addCleanup(form.close)

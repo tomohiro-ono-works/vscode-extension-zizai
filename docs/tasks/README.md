@@ -10,6 +10,8 @@
 
 ## 新方式のTask
 
+- [TASK-037 / #139：VectorとRENAMEの保存・参照フォルダーを整理する](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/139)
+
 - [TASK-036 / #137：スライドエンジンをコネクタ内に同梱する](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/137)
 
 - [TASK-035 / #135：Markdownを編集可能なPPTXに変換するコネクタを追加](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/135)
