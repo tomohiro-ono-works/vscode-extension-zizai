@@ -1,4 +1,4 @@
-"""Convert Markdown files or strings using the separately installed Zizai Slides engine."""
+"""Convert Markdown files or strings using the bundled Zizai Slides engine."""
 
 from pathlib import Path
 from shutil import copyfileobj
@@ -18,12 +18,7 @@ def markdown_to_pptx(output_path, *, markdown_text=None, markdown_file=None, sty
         raise FileExistsError(f'出力先が既にあります: {target}')
     if not target.parent.is_dir():
         raise FileNotFoundError(f'出力先フォルダーがありません: {target.parent}')
-    try:
-        from zizai_slides import convert, convert_text
-    except ModuleNotFoundError as error:
-        if error.name != 'zizai_slides':
-            raise
-        raise ModuleNotFoundError('このPython環境にZizai Slidesエンジンを登録してください。') from error
+    from slides.zizai_slides import convert, convert_text
 
     with TemporaryDirectory(dir=target.parent, prefix='.zizai-pptx-') as folder:
         staged = Path(folder) / 'slides.pptx'

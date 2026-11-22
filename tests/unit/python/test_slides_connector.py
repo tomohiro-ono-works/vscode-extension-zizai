@@ -20,6 +20,10 @@ class SlidesConnectorTests(unittest.TestCase):
         self.addCleanup(form.close)
         form.action.value = 'markdown_to_pptx'
         fields = form.field_widgets
+        default = CONNECTORS / 'slides/zizai_slides/assets/slide.css'
+        example = CONNECTORS / 'slides/config/custom.example.css'
+        self.assertTrue(any(str(default) in getattr(row, 'value', '') and str(example) in getattr(row, 'value', '')
+                            for row in form.details.children))
         fields['output_folder'].value = str(root)
         fields['markdown_text'].value = '# Draft\n'
         fields['markdown_file'].value = 'relative.md'
@@ -43,7 +47,7 @@ class SlidesConnectorTests(unittest.TestCase):
 
     def test_calls_upstream_editable_engine_and_protects_existing_file(self):
         root = Path(self.enterContext(TemporaryDirectory()))
-        self.enterContext(patch.object(sys, 'path', [str(CONNECTORS / 'slides'), *sys.path]))
+        self.enterContext(patch.object(sys, 'path', [str(CONNECTORS), str(CONNECTORS / 'slides'), *sys.path]))
         from slides_connector import markdown_to_pptx
 
         def output(source, destination, **kwargs):
@@ -52,7 +56,7 @@ class SlidesConnectorTests(unittest.TestCase):
         file_convert = Mock(side_effect=output)
         text_convert = Mock(side_effect=output)
         engine = SimpleNamespace(convert=file_convert, convert_text=text_convert)
-        with patch.dict(sys.modules, zizai_slides=engine):
+        with patch.dict(sys.modules, {'slides.zizai_slides': engine, 'zizai_slides': SimpleNamespace()}):
             first = root / 'from text.pptx'
             self.assertEqual(markdown_to_pptx(first, markdown_text='# Text'), first.as_posix())
             self.assertEqual(text_convert.call_args.kwargs, {'mode': 'editable', 'style_path': None})
