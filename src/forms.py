@@ -45,14 +45,14 @@ def _select_folder(current):
                                initialdir=current if current and Path(current).is_absolute() else None)
 
 
-def _select_file(current, extension):
+def _select_file(current, extension, *, initial_directory=None):
     from tkinter.filedialog import askopenfilename
     path = Path(current)
     absolute = path.is_absolute()
     patterns = [(extension.upper().lstrip('.') + 'ファイル', '*' + extension)] if extension else []
     patterns.append(('すべてのファイル', '*'))
     return _show_native_picker(askopenfilename, title='ファイルを選択', filetypes=patterns,
-                               initialdir=str(path.parent) if absolute else None,
+                               initialdir=str(path.parent) if absolute else initial_directory,
                                initialfile=path.name if absolute else None)
 
 
@@ -395,8 +395,7 @@ class NotebookForm:
         self._slide_file_row.layout.display = '' if use_file else 'none'
 
     def _slide_css_help(self):
-        module_path = self.model.definition['connectors']['slides'].get('module_path')
-        folder = Path(module_path).parent if module_path else Path('connectors/slides')
+        folder = self.model.connector_folder or Path('connectors/slides')
         default = folder / 'zizai_slides/assets/slide.css'
         example = folder / 'config/custom.example.css'
         return (f'組み込みCSS <code>{escape(str(default))}</code><br>'
@@ -555,9 +554,16 @@ class NotebookForm:
         field = self.model.fields[name]
         widget = self.field_widgets[name]
         is_file = field['type'] == 'file'
+        initial_directory = None
+        if (self.model.connector, self.model.action, name) == ('dataintegration', 'replace_fields_forrenamelist', 'file_path'):
+            folder = self.model.connector_folder
+            if folder is not None:
+                references = folder / 'references'
+                if references.is_dir():
+                    initial_directory = str(references)
         try:
-            selected = (_select_file(widget.value, field.get('extension')) if is_file
-                        else self._folder_picker(widget.value))
+            selected = (_select_file(widget.value, field.get('extension'), initial_directory=initial_directory)
+                        if is_file else self._folder_picker(widget.value))
             if selected:  # Cancellation preserves the existing value and result.
                 widget.value = selected
         except Exception as error:

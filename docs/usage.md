@@ -91,6 +91,8 @@ Notebookのカーネルに `[forms,windows]` 付きのwheelを導入します。
 
 ## RENAMEリストで列名変更（TASK-015）
 
+RENAMEの「参照…」は、まだファイルが選ばれていなければ `connectors/dataintegration/references/` から開きます。[RENAME.example.csv](../connectors/dataintegration/references/RENAME.example.csv) を別名でコピーし、列名の対応を書いて使えます。
+
 カーネルと同じPython環境にwheelを`[forms,dataintegration]`付きで導入します。[データ統合資産](../connectors/dataintegration/)を共通フォルダーの`dataintegration/`へ配置し、`configure_connectors`で再登録します。`%zizai_form`の「データ統合」→「RENAMEリストで列名変更」で入力変数を指定し、`参照…`からRENAMEのCSVファイルを選びます。生成コードをPythonセルで実行すると、変更後のDataFrameが初期値 `renamed_df` の出力変数に入ります。
 
 ```csv
@@ -312,6 +314,8 @@ python -c 'from setuptools.build_meta import build_wheel; build_wheel("dist")'
 [設計](https://github.com/tomohiro-ono-works/vscode-extension-zizai/blob/65631504f146a4dfa2ab52d557e58db53c2e6a00/docs/research/python-import/TASK-003-02.md)と[最小実装計画](https://github.com/tomohiro-ono-works/vscode-extension-zizai/blob/65631504f146a4dfa2ab52d557e58db53c2e6a00/docs/research/python-import/TASK-003-03-plan.md)を参照してください。
 
 ### Vectorの登録・検索
+
+新しい設定の構築・検索では、[connectors/vector/config/vector-db/](../connectors/vector/config/vector-db/) が最初に表示されます。既存のDBは、フォームの「参照…」でそのフォルダーを指定できます。試用DBの置き場は [connectors/vector/references/](../connectors/vector/references/) を参照してください。
 
 Notebookのカーネル環境に開発版のwheelを `[forms,vector]` 付きで導入し、[Vector資産](../connectors/vector/) のPythonとYAMLを共通フォルダーの `vector/` に置いて `configure_connectors` で登録します。`%zizai_form` の「Vector」から「ベクトルDB構築・更新」または「ベクトル検索」を選べます。初回実行時に埋め込みモデルがローカルにない場合は、モデルの取得が発生します。アクセス先とモデルは利用する環境で確認してください。
 

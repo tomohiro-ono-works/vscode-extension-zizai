@@ -1,5 +1,6 @@
 """Selection and placeholder generation; no GUI, kernel or business execution."""
 from copy import deepcopy
+from pathlib import Path
 from .form_definition import valid_value
 from .connector_forms.bigquery.bigquery_codegen import generate_bigquery
 from .connector_forms.csv.csv_codegen import generate_csv
@@ -28,6 +29,11 @@ class FormModel:
         self.values = {}
 
     @property
+    def connector_folder(self):
+        module = self.definition['connectors'].get(self.connector, {}).get('module_path')
+        return Path(module).parent if module else None
+
+    @property
     def actions(self):
         return self.definition['connectors'][self.connector]['actions'] if self.connector else {}
 
@@ -44,6 +50,8 @@ class FormModel:
                 default = field.get('minimum', 0) if field['type'] == 'integer' else (None if field['type'] == 'choice' else '')
                 if field['type'] == 'checkbox':
                     default = False
+                if self.connector == 'vector' and name == 'db_folder' and self.connector_folder is not None:
+                    default = (self.connector_folder / 'config/vector-db').as_posix()
                 self.values[name] = field.get('default', default)
 
     def set_connector(self, connector):
