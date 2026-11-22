@@ -1,0 +1,222 @@
+/* Zizai Slides — slide canvas only. Never put VS Code toolbar/sidebar styles here.
+ * Edit --zs-* properties below to change BOTH Python-generated PPTX and preview.
+ * Supported design tokens and named .slide .zs-* object rules are parsed by
+ * Python's standard library into shared PPTX/HTML geometry.
+ */
+.slide{
+  --zs-ink:#111111;
+  --zs-background:#FFFFFF;
+  --zs-background-gray:#FBFBFB;
+  --zs-muted:#777777;
+  /* Right footer pagination. CSS controls style; front matter 'paginate: false' hides it. */
+  --zs-page-number-color:#777777;
+  --zs-page-number-font-size:12px;
+  --zs-page-number-right:42px;
+  --zs-page-number-bottom:17px;
+  --zs-navy:#1B2B45;
+  --zs-track:#D9DDE4;
+  --zs-line:#242424;
+  --zs-canvas-padding-x:42px;
+  --zs-canvas-padding-top:36px;
+  /* Header/body regions: body top = top padding + header height + gap. */
+  --zs-header-height:140px;
+  --zs-header-body-gap:14px;
+  --zs-body-font-size:23px;
+  --zs-title-font-size:36px;
+  --zs-h2-font-size:27px;
+  --zs-h3-font-size:23px;
+  --zs-card-font-size:20px;
+  --zs-layout-gap:18px;
+  --zs-card-padding-x:21px;
+  --zs-card-padding-y:18px;
+  --zs-card-radius:9px;
+  --zs-paper-padding:32px;
+  --zs-card-border:#242424;
+  --zs-code-background:#F2F4F6;
+  --zs-table-header-background:#F2F2F2;
+  --zs-table-border:#A9ADB0;
+  --zs-link:#167D86;
+  --zs-title-mark-width:10px;
+  --zs-cover-left-background:#F1F1F1;
+  --zs-chapter-left-background:#1B2B45;
+  --zs-hero-left-percent:40%;
+  --zs-chip-radius:11px;
+  --zs-chip-font-size:16px;
+  --zs-card-turquoise-light-bg:#EDFDFC;
+  --zs-card-turquoise-light-ink:#00786F;
+  --zs-card-turquoise-dark-bg:#00786F;
+  --zs-card-turquoise-dark-ink:#FFFFFF;
+  --zs-card-aqua-light-bg:#D8F4F1;
+  --zs-card-aqua-light-ink:#126B75;
+  --zs-card-aqua-dark-bg:#167D86;
+  --zs-card-aqua-dark-ink:#FFFFFF;
+  --zs-card-gray-light-bg:#F6F6F6;
+  --zs-card-gray-light-ink:#606668;
+  --zs-card-gray-dark-bg:#606668;
+  --zs-card-gray-dark-ink:#FFFFFF;
+  --zs-card-coral-light-bg:#FBE6E5;
+  --zs-card-coral-light-ink:#B53E3D;
+  --zs-card-coral-dark-bg:#B53E3D;
+  --zs-card-coral-dark-ink:#FFFFFF;
+  --zs-card-mono-light-bg:#D9D9D9;
+  --zs-card-mono-light-ink:#171717;
+  --zs-card-mono-dark-bg:#171717;
+  --zs-card-mono-dark-ink:#FFFFFF;
+  --zs-card-yellow-light-bg:#FAF8E0;
+  --zs-card-yellow-light-ink:#75721F;
+  --zs-card-yellow-dark-bg:#75721F;
+  --zs-card-yellow-dark-ink:#FFFFFF;
+  --zs-chip-turquoise-light-bg:#EDFDFC;
+  --zs-chip-turquoise-light-ink:#00786F;
+  --zs-chip-turquoise-dark-bg:#00786F;
+  --zs-chip-turquoise-dark-ink:#FFFFFF;
+  --zs-chip-aqua-light-bg:#D8F4F1;
+  --zs-chip-aqua-light-ink:#126B75;
+  --zs-chip-aqua-dark-bg:#167D86;
+  --zs-chip-aqua-dark-ink:#FFFFFF;
+  --zs-chip-gray-light-bg:#F6F6F6;
+  --zs-chip-gray-light-ink:#606668;
+  --zs-chip-gray-dark-bg:#606668;
+  --zs-chip-gray-dark-ink:#FFFFFF;
+  --zs-chip-coral-light-bg:#FBE6E5;
+  --zs-chip-coral-light-ink:#B53E3D;
+  --zs-chip-coral-dark-bg:#B53E3D;
+  --zs-chip-coral-dark-ink:#FFFFFF;
+  --zs-chip-mono-light-bg:#D9D9D9;
+  --zs-chip-mono-light-ink:#171717;
+  --zs-chip-mono-dark-bg:#171717;
+  --zs-chip-mono-dark-ink:#FFFFFF;
+  --zs-chip-yellow-light-bg:#FAF8E0;
+  --zs-chip-yellow-light-ink:#75721F;
+  --zs-chip-yellow-dark-bg:#75721F;
+  --zs-chip-yellow-dark-ink:#FFFFFF;
+}
+
+/* Zizai Slide Studio — standalone theme, 1280 × 720. No Marp runtime. */
+.slide,.slide *{box-sizing:border-box}
+.slide{
+  --ink:#111; --line:#242424; --muted:#777; --soft:#f2f2f2;
+  --navy:#1b2b45; --track:#d9dde4;
+  width:1280px;height:720px;overflow:hidden;position:relative;isolation:isolate;
+  padding:var(--zs-canvas-padding-top) var(--zs-canvas-padding-x) 48px;background:var(--zs-background);color:var(--zs-ink);
+  font:var(--zs-body-font-size)/1.36 "Noto Sans JP","Yu Gothic",Meiryo,sans-serif;
+  display:flex;flex-direction:column;align-items:stretch;
+}
+.slide.gray{background:var(--zs-background-gray)}
+.slide:before{content:"";position:absolute;top:29px;right:38px;width:18px;height:18px;
+  border-right:2px solid #242424;border-top:2px solid #242424;transform:rotate(14deg)}
+.slide:after{content:"";position:absolute;bottom:0;left:0;width:100%;height:7px;background:var(--track)}
+.slide .slide-progress{position:absolute;bottom:0;left:0;height:7px;background:var(--navy);z-index:2}
+.slide .slide-footer{font-size:12px;color:#777;position:absolute;left:42px;bottom:17px;letter-spacing:.06em}
+.slide-content{position:relative;min-height:0;flex:1 1 auto;overflow:hidden;display:flex;flex-direction:column;align-items:stretch}
+.slide-content>h1{position:relative;padding-left:20px;margin:0 42px 14px 0;font-size:36px;font-weight:800;line-height:1.24;color:var(--ink)}
+.slide-content>h1:before{content:"";position:absolute;left:0;top:.08em;width:10px;height:.95em;background:var(--ink)}
+.slide-content>h1+p{font-size:21px;margin:0 0 20px 10px;padding-bottom:16px;line-height:1.4}
+.slide h2{font-size:27px;font-weight:800;margin:20px 0 12px}
+.slide h3{font-size:23px;font-weight:800;margin:10px 0}
+.slide h1+h2,.slide h2+h3{margin-top:0}
+.slide p{margin:8px 0;color:inherit}
+.slide ul,.slide ol{margin:10px 0 12px 24px;padding:0}
+.slide li{margin:8px 0;color:inherit}
+.slide strong{font-weight:800;color:inherit}
+.slide a{color:#167d86;text-decoration:underline}
+.slide code{font-family:Consolas,"Cascadia Code",monospace;background:#e9f8f7;padding:2px 6px;border-radius:4px;font-size:.86em}
+.slide pre{white-space:pre-wrap;word-break:break-word;background:#f2f4f6;padding:16px;border-radius:8px;font-size:18px;overflow:hidden}
+.slide pre code{background:transparent;padding:0}
+.slide img{max-width:100%;max-height:450px;object-fit:contain}
+.slide blockquote{margin:12px 0;padding:18px 21px;border:1.8px solid var(--line);border-radius:9px;background:white;font-size:20px}
+.slide-table{border-collapse:collapse;width:100%;table-layout:fixed;font-size:20px;margin:10px 0}
+.slide-table th,.slide-table td{padding:10px 13px;border:1px solid #aaa;text-align:left;vertical-align:top}
+.slide-table th,.slide-table td:first-child{background:#f2f2f2;font-weight:700}
+
+/* Layouts: direct children are automatically distributed. */
+.slide-layout{min-width:0;min-height:0;display:flex;gap:var(--zs-layout-gap);width:100%;margin:10px 0;align-items:stretch}
+.slide-layout.slide-h{flex-direction:row}
+.slide-layout.slide-v{flex-direction:column}
+.slide-layout.slide-h>*{min-width:0;flex:1 1 0}
+.slide-layout.slide-v>*{width:100%;flex:0 0 auto}
+.slide-layout.mod-equal>*{flex:1 1 0}
+.slide-layout.mod-medium{min-height:183px}
+.slide-layout.mod-tall{min-height:355px}
+.slide-layout.mod-center{justify-content:center}
+.slide-layout.mod-center>*{text-align:center;background:#f2f2f2}
+.slide-layout.mod-flow>.slide-card:not(:last-child){position:relative}
+.slide-layout.mod-flow>.slide-card:not(:last-child):after{content:"→";position:absolute;right:-28px;top:43%;z-index:3;
+  background:white;color:#111;font-weight:800;font-size:25px}
+
+/* Cards have independent paint, never inherited from a parent. */
+.slide-card{
+  display:block;min-width:0;min-height:0;margin:12px 0;padding:var(--zs-card-padding-y) var(--zs-card-padding-x);
+  background:white;color:#111;border:1.8px solid #242424;border-radius:var(--zs-card-radius);
+  font-size:var(--zs-card-font-size);line-height:1.37;overflow:hidden
+}
+.slide-card>p{margin:0 0 9px;color:inherit}
+.slide-card>p:last-child{margin-bottom:0}
+.slide-card>p:first-child strong{font-size:23px}
+.slide-card ul,.slide-card ol{margin:10px 0 10px 21px}
+.slide-card li{margin:5px 0}
+.slide-layout>.slide-card{margin:0}
+.slide-card.mod-hover,.slide-layout.mod-hover>.slide-card,.slide-paper.mod-hover{box-shadow:0 7px 10px -5px rgba(27,43,69,.2)}
+.slide-blank{min-width:0;margin:0;padding:0;border:0;background:transparent;box-shadow:none}
+.slide-paper{width:95%;align-self:center;background:white;padding:32px;margin:32px 0;border:1px solid #e4e4e4;
+  display:flex;flex-direction:column;gap:14px;min-width:0}
+.slide-hero{display:flex;flex-direction:row;gap:0;flex:1;width:100%;min-height:0;margin:-36px -42px -48px;width:calc(100% + 84px);height:720px}
+.slide-hero-media,.slide-hero-copy{display:flex;flex-direction:column;justify-content:center;padding:44px;min-width:0}
+.slide-hero-media{flex:0 0 var(--zs-hero-left-percent);background:var(--zs-cover-left-background);text-align:center;font-weight:800}
+.slide-hero-copy{flex:1 1 0;background:white}
+.slide.chapter .slide-hero-media{background:var(--zs-chapter-left-background);color:white}
+.slide.cover .slide-content>h1,.slide.chapter .slide-content>h1{margin:0}
+.slide-hero h1{font-size:44px;line-height:1.2;margin:0 0 14px}
+.slide-hero h2{font-size:24px;line-height:1.5;margin:0;color:#555}
+.slide.message .slide-content>.slide-card{padding:60px 42px;text-align:center;font-size:46px;font-weight:800}
+.slide.steps-vertical>.slide-content>ol{list-style:none;counter-reset:steps;margin:10px 35px}
+.slide.steps-vertical>.slide-content>ol>li{counter-increment:steps;position:relative;border:1.6px solid #242424;
+  border-radius:9px;padding:13px 18px 13px 72px;background:#fff;margin:0 0 18px;min-height:49px}
+.slide.steps-vertical>.slide-content>ol>li:before{content:counter(steps);position:absolute;top:10px;left:15px;width:38px;height:38px;
+  border-radius:50%;background:#111;color:white;text-align:center;line-height:38px;font-size:21px;font-weight:800}
+.slide.object-callout>.slide-content>.slide-card{background:#f2f2f2;border-left:10px solid #111}
+.slide.object-guide>.slide-content>.slide-card{max-width:800px}
+.slide.dense{font-size:20px}
+.slide.dense .slide-card{font-size:18px}
+
+/* 12 independently addressable card colors. */
+.slide-card.tone-turquoise-light{background:var(--zs-card-turquoise-light-bg);color:var(--zs-card-turquoise-light-ink);border:0}
+.slide-card.tone-aqua-light{background:var(--zs-card-aqua-light-bg);color:var(--zs-card-aqua-light-ink);border:0}
+.slide-card.tone-gray-light{background:var(--zs-card-gray-light-bg);color:var(--zs-card-gray-light-ink);border:0}
+.slide-card.tone-coral-light{background:var(--zs-card-coral-light-bg);color:var(--zs-card-coral-light-ink);border:0}
+.slide-card.tone-mono-light{background:var(--zs-card-mono-light-bg);color:var(--zs-card-mono-light-ink);border:0}
+.slide-card.tone-yellow-light{background:var(--zs-card-yellow-light-bg);color:var(--zs-card-yellow-light-ink);border:0}
+.slide-card.tone-turquoise-dark{background:var(--zs-card-turquoise-dark-bg);color:var(--zs-card-turquoise-dark-ink);border-color:var(--zs-card-turquoise-dark-ink)}
+.slide-card.tone-aqua-dark{background:var(--zs-card-aqua-dark-bg);color:var(--zs-card-aqua-dark-ink);border-color:var(--zs-card-aqua-dark-ink)}
+.slide-card.tone-gray-dark{background:var(--zs-card-gray-dark-bg);color:var(--zs-card-gray-dark-ink);border-color:var(--zs-card-gray-dark-ink)}
+.slide-card.tone-coral-dark{background:var(--zs-card-coral-dark-bg);color:var(--zs-card-coral-dark-ink);border-color:var(--zs-card-coral-dark-ink)}
+.slide-card.tone-mono-dark{background:var(--zs-card-mono-dark-bg);color:var(--zs-card-mono-dark-ink);border-color:var(--zs-card-mono-dark-ink)}
+.slide-card.tone-yellow-dark{background:var(--zs-card-yellow-dark-bg);color:var(--zs-card-yellow-dark-ink);border-color:var(--zs-card-yellow-dark-ink)}
+
+/* Inline chips explicitly set their own colors, even inside dark cards. */
+.slide-chip{display:inline-block;vertical-align:baseline;border-radius:999px;padding:3px 11px;margin:2px 4px 2px 0;
+  font-size:18px;line-height:1.3;font-weight:700;white-space:nowrap;border:1px solid transparent}
+.slide-chip.tone-turquoise-light{background:var(--zs-chip-turquoise-light-bg);color:var(--zs-chip-turquoise-light-ink);border-color:var(--zs-chip-turquoise-light-ink)}
+.slide-chip.tone-aqua-light{background:var(--zs-chip-aqua-light-bg);color:var(--zs-chip-aqua-light-ink);border-color:var(--zs-chip-aqua-light-ink)}
+.slide-chip.tone-gray-light{background:var(--zs-chip-gray-light-bg);color:var(--zs-chip-gray-light-ink);border-color:var(--zs-chip-gray-light-ink)}
+.slide-chip.tone-coral-light{background:var(--zs-chip-coral-light-bg);color:var(--zs-chip-coral-light-ink);border-color:var(--zs-chip-coral-light-ink)}
+.slide-chip.tone-mono-light{background:var(--zs-chip-mono-light-bg);color:var(--zs-chip-mono-light-ink);border-color:var(--zs-chip-mono-light-ink)}
+.slide-chip.tone-yellow-light{background:var(--zs-chip-yellow-light-bg);color:var(--zs-chip-yellow-light-ink);border-color:var(--zs-chip-yellow-light-ink)}
+.slide-chip.tone-turquoise-dark{background:var(--zs-chip-turquoise-dark-bg);color:var(--zs-chip-turquoise-dark-ink);border-color:var(--zs-chip-turquoise-dark-ink)}
+.slide-chip.tone-aqua-dark{background:var(--zs-chip-aqua-dark-bg);color:var(--zs-chip-aqua-dark-ink);border-color:var(--zs-chip-aqua-dark-ink)}
+.slide-chip.tone-gray-dark{background:var(--zs-chip-gray-dark-bg);color:var(--zs-chip-gray-dark-ink);border-color:var(--zs-chip-gray-dark-ink)}
+.slide-chip.tone-coral-dark{background:var(--zs-chip-coral-dark-bg);color:var(--zs-chip-coral-dark-ink);border-color:var(--zs-chip-coral-dark-ink)}
+.slide-chip.tone-mono-dark{background:var(--zs-chip-mono-dark-bg);color:var(--zs-chip-mono-dark-ink);border-color:var(--zs-chip-mono-dark-ink)}
+.slide-chip.tone-yellow-dark{background:var(--zs-chip-yellow-dark-bg);color:var(--zs-chip-yellow-dark-ink);border-color:var(--zs-chip-yellow-dark-ink)}
+
+/* Canonical Python layout: each primitive uses the identical geometry as PPTX. */
+.slide-geometry { position:absolute; inset:0; width:1280px; height:720px; pointer-events:none; }
+.slide-geometry .geometry-shape,
+.slide-geometry .geometry-text,
+.slide-geometry .geometry-image { position:absolute; box-sizing:border-box; }
+.slide-geometry .geometry-text {
+  white-space:pre; overflow:visible; line-height:1.37;
+  font-family:"Yu Gothic","Meiryo",sans-serif; font-kerning:none;
+}
+.slide-geometry .geometry-image { object-fit:contain; }
+.slide:before,.slide:after {display:none} /* Python geometry draws these itself. */

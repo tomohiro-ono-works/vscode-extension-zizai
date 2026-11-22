@@ -1,0 +1,10 @@
+/* PDF/HTML export presentation shell — not a slide theme or VS Code UI. */
+@page{size:13.333333in 7.5in;margin:0}
+@media print{
+ html,body{padding:0!important;margin:0!important;background:white!important}
+ .export-root{display:block!important;margin:0!important;padding:0!important}
+ .slide{width:1280px;height:720px;margin:0!important;break-after:page;page-break-after:always;
+   print-color-adjust:exact;-webkit-print-color-adjust:exact}
+ .slide:last-child{break-after:auto;page-break-after:auto}
+}
+

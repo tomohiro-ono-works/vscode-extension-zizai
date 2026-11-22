@@ -394,13 +394,13 @@ class NotebookForm:
         self.field_widgets['markdown_text'].layout.display = 'none' if use_file else ''
         self._slide_file_row.layout.display = '' if use_file else 'none'
 
-    @staticmethod
-    def _slide_css_help():
-        engine = find_spec('zizai_slides')
-        locations = engine.submodule_search_locations if engine else None
-        default = Path(locations[0]) / 'assets/slide.css' if locations else 'zizai_slides/assets/slide.css'
+    def _slide_css_help(self):
+        module_path = self.model.definition['connectors']['slides'].get('module_path')
+        folder = Path(module_path).parent if module_path else Path('connectors/slides')
+        default = folder / 'zizai_slides/assets/slide.css'
+        example = folder / 'config/custom.example.css'
         return (f'組み込みCSS <code>{escape(str(default))}</code><br>'
-                '自作CSSの例 <code>C:/project/styles/custom.css</code><br>'
+                f'自作CSSのひな形 <code>{escape(str(example))}</code><br>'
                 'CSS欄が空でファイルを指定した場合は、Markdownと同名のCSSがあれば使います。')
 
     def _show_vector_query_mode(self):
