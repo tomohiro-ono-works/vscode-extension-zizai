@@ -1,0 +1,17 @@
+version: 1
+output_template: "{connector}.{action}のコードを生成"
+connectors:
+  slides:
+    label: スライド
+    module_file: slides_connector.py
+    actions:
+      markdown_to_pptx:
+        label: MarkdownをPPTXに変換
+        generation: slides.markdown_to_pptx
+        fields:
+          input_mode: {label: 入力方法, type: choice, choices: [text, file], default: text, required: true}
+          markdown_text: {label: Markdown本文, type: textarea}
+          markdown_file: {label: Markdownファイル, type: file, extension: .md}
+          style_path: {label: CSSファイル（任意）, type: file, extension: .css}
+          output_folder: {label: 保存先, type: folder, required: true}
+          filename: {label: PPTXファイル名, type: text, default: slides.pptx, required: true}

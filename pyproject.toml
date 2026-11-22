@@ -35,6 +35,7 @@ packages = [
     "zizai.connector_forms.excel",
     "zizai.connector_forms.python",
     "zizai.connector_forms.shell",
+    "zizai.connector_forms.slides",
     "zizai.connector_forms.vector",
     "zizai.connector_forms.windows",
 ]
@@ -49,6 +50,7 @@ zizai = "src"
 "zizai.connector_forms.excel" = "connectors/excel/form"
 "zizai.connector_forms.python" = "connectors/python/form"
 "zizai.connector_forms.shell" = "connectors/shell/form"
+"zizai.connector_forms.slides" = "connectors/slides/form"
 "zizai.connector_forms.vector" = "connectors/vector/form"
 "zizai.connector_forms.windows" = "connectors/windows/form"
 

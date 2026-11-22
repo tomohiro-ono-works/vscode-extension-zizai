@@ -8,6 +8,7 @@ from .connector_forms.duckdb.duckdb_codegen import generate_duckdb
 from .connector_forms.excel.excel_codegen import generate_excel
 from .connector_forms.python.python_codegen import generate_python
 from .connector_forms.shell.shell_codegen import generate_shell
+from .connector_forms.slides.slides_codegen import generate_slides
 from .connector_forms.vector.vector_codegen import generate_vector
 from .connector_forms.windows.windows_codegen import generate_windows
 
@@ -15,7 +16,7 @@ from .connector_forms.windows.windows_codegen import generate_windows
 GENERATORS = {
     'bigquery': generate_bigquery, 'csv': generate_csv, 'dataintegration': generate_dataintegration,
     'duckdb': generate_duckdb, 'excel': generate_excel, 'python': generate_python, 'shell': generate_shell,
-    'vector': generate_vector, 'windows': generate_windows,
+    'slides': generate_slides, 'vector': generate_vector, 'windows': generate_windows,
 }
 
 

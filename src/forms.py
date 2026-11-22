@@ -12,6 +12,7 @@ import sys
 from .connector_codegen import module_name_for
 from .connector_forms.dataintegration.dataintegration_codegen import COLUMN_OPERATIONS, DATAFRAME_OPERATIONS, ROW_OPERATIONS, VALUE_OPERATIONS
 from .connector_forms.dataintegration.pandas_table_codegen import TABLE_ACTIONS
+from .connector_forms.slides.slides_codegen import CONVERSION as SLIDES_CONVERSION
 from .connector_forms.vector.collection_names import _vector_collection_names
 from .connector_forms.vector.vector_codegen import BUILD as VECTOR_BUILD, CORRECTION_FIELDS, SEARCH as VECTOR_SEARCH
 from .connector_forms.windows.cursor import _read_cursor_position
@@ -90,6 +91,7 @@ class NotebookForm:
         self._namespace = {} if namespace is None else namespace
         self._syncing = False
         self._invalid_fields = set()
+        self._slide_file_row = None
         self._dynamic = []
         self.result = ''
         self.field_widgets = {}
@@ -141,7 +143,13 @@ class NotebookForm:
             ready = True
         except ValueError:
             ready = False
-        self.generate_button.disabled = not ready or bool(self._invalid_fields)
+        self.generate_button.disabled = not ready or bool(self._relevant_invalid_fields())
+
+    def _relevant_invalid_fields(self):
+        if self._slide_file_row is None:
+            return self._invalid_fields
+        hidden = 'markdown_text' if self.model.values['input_mode'] == 'file' else 'markdown_file'
+        return self._invalid_fields - {hidden}
 
     def _connector_changed(self, change):
         if not self._syncing:
@@ -181,8 +189,10 @@ class NotebookForm:
             self.browse_buttons = {}
             self.row_preview_button = None
             self._invalid_fields.clear()
+            self._slide_file_row = None
             dataframe_mode = self._has_dataframe_editor()
             generation = self.model.actions.get(self.model.action, {}).get('generation')
+            slides = generation == SLIDES_CONVERSION
             vector_build = generation == VECTOR_BUILD
             vector_search = generation == VECTOR_SEARCH
             self.root.layout.max_width = 'none' if dataframe_mode else self._form_width
@@ -211,6 +221,10 @@ class NotebookForm:
                         value = ''
                         self.model.set_value(name, value)
                     widget = widgets.Dropdown(description=label, options=options, value=value)
+                elif slides and name == 'input_mode':
+                    widget = widgets.ToggleButtons(description=label, options=[('直接入力', 'text'), ('ファイル指定', 'file')],
+                                                    value=value, style={'button_width': 'auto'})
+                    widget.add_class('zizai-batch-toggle')
                 elif field['type'] == 'choice':
                     placeholder = ('既存DBのモデルを使用（新規は130m）'
                                    if vector_build and name == 'model_name' else '選択してください')
@@ -284,6 +298,12 @@ class NotebookForm:
                     row.add_class('zizai-folder-row')
                     self._dynamic.append(row)
                     rows.append(row)
+                    if slides and name == 'markdown_file':
+                        self._slide_file_row = row
+                    if slides and name == 'style_path':
+                        css = widgets.HTML(self._slide_css_help())
+                        self._dynamic.append(css)
+                        rows.append(css)
                 elif name in paired_fields:
                     pair = [widget, self.field_widgets[paired_fields[name]]]
                     for item in pair:
@@ -315,6 +335,8 @@ class NotebookForm:
                 rows.append(self._dataframe_slot)
                 self._show_dataframe_editor(self.model.values['input_variable'])
             self.details.children = rows
+            if slides:
+                self._show_slide_input_mode()
             if vector_search and 'batch_search' in self.field_widgets:
                 self._show_vector_query_mode()
             self.message.value = ''
@@ -335,6 +357,8 @@ class NotebookForm:
         except ValueError:
             self._invalid_fields.add(name)
         generation = self.model.actions.get(self.model.action, {}).get('generation')
+        if generation == SLIDES_CONVERSION and name == 'input_mode':
+            self._show_slide_input_mode()
         if name == 'db_folder' and generation == VECTOR_SEARCH:
             name_field = self.field_widgets['collection_name']
             self._replace_vector_picker('collection_name', self._vector_collection_picker(value, name_field.description))
@@ -354,7 +378,7 @@ class NotebookForm:
             self._show_dataframe_editor(value)
         if name == 'file_path' and self.row_preview_button is not None:
             self.row_preview_button.disabled = not value.strip() or name in self._invalid_fields
-        if self._invalid_fields:
+        if self._relevant_invalid_fields():
             self.message.value = '入力値を確認してください。ファイルとフォルダーは絶対パスを指定します。'
         else:
             self.message.value = ''
@@ -364,6 +388,20 @@ class NotebookForm:
                 except ValueError as error:
                     self.message.value = escape(str(error))
         self._refresh_generate()
+
+    def _show_slide_input_mode(self):
+        use_file = self.model.values['input_mode'] == 'file'
+        self.field_widgets['markdown_text'].layout.display = 'none' if use_file else ''
+        self._slide_file_row.layout.display = '' if use_file else 'none'
+
+    @staticmethod
+    def _slide_css_help():
+        engine = find_spec('zizai_slides')
+        locations = engine.submodule_search_locations if engine else None
+        default = Path(locations[0]) / 'assets/slide.css' if locations else 'zizai_slides/assets/slide.css'
+        return (f'組み込みCSS <code>{escape(str(default))}</code><br>'
+                '自作CSSの例 <code>C:/project/styles/custom.css</code><br>'
+                'CSS欄が空でファイルを指定した場合は、Markdownと同名のCSSがあれば使います。')
 
     def _show_vector_query_mode(self):
         batch = self.model.values['batch_search']
@@ -560,7 +598,7 @@ class NotebookForm:
             self._cursor_capture_timer = None
 
     def _generate(self, _):
-        if self._invalid_fields:
+        if self._relevant_invalid_fields():
             return
         try:
             self.result = self.model.generate()
