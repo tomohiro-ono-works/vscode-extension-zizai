@@ -24,6 +24,7 @@ FORM_MODULES = {
     "excel": {"excel_codegen", "preview"},
     "python": {"python_codegen"},
     "shell": {"shell_codegen"},
+    "slides": {"slides_codegen"},
     "vector": {"collection_names", "vector_codegen"},
     "windows": {"cursor", "windows_codegen"},
 }

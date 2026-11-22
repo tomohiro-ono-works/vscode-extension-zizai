@@ -52,6 +52,30 @@ SELECT 1 AS value
 
 CSVとExcelのフォーム表示は `%zizai_csv` と `%zizai_excel` で行えます。`%%` で書く場合は、IPythonのセルマジックに必要な本文として次の行にコメントを置きます。
 
+## MarkdownをPPTXへ変換
+
+Notebookで `%zizai_form` を開き、**スライド → MarkdownをPPTXに変換** を選びます。「直接入力」でMarkdown本文を貼るか、「ファイル指定」で `.md` を選びます。保存先とPPTXファイル名を指定し、生成したPythonコードをセルで実行すると編集可能なPPTXを新規作成します。
+
+### エンジンの初期設定
+
+[Zizai Slides v0.6.1のソース](https://github.com/tomohiro-ono-works/marp-css-design/tree/d94749304af74fc0bf084079c17d19fe8bdcba01/zizai-slide-studio)を取得します。`zizai-slide-studio` をエンジンのルートとして、最初の1回だけ、Notebookと同じPythonで下記を実行します。この例ではエンジンを `C:/tools/zizai-slide-studio` に置いています。
+
+```powershell
+& ".\.venv\Scripts\python.exe" "C:/tools/zizai-slide-studio/tools/link_engine.py"
+```
+
+コネクタの共通フォルダーへ `slides/` を置き、既存のセットアップの「コネクタ共通フォルダーを登録する」を実行してカーネルを再起動します。編集可能なPPTXはエンジンのPython標準ライブラリだけで生成されます。
+
+### CSSのパス
+
+| 指定 | 読み込むCSS |
+| --- | --- |
+| CSS欄が空欄（直接入力） | `<エンジンルート>/zizai_slides/assets/slide.css`。例 `C:/tools/zizai-slide-studio/zizai_slides/assets/slide.css` |
+| CSS欄が空欄（ファイル指定） | `report.md` の隣の `report.css` があれば使用し、なければ組み込みCSSを使用 |
+| 自作CSSを指定 | 例 `C:/project/styles/custom.css`。CSS欄の「参照…」で絶対パスを指定 |
+
+自作CSSは組み込みCSSを別の場所へコピーし、エンジンが対応する `--zs-*` のトークンなどを変更して使えます。相対画像パスの基準は、ファイル指定ではMarkdownのフォルダー、直接入力ではカーネルの作業フォルダーです。[上流エンジンの仕様](https://github.com/tomohiro-ono-works/marp-css-design/blob/d94749304af74fc0bf084079c17d19fe8bdcba01/zizai-slide-studio/ENGINE-README.md)
+
 ## Windowsのファイル操作（TASK-027）
 
 Notebookのカーネルに `[forms,windows]` 付きのwheelを導入します。[Windows資産](../connectors/windows/)のPythonとYAMLを共通フォルダーの `windows/` へ置き、`configure_connectors` で登録します。

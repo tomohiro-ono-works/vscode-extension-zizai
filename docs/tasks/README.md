@@ -10,6 +10,8 @@
 
 ## 新方式のTask
 
+- [TASK-035 / #135：Markdownを編集可能なPPTXに変換するコネクタを追加](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/135)
+
 - [TASK-034 / #133：BigQuery・DuckDBのフォームで直接SQLのマジックセルを生成する](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/133)
 
 - [TASK-033 / #130：コネクタ別フォームとSQL実行マジックを追加する](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/130)

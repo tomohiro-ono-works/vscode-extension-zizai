@@ -11,6 +11,7 @@ from .connector_forms.duckdb.duckdb_codegen import GENERATION_FIELDS as DUCKDB_G
 from .connector_forms.excel.excel_codegen import GENERATION_FIELDS as EXCEL_GENERATION_FIELDS
 from .connector_forms.python.python_codegen import GENERATION_FIELDS as PYTHON_GENERATION_FIELDS
 from .connector_forms.shell.shell_codegen import GENERATION_FIELDS as SHELL_GENERATION_FIELDS
+from .connector_forms.slides.slides_codegen import GENERATION_FIELDS as SLIDES_GENERATION_FIELDS
 from .connector_forms.vector.vector_codegen import GENERATION_FIELDS as VECTOR_GENERATION_FIELDS
 from .connector_forms.windows.windows_codegen import GENERATION_FIELDS as WINDOWS_GENERATION_FIELDS
 from .core.connector_config import get_connector_directory
@@ -20,7 +21,7 @@ ID = re.compile(r'[A-Za-z_][A-Za-z0-9_]*\Z')
 GENERATION_FIELDS = {
     **BIGQUERY_GENERATION_FIELDS, **DATAINTEGRATION_GENERATION_FIELDS,
     **DUCKDB_GENERATION_FIELDS, **EXCEL_GENERATION_FIELDS, **PYTHON_GENERATION_FIELDS, **SHELL_GENERATION_FIELDS,
-    **VECTOR_GENERATION_FIELDS, **WINDOWS_GENERATION_FIELDS,
+    **SLIDES_GENERATION_FIELDS, **VECTOR_GENERATION_FIELDS, **WINDOWS_GENERATION_FIELDS,
 }
 ALLOWED_GENERATIONS = GENERATION_KINDS.union(GENERATION_FIELDS)
 
