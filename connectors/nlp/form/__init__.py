@@ -34,5 +34,5 @@ def generate(kind, values, module_path):
         constant("method",values["method"])
         constant("top_n",int(values["top_n"]) or None)
         if values.get("corpus_variable"): variable("corpus","corpus_variable")
-    if action == "resolve_coreferences": variable("resolver","resolver_variable")
+    if action == "resolve_coreferences" and values.get("resolver_variable"): variable("resolver","resolver_variable")
     return render_call(module_name_for(module_path),action,args,_identifier(values,"output_variable"),reading=True)
