@@ -66,12 +66,6 @@ connectors:
           db_file: {label: SQLiteファイル（絶対パス）, type: text, required: true}
           class_uri: {label: class_uri, type: text, required: true}
           output_variable: {label: 出力変数, type: text, default: result, required: true}
-      infer_types:
-        label: 型推論
-        generation: knowledge.infer_types
-        fields:
-          db_file: {label: SQLiteファイル（絶対パス）, type: text, required: true}
-          output_variable: {label: 出力変数, type: text, default: result, required: true}
       validate_ontology:
         label: 整合性検証
         generation: knowledge.validate_ontology
