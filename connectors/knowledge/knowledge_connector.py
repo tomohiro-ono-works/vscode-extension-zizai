@@ -96,9 +96,6 @@ def list_ancestors(db_file, class_uri):
     from ontology import list_ancestors as action
     return action(db_file, class_uri)
 
-def infer_types(db_file):
-    from ontology import infer_types as action
-    return action(db_file)
 
 def validate_ontology(db_file):
     from ontology import validate_ontology as action
