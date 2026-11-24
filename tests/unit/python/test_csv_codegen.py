@@ -8,7 +8,7 @@ import unittest
 from unittest.mock import patch
 
 import source_test_support
-from zizai.form_definition import load_definition, parse_definition
+from zizai.form_definition import load_definition, parse_definition, sample_definition
 from zizai.form_model import FormModel
 
 
@@ -115,7 +115,7 @@ class CsvCodegenTests(unittest.TestCase):
         form.set_action('export')
         form.set_value('folder', str(self.directory))
         self.assertIn('write_csv', form.generate())
-        fallback = FormModel(load_definition(source_test_support.REPO / 'src/forms.yaml'))
+        fallback = FormModel(sample_definition())
         fallback.set_connector('excel')
         fallback.set_action('export')
         fallback.set_value('folder', str(self.directory))

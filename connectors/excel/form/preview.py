@@ -19,3 +19,10 @@ def sheet_names(path):
         return workbook.sheetnames
     finally:
         workbook.close()
+
+
+def make_settings(widgets, path, fields):
+    sheets = sheet_names(path)
+    current = fields['sheet_name'].value
+    return {'sheet_name': widgets.Dropdown(description='シート', options=sheets,
+                                          value=current if current in sheets else sheets[0])}

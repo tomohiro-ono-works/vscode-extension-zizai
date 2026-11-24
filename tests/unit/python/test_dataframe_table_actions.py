@@ -15,7 +15,7 @@ class DataFrameTableActionsTests(unittest.TestCase):
         form.connector.value = 'dataintegration'
         form.action.value = action
         form.field_widgets['input_variable'].value = 'left'
-        return form, form._dataframe_editor
+        return form, form._controls._dataframe_editor
 
     def generate(self, action, settings, **namespace):
         form = FormModel(load_definition(source_test_support.REPO / 'connectors'))

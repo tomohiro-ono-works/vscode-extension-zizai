@@ -1,10 +1,9 @@
 """Normal form selection, safe data loading and placeholder generation."""
 import copy
-from importlib.resources import files
 from pathlib import Path
 import unittest
 
-from zizai.form_definition import load_definition, parse_definition
+from zizai.form_definition import load_definition, parse_definition, sample_definition
 from zizai.form_model import FormModel
 
 
@@ -18,7 +17,7 @@ class FormModelTests(unittest.TestCase):
         self.model.set_action(action)
 
     def test_placeholder_uses_ids_and_does_not_execute_business_code(self):
-        self.model = FormModel(parse_definition(files('zizai').joinpath('forms.yaml').read_text(encoding='utf-8')))
+        self.model = FormModel(sample_definition())
         self.choose('excel')
         self.model.set_value('folder', 'C:/データ/保存先')
         self.assertEqual(self.model.generate(), '{excel.exportのコードを生成}')

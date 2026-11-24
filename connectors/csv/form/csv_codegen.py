@@ -2,7 +2,12 @@
 import ast
 from ...connector_codegen import _text, _identifier, _integer, form_file_path, form_input_file_path, module_name_for, render_call
 
-GENERATION_KINDS = frozenset({'csv.read_csv', 'csv.write_csv'})
+COMMON_FIELDS = {'folder', 'filename', 'encoding', 'delimiter', 'schema'}
+GENERATION_FIELDS = {
+    'csv.read_csv': COMMON_FIELDS | {'output_variable', 'header_row', 'data_start_row', 'chunk_size'},
+    'csv.write_csv': COMMON_FIELDS | {'input_variable'},
+}
+GENERATION_KINDS = frozenset(GENERATION_FIELDS)
 
 
 def generate_csv(kind, values, module_path):
