@@ -67,7 +67,7 @@ def split_bunsetsu(data, *, text_column="text", id_column=None, model="ja_ginza"
         for i,d in _parsed(data,text_column,id_column,model) for j,s in enumerate(ginza.bunsetu_spans(d))],
         columns=["doc_id","bunsetsu_id","text","start","end"])
 
-def extract_keywords(data, *, method, text_column="text", id_column=None, model="ja_ginza", top_n=None, corpus=None, embedding_model="cl-nagoya/ruri-v3-30m"):
+def extract_keywords(data, *, method, text_column="text", id_column=None, model="ja_ginza", top_n=None, corpus=None, embedding_model="cl-nagoya/ruri-v3-130m"):
     if method not in {"tfidf","textrank","keybert"}:
         raise ValueError("Unknown keyword method")
     if top_n is not None and top_n < 1: raise ValueError("top_n must be positive")
@@ -99,7 +99,12 @@ def extract_keywords(data, *, method, text_column="text", id_column=None, model=
             scores.append(nx.pagerank(g,weight="weight") if g else {})
     else:
         from keybert import KeyBERT
-        encoder = KeyBERT(model=embedding_model)
+        from sentence_transformers import SentenceTransformer
+        encoder = KeyBERT(model=SentenceTransformer(
+            embedding_model, device="cpu", trust_remote_code=False,
+            model_kwargs={"use_safetensors": True},
+            revision="e3114c6ee10dbab8b4b235fbc6dcf9dd4d5ac1a6"
+            if embedding_model == "cl-nagoya/ruri-v3-130m" else None))
         for (_,d),ts in zip(docs,lists):
             candidates = list(dict.fromkeys(ts))
             if not candidates:
