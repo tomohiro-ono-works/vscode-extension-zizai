@@ -9,7 +9,7 @@ GENERATION_FIELDS = {}
 for action in ACTIONS:
     fields = set(COMMON)
     if action not in ("normalize_text","resolve_coreferences"): fields.add("model")
-    if action == "extract_keywords": fields.update(("method","top_n","corpus_variable"))
+    if action == "extract_keywords": fields.update(("method","top_n","corpus_variable","embedding_model"))
     if action == "resolve_coreferences": fields.add("resolver_variable")
     GENERATION_FIELDS["nlp."+action] = fields
 
@@ -32,6 +32,8 @@ def generate(kind, values, module_path):
     if action == "extract_keywords":
         if values.get("method") not in ("tfidf","textrank","keybert"): raise ValueError("Select method")
         constant("method",values["method"])
+        if values["method"] == "keybert" and values.get("embedding_model"):
+            constant("embedding_model",values["embedding_model"])
         constant("top_n",int(values["top_n"]) or None)
         if values.get("corpus_variable"): variable("corpus","corpus_variable")
     if action == "resolve_coreferences" and values.get("resolver_variable"): variable("resolver","resolver_variable")
