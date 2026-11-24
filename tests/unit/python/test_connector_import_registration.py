@@ -34,6 +34,22 @@ class ConnectorImportRegistrationTests(PackageArtifactTestCase):
         with patch.dict(os.environ,self.env), patch('zizai.core.connector_config._site_packages',return_value=self.site,create=True):
             configure_connectors(self.shared)
 
+    def test_selection_limits_registered_paths_and_form_candidates(self):
+        with patch.dict(os.environ, self.env), patch('zizai.core.connector_config._site_packages', return_value=self.site):
+            configure_connectors(self.shared, enabled_connectors=['csv', 'slides'])
+            registered = (self.site / 'zizai-connectors.pth').read_text(encoding='utf-8').splitlines()
+            self.assertEqual({Path(path) for path in registered[2:]},
+                             {self.shared, self.shared / 'csv', self.shared / 'slides'})
+            self.assertEqual(set(load_definition()['connectors']), {'csv', 'slides'})
+            self.assertIn('excel', load_definition(self.shared)['connectors'])
+            with self.assertRaises(ValueError):
+                configure_connectors(self.shared, enabled_connectors=['missing'])
+            self.assertEqual(set(load_definition()['connectors']), {'csv', 'slides'})
+            self.assertEqual((self.site / 'zizai-connectors.pth').read_text(encoding='utf-8').splitlines(),
+                             registered)
+            configure_connectors(self.shared)
+            self.assertIn('excel', load_definition()['connectors'])
+
     def test_generated_code_uses_ordinary_import_without_module_path(self):
         model=FormModel(load_definition(self.shared))
         model.set_connector('csv');model.set_action('import')
