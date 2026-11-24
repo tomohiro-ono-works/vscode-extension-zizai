@@ -12,7 +12,7 @@ dependencies = []
 dynamic = ["entry-points"]
 
 [project.optional-dependencies]
-nlp = ["pandas>=2", "ginza>=5.2,<6", "ja-ginza>=5.2,<6", "scikit-learn>=1.4", "networkx>=3", "sentence-transformers>=3"]
+nlp = ["pandas>=2", "ginza>=5.2,<6", "ja-ginza>=5.2,<6", "scikit-learn>=1.4", "networkx>=3", "sentence-transformers>=3", "keybert>=0.8"]
 forms = ["ipywidgets==8.1.9", "PyYAML==6.0.3"]
 bigquery = ["google-cloud-bigquery[pandas]==3.47.0", "pandas==3.1.1", "numpy==2.5.4", "pyarrow==26.0.1"]
 csv = ["pandas==3.1.1", "numpy==2.5.4"]
