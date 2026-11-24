@@ -39,21 +39,6 @@ def list_ancestors(db_file, class_uri):
                              initBindings={"cls":URIRef(class_uri)})
         return pd.DataFrame.from_records(((str(row[0]),) for row in result),columns=["ancestor"])
 
-def infer_types(db_file):
-    """Return inferred types without modifying the source graph."""
-    rows = set()
-    with open_graph(db_file, ONTOLOGY_GRAPH) as schema, open_graph(db_file) as data:
-        for subject, predicate, obj in data:
-            seeds = [(subject,obj)] if predicate == RDF.type else []
-            seeds.extend((subject,c) for c in schema.objects(predicate,RDFS.domain))
-            if isinstance(obj,URIRef):
-                seeds.extend((obj,c) for c in schema.objects(predicate,RDFS.range))
-            for node, cls in seeds:
-                for ancestor in schema.transitive_objects(cls,RDFS.subClassOf):
-                    if (node,RDF.type,ancestor) not in data:
-                        rows.add((node.n3(),RDF.type.n3(),ancestor.n3()))
-    return pd.DataFrame(sorted(rows),columns=["subject","predicate","object"])
-
 def validate_ontology(db_file):
     """Check explicit object/datatype property usage and declared datatype ranges."""
     rows = []
