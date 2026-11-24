@@ -28,6 +28,14 @@ class KnowledgeTests(unittest.TestCase):
             self.assertTrue(search_ontology(db, "ASK { <urn:Table> a <http://www.w3.org/2002/07/owl#Class> }").iloc[0,0])
             self.assertFalse(search_graph(db, "ASK { ?s ?p ?o }").iloc[0,0])
 
+    def test_validation(self):
+        from ontology import validate_ontology
+        with tempfile.TemporaryDirectory() as folder:
+            db = Path(folder) / "catalog.sqlite"
+            define_property(db, "urn:column", property_type="object")
+            add_triples(db, pd.DataFrame([["<urn:table>", "<urn:column>", '"invalid"']], columns=["subject","predicate","object"]))
+            self.assertEqual(validate_ontology(db)["issue"].tolist(), ["object_property_requires_resource"])
+
     def test_external_query_rejected(self):
         with tempfile.TemporaryDirectory() as folder:
             db = Path(folder) / "catalog.sqlite"
