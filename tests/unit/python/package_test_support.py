@@ -17,16 +17,16 @@ FORM_MODULES = {
     "bigquery": {"bigquery_codegen"},
     "csv": {"csv_codegen", "preview"},
     "dataintegration": {
-        "arithmetic_formula", "column_editor", "data_operations_editor", "dataintegration_codegen",
+        "arithmetic_formula", "column_editor", "data_operations_editor", "dataintegration_codegen", "ui",
         "pandas_operations_codegen", "pandas_table_codegen", "row_filter_editor", "table_action_editor", "value_editor",
     },
     "duckdb": {"duckdb_codegen"},
     "excel": {"excel_codegen", "preview"},
     "python": {"python_codegen"},
     "shell": {"shell_codegen"},
-    "slides": {"slides_codegen"},
-    "vector": {"collection_names", "vector_codegen"},
-    "windows": {"cursor", "windows_codegen"},
+    "slides": {"slides_codegen", "ui"},
+    "vector": {"collection_names", "vector_codegen", "ui"},
+    "windows": {"cursor", "windows_codegen", "ui"},
 }
 PACKAGE_FILES = {
     "zizai/__init__.py",
@@ -37,7 +37,9 @@ PACKAGE_FILES = {
     "zizai/form_model.py",
     "zizai/forms.py",
     "zizai/sql_magic.py",
-    "zizai/forms.yaml",
+    "zizai/connector_forms/controls.py",
+    "zizai/connector_forms/csv/sample.yaml",
+    "zizai/connector_forms/excel/sample.yaml",
     "zizai/form.css",
     "zizai/row_preview.py",
     "zizai/arithmetic_formula.py",
@@ -90,6 +92,7 @@ class PackageArtifactTestCase(unittest.TestCase):
         if cls.built_wheel is None:
             self.source.mkdir()
             shutil.copy2(REPO / "pyproject.toml", self.source)
+            shutil.copy2(REPO / "setup.py", self.source)
             shutil.copy2(REPO / "README.md", self.source)
             (self.source / "docs").mkdir()
             shutil.copy2(REPO / "docs" / "usage.md", self.source / "docs")

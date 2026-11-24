@@ -4,26 +4,11 @@ from pathlib import Path
 import keyword
 import re
 from string import Formatter
-from .connector_forms.bigquery.bigquery_codegen import GENERATION_FIELDS as BIGQUERY_GENERATION_FIELDS
-from .connector_forms.csv.csv_codegen import GENERATION_KINDS
-from .connector_forms.dataintegration.dataintegration_codegen import GENERATION_FIELDS as DATAINTEGRATION_GENERATION_FIELDS
-from .connector_forms.duckdb.duckdb_codegen import GENERATION_FIELDS as DUCKDB_GENERATION_FIELDS
-from .connector_forms.excel.excel_codegen import GENERATION_FIELDS as EXCEL_GENERATION_FIELDS
-from .connector_forms.python.python_codegen import GENERATION_FIELDS as PYTHON_GENERATION_FIELDS
-from .connector_forms.shell.shell_codegen import GENERATION_FIELDS as SHELL_GENERATION_FIELDS
-from .connector_forms.slides.slides_codegen import GENERATION_FIELDS as SLIDES_GENERATION_FIELDS
-from .connector_forms.vector.vector_codegen import GENERATION_FIELDS as VECTOR_GENERATION_FIELDS
-from .connector_forms.windows.windows_codegen import GENERATION_FIELDS as WINDOWS_GENERATION_FIELDS
+from .connector_forms import form_ids, generation_support
 from .core.connector_config import get_connector_directory, get_enabled_connector_folders
 
 MAX_BYTES = 1024 * 1024
 ID = re.compile(r'[A-Za-z_][A-Za-z0-9_]*\Z')
-GENERATION_FIELDS = {
-    **BIGQUERY_GENERATION_FIELDS, **DATAINTEGRATION_GENERATION_FIELDS,
-    **DUCKDB_GENERATION_FIELDS, **EXCEL_GENERATION_FIELDS, **PYTHON_GENERATION_FIELDS, **SHELL_GENERATION_FIELDS,
-    **SLIDES_GENERATION_FIELDS, **VECTOR_GENERATION_FIELDS, **WINDOWS_GENERATION_FIELDS,
-}
-ALLOWED_GENERATIONS = GENERATION_KINDS.union(GENERATION_FIELDS)
 
 
 def valid_value(field, value, *, require=False):
@@ -116,21 +101,15 @@ def parse_definition(text):
                 raise ValueError('アクション定義に未対応の項目があります。')
             if 'generation' in action:
                 generation = action['generation']
-                if not isinstance(generation, str) or generation not in ALLOWED_GENERATIONS:
+                if not isinstance(generation, str):
                     raise ValueError('generationは許可されたコネクタ操作を指定してください。')
             fields = action.get('fields', {})
             if not isinstance(fields, dict):
                 raise ValueError('fieldsは項目一覧にしてください。')
             if 'generation' in action:
-                needed = GENERATION_FIELDS.get(generation)
-                if needed is None:
-                    needed = {'folder', 'filename', 'encoding', 'delimiter', 'schema'}
-                    needed |= ({'output_variable', 'header_row', 'data_start_row', 'chunk_size'}
-                               if generation == 'csv.read_csv' else {'input_variable'})
-                if 'file_path' in fields and generation in {
-                    'csv.read_csv', 'excel.read_excel', 'excel.read_excel_range',
-                    'dataintegration.replace_fields_forrenamelist', 'shell.execute_bat',
-                }:
+                support = generation_support(generation)
+                needed = support.GENERATION_FIELDS[generation]
+                if 'file_path' in fields and generation in getattr(support, 'FILE_PATH_GENERATIONS', ()):
                     needed = (needed - {'folder', 'filename'}) | {'file_path'}
                 if not needed <= fields.keys():
                     raise ValueError('コード生成に必要な入力項目が不足しています。')
@@ -184,23 +163,33 @@ def _load_file(path):
     return data
 
 
+def sample_definition():
+    data = {'version': 1, 'output_template': '{connector}.{action}のコードを生成', 'connectors': {}}
+    for identifier in form_ids():
+        sample = files(f'zizai.connector_forms.{identifier}').joinpath('sample.yaml')
+        if sample.is_file():
+            data['connectors'].update(parse_definition(sample.read_text(encoding='utf-8'))['connectors'])
+    return data
+
+
 def load_definition(path=None):
     selected = Path(path).expanduser() if path is not None else get_connector_directory()
     if selected is not None and not selected.is_dir():
         return _load_file(selected)
-    data = parse_definition(files('zizai').joinpath('forms.yaml').read_text(encoding='utf-8'))
     if selected is None:
-        return data
+        return sample_definition()
     definitions = sorted(selected.glob('*/*_definition.yaml'))
     if not definitions:
         raise ValueError('共通フォルダーにコネクタの*_definition.yamlがありません。')
     enabled = get_enabled_connector_folders() if path is None else None
+    data = sample_definition() if enabled is None else {
+        'version': 1, 'output_template': '{connector}.{action}のコードを生成', 'connectors': {},
+    }
     if enabled is not None:
         definitions = [definition for definition in definitions if definition.parent.name in enabled]
         missing = set(enabled) - {definition.parent.name for definition in definitions}
         if missing:
             raise ValueError(f'登録済みコネクタの定義がありません: {", ".join(sorted(missing))}')
-        data['connectors'] = {}
     seen = set()
     for definition in definitions:
         if not definition.resolve().is_relative_to(selected.resolve()):

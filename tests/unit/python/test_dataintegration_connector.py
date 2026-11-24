@@ -28,7 +28,7 @@ class DataIntegrationConnectorTests(unittest.TestCase):
             form.connector.value = 'dataintegration'
             form.action.value = 'apply_data_operations'
             form.field_widgets['input_variable'].value = 'df'
-            editor = form._dataframe_editor
+            editor = form._controls._dataframe_editor
             self.assertEqual(editor._inputs.children[0].description, '対象列')
             editor._inputs.children[0].value = '数量'
             editor.category.value = 'value'
@@ -135,7 +135,7 @@ class DataIntegrationConnectorTests(unittest.TestCase):
             form.connector.value = 'dataintegration'
             form.action.value = 'apply_data_operations'
             form.field_widgets['input_variable'].value = 'df'
-            editor = form._dataframe_editor
+            editor = form._controls._dataframe_editor
             self.assertFalse(hasattr(editor, 'grid'))
             self.assertIs(editor._settings_row.children[-1], editor.apply)
             editor.category.value = 'condition'
@@ -220,7 +220,7 @@ class DataIntegrationConnectorTests(unittest.TestCase):
             form.connector.value = 'dataintegration'
             form.action.value = 'apply_data_operations'
             form.field_widgets['input_variable'].value = 'df'
-            editor = form._dataframe_editor
+            editor = form._controls._dataframe_editor
             self.assertFalse(hasattr(editor, 'grid'))
             self.assertIs(editor._settings_row.children[-1], editor.apply)
             editor.category.value = 'value'
@@ -267,7 +267,7 @@ class DataIntegrationConnectorTests(unittest.TestCase):
             form.connector.value = 'dataintegration'
             form.action.value = 'apply_data_operations'
             form.field_widgets['input_variable'].value = 'df'
-            editor = form._dataframe_editor
+            editor = form._controls._dataframe_editor
             value, row = editor.value_fields, editor.row_fields
             value.column.value = 'コード'
             editor.category.value = 'value'
@@ -308,7 +308,7 @@ class DataIntegrationConnectorTests(unittest.TestCase):
             form.connector.value = 'dataintegration'
             form.action.value = 'apply_data_operations'
             form.field_widgets['input_variable'].value = 'df'
-            editor = form._dataframe_editor
+            editor = form._controls._dataframe_editor
             value = editor.value_fields
             self.assertIs(editor.entries.rows.children[-1], editor.settings)
             self.assertEqual(editor.column.options[0][0], '新しく作る')
@@ -417,7 +417,7 @@ class DataIntegrationConnectorTests(unittest.TestCase):
             form.action.value = 'apply_column_operations'
             self.assertEqual([key for _, key in form.field_widgets['input_variable'].options], ['', 'df'])
             form.field_widgets['input_variable'].value = 'df'
-            editor = form._dataframe_editor
+            editor = form._controls._dataframe_editor
             self.assertEqual(len(editor.preview), 30)
             self.assertTrue(editor.add_operation({'op': 'convert', 'column': '数量', 'type': 'integer'}))
             self.assertFalse(editor.add_operation({'op': 'convert', 'column': '注記', 'type': 'integer'}))
@@ -444,7 +444,7 @@ class DataIntegrationConnectorTests(unittest.TestCase):
             form.connector.value = 'dataintegration'
             form.action.value = 'apply_column_operations'
             form.field_widgets['input_variable'].value = 'df'
-            editor = form._dataframe_editor
+            editor = form._controls._dataframe_editor
 
             def send(column, **message):
                 header = next(header for header in editor._headers if header._column_name == column)

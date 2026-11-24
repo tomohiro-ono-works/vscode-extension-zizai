@@ -222,7 +222,7 @@ CSV・読み込みを選んで設定し、生成コードを通常のPythonセ�
 
 ### 設定ファイル
 
-省略時は同梱の[forms.yaml](../src/forms.yaml)を使います。独自のファイルを指定すると、その全体を使います。拡張機能用`.vscode/zizai-definitions.yaml`とは別の形式です。
+省略時はセットアップで登録した定義を読み込みます。共通フォルダーが未登録の場合は、各コネクタに同梱した `form/sample.yaml` を使います。独自のファイルを指定すると、その全体を使います。拡張機能用の `.vscode/zizai-definitions.yaml` は別形式です。
 
 ```python
 %form "C:/設定/zizai-form.yaml"
@@ -289,7 +289,11 @@ distributionは`zizai-runtime`、importは`zizai`です。当時の`0.0.0.dev0`�
 | `src/connectors.py` | `zizai/connectors.py` |
 | `connectors/<id>/form/` のコード生成・フォーム補助 | `zizai/connector_forms/<id>/` |
 
-rootの`pyproject.toml`がpackage一覧とソースの対応を明示します。生成されたwheelやsdistのコピーを直接編集せず、上記正本を更新して再ビルドします。基本APIのimportは、Host・UI・個別コネクタ・追加SDKの読込を伴いません。共通フォルダーには業務モジュールの `*_connector.py` と定義の `*_definition.yaml` を配置します。フォーム補助はwheelまたはソースインストールから読み込まれます。
+ビルド時に `setup.py` が `connectors/*/form/__init__.py` を検出し、フォルダー名でフォーム部品を登録します。コネクタを追加したらセットアップNotebookで選び、②で再インストール、③で登録し、同じカーネルを再起動します。③の選択はPython環境ごとの `zizai-connectors.json` に保存します。
+
+`*_definition.yaml` に表示名・アクション・項目を記載します。`form/__init__.py` は `GENERATION_FIELDS` と `generate` を公開し、必要に応じて `MAGIC_NAME` やフォーム専用コントロールを宣言します。業務モジュールの `*_connector.py` は従来どおり登録して通常のPython importで使います。
+
+wheelやsdistは上記正本から再生成します。基本APIのimportは、Host・UI・個別コネクタ・追加SDKの読込を伴いません。
 
 実行依存は最小基盤では空です。個別アクションを追加した際に必要な直接依存を宣言します。この開発版を、全コネクタに必要な依存や契約資産が揃った製品版として扱いません。共通関数は実際に複数の利用箇所が必要になった時点で追加します。
 

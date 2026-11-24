@@ -1,5 +1,8 @@
 """Exercise the actual package collection and hand-installed wheel boundary."""
 
+import json
+import shutil
+import sys
 import tarfile
 import unittest
 import zipfile
@@ -9,6 +12,75 @@ from package_test_support import PackageArtifactTestCase
 
 
 class PackageDistributionTests(PackageArtifactTestCase):
+    def test_new_connector_form_is_packaged_by_folder_name(self):
+        self.wheel()
+        source = self.root / 'extended-source'
+        shutil.copytree(self.source, source, ignore=shutil.ignore_patterns('build', '*.egg-info'))
+        support = source / 'connectors' / 'example' / 'form'
+        support.mkdir(parents=True)
+        (support / '__init__.py').write_text(
+            "GENERATION_FIELDS = {'example.run': {'text'}}\n"
+            "MAGIC_NAME = 'zizai_example'\n"
+            "def generate(kind, values, module_path):\n"
+            "    return 'import example_connector\\nresult = ' + repr(values['text'])\n",
+            encoding='utf-8',
+        )
+        catalog = source / 'connectors'
+        (catalog / 'example/example_connector.py').write_text(
+            "raise AssertionError('connector executed while generating code')\n", encoding='utf-8')
+        (catalog / 'example/example_definition.yaml').write_text('''version: 1
+output_template: "{connector}.{action}"
+connectors:
+  example:
+    label: Example
+    module_file: example_connector.py
+    actions:
+      run:
+        label: Run
+        generation: example.run
+        fields:
+          text: {label: Text, type: text, default: sample}
+''', encoding='utf-8')
+        output = self.root / 'extended-wheel'
+        self.build(source, 'build_wheel', output)
+        with zipfile.ZipFile(next(output.glob('*.whl'))) as archive:
+            self.assertIn('zizai/connector_forms/example/__init__.py', archive.namelist())
+            name = next(name for name in archive.namelist() if name.endswith('.dist-info/entry_points.txt'))
+            self.assertIn('example = zizai.connector_forms.example', archive.read(name).decode('utf-8'))
+            installed = self.root / 'extended-install'
+            archive.extractall(installed)
+        result = self.run_process([sys.executable, '-I', '-B', '-c', '''
+import json, os, sys
+from pathlib import Path
+from unittest.mock import patch
+sys.path.insert(0, sys.argv[1])
+from IPython.core.interactiveshell import InteractiveShell
+from traitlets.config import Config
+from zizai.connectors import configure_connectors
+from zizai.forms import create_form, load_ipython_extension
+
+site = Path(sys.argv[3])
+settings = {'ZIZAI_CONFIG_FILE': str(site / 'zizai-connectors.json'), 'ZIZAI_CONNECTORS_DIR': ''}
+with patch.dict(os.environ, settings), patch('zizai.core.connector_config._site_packages', return_value=site):
+    configure_connectors(sys.argv[2], enabled_connectors=['example'])
+    form = create_form(connector='example')
+    form.action.value = 'run'
+    form.generate_button.click()
+    shell = InteractiveShell(ipython_dir=str(site), config=Config({'HistoryManager': {'hist_file': ':memory:'}}))
+    try:
+        load_ipython_extension(shell)
+        print(json.dumps({'connectors': list(form.model.definition['connectors']), 'code': form.result,
+                          'magic': shell.find_line_magic('zizai_example') is not None,
+                          'executed': 'example_connector' in sys.modules}))
+    finally:
+        shell.history_manager.end_session()
+        form.close()
+''', str(installed), str(catalog), str(self.root / 'example-site')])
+        self.assertEqual(json.loads(result), {
+            'connectors': ['example'], 'code': "import example_connector\nresult = 'sample'",
+            'magic': True, 'executed': False,
+        })
+
     def test_form_dependencies_are_optional_and_default_install_does_not_load_ui(self):
         with zipfile.ZipFile(self.wheel()) as archive:
             name = next(n for n in archive.namelist() if n.endswith('.dist-info/METADATA'))

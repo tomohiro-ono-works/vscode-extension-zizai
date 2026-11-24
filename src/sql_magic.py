@@ -7,11 +7,7 @@ from keyword import iskeyword
 from pathlib import Path
 from unicodedata import normalize
 
-
-_CONNECTIONS = {
-    'bigquery': ('zizai_bq', '--project-id', 'zizai_bq_project'),
-    'duckdb': ('zizai_duck', '--db-file', 'zizai_duck_db'),
-}
+from .connector_forms import form_support
 
 
 def _destination(line):
@@ -42,7 +38,9 @@ def _destination(line):
 
 
 def render_sql_magic(connector, connection, sql, output):
-    magic, option, _ = _CONNECTIONS[connector]
+    support = form_support(connector)
+    magic = support.MAGIC_NAME
+    option, _, _ = support.SQL_CONNECTION
     target = output.strip()
     if any(character in target for character in '\r\n\0'):
         raise ValueError('出力先は1行で指定してください。')
@@ -53,7 +51,7 @@ def render_sql_magic(connector, connection, sql, output):
 
 
 def _read_arguments(connector, line, namespace):
-    _, option, variable = _CONNECTIONS[connector]
+    option, variable, _ = form_support(connector).SQL_CONNECTION
     line = line.strip()
     if not line.startswith('--'):
         return namespace.get(variable), _destination(line)
@@ -105,9 +103,8 @@ def run_sql_cell(connector, line, sql, namespace):
     connection, destination = _read_arguments(connector, line, namespace)
     if isinstance(connection, str):
         connection = connection.strip()
-    if not ((isinstance(connection, str) and connection) or
-            (connector == 'duckdb' and isinstance(connection, Path))):
-        _, _, variable = _CONNECTIONS[connector]
+    _, variable, accepted_types = form_support(connector).SQL_CONNECTION
+    if not isinstance(connection, accepted_types) or not connection:
         raise ValueError(f'先にPythonセルで {variable} に接続先を指定してください。')
     if isinstance(destination, Path):
         destination = destination.absolute()

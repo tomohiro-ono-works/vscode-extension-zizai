@@ -9,6 +9,7 @@ description = "Python package foundation for ZizAI notebooks"
 readme = "docs/usage.md"
 requires-python = ">=3.12"
 dependencies = []
+dynamic = ["entry-points"]
 
 [project.optional-dependencies]
 forms = ["ipywidgets==8.1.9", "PyYAML==6.0.3"]
@@ -26,36 +27,11 @@ vector = [
 windows = ["pandas==3.1.1", "numpy==2.5.4"]
 
 [tool.setuptools]
-packages = [
-    "zizai", "zizai.core", "zizai.connector_forms",
-    "zizai.connector_forms.bigquery",
-    "zizai.connector_forms.csv",
-    "zizai.connector_forms.dataintegration",
-    "zizai.connector_forms.duckdb",
-    "zizai.connector_forms.excel",
-    "zizai.connector_forms.python",
-    "zizai.connector_forms.shell",
-    "zizai.connector_forms.slides",
-    "zizai.connector_forms.vector",
-    "zizai.connector_forms.windows",
-]
 include-package-data = false
 
-[tool.setuptools.package-dir]
-zizai = "src"
-"zizai.connector_forms.bigquery" = "connectors/bigquery/form"
-"zizai.connector_forms.csv" = "connectors/csv/form"
-"zizai.connector_forms.dataintegration" = "connectors/dataintegration/form"
-"zizai.connector_forms.duckdb" = "connectors/duckdb/form"
-"zizai.connector_forms.excel" = "connectors/excel/form"
-"zizai.connector_forms.python" = "connectors/python/form"
-"zizai.connector_forms.shell" = "connectors/shell/form"
-"zizai.connector_forms.slides" = "connectors/slides/form"
-"zizai.connector_forms.vector" = "connectors/vector/form"
-"zizai.connector_forms.windows" = "connectors/windows/form"
-
 [tool.setuptools.package-data]
-zizai = ["forms.yaml", "form.css"]
+zizai = ["form.css"]
+"*" = ["sample.yaml"]
 
 [tool.setuptools.data-files]
 "share/jupyter/nbextensions/zizai-row-preview" = [

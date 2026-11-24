@@ -4,7 +4,8 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
-from zizai.forms import create_form, load_ipython_extension
+from zizai.form_definition import sample_definition
+from zizai.forms import NotebookForm, create_form, load_ipython_extension
 
 
 class FormWidgetTests(unittest.TestCase):
@@ -33,10 +34,10 @@ class FormWidgetTests(unittest.TestCase):
         form.action.value = 'mouse_click'
         form.field_widgets['wait_before_seconds'].value = 1
         form.field_widgets['wait_after_seconds'].value = 2
-        button = form.cursor_capture_button
+        button = form._controls.cursor_capture_button
 
-        with (patch('zizai.forms.get_running_loop') as run_loop,
-              patch('zizai.forms._read_cursor_position', return_value=(-192, 40)) as read):
+        with (patch('zizai.connector_forms.windows.ui.get_running_loop') as run_loop,
+              patch('zizai.connector_forms.windows.ui._read_cursor_position', return_value=(-192, 40)) as read):
             button.click()
             button.click()
             schedule = run_loop.return_value.call_later
@@ -67,10 +68,10 @@ class FormWidgetTests(unittest.TestCase):
         form.field_widgets['y'].value = '110'
         form.generate_button.click()
         original = form.result
-        button = form.cursor_capture_button
+        button = form._controls.cursor_capture_button
 
-        with (patch('zizai.forms.get_running_loop') as run_loop,
-              patch('zizai.forms._read_cursor_position', side_effect=OSError('unavailable')) as read):
+        with (patch('zizai.connector_forms.windows.ui.get_running_loop') as run_loop,
+              patch('zizai.connector_forms.windows.ui._read_cursor_position', side_effect=OSError('unavailable')) as read):
             schedule = run_loop.return_value.call_later
             button.click()
             callback, *args = schedule.call_args.args[1:]
@@ -88,7 +89,7 @@ class FormWidgetTests(unittest.TestCase):
             schedule.return_value.cancel.assert_called_once_with()
             stale_callback(*args)
             read.assert_not_called()
-            self.assertIsNone(form.cursor_capture_button)
+            self.assertIsNone(getattr(form._controls, 'cursor_capture_button', None))
 
     def test_csv_read_browse_selects_file_and_keeps_it_on_cancel(self):
         import ipywidgets as widgets
@@ -465,10 +466,11 @@ class FormWidgetTests(unittest.TestCase):
     def test_csv_read_form_pairs_row_and_chunk_settings_without_date_control(self):
         import ipywidgets as widgets
         repo = Path(__file__).resolve().parents[3]
-        definitions = (repo / 'connectors', repo / 'src/forms.yaml')
-        for definition in definitions:
-            with self.subTest(definition=definition.name):
-                form = create_form(definition, folder_picker=lambda current: 'C:/選択先')
+        for real in (True, False):
+            with self.subTest(real=real):
+                picker = lambda current: 'C:/選択先'
+                form = create_form(repo / 'connectors', folder_picker=picker) if real else (
+                    NotebookForm(sample_definition(), folder_picker=picker))
                 self.addCleanup(form.close)
                 self.select(form, 'import')
                 fields = form.field_widgets
@@ -482,7 +484,7 @@ class FormWidgetTests(unittest.TestCase):
                 fields['chunk_size'].value = 0
                 self.assertFalse(form.generate_button.disabled)
                 form.generate_button.click()
-                if definition.is_dir():
+                if real:
                     for name, value in (('header_row', 2), ('data_start_row', 4), ('chunk_size', 0)):
                         self.assertIn(f'{name} = {value}', form.result)
                         self.assertIn(f'{name}={name}', form.result)
@@ -618,10 +620,7 @@ class FormWidgetTests(unittest.TestCase):
                 self.assertEqual(form.model.action, 'export')
 
     def test_output_is_escaped_text_not_executable_html(self):
-        from importlib.resources import files
-        from zizai.form_definition import parse_definition
-        from zizai.forms import NotebookForm
-        config = parse_definition(files('zizai').joinpath('forms.yaml').read_text(encoding='utf-8'))
+        config = sample_definition()
         config['output_template'] = '<img src=x onerror=bad()> {connector}.{action}'
         form = NotebookForm(config)
         self.addCleanup(form.close)

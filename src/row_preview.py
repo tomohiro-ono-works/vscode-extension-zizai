@@ -1,4 +1,4 @@
-"""Bounded CSV and Excel previews for selecting rows in the notebook form."""
+"""Bounded previews for selecting rows in the notebook form."""
 import csv
 from html import escape
 from string import ascii_uppercase
@@ -6,8 +6,6 @@ from zipfile import BadZipFile
 
 import ipywidgets as w
 from traitlets import Unicode
-from .connector_forms.csv.preview import read_preview_rows as read_csv_preview
-from .connector_forms.excel.preview import read_preview_rows as read_excel_preview, sheet_names
 from .form_definition import valid_value
 
 
@@ -16,11 +14,6 @@ MAX_COLS = 40
 ROW_NUMBER_WIDTH = 114
 CELL_WIDTH = 138
 COLUMN_LABELS = (*ascii_uppercase, *('A' + letter for letter in ascii_uppercase))
-
-
-def _preview_rows(path, connector, settings):
-    read_rows = read_csv_preview if connector == 'csv' else read_excel_preview
-    return read_rows(path, settings, max_rows=MAX_ROWS, max_cols=MAX_COLS)
 
 
 def _close_widgets(widgets):
@@ -38,17 +31,17 @@ class RowNumber(w.Button):
 
 
 class RowPreview:
-    def __init__(self, form, path):
+    def __init__(self, form, path, preview):
         self.form = form
         self.path = path
-        self.connector = form.model.connector
+        self.preview = preview
         self.rows = []
         self.table_rows = []
         self.row_buttons = []
         self.grid_widgets = []
         fields = form.field_widgets
         self.picks = {name: fields[name].value for name in ('header_row', 'data_start_row')}
-        self.settings = self._make_settings(fields)
+        self.settings = preview.make_settings(w, path, fields)
         self.grid = w.VBox(layout=w.Layout(width='100%', max_height='310px', overflow='auto'))
         self.grid.add_class('row-preview-grid')
         self.summary = w.HTML()
@@ -72,20 +65,6 @@ class RowPreview:
             setting.observe(self._render_table, names='value')
         self._render_table()
 
-    def _make_settings(self, fields):
-        if self.connector == 'csv':
-            encoding = fields['encoding']
-            return {
-                'encoding': w.Dropdown(description='文字コード', options=encoding.options,
-                                       value=encoding.value),
-                'delimiter': w.Text(description='区切り文字', value=fields['delimiter'].value,
-                                    continuous_update=False),
-            }
-        sheets = sheet_names(self.path)
-        current = fields['sheet_name'].value
-        return {'sheet_name': w.Dropdown(description='シート', options=sheets,
-                                        value=current if current in sheets else sheets[0])}
-
     def _render_table(self, _change=None):
         self.grid.children = ()
         _close_widgets(self.grid_widgets)
@@ -95,9 +74,7 @@ class RowPreview:
         self.rows = []
         try:
             settings = {name: widget.value for name, widget in self.settings.items()}
-            if self.connector == 'csv' and settings['encoding'] is None:
-                raise ValueError('文字コードを選択してください。')
-            self.rows = _preview_rows(self.path, self.connector, settings)
+            self.rows = self.preview.read_preview_rows(self.path, settings, max_rows=MAX_ROWS, max_cols=MAX_COLS)
         except (OSError, ValueError, LookupError, TypeError, csv.Error, BadZipFile) as error:
             self.status.value = f'<p role="alert">{escape(str(error))}</p>'
             self._update_picks()
@@ -156,10 +133,8 @@ class RowPreview:
         message = ''
         if self.rows and not 1 <= header <= start <= len(self.rows):
             message = '表示範囲で、データ開始行をヘッダー行以降に指定してください。'
-        elif self.connector == 'csv' and any(
-            not row or (len(row) == 1 and not row[0].strip()) for row in self.rows[:start]
-        ):
-            message = 'CSVの空行で読み込み時と行番号がずれる場合があります。フォームで行番号を直接指定してください。'
+        elif hasattr(self.preview, 'row_selection_error'):
+            message = self.preview.row_selection_error(self.rows, start)
         self.confirm.disabled = not self.rows or bool(message)
         detail = f'<br><small>{message}</small>' if message else ''
         self.summary.value = f'<p>ヘッダー行 {header} ／ データ開始行 {start}{detail}</p>'
