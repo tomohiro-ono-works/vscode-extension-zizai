@@ -9,3 +9,5 @@ keywords = extract_keywords('売上を分析してください。', method='text
 ```
 
 全アクションは str または DataFrame を受け取り DataFrame を返す。文字位置は原文の0始まり、終了位置は排他的。TF-IDF は複数文書または corpus を必要とする。KeyBERT はモデル取得時に通信が発生し得る。共参照の既定実装は人物名と明示的代名詞に限定したルールベースであり、resolver 引数で差し替え可能。一般的な共参照やゼロ代名詞の解決は保証しない。
+
+KeyBERT の embedding_model は Hugging Face モデルIDまたはローカルの SentenceTransformer モデルディレクトリを指定できる。既定値は vector コネクタと同じ cl-nagoya/ruri-v3-130m。CPU、trust_remote_code=False、safetensors を使用する。モデルID指定時は Hugging Face の標準キャッシュ（HF_HOME / HF_HUB_CACHE で変更可能）を利用する。
