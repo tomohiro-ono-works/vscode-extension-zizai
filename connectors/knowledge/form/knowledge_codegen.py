@@ -1,7 +1,7 @@
 import ast
 from ...connector_codegen import _identifier, _text, absolute_file_path, module_name_for, render_call
 
-ACTION_FIELDS = {"create_graph":[],"add_triples":["input_variable"],"remove_triples":["input_variable"],"search_graph":["sparql"],"define_class":["class_uri","label","parent_uri"],"define_property":["property_uri","domain_uri","range_uri","property_type","label"],"search_ontology":["sparql"],"list_ancestors":["class_uri"],"infer_types":[],"validate_ontology":[]}
+ACTION_FIELDS = {"create_graph":[],"add_triples":["input_variable"],"remove_triples":["input_variable"],"search_graph":["sparql"],"define_class":["class_uri","label","parent_uri"],"define_property":["property_uri","domain_uri","range_uri","property_type","label"],"search_ontology":["sparql"],"list_ancestors":["class_uri"],"validate_ontology":[]}
 GENERATION_FIELDS = {"knowledge."+name: set(fields)|{"db_file","output_variable"} for name,fields in ACTION_FIELDS.items()}
 
 def generate(kind, values, module_path):
