@@ -12,6 +12,7 @@ dependencies = []
 dynamic = ["entry-points"]
 
 [project.optional-dependencies]
+knowledge = ["rdflib>=7.1,<8", "pandas==3.1.1", "numpy==2.5.4"]
 forms = ["ipywidgets==8.1.9", "PyYAML==6.0.3"]
 bigquery = ["google-cloud-bigquery[pandas]==3.47.0", "pandas==3.1.1", "numpy==2.5.4", "pyarrow==26.0.1"]
 csv = ["pandas==3.1.1", "numpy==2.5.4"]
