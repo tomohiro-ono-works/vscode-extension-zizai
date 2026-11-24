@@ -98,14 +98,22 @@ def extract_keywords(data, *, method, text_column="text", id_column=None, model=
                     if a != b: g.add_edge(a,b,weight=g.get_edge_data(a,b,{}).get("weight",0)+1)
             scores.append(nx.pagerank(g,weight="weight") if g else {})
     else:
-        from sentence_transformers import SentenceTransformer
-        encoder = SentenceTransformer(embedding_model)
+        from keybert import KeyBERT
+        encoder = KeyBERT(model=embedding_model)
         for (_,d),ts in zip(docs,lists):
             candidates = list(dict.fromkeys(ts))
             if not candidates:
                 scores.append({}); continue
-            vectors = encoder.encode([d.text,*candidates],normalize_embeddings=True)
-            scores.append(dict(zip(candidates,map(float,vectors[1:] @ vectors[0]))))
+            # Use the same morphological representation for candidates and document.
+            from sklearn.feature_extraction.text import CountVectorizer
+            vectorizer = CountVectorizer(vocabulary=candidates, tokenizer=str.split,
+                                         token_pattern=None, lowercase=False)
+            # Supply embeddings of the original document to retain its context.
+            doc_embeddings = encoder.model.embed([d.text])
+            word_embeddings = encoder.model.embed(candidates)
+            scores.append(dict(encoder.extract_keywords(" ".join(ts),
+                vectorizer=vectorizer, top_n=len(candidates),
+                doc_embeddings=doc_embeddings, word_embeddings=word_embeddings)))
     rows = []
     for (i,_),score in zip(docs,scores):
         for rank,(word,value) in enumerate(sorted(score.items(),key=lambda x:(-x[1],x[0]))[:top_n],1):
@@ -115,10 +123,26 @@ def extract_keywords(data, *, method, text_column="text", id_column=None, model=
 def resolve_coreferences(data, *, text_column="text", id_column=None, resolver=None):
     """Use an explicitly supplied Japanese coreference resolver returning span dictionaries."""
     if resolver is None:
-        raise NotImplementedError("A Japanese coreference resolver must be supplied")
+        resolver = _heuristic_coreferences
     columns = ["doc_id","mention","antecedent","antecedent_start","antecedent_end"]
     rows = []
     for i,t in _docs(data,text_column,id_column):
         for item in resolver(t):
             rows.append([i,*[item[k] for k in columns[1:]]])
     return pd.DataFrame(rows,columns=columns)
+
+def _heuristic_coreferences(text):
+    """Conservative baseline: explicit third-person pronouns and preceding person entities.
+    This is not a general Japanese coreference model; ambiguous candidates are skipped.
+    """
+    doc = _model("ja_ginza")(text)
+    for token in doc:
+        if token.pos_ != "PRON" or token.text not in {"彼","彼女","彼ら"}:
+            continue
+        candidates = [e for e in doc.ents if e.end <= token.i and e.label_ in {"Person","PERSON"}]
+        unique = {e.text:e for e in candidates}
+        if len(unique) != 1 or token.text == "彼ら":
+            continue
+        e = next(iter(unique.values()))
+        yield {"mention":token.text,"antecedent":e.text,
+               "antecedent_start":e.start_char,"antecedent_end":e.end_char}
