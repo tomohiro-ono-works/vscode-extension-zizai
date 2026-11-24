@@ -72,7 +72,7 @@ connectors:
           text_column: {label: 文章列, type: text, default: text}
           id_column: {label: ID列, type: text}
           output_variable: {label: 出力変数, type: text, default: result, required: true}
-          resolver_variable: {label: 解析関数の変数名, type: text, required: true}
+          resolver_variable: {label: 解析関数の変数名（省略可）, type: text}
       split_sentences:
         label: 文分割
         generation: nlp.split_sentences
