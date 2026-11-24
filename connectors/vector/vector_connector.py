@@ -34,7 +34,7 @@ def _collection_path(db_folder, collection_name):
 def _model(model_name):
     from sentence_transformers import SentenceTransformer
 
-    return SentenceTransformer(model_name, device='cpu', trust_remote_code=False,
+    return SentenceTransformer(model_name, device='cpu', trust_remote_code=False, local_files_only=True,
                                model_kwargs={'use_safetensors': True},
                                revision=_DEFAULT_MODEL_REVISION if model_name == DEFAULT_MODEL_NAME else None)
 
