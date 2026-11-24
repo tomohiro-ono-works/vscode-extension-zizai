@@ -1,0 +1,97 @@
+version: 1
+output_template: "{connector}.{action}のコードを生成"
+connectors:
+  nlp:
+    label: NLP
+    module_file: nlp_connector.py
+    actions:
+      normalize_text:
+        label: 正規化
+        generation: nlp.normalize_text
+        fields:
+          input_mode: {label: 入力形式, type: choice, choices: [text, dataframe], default: text}
+          text: {label: 原文, type: text}
+          input_variable: {label: 入力変数, type: text, default: df}
+          text_column: {label: 文章列, type: text, default: text}
+          id_column: {label: ID列, type: text}
+          output_variable: {label: 出力変数, type: text, default: result, required: true}
+      tokenize:
+        label: 形態素解析
+        generation: nlp.tokenize
+        fields:
+          input_mode: {label: 入力形式, type: choice, choices: [text, dataframe], default: text}
+          text: {label: 原文, type: text}
+          input_variable: {label: 入力変数, type: text, default: df}
+          text_column: {label: 文章列, type: text, default: text}
+          id_column: {label: ID列, type: text}
+          output_variable: {label: 出力変数, type: text, default: result, required: true}
+          model: {label: 解析モデル, type: text, default: ja_ginza}
+      parse_dependencies:
+        label: 係り受け解析
+        generation: nlp.parse_dependencies
+        fields:
+          input_mode: {label: 入力形式, type: choice, choices: [text, dataframe], default: text}
+          text: {label: 原文, type: text}
+          input_variable: {label: 入力変数, type: text, default: df}
+          text_column: {label: 文章列, type: text, default: text}
+          id_column: {label: ID列, type: text}
+          output_variable: {label: 出力変数, type: text, default: result, required: true}
+          model: {label: 解析モデル, type: text, default: ja_ginza}
+      extract_entities:
+        label: 固有表現抽出
+        generation: nlp.extract_entities
+        fields:
+          input_mode: {label: 入力形式, type: choice, choices: [text, dataframe], default: text}
+          text: {label: 原文, type: text}
+          input_variable: {label: 入力変数, type: text, default: df}
+          text_column: {label: 文章列, type: text, default: text}
+          id_column: {label: ID列, type: text}
+          output_variable: {label: 出力変数, type: text, default: result, required: true}
+          model: {label: 解析モデル, type: text, default: ja_ginza}
+      extract_keywords:
+        label: キーワード抽出
+        generation: nlp.extract_keywords
+        fields:
+          input_mode: {label: 入力形式, type: choice, choices: [text, dataframe], default: text}
+          text: {label: 原文, type: text}
+          input_variable: {label: 入力変数, type: text, default: df}
+          text_column: {label: 文章列, type: text, default: text}
+          id_column: {label: ID列, type: text}
+          output_variable: {label: 出力変数, type: text, default: result, required: true}
+          method: {label: 抽出手法, type: choice, choices: [tfidf, textrank, keybert], required: true}
+          top_n: {label: 上位件数（0は全件）, type: integer, default: 0, minimum: 0}
+          corpus_variable: {label: 参照文書リスト変数, type: text}
+          model: {label: 解析モデル, type: text, default: ja_ginza}
+      resolve_coreferences:
+        label: 共参照解析
+        generation: nlp.resolve_coreferences
+        fields:
+          input_mode: {label: 入力形式, type: choice, choices: [text, dataframe], default: text}
+          text: {label: 原文, type: text}
+          input_variable: {label: 入力変数, type: text, default: df}
+          text_column: {label: 文章列, type: text, default: text}
+          id_column: {label: ID列, type: text}
+          output_variable: {label: 出力変数, type: text, default: result, required: true}
+          resolver_variable: {label: 解析関数の変数名, type: text, required: true}
+      split_sentences:
+        label: 文分割
+        generation: nlp.split_sentences
+        fields:
+          input_mode: {label: 入力形式, type: choice, choices: [text, dataframe], default: text}
+          text: {label: 原文, type: text}
+          input_variable: {label: 入力変数, type: text, default: df}
+          text_column: {label: 文章列, type: text, default: text}
+          id_column: {label: ID列, type: text}
+          output_variable: {label: 出力変数, type: text, default: result, required: true}
+          model: {label: 解析モデル, type: text, default: ja_ginza}
+      split_bunsetsu:
+        label: 文節分割
+        generation: nlp.split_bunsetsu
+        fields:
+          input_mode: {label: 入力形式, type: choice, choices: [text, dataframe], default: text}
+          text: {label: 原文, type: text}
+          input_variable: {label: 入力変数, type: text, default: df}
+          text_column: {label: 文章列, type: text, default: text}
+          id_column: {label: ID列, type: text}
+          output_variable: {label: 出力変数, type: text, default: result, required: true}
+          model: {label: 解析モデル, type: text, default: ja_ginza}
