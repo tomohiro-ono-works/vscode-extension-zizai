@@ -1,0 +1,80 @@
+version: 1
+output_template: "{connector}.{action}のコードを生成"
+connectors:
+  knowledge:
+    label: Knowledge
+    module_file: knowledge_connector.py
+    actions:
+      create_graph:
+        label: グラフ作成
+        generation: knowledge.create_graph
+        fields:
+          db_file: {label: SQLiteファイル（絶対パス）, type: text, required: true}
+          output_variable: {label: 出力変数, type: text, default: result, required: true}
+      add_triples:
+        label: トリプル登録
+        generation: knowledge.add_triples
+        fields:
+          db_file: {label: SQLiteファイル（絶対パス）, type: text, required: true}
+          input_variable: {label: input_variable, type: text, required: true}
+          output_variable: {label: 出力変数, type: text, default: result, required: true}
+      remove_triples:
+        label: トリプル削除
+        generation: knowledge.remove_triples
+        fields:
+          db_file: {label: SQLiteファイル（絶対パス）, type: text, required: true}
+          input_variable: {label: input_variable, type: text, required: true}
+          output_variable: {label: 出力変数, type: text, default: result, required: true}
+      search_graph:
+        label: グラフ検索
+        generation: knowledge.search_graph
+        fields:
+          db_file: {label: SQLiteファイル（絶対パス）, type: text, required: true}
+          sparql: {label: sparql, type: textarea, required: true}
+          output_variable: {label: 出力変数, type: text, default: result, required: true}
+      define_class:
+        label: クラス定義
+        generation: knowledge.define_class
+        fields:
+          db_file: {label: SQLiteファイル（絶対パス）, type: text, required: true}
+          class_uri: {label: class_uri, type: text, required: true}
+          label: {label: label, type: text, required: false}
+          parent_uri: {label: parent_uri, type: text, required: false}
+          output_variable: {label: 出力変数, type: text, default: result, required: true}
+      define_property:
+        label: プロパティ定義
+        generation: knowledge.define_property
+        fields:
+          db_file: {label: SQLiteファイル（絶対パス）, type: text, required: true}
+          property_uri: {label: property_uri, type: text, required: true}
+          domain_uri: {label: domain_uri, type: text, required: false}
+          range_uri: {label: range_uri, type: text, required: false}
+          property_type: {label: property_type, type: choice, choices: [object, datatype], default: object, required: true}
+          label: {label: label, type: text, required: false}
+          output_variable: {label: 出力変数, type: text, default: result, required: true}
+      search_ontology:
+        label: オントロジー検索
+        generation: knowledge.search_ontology
+        fields:
+          db_file: {label: SQLiteファイル（絶対パス）, type: text, required: true}
+          sparql: {label: sparql, type: textarea, required: true}
+          output_variable: {label: 出力変数, type: text, default: result, required: true}
+      list_ancestors:
+        label: 上位クラス検索
+        generation: knowledge.list_ancestors
+        fields:
+          db_file: {label: SQLiteファイル（絶対パス）, type: text, required: true}
+          class_uri: {label: class_uri, type: text, required: true}
+          output_variable: {label: 出力変数, type: text, default: result, required: true}
+      infer_types:
+        label: 型推論
+        generation: knowledge.infer_types
+        fields:
+          db_file: {label: SQLiteファイル（絶対パス）, type: text, required: true}
+          output_variable: {label: 出力変数, type: text, default: result, required: true}
+      validate_ontology:
+        label: 整合性検証
+        generation: knowledge.validate_ontology
+        fields:
+          db_file: {label: SQLiteファイル（絶対パス）, type: text, required: true}
+          output_variable: {label: 出力変数, type: text, default: result, required: true}
