@@ -38,3 +38,40 @@ def list_ancestors(db_file, class_uri):
         result = graph.query("SELECT DISTINCT ?ancestor WHERE { ?cls <http://www.w3.org/2000/01/rdf-schema#subClassOf>+ ?ancestor }",
                              initBindings={"cls":URIRef(class_uri)})
         return pd.DataFrame.from_records(((str(row[0]),) for row in result),columns=["ancestor"])
+
+def infer_types(db_file):
+    """Return inferred types without modifying the source graph."""
+    rows = set()
+    with open_graph(db_file, ONTOLOGY_GRAPH) as schema, open_graph(db_file) as data:
+        for subject, predicate, obj in data:
+            seeds = [(subject,obj)] if predicate == RDF.type else []
+            seeds.extend((subject,c) for c in schema.objects(predicate,RDFS.domain))
+            if isinstance(obj,URIRef):
+                seeds.extend((obj,c) for c in schema.objects(predicate,RDFS.range))
+            for node, cls in seeds:
+                for ancestor in schema.transitive_objects(cls,RDFS.subClassOf):
+                    if (node,RDF.type,ancestor) not in data:
+                        rows.add((node.n3(),RDF.type.n3(),ancestor.n3()))
+    return pd.DataFrame(sorted(rows),columns=["subject","predicate","object"])
+
+def validate_ontology(db_file):
+    """Check explicit object/datatype property usage and declared datatype ranges."""
+    rows = []
+    with open_graph(db_file, ONTOLOGY_GRAPH) as schema, open_graph(db_file) as data:
+        for s,p,o in data:
+            types = set(schema.objects(p,RDF.type))
+            issues = []
+            if OWL.ObjectProperty in types and isinstance(o,Literal):
+                issues.append("object_property_requires_resource")
+            if OWL.DatatypeProperty in types:
+                if not isinstance(o,Literal):
+                    issues.append("datatype_property_requires_literal")
+                else:
+                    from rdflib.namespace import XSD
+                    actual = o.datatype or (RDF.langString if o.language else XSD.string)
+                    for expected in schema.objects(p,RDFS.range):
+                        if actual != expected:
+                            issues.append("datatype_range_mismatch")
+            for issue in issues:
+                rows.append((s.n3(),p.n3(),o.n3(),issue))
+    return pd.DataFrame(rows,columns=["subject","predicate","object","issue"])
