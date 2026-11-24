@@ -44,7 +44,26 @@ def get_connector_directory():
     return Path(value).expanduser().resolve()
 
 
-def configure_connectors(directory):
+def get_enabled_connector_folders():
+    settings = _settings()
+    enabled = settings.get('enabled_connectors')
+    if enabled is None:
+        return None
+    registered = settings.get('connectors_directory')
+    if registered != str(get_connector_directory()):
+        return None
+    return _validate_connector_selection(enabled)
+
+
+def _validate_connector_selection(enabled):
+    if (not isinstance(enabled, (list, tuple)) or not enabled
+            or any(not isinstance(name, str) or not name for name in enabled)
+            or len(set(enabled)) != len(enabled)):
+        raise ValueError('コネクタは重複なく1つ以上選んでください。')
+    return tuple(enabled)
+
+
+def configure_connectors(directory, *, enabled_connectors=None):
     """Register the shared source in this Python environment, without importing it.
 
     New kernels read the standard .pth file. Restart an existing kernel after
@@ -54,8 +73,16 @@ def configure_connectors(directory):
     if not directory.is_absolute() or not directory.is_dir():
         raise ValueError('既存のコネクタ共通フォルダーを絶対パスで指定してください。')
     directory = directory.resolve()
-    paths = [directory, *sorted(p.resolve() for p in directory.iterdir()
-        if p.is_dir() and not p.name.startswith('.') and p.name != '__pycache__')]
+    folders = sorted(p for p in directory.iterdir()
+                     if p.is_dir() and not p.name.startswith('.') and p.name != '__pycache__')
+    if enabled_connectors is not None:
+        enabled_connectors = _validate_connector_selection(enabled_connectors)
+        available = {p.name for p in folders if any(p.glob('*_definition.yaml'))}
+        unknown = set(enabled_connectors) - available
+        if unknown:
+            raise ValueError(f'共通フォルダーに定義がないコネクタ: {", ".join(sorted(unknown))}')
+        folders = [p for p in folders if p.name in enabled_connectors]
+    paths = [directory, *(folder.resolve() for folder in folders)]
     names = {}
     for folder in paths:
         if not folder.is_relative_to(directory) or any(c in str(folder) for c in '\r\n'):
@@ -72,9 +99,13 @@ def configure_connectors(directory):
     text = (REGISTRATION_HEADER +
         f'import sys; sys.pycache_prefix = {cache} if sys.pycache_prefix is None else sys.pycache_prefix\n' +
         ''.join(str(folder) + '\n' for folder in paths))
-    _atomic_write(registration, text, encoding=encoding)
     settings = _settings()
     settings['connectors_directory'] = str(directory)
+    if enabled_connectors is None:
+        settings.pop('enabled_connectors', None)
+    else:
+        settings['enabled_connectors'] = enabled_connectors
+    _atomic_write(registration, text, encoding=encoding)
     _atomic_write(_settings_path(), json.dumps(settings, ensure_ascii=False, indent=2))
     return directory
 

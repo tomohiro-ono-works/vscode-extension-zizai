@@ -10,6 +10,8 @@
 
 ## 新方式のTask
 
+- [TASK-038 / #141：セットアップNotebookでコネクタ選択とbuildの片付けを行う](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/141)
+
 - [TASK-037 / #139：VectorとRENAMEの保存・参照フォルダーを整理する](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/139)
 
 - [TASK-036 / #137：スライドエンジンをコネクタ内に同梱する](https://github.com/tomohiro-ono-works/vscode-extension-zizai/issues/137)

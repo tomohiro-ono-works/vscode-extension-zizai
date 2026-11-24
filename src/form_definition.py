@@ -14,7 +14,7 @@ from .connector_forms.shell.shell_codegen import GENERATION_FIELDS as SHELL_GENE
 from .connector_forms.slides.slides_codegen import GENERATION_FIELDS as SLIDES_GENERATION_FIELDS
 from .connector_forms.vector.vector_codegen import GENERATION_FIELDS as VECTOR_GENERATION_FIELDS
 from .connector_forms.windows.windows_codegen import GENERATION_FIELDS as WINDOWS_GENERATION_FIELDS
-from .core.connector_config import get_connector_directory
+from .core.connector_config import get_connector_directory, get_enabled_connector_folders
 
 MAX_BYTES = 1024 * 1024
 ID = re.compile(r'[A-Za-z_][A-Za-z0-9_]*\Z')
@@ -194,6 +194,13 @@ def load_definition(path=None):
     definitions = sorted(selected.glob('*/*_definition.yaml'))
     if not definitions:
         raise ValueError('共通フォルダーにコネクタの*_definition.yamlがありません。')
+    enabled = get_enabled_connector_folders() if path is None else None
+    if enabled is not None:
+        definitions = [definition for definition in definitions if definition.parent.name in enabled]
+        missing = set(enabled) - {definition.parent.name for definition in definitions}
+        if missing:
+            raise ValueError(f'登録済みコネクタの定義がありません: {", ".join(sorted(missing))}')
+        data['connectors'] = {}
     seen = set()
     for definition in definitions:
         if not definition.resolve().is_relative_to(selected.resolve()):
