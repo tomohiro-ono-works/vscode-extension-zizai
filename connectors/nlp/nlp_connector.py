@@ -101,7 +101,7 @@ def extract_keywords(data, *, method, text_column="text", id_column=None, model=
         from keybert import KeyBERT
         from sentence_transformers import SentenceTransformer
         encoder = KeyBERT(model=SentenceTransformer(
-            embedding_model, device="cpu", trust_remote_code=False,
+            embedding_model, device="cpu", trust_remote_code=False, local_files_only=True,
             model_kwargs={"use_safetensors": True},
             revision="e3114c6ee10dbab8b4b235fbc6dcf9dd4d5ac1a6"
             if embedding_model == "cl-nagoya/ruri-v3-130m" else None))
