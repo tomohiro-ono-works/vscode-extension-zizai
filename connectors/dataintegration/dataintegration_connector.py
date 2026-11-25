@@ -572,7 +572,10 @@ def join_frames(left, right, *, keys, how='inner', match_policy='all'):
         for i, (l, r) in enumerate(exact):
             lk[i] = left[l].reset_index(drop=True)
             rk[i] = right[r].reset_index(drop=True)
-        candidates = lk.merge(rk, on=list(range(len(exact))), how='inner', sort=False)
+        exact_columns = list(range(len(exact)))
+        if match_policy == 'first' and not textual:
+            rk = rk.drop_duplicates(subset=exact_columns, keep='first')
+        candidates = lk.merge(rk, on=exact_columns, how='inner', sort=False)
         candidates = candidates.sort_values([left_pos, right_pos], kind='stable')
         groups = ((int(i), group[right_pos].to_numpy())
                   for i, group in candidates.groupby(left_pos, sort=False))
@@ -618,14 +621,15 @@ def join_frames(left, right, *, keys, how='inner', match_policy='all'):
     # Preserve both non-exact key values. Same-name exact keys coalesce
     # like pandas.merge. Other overlapping labels receive _x/_y suffixes.
     shared_exact = {l for l, r in exact if l == r}
-    overlap = set(left.columns) & set(right.columns) - shared_exact
+    overlap = (set(left.columns) & set(right.columns)) - shared_exact
     li = [i for i, _ in pairs]
     ri = [j for _, j in pairs]
     lout = left.reset_index(drop=True).reindex(li).reset_index(drop=True)
     rout = right.reset_index(drop=True).reindex(ri).reset_index(drop=True)
-    absent_left = pd.Series([i < 0 for i in li], dtype=bool)
     for name in shared_exact:
-        lout[name] = lout[name].where(~absent_left, rout[name])
+        combined = pd.concat([left[name], right[name]], ignore_index=True)
+        positions = [i if i >= 0 else len(left) + j for i, j in pairs]
+        lout[name] = combined.iloc[positions].reset_index(drop=True)
     rout = rout.drop(columns=list(shared_exact))
     lout = lout.rename(columns={name: f'{name}_x' for name in overlap})
     rout = rout.rename(columns={name: f'{name}_y' for name in overlap})
