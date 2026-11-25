@@ -1,5 +1,7 @@
 """Render the ordered data operations as standalone pandas statements."""
 from itertools import groupby
+import keyword
+from pathlib import Path
 from unicodedata import normalize
 
 from .arithmetic_formula import ArithmeticFormula
@@ -15,10 +17,11 @@ TEXT_METHODS = {'trim': 'strip', 'upper': 'upper', 'lower': 'lower'}
 
 
 class PandasOperationsCode:
-    def __init__(self, incoming, output, *, lookup_labels):
+    def __init__(self, incoming, output, *, lookup_labels, dictionary_refs=(), connector_module='dataintegration_connector'):
         self.output = output
         self.imports = {}
-        self.names = {normalize('NFKC', name) for name in (incoming, output)}
+        self.names = {normalize('NFKC', name) for name in (incoming, output, *dictionary_refs)}
+        self.connector_module = connector_module
         self.lines = [f'{output} = {incoming}.copy()']
         self.labels = None
         if lookup_labels:
@@ -77,6 +80,23 @@ class PandasOperationsCode:
             expression = f'{column}.mask({column}.eq({value}).fillna(False), {missing})'
         elif op in TEXT_METHODS:
             expression = f'{text}.{TEXT_METHODS[op]}()'
+        elif op == 'replace_dictionary':
+            reference = step['dictionary_reference']
+            if step['dictionary_source'] == 'dataframe':
+                dictionary = reference
+            elif step['dictionary_source'] == 'csv':
+                if not Path(reference).is_absolute() or Path(reference).suffix.lower() != '.csv':
+                    raise ValueError('辞書CSVは絶対パスで指定してください。')
+                dictionary = repr(reference)
+            else:
+                raise ValueError('辞書の参照形式を確認してください。')
+            module = self.use(self.connector_module, '_zizai_dataintegration')
+            expression = (
+                f'{module}.replace_dictionary({column}, {dictionary}, '
+                f'source_column={step["source_column"]!r}, target_column={step["target_column"]!r}, '
+                f'match_mode={step.get("match_mode", "exact")!r}, '
+                f'unmatched={step.get("unmatched", "keep")!r}, cascade={step.get("cascade", False)!r})'
+            )
         elif op == 'replace_exact':
             expression = (
                 f"{column}.astype('string').replace({step['search']!r}, {step['replacement']!r}, regex=False)"
@@ -192,9 +212,20 @@ class PandasOperationsCode:
         return '\n'.join([*lines, self.output])
 
 
-def generate_pandas_operations(incoming, output, operations):
+def generate_pandas_operations(incoming, output, operations, *, connector_module='dataintegration_connector'):
     try:
-        code = PandasOperationsCode(incoming, output, lookup_labels=operations[0].get('lookup_labels') is True)
+        refs = set()
+        for item in operations:
+            step = item['operation']
+            if step.get('op') == 'replace_dictionary' and step.get('dictionary_source') == 'dataframe':
+                reference = step['dictionary_reference']
+                if not isinstance(reference, str) or not reference.isidentifier() or keyword.iskeyword(normalize('NFKC', reference)):
+                    raise ValueError('辞書DataFrameの変数名を指定してください。')
+                if normalize('NFKC', reference) == normalize('NFKC', output):
+                    raise ValueError('辞書と出力には別の変数名を指定してください。')
+                refs.add(reference)
+        code = PandasOperationsCode(incoming, output, lookup_labels=operations[0].get('lookup_labels') is True,
+                                    dictionary_refs=refs, connector_module=connector_module)
         for category, group in groupby(operations, lambda step: step['category']):
             steps = [item['operation'] for item in group]
             if category == 'condition':
