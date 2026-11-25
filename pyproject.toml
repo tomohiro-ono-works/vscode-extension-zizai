@@ -18,6 +18,7 @@ csv = ["pandas==3.1.1", "numpy==2.5.4"]
 dataintegration = ["pandas==3.1.1", "numpy==2.5.4"]
 duckdb = ["duckdb==2.0.0", "pandas==3.1.1", "numpy==2.5.4"]
 excel = ["pandas==3.1.1", "numpy==2.5.4", "openpyxl==3.1.5", "defusedxml==0.7.1"]
+fulltext_search = ["pandas==3.1.1", "numpy==2.5.4"]
 python = ["pandas==3.1.1", "numpy==2.5.4"]
 shell = ["pandas==3.1.1", "numpy==2.5.4"]
 vector = [
