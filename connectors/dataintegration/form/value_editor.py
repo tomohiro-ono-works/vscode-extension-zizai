@@ -10,6 +10,7 @@ from ...row_preview import _close_widgets
 VALUE_ACTIONS = {
     'text': {
         'replace_exact': '置換（完全一致）', 'replace_part': '置換（部分一致）',
+        'replace_dictionary': '辞書置換（一括）',
         'concat': '列の値を結合', 'split': '区切って取り出す', 'extract_regex': '正規表現で抽出',
         'trim': '前後の空白を除去', 'upper': '大文字に変換', 'lower': '小文字に変換',
     },
@@ -20,6 +21,8 @@ ACTION_LABELS = {**VALUE_ACTIONS['text'], **VALUE_ACTIONS['numeric'], **NULL_ACT
 ACTION_FIELDS = {
     'replace_exact': ('search', 'replacement'),
     'replace_part': ('search', 'replacement'),
+    'replace_dictionary': ('dictionary_source', 'dictionary_reference', 'source_column', 'target_column',
+                           'match_mode', 'unmatched', 'cascade'),
     'concat': ('other_column', 'separator'),
     'split': ('separator', 'position'),
     'extract_regex': ('pattern', 'group'),
@@ -29,6 +32,9 @@ ACTION_FIELDS = {
     'formula': ('expression',),
 }
 FIELD_LABELS = {
+    'dictionary_source': '辞書形式', 'dictionary_reference': '辞書変数名／CSV絶対パス',
+    'source_column': '変換前列', 'target_column': '変換後列',
+    'match_mode': '一致方式', 'unmatched': '未一致時', 'cascade': '連鎖置換',
     'search': '検索文字列', 'replacement': '置換後の文字列', 'separator': '区切り文字',
     'pattern': '正規表現', 'value': '指定値', 'other_column': '相手列', 'expression': '計算式',
     'position': '取り出す位置', 'group': 'グループ番号（0は一致全体）', 'digits': '小数点以下の桁数',
@@ -147,6 +153,16 @@ class ValueFields:
         _close_widgets(previous.values())
 
     def _make_field(self, name):
+        choices = {
+            'dictionary_source': [('DataFrame', 'dataframe'), ('CSV', 'csv')],
+            'match_mode': [('完全一致', 'exact'), ('部分一致', 'partial'), ('正規表現', 'regex')],
+            'unmatched': [('元の値を維持', 'keep'), ('NULLにする', 'null')],
+        }
+        if name in choices:
+            return _dropdown(FIELD_LABELS[name], choices[name], value=choices[name][0][1])
+        if name == 'cascade':
+            return widgets.Checkbox(description=FIELD_LABELS[name], value=False,
+                                    layout=widgets.Layout(width='auto'), indent=False)
         if name == 'other_column':
             return _dropdown(FIELD_LABELS[name], self._column_options())
         if name == 'value_type':
@@ -200,6 +216,19 @@ class ValueFields:
             change['value'] = value
         else:
             change.update((key, widget.value) for key, widget in self.fields.items())
+        if op == 'replace_dictionary':
+            import keyword
+            import unicodedata
+            from pathlib import Path
+            reference = change['dictionary_reference'].strip()
+            change['dictionary_reference'] = reference
+            if change['dictionary_source'] == 'dataframe':
+                if not reference.isidentifier() or keyword.iskeyword(unicodedata.normalize('NFKC', reference)):
+                    raise ValueError('辞書DataFrameの変数名を指定してください。')
+            elif not Path(reference).is_absolute() or Path(reference).suffix.lower() != '.csv':
+                raise ValueError('辞書CSVの絶対パスを指定してください。')
+            if not change['source_column'] or not change['target_column']:
+                raise ValueError('辞書の変換前列・変換後列を指定してください。')
         return change
 
     def load(self, operation):
