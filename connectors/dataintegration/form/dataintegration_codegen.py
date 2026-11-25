@@ -52,7 +52,8 @@ def generate_dataintegration(kind, values, module_path):
         if not isinstance(operations, list) or not operations or any(not isinstance(op, dict) for op in operations):
             raise ValueError(f'{label}を1件以上設定してください。')
         if kind == DATA_OPERATIONS:
-            return generate_pandas_operations(incoming, output, operations)
+            return generate_pandas_operations(incoming, output, operations,
+                                              connector_module=module_name_for(module_path))
         module = module_name_for(module_path)
         arguments = [ast.keyword(arg='data', value=ast.Name(id=incoming, ctx=ast.Load())),
                      ast.keyword(arg='operations', value=ast.parse(repr(operations), mode='eval').body)]
