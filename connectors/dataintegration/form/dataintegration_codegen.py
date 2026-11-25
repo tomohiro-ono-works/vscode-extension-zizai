@@ -5,7 +5,7 @@ import unicodedata
 
 from ...connector_codegen import _identifier, _text, form_input_file_path, module_name_for, render_call
 from .pandas_operations_codegen import generate_pandas_operations
-from .pandas_table_codegen import TABLE_ACTIONS, generate_table_action
+from .pandas_table_codegen import COMBINE_FRAMES, JOIN_TYPES, TABLE_ACTIONS, generate_table_action
 
 
 PRE_FLAGS = ('remove_spaces', 'remove_newlines', 'to_halfwidth_alnum', 'symbols_to_snake')
@@ -39,7 +39,15 @@ def generate_dataintegration(kind, values, module_path):
             raise ValueError('処理の設定を確認してください。') from error
         if not isinstance(settings, dict):
             raise ValueError('処理の設定を確認してください。')
-        return generate_table_action(kind, incoming, output, settings)
+        kwargs = {}
+        if kind == COMBINE_FRAMES and settings.get('kind') in JOIN_TYPES:
+            keys = settings.get('keys', [])
+            if settings.get('match_policy', 'all') != 'all' or (
+                isinstance(keys, list) and any(isinstance(key, dict) and key.get('match', 'exact') != 'exact'
+                                              for key in keys)
+            ):
+                kwargs['connector_module'] = module_name_for(module_path)
+        return generate_table_action(kind, incoming, output, settings, **kwargs)
     if kind in DATAFRAME_OPERATIONS:
         label = {COLUMN_OPERATIONS: '列操作', VALUE_OPERATIONS: '値加工', ROW_OPERATIONS: '行の条件',
                  DATA_OPERATIONS: '処理'}[kind]
