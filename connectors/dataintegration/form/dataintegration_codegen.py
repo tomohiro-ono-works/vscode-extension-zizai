@@ -1,6 +1,7 @@
 """Generate data integration calls from the Notebook form."""
 import ast
 import json
+import keyword
 import unicodedata
 
 from ...connector_codegen import _identifier, _text, form_input_file_path, module_name_for, render_call
@@ -52,11 +53,29 @@ def generate_dataintegration(kind, values, module_path):
         if not isinstance(operations, list) or not operations or any(not isinstance(op, dict) for op in operations):
             raise ValueError(f'{label}を1件以上設定してください。')
         if kind == DATA_OPERATIONS:
-            return generate_pandas_operations(incoming, output, operations,
-                                              connector_module=module_name_for(module_path))
+            has_dictionary = any(isinstance(step.get('operation'), dict) and
+                                 step['operation'].get('op') == 'replace_dictionary'
+                                 for step in operations)
+            kwargs = {'connector_module': module_name_for(module_path)} if has_dictionary else {}
+            return generate_pandas_operations(incoming, output, operations, **kwargs)
         module = module_name_for(module_path)
         arguments = [ast.keyword(arg='data', value=ast.Name(id=incoming, ctx=ast.Load())),
                      ast.keyword(arg='operations', value=ast.parse(repr(operations), mode='eval').body)]
+        if kind == VALUE_OPERATIONS:
+            refs = set()
+            for op in operations:
+                if op.get('op') == 'replace_dictionary' and op.get('dictionary_source') == 'dataframe':
+                    name = op.get('dictionary_reference')
+                    if not isinstance(name, str) or not name.isidentifier() or keyword.iskeyword(unicodedata.normalize('NFKC', name)):
+                        raise ValueError('辞書DataFrameの変数名を指定してください。')
+                    if unicodedata.normalize('NFKC', name) == unicodedata.normalize('NFKC', output):
+                        raise ValueError('辞書と出力には別の変数名を指定してください。')
+                    refs.add(name)
+            if refs:
+                # Reserve referenced names before temporary variables are generated.
+                return generate_pandas_operations(incoming, output,
+                    [{'category': 'value', 'operation': op} for op in operations],
+                    connector_module=module)
         return render_call(module, DATAFRAME_OPERATIONS[kind], arguments, output, reading=True,
                            direct_variables=True, temporary_prefix='_zizai_')
     module = module_name_for(module_path)
