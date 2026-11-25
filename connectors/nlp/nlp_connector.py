@@ -1,5 +1,8 @@
 """Japanese NLP operations with DataFrame outputs."""
 from functools import lru_cache
+from numbers import Integral
+from uuid import UUID, NAMESPACE_URL, uuid4, uuid5
+import json
 import unicodedata
 import pandas as pd
 
@@ -239,7 +242,31 @@ def analyze_text(data, *, text_column="text", id_column=None, model="ja_ginza",
                 str(token.morph),start,end,token.head.i,token.dep_,
                 *entity.get(token.i,(None,)*5),*coref
             ))
-    return pd.DataFrame(rows,columns=ANALYSIS_COLUMNS)
+    result = pd.DataFrame(rows,columns=ANALYSIS_COLUMNS)
+    # Preserve the original local IDs and add globally usable identifiers.
+    # A caller-supplied document ID is the stable identity across invocations.
+    document_ids = {}
+    for doc_id in result["doc_id"]:
+        if doc_id not in document_ids:
+            if id_column is None or isinstance(data,str):
+                identity = uuid4()
+            else:
+                if isinstance(doc_id,Integral) and not isinstance(doc_id,bool):
+                    key = int(doc_id)
+                elif isinstance(doc_id,str) and doc_id.strip():
+                    key = doc_id
+                else:
+                    raise ValueError("Document identifiers must be nonempty strings or integers")
+                identity = uuid5(NAMESPACE_URL,"urn:zizai:nlp:"+json.dumps(key,ensure_ascii=False))
+            document_ids[doc_id] = str(identity)
+    result["doc_identifier"] = result["doc_id"].map(document_ids)
+    for column,unit in (("sentence_id","sentence"),("bunsetsu_id","bunsetsu"),
+                        ("token_id","token"),("entity_id","entity"),("head_id","token")):
+        result[column.replace("_id","_identifier")] = [
+            None if pd.isna(index) else str(uuid5(UUID(doc_identifier),f"{unit}:{int(index)}"))
+            for doc_identifier,index in zip(result["doc_identifier"],result[column])
+        ]
+    return result
 
 def analyze_keyword_importance(data, *, method, text_column="text", id_column=None,
                                model="ja_ginza", corpus=None,
