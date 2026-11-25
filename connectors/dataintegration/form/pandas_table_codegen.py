@@ -14,7 +14,9 @@ AGGREGATIONS = {
     'sum': '合計', 'mean': '平均', 'min': '最小', 'max': '最大', 'count': 'カウント（非NULL）',
     'nunique': '重複なしカウント', 'median': '中央値', 'mode': '最頻値',
 }
-JOIN_TYPES = {'inner': '内部結合', 'left': '左結合', 'right': '右結合', 'outer': '完全外部結合'}
+JOIN_TYPES = {'inner': '内部結合', 'left': '左外部結合', 'right': '右外部結合', 'outer': '完全外部結合'}
+JOIN_MATCHES = {'exact': '完全一致', 'contains': '部分一致', 'prefix': '前方一致', 'suffix': '後方一致'}
+JOIN_POLICIES = {'all': '複数行マッチ', 'first': '最初行マッチ'}
 SET_OPERATIONS = {
     'union_all': '縦結合（すべての行）', 'union_distinct': '縦結合（重複を除く）',
     'except_distinct': 'EXCEPT DISTINCT（左側の行から右側と同じ行を除く）',
@@ -142,8 +144,9 @@ def reshape_sample(data, settings):
 
 
 class TableCode:
-    def __init__(self, incoming, output, right=None):
+    def __init__(self, incoming, output, right=None, *, connector_module='dataintegration_connector'):
         self.incoming, self.output, self.right = incoming, output, right
+        self.connector_module = connector_module
         self.names = {normalize('NFKC', name) for name in (incoming, output, right) if name is not None}
         self.lines = []
         self.imports = []
@@ -214,8 +217,22 @@ class TableCode:
         left_lookup, right_lookup = settings.get('lookup_labels') is True, settings.get('right_lookup') is True
         if kind in JOIN_TYPES:
             keys = _rows(settings, 'keys')
-            left = self.labels(self.incoming, _columns([key.get('left') for key in keys]), lookup=left_lookup)
-            right = self.labels(self.right, _columns([key.get('right') for key in keys]), lookup=right_lookup)
+            left_names = _columns([key.get('left') for key in keys])
+            right_names = _columns([key.get('right') for key in keys])
+            policy = settings.get('match_policy', 'all')
+            matches = [key.get('match', 'exact') for key in keys]
+            if policy not in JOIN_POLICIES or any(mode not in JOIN_MATCHES for mode in matches):
+                raise ValueError('一致方式・マッチ方式を確認してください。')
+            if policy != 'all' or any(mode != 'exact' for mode in matches):
+                module = self.unique('_zizai_dataintegration')
+                self.imports.append(f'import {self.connector_module} as {module}')
+                rules = [{'left': l, 'right': r, 'match': m}
+                         for l, r, m in zip(left_names, right_names, matches)]
+                self.lines.append(f'{self.output} = {module}.join_frames({self.incoming}, {self.right},')
+                self.lines.append(f'    keys={rules!r}, how={kind!r}, match_policy={policy!r})')
+                return
+            left = self.labels(self.incoming, left_names, lookup=left_lookup)
+            right = self.labels(self.right, right_names, lookup=right_lookup)
             self.lines.append(f'{self.output} = {self.incoming}.merge({self.right}, how={kind!r}, '
                               f'left_on={left}, right_on={right})')
             return
@@ -288,11 +305,11 @@ class TableCode:
         return '\n'.join([*before, *self.lines, self.output])
 
 
-def generate_table_action(kind, incoming, output, settings):
+def generate_table_action(kind, incoming, output, settings, *, connector_module='dataintegration_connector'):
     right = _identifier(settings, 'right') if kind == COMBINE_FRAMES else None
     if any(normalize('NFKC', name) == normalize('NFKC', output) for name in (incoming, right) if name is not None):
         raise ValueError('入力と出力には別の変数名を指定してください。')
-    code = TableCode(incoming, output, right)
+    code = TableCode(incoming, output, right, connector_module=connector_module)
     try:
         {SORT_ROWS: code.sort, AGGREGATE_ROWS: code.aggregate,
          COMBINE_FRAMES: code.combine, RESHAPE_ROWS: code.reshape}[kind](settings)
