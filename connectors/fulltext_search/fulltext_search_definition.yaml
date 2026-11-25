@@ -1,0 +1,28 @@
+version: 1
+output_template: "{connector}.{action}のコードを生成"
+connectors:
+  fulltext_search:
+    label: Fulltext
+    module_file: fulltext_search_connector.py
+    actions:
+      build_fulltext_db:
+        label: 全文検索DB構築・更新
+        generation: fulltext_search.build_fulltext_db
+        fields:
+          db_folder: {label: DBフォルダー, type: folder, required: true}
+          collection_name: {label: コレクション名, type: text, default: default, required: true}
+          input_variable: {label: 入力DataFrame, type: text, required: true}
+          id_column: {label: 識別ID列, type: text, default: id, required: true}
+          text_column: {label: 原文列, type: text, default: text, required: true}
+          search_text_column: {label: 検索対象列（原文列と異なる場合）, type: text}
+          tokenizer: {label: トークナイズ方式, type: choice, choices: [trigram, pretokenized], default: trigram, required: true}
+          output_variable: {label: 出力変数, type: text, default: result, required: true}
+      search_fulltext_db:
+        label: 全文検索
+        generation: fulltext_search.search_fulltext_db
+        fields:
+          db_folder: {label: DBフォルダー, type: folder, required: true}
+          collection_name: {label: コレクション名, type: text, default: default, required: true}
+          query_text: {label: 検索文（事前分割方式の場合は空白区切り）, type: textarea, required: true}
+          top_k: {label: 取得件数, type: integer, minimum: 1, default: 10, required: true}
+          output_variable: {label: 出力変数, type: text, default: result, required: true}
