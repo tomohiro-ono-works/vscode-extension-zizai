@@ -520,3 +520,115 @@ def apply_data_operations(data, *, operations):
             raise ValueError('処理分類を確認してください。')
         result = functions[category](result, operations=[step['operation'] for step in steps])
     return result
+
+
+def join_frames(left, right, *, keys, how='inner', match_policy='all'):
+    """Join using AND-connected exact/contains/prefix/suffix keys.
+
+    For textual keys, the left value is the text and the right value is
+    the search term. First match means the earliest right row per left
+    row, regardless of join type. Outer joins retain all unpaired rows.
+    """
+    if how not in ('inner', 'left', 'right', 'outer'):
+        raise ValueError('結合方式を確認してください。')
+    if match_policy not in ('all', 'first'):
+        raise ValueError('マッチ方式を確認してください。')
+    if not isinstance(keys, (list, tuple)) or not keys:
+        raise ValueError('結合キーを指定してください。')
+    modes = ('exact', 'contains', 'prefix', 'suffix')
+    def labels(frame):
+        if not isinstance(frame, pd.DataFrame) or frame.columns.nlevels != 1:
+            raise ValueError('1段の列名を持つDataFrameを指定してください。')
+        result = dict(zip(map(str, frame.columns), frame.columns))
+        if len(result) != len(frame.columns):
+            raise ValueError('列名は重複なく指定してください。')
+        return result
+    left_labels, right_labels = labels(left), labels(right)
+    resolved = []
+    for key in keys:
+        if not isinstance(key, dict):
+            raise ValueError('結合キーを確認してください。')
+        l, r, mode = key.get('left'), key.get('right'), key.get('match', 'exact')
+        if l not in left_labels or r not in right_labels or mode not in modes:
+            raise ValueError('結合キー・一致方式を確認してください。')
+        resolved.append((left_labels[l], right_labels[r], mode))
+    if any(len(set(row[i] for row in resolved)) != len(resolved) for i in (0, 1)):
+        raise ValueError('左右それぞれの結合キーを重複なく指定してください。')
+    exact = [(l, r) for l, r, mode in resolved if mode == 'exact']
+    textual = [(l, r, mode) for l, r, mode in resolved if mode != 'exact']
+    if not textual and match_policy == 'all':
+        return left.merge(right, how=how, left_on=[l for l, r in exact],
+                          right_on=[r for l, r in exact], sort=False)
+
+    # Match positional row IDs, never index labels (which may be duplicated).
+    # Exact keys narrow the candidate set before any text matching.
+    import numpy as np
+    left_ids = np.arange(len(left), dtype='int64')
+    right_ids = np.arange(len(right), dtype='int64')
+    left_pos, right_pos = '__left_position', '__right_position'
+    if exact:
+        lk = pd.DataFrame({left_pos: left_ids})
+        rk = pd.DataFrame({right_pos: right_ids})
+        for i, (l, r) in enumerate(exact):
+            lk[i] = left[l].reset_index(drop=True)
+            rk[i] = right[r].reset_index(drop=True)
+        candidates = lk.merge(rk, on=list(range(len(exact))), how='inner', sort=False)
+        candidates = candidates.sort_values([left_pos, right_pos], kind='stable')
+        groups = ((int(i), group[right_pos].to_numpy())
+                  for i, group in candidates.groupby(left_pos, sort=False))
+    else:
+        groups = ((int(i), right_ids) for i in left_ids)
+
+    left_text = [left[l].astype('string').tolist() for l, _, _ in textual]
+    right_text = [right[r].astype('string').tolist() for _, r, _ in textual]
+    comparisons = [mode for _, _, mode in textual]
+    def matches(i, j):
+        for a, b, mode in zip(left_text, right_text, comparisons):
+            value, term = a[i], b[j]
+            if pd.isna(value) or pd.isna(term) or not term:
+                return False
+            if mode == 'contains' and term not in value:
+                return False
+            if mode == 'prefix' and not value.startswith(term):
+                return False
+            if mode == 'suffix' and not value.endswith(term):
+                return False
+        return True
+
+    pairs = []
+    used_left, used_right = set(), set()
+    for i, candidates in groups:
+        for j in candidates:
+            j = int(j)
+            if matches(i, j):
+                pairs.append((i, j))
+                used_left.add(i)
+                used_right.add(j)
+                if match_policy == 'first':
+                    break
+    if how in ('left', 'outer'):
+        pairs.extend((int(i), -1) for i in left_ids if i not in used_left)
+    if how in ('right', 'outer'):
+        pairs.extend((-1, int(j)) for j in right_ids if j not in used_right)
+    if how == 'right':
+        pairs.sort(key=lambda p: (p[1], p[0]))
+    else:
+        pairs.sort(key=lambda p: (p[0] < 0, p[0], p[1]))
+
+    # Preserve both non-exact key values. Same-name exact keys coalesce
+    # like pandas.merge. Other overlapping labels receive _x/_y suffixes.
+    shared_exact = {l for l, r in exact if l == r}
+    overlap = set(left.columns) & set(right.columns) - shared_exact
+    li = [i for i, _ in pairs]
+    ri = [j for _, j in pairs]
+    lout = left.reset_index(drop=True).reindex(li).reset_index(drop=True)
+    rout = right.reset_index(drop=True).reindex(ri).reset_index(drop=True)
+    absent_left = pd.Series([i < 0 for i in li], dtype=bool)
+    for name in shared_exact:
+        lout[name] = lout[name].where(~absent_left, rout[name])
+    rout = rout.drop(columns=list(shared_exact))
+    lout = lout.rename(columns={name: f'{name}_x' for name in overlap})
+    rout = rout.rename(columns={name: f'{name}_y' for name in overlap})
+    result = pd.concat([lout, rout], axis=1)
+    labels(result)
+    return result
