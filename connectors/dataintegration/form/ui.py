@@ -1,4 +1,5 @@
 """DataFrame editing and reference-file defaults for data integration."""
+from functools import partial
 from html import escape
 from importlib import import_module
 from importlib.util import find_spec
@@ -96,7 +97,10 @@ class Controls(FormControls):
             return ColumnEditor(*args)
         from .data_operations_editor import DataOperationsEditor
         mode = {VALUE_OPERATIONS: 'value', ROW_OPERATIONS: 'condition'}.get(generation)
-        return DataOperationsEditor(*args, mode=mode)
+        if generation != ROW_OPERATIONS:
+            apply_operations = partial(apply_operations, dictionaries=self.form._namespace)
+        return DataOperationsEditor(self.form._namespace[name], apply_operations,
+                                    self._set_dataframe_operations, mode=mode)
 
     def _set_dataframe_operations(self, operations):
         self.form._value_changed('operations', json.dumps(operations, ensure_ascii=False) if operations else '')
