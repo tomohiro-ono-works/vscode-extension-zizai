@@ -4,6 +4,7 @@ from itertools import groupby
 from math import isfinite
 import operator
 import re
+from pathlib import Path
 import string
 
 import pandas as pd
@@ -224,6 +225,122 @@ def _value_operand(frame, columns, change):
     return frame[columns[key]]
 
 
+
+def replace_dictionary(series, dictionary, *, source_column, target_column,
+                       match_mode='exact', unmatched='keep', cascade=False):
+    """Apply ordered dictionary rules to text, preserving index and NULL input.
+
+    Each dictionary row has priority over later rows. Without cascade,
+    matches are selected on the original text; overlapping matches are
+    resolved by row priority. Regex replacement values are literal strings.
+    """
+    if match_mode not in ('exact', 'partial', 'regex'):
+        raise ValueError('一致方式を確認してください。')
+    if unmatched not in ('keep', 'null') or type(cascade) is not bool:
+        raise ValueError('未一致時・連鎖置換の設定を確認してください。')
+    if isinstance(dictionary, (str, Path)):
+        path = Path(dictionary)
+        if not path.is_absolute() or path.suffix.lower() != '.csv':
+            raise ValueError('辞書CSVは絶対パスで指定してください。')
+        try:
+            dictionary = pd.read_csv(path, dtype='string', keep_default_na=False,
+                                     encoding='utf-8-sig')
+        except (OSError, UnicodeError, pd.errors.ParserError, pd.errors.EmptyDataError) as error:
+            raise ValueError(f'辞書CSVを読み込めません: {error}') from error
+    if not isinstance(dictionary, pd.DataFrame) or not dictionary.columns.is_unique:
+        raise ValueError('辞書は列名が一意のDataFrameまたはCSVで指定してください。')
+    if source_column == target_column or not {source_column, target_column} <= set(dictionary.columns):
+        raise ValueError('辞書の変換前列・変換後列を確認してください。')
+    if dictionary.empty:
+        raise ValueError('辞書に置換ルールがありません。')
+    rules = []
+    seen = set()
+    for index, (source, target) in enumerate(
+        dictionary[[source_column, target_column]].itertuples(index=False, name=None), 1
+    ):
+        if pd.isna(source) or pd.isna(target):
+            raise ValueError(f'辞書{index}行目: NULLは指定できません。')
+        source, target = str(source), str(target)
+        if not source and match_mode != 'exact':
+            raise ValueError(f'辞書{index}行目: 検索文字列は空にできません。')
+        if source in seen:
+            continue
+        seen.add(source)
+        if match_mode == 'exact':
+            rules.append((source, target))
+        else:
+            try:
+                pattern = re.compile(source if match_mode == 'regex' else re.escape(source))
+            except re.error as error:
+                raise ValueError(f'辞書{index}行目: 正規表現が不正です: {error}') from error
+            if pattern.search('') is not None:
+                raise ValueError(f'辞書{index}行目: 長さ0の一致は使用できません。')
+            rules.append((pattern, target))
+
+    def missing(value):
+        return value if unmatched == 'keep' else pd.NA
+
+    if match_mode == 'exact' and not cascade:
+        mapping = dict(rules)
+        def transform(value):
+            return mapping[value] if value in mapping else missing(value)
+    elif cascade:
+        def transform(value):
+            result, matched = value, False
+            for pattern, target in rules:
+                if match_mode == 'exact':
+                    if result == pattern:
+                        result, matched = target, True
+                else:
+                    def substitute(match):
+                        if match.start() == match.end():
+                            raise ValueError('長さ0の一致は使用できません。')
+                        return target
+                    result, count = pattern.subn(substitute, result)
+                    matched = matched or bool(count)
+            return result if matched else missing(value)
+    else:
+        def transform(value):
+            # A lower-priority rule may only replace unoccupied original spans.
+            spans = []
+            for pattern, target in rules:
+                for match in pattern.finditer(value):
+                    start, end = match.span()
+                    if start == end:
+                        raise ValueError('長さ0の一致は使用できません。')
+                    if not any(start < b and a < end for a, b, _ in spans):
+                        spans.append((start, end, target))
+            if not spans:
+                return missing(value)
+            pieces, cursor = [], 0
+            for start, end, target in sorted(spans):
+                pieces.extend((value[cursor:start], target))
+                cursor = end
+            pieces.append(value[cursor:])
+            return ''.join(pieces)
+    return series.astype('string').map(transform, na_action='ignore').astype('string')
+
+
+def _dictionary_result(series, change, dictionaries):
+    mode = change.get('dictionary_source')
+    reference = _value_text(change, 'dictionary_reference', '辞書の参照先', required=True)
+    if mode == 'dataframe':
+        if dictionaries is None or reference not in dictionaries:
+            raise ValueError(f'辞書DataFrameが見つかりません: {reference}')
+        dictionary = dictionaries[reference]
+        if not isinstance(dictionary, pd.DataFrame):
+            raise ValueError('辞書の変数はDataFrameを指定してください。')
+    elif mode == 'csv':
+        dictionary = reference
+    else:
+        raise ValueError('辞書の参照形式を確認してください。')
+    return replace_dictionary(series, dictionary,
+        source_column=_value_text(change, 'source_column', '変換前列', required=True),
+        target_column=_value_text(change, 'target_column', '変換後列', required=True),
+        match_mode=change.get('match_mode', 'exact'),
+        unmatched=change.get('unmatched', 'keep'), cascade=change.get('cascade', False))
+
+
 def _text_result(frame, columns, series, change, op):
     text = series.astype('string')
     if op in _TEXT_METHODS:
@@ -312,7 +429,7 @@ def _numeric_result(frame, columns, series, change, op):
     return _ARITHMETIC[op](left, right)
 
 
-def apply_value_operations(data, *, operations):
+def apply_value_operations(data, *, operations, dictionaries=None):
     """Apply ordered value changes into the selected or a new column in a copy."""
     frame = _operation_frame(data, operations, '値加工')
     changed = set()
@@ -335,7 +452,9 @@ def apply_value_operations(data, *, operations):
         if not isinstance(op, str):
             raise ValueError('値加工の操作を指定してください。')
         try:
-            if op in _TEXT_METHODS or op in ('replace_exact', 'replace_part', 'concat', 'split', 'extract_regex'):
+            if op == 'replace_dictionary':
+                result = _dictionary_result(series, change, dictionaries)
+            elif op in _TEXT_METHODS or op in ('replace_exact', 'replace_part', 'concat', 'split', 'extract_regex'):
                 result = _text_result(frame, columns, series, change, op)
             elif op in _ARITHMETIC or op in ('round', 'abs'):
                 result = _numeric_result(frame, columns, series, change, op)
@@ -505,7 +624,7 @@ def filter_rows(data, *, operations):
     return frame
 
 
-def apply_data_operations(data, *, operations):
+def apply_data_operations(data, *, operations, dictionaries=None):
     """Apply mixed value and row operations in the order supplied."""
     if not isinstance(operations, (list, tuple)):
         raise ValueError('処理は操作の一覧で指定してください。')
@@ -518,5 +637,8 @@ def apply_data_operations(data, *, operations):
     for category, steps in groupby(operations, key=lambda step: step.get('category')):
         if not isinstance(category, str) or category not in functions:
             raise ValueError('処理分類を確認してください。')
-        result = functions[category](result, operations=[step['operation'] for step in steps])
+        arguments = {'operations': [step['operation'] for step in steps]}
+        if category == 'value':
+            arguments['dictionaries'] = dictionaries
+        result = functions[category](result, **arguments)
     return result
