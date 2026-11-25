@@ -1,7 +1,7 @@
 """Local SQLite-backed RDFLib store."""
 import sqlite3
 from rdflib import URIRef, BNode, Literal
-from rdflib.store import Store, VALID, NO_STORE
+from rdflib.store import NO_STORE, VALID_STORE, Store
 import json
 from pathlib import Path
 
@@ -43,7 +43,7 @@ class SQLiteStore(Store):
         CREATE INDEX IF NOT EXISTS triples_context ON triples(c,s,p,o);
         CREATE TABLE IF NOT EXISTS namespaces(prefix TEXT PRIMARY KEY, uri TEXT UNIQUE);
         """)
-        return VALID
+        return VALID_STORE
 
     def _where(self, triple, context):
         clauses, args = [], []

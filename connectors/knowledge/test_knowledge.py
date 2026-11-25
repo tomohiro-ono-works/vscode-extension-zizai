@@ -2,10 +2,25 @@ import tempfile
 import unittest
 from pathlib import Path
 import pandas as pd
+from rdflib.store import NO_STORE, VALID_STORE
 from knowledge_connector import create_graph, add_triples, remove_triples, search_graph
+from knowledge_store import SQLiteStore
 from ontology import define_class, define_property, list_ancestors, search_ontology
 
 class KnowledgeTests(unittest.TestCase):
+    def test_store_open_reports_rdflib_status(self):
+        with tempfile.TemporaryDirectory() as folder:
+            path = Path(folder) / "catalog.sqlite"
+            store = SQLiteStore()
+            self.assertEqual(store.open(path), NO_STORE)
+            self.assertFalse(path.exists())
+            status = store.open(path, create=True)
+            try:
+                self.assertEqual(status, VALID_STORE)
+                self.assertTrue(path.is_file())
+            finally:
+                store.close()
+
     def test_persistence(self):
         with tempfile.TemporaryDirectory() as folder:
             db = Path(folder) / "catalog.sqlite"
