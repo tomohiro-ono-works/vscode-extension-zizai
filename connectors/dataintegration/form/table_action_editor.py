@@ -6,7 +6,7 @@ from traitlets import Unicode
 
 from .pandas_table_codegen import (
     AGGREGATE_ROWS, AGGREGATIONS, COMBINE_FRAMES, JOIN_TYPES, RESHAPE_ROWS, SET_OPERATIONS, SORT_ROWS,
-    aggregate_sample, column_names, reshape_sample,
+    JOIN_MATCHES, JOIN_POLICIES, aggregate_sample, column_names, reshape_sample,
 )
 from ...row_preview import MAX_ROWS, _close_widgets
 from .value_editor import _dropdown
@@ -200,6 +200,8 @@ class CombineEditor(TableEditor):
         self.right = _dropdown('右のDataFrame', _choices(candidates))
         self.kind = _dropdown('結合方法', [(label, key) for key, label in {**JOIN_TYPES, **SET_OPERATIONS}.items()],
                               value='inner')
+        self.match_policy = _dropdown('マッチ方式', [(label, key) for key, label in JOIN_POLICIES.items()],
+                                      value='all')
         self.columns_used = widgets.SelectMultiple(description='共通列', rows=4, layout=widgets.Layout(width='auto'))
         self.columns_used.style.description_width = 'initial'
         self._owned.append(self.columns_used)
@@ -207,6 +209,7 @@ class CombineEditor(TableEditor):
         self.options_row = widgets.HBox([self.right, self.kind],
                                        layout=widgets.Layout(flex_flow='row wrap', align_items='flex-end'))
         self.options_row.add_class('zizai-table-step-row')
+        self.match_row = self.controls(self.match_policy)
         self._owned.extend([self.right, self.kind, self.options_row])
         self.right.observe(self._change_right, names='value')
         self.kind.observe(self._show_settings, names='value')
@@ -215,7 +218,8 @@ class CombineEditor(TableEditor):
 
     def _fields(self):
         return (_dropdown('左のキー', _choices(self.columns)),
-                _dropdown('右のキー', _choices(self._right_columns)))
+                _dropdown('右のキー', _choices(self._right_columns)),
+                _dropdown('一致方式', [(label, key) for key, label in JOIN_MATCHES.items()], value='exact'))
 
     def _change_right(self, _change):
         self._updating = True
@@ -238,8 +242,8 @@ class CombineEditor(TableEditor):
         self.refresh()
 
     def _show_settings(self, _change=None):
-        fields = self.rules.root if self.kind.value in JOIN_TYPES else self.columns_used
-        self.root.children = (self.options_row, fields, self.status)
+        fields = (self.match_row, self.rules.root) if self.kind.value in JOIN_TYPES else (self.columns_used,)
+        self.root.children = (self.options_row, *fields, self.status)
         self.refresh()
 
     def settings(self):
@@ -250,13 +254,15 @@ class CombineEditor(TableEditor):
         settings = {'right': self.right.value, 'kind': self.kind.value,
                     'right_lookup': any(not isinstance(label, str) for label in self._right_columns.values())}
         if self.kind.value in JOIN_TYPES:
-            keys = [{'left': row.children[0].value, 'right': row.children[1].value}
+            keys = [{'left': row.children[0].value, 'right': row.children[1].value,
+                     'match': row.children[2].value}
                     for row in self.rules.rows.children]
             if any(None in key.values() for key in keys):
                 return None
             if any(len({key[side] for key in keys}) != len(keys) for side in ('left', 'right')):
                 raise ValueError('左右それぞれの結合キーを重複なく指定してください。')
             settings['keys'] = keys
+            settings['match_policy'] = self.match_policy.value
         else:
             if not self.columns_used.options:
                 raise ValueError('左右のDataFrameに同名の列が必要です。')
