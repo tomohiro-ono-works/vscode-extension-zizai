@@ -15,9 +15,12 @@ connectors:
           text_column: {label: 文章列, type: text, default: text}
           id_column: {label: ID列, type: text}
           output_variable: {label: 出力変数, type: text, default: result, required: true}
-      tokenize:
-        label: 形態素解析
-        generation: nlp.tokenize
+          form: {label: Unicode正規化形式, type: choice, choices: [NFC, NFD, NFKC, NFKD], default: NFKC, required: true}
+          collapse_whitespace: {label: 連続する空白の統一, type: checkbox, default: true}
+          lowercase: {label: 小文字化, type: checkbox, default: false}
+      analyze_text:
+        label: 自然言語解析
+        generation: nlp.analyze_text
         fields:
           input_mode: {label: 入力形式, type: choice, choices: [text, dataframe], default: text}
           text: {label: 原文, type: text}
@@ -25,10 +28,12 @@ connectors:
           text_column: {label: 文章列, type: text, default: text}
           id_column: {label: ID列, type: text}
           output_variable: {label: 出力変数, type: text, default: result, required: true}
-          model: {label: 解析モデル, type: text, default: ja_ginza}
-      parse_dependencies:
-        label: 係り受け解析
-        generation: nlp.parse_dependencies
+          model: {label: 解析モデル, type: text, default: ja_ginza, required: true}
+          enable_coreference: {label: 共参照解析（既定は限定的なヒューリスティック）, type: checkbox, default: true}
+          resolver_variable: {label: 共参照解析関数の変数名（省略可）, type: text}
+      analyze_keyword_importance:
+        label: キーワード重要度分析
+        generation: nlp.analyze_keyword_importance
         fields:
           input_mode: {label: 入力形式, type: choice, choices: [text, dataframe], default: text}
           text: {label: 原文, type: text}
@@ -36,63 +41,7 @@ connectors:
           text_column: {label: 文章列, type: text, default: text}
           id_column: {label: ID列, type: text}
           output_variable: {label: 出力変数, type: text, default: result, required: true}
-          model: {label: 解析モデル, type: text, default: ja_ginza}
-      extract_entities:
-        label: 固有表現抽出
-        generation: nlp.extract_entities
-        fields:
-          input_mode: {label: 入力形式, type: choice, choices: [text, dataframe], default: text}
-          text: {label: 原文, type: text}
-          input_variable: {label: 入力変数, type: text, default: df}
-          text_column: {label: 文章列, type: text, default: text}
-          id_column: {label: ID列, type: text}
-          output_variable: {label: 出力変数, type: text, default: result, required: true}
-          model: {label: 解析モデル, type: text, default: ja_ginza}
-      extract_keywords:
-        label: キーワード抽出
-        generation: nlp.extract_keywords
-        fields:
-          input_mode: {label: 入力形式, type: choice, choices: [text, dataframe], default: text}
-          text: {label: 原文, type: text}
-          input_variable: {label: 入力変数, type: text, default: df}
-          text_column: {label: 文章列, type: text, default: text}
-          id_column: {label: ID列, type: text}
-          output_variable: {label: 出力変数, type: text, default: result, required: true}
-          method: {label: 抽出手法, type: choice, choices: [tfidf, textrank, keybert], required: true}
-          top_n: {label: 上位件数（0は全件）, type: integer, default: 0, minimum: 0}
+          method: {label: 分析手法, type: choice, choices: [tfidf, textrank, keybert], required: true}
           embedding_model: {label: 埋め込みモデル名またはローカルパス, type: text, default: cl-nagoya/ruri-v3-130m}
-          corpus_variable: {label: 参照文書リスト変数, type: text}
-          model: {label: 解析モデル, type: text, default: ja_ginza}
-      resolve_coreferences:
-        label: 共参照解析
-        generation: nlp.resolve_coreferences
-        fields:
-          input_mode: {label: 入力形式, type: choice, choices: [text, dataframe], default: text}
-          text: {label: 原文, type: text}
-          input_variable: {label: 入力変数, type: text, default: df}
-          text_column: {label: 文章列, type: text, default: text}
-          id_column: {label: ID列, type: text}
-          output_variable: {label: 出力変数, type: text, default: result, required: true}
-          resolver_variable: {label: 解析関数の変数名（省略可）, type: text}
-      split_sentences:
-        label: 文分割
-        generation: nlp.split_sentences
-        fields:
-          input_mode: {label: 入力形式, type: choice, choices: [text, dataframe], default: text}
-          text: {label: 原文, type: text}
-          input_variable: {label: 入力変数, type: text, default: df}
-          text_column: {label: 文章列, type: text, default: text}
-          id_column: {label: ID列, type: text}
-          output_variable: {label: 出力変数, type: text, default: result, required: true}
-          model: {label: 解析モデル, type: text, default: ja_ginza}
-      split_bunsetsu:
-        label: 文節分割
-        generation: nlp.split_bunsetsu
-        fields:
-          input_mode: {label: 入力形式, type: choice, choices: [text, dataframe], default: text}
-          text: {label: 原文, type: text}
-          input_variable: {label: 入力変数, type: text, default: df}
-          text_column: {label: 文章列, type: text, default: text}
-          id_column: {label: ID列, type: text}
-          output_variable: {label: 出力変数, type: text, default: result, required: true}
-          model: {label: 解析モデル, type: text, default: ja_ginza}
+          corpus_variable: {label: 参照文書リスト変数（TF-IDF用）, type: text}
+          model: {label: 解析モデル, type: text, default: ja_ginza, required: true}
