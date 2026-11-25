@@ -22,6 +22,7 @@ FORM_MODULES = {
     },
     "duckdb": {"duckdb_codegen"},
     "excel": {"excel_codegen", "preview"},
+    "fulltext_search": set(),
     "python": {"python_codegen"},
     "shell": {"shell_codegen"},
     "slides": {"slides_codegen", "ui"},
