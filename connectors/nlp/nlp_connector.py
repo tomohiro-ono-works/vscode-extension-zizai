@@ -86,8 +86,11 @@ def extract_keywords(data, *, method, text_column="text", id_column=None, model=
             v.fit(training)
             matrix = v.transform(lists) if lists else []
             names = v.get_feature_names_out()
-            scores = [{names[j]:float(x) for j,x in zip(row.indices,row.data)} for row in matrix]
-        else: scores = [{} for _ in lists]
+            for ts,row in zip(lists,matrix):
+                score = dict.fromkeys(ts,0.0)
+                score.update({names[j]:float(x) for j,x in zip(row.indices,row.data)})
+                scores.append(score)
+        else: scores = [dict.fromkeys(ts,0.0) for ts in lists]
     elif method == "textrank":
         import networkx as nx
         for ts in lists:
@@ -137,10 +140,12 @@ def resolve_coreferences(data, *, text_column="text", id_column=None, resolver=N
     return pd.DataFrame(rows,columns=columns)
 
 def _heuristic_coreferences(text):
+    return _heuristic_coreferences_doc(_model("ja_ginza")(text))
+
+def _heuristic_coreferences_doc(doc):
     """Conservative baseline: explicit third-person pronouns and preceding person entities.
     This is not a general Japanese coreference model; ambiguous candidates are skipped.
     """
-    doc = _model("ja_ginza")(text)
     for token in doc:
         if token.pos_ != "PRON" or token.text not in {"彼","彼女","彼ら"}:
             continue
@@ -149,5 +154,97 @@ def _heuristic_coreferences(text):
         if len(unique) != 1 or token.text == "彼ら":
             continue
         e = next(iter(unique.values()))
-        yield {"mention":token.text,"antecedent":e.text,
+        yield {"mention":token.text,"mention_start":token.idx,
+               "mention_end":token.idx+len(token.text),"antecedent":e.text,
                "antecedent_start":e.start_char,"antecedent_end":e.end_char}
+
+
+# Public consolidated analysis API. Legacy functions remain available to
+# existing notebooks; only the consolidated actions are exposed in the form.
+ANALYSIS_COLUMNS = [
+    "doc_id", "sentence_id", "sentence_text", "sentence_start", "sentence_end",
+    "bunsetsu_id", "bunsetsu_text", "bunsetsu_start", "bunsetsu_end",
+    "token_id", "text", "lemma", "pos", "tag", "morph", "start", "end",
+    "head_id", "dependency", "entity_id", "entity_text", "entity_label",
+    "entity_start", "entity_end", "coreference_mention",
+    "coreference_mention_start", "coreference_mention_end",
+    "antecedent", "antecedent_start", "antecedent_end", "coreference_method",
+]
+
+def _coreference_spans(doc, resolver):
+    """Map mentions to character spans; never guess ambiguous occurrences."""
+    links = []
+    items = _heuristic_coreferences_doc(doc) if resolver is None else resolver(doc.text)
+    for item in items:
+        mention = item["mention"]
+        if not isinstance(mention, str) or not mention:
+            raise ValueError("Coreference mention must be a nonempty string")
+        start = item.get("mention_start")
+        end = item.get("mention_end")
+        if start is None and end is None:
+            start = doc.text.find(mention)
+            if start < 0 or doc.text.find(mention,start+1) >= 0:
+                raise ValueError("Ambiguous coreference mention: provide character offsets")
+            end = start + len(mention)
+        if not isinstance(start,int) or not isinstance(end,int) or not (
+            0 <= start < end <= len(doc.text) and doc.text[start:end] == mention
+        ):
+            raise ValueError("Invalid coreference mention offsets")
+        a,b = item["antecedent_start"],item["antecedent_end"]
+        if not isinstance(a,int) or not isinstance(b,int) or not (
+            0 <= a < b <= len(doc.text) and doc.text[a:b] == item["antecedent"]
+        ):
+            raise ValueError("Invalid coreference antecedent offsets")
+        links.append((start,end,mention,item["antecedent"],a,b))
+    return links
+
+def analyze_text(data, *, text_column="text", id_column=None, model="ja_ginza",
+                 enable_coreference=True, resolver=None):
+    """Analyze each document once and return one row per token.
+
+    IDs are zero-based within a document; character offsets are half-open.
+    Sentence, bunsetsu and entity attributes repeat on their constituent tokens.
+    Default coreference is a limited heuristic, not a general resolver.
+    """
+    import ginza
+    rows = []
+    for doc_id,doc in _parsed(data,text_column,id_column,model):
+        sentence = {}
+        for j,span in enumerate(doc.sents):
+            for token in span:
+                sentence[token.i] = (j,span.text,span.start_char,span.end_char)
+        bunsetsu = {}
+        for j,span in enumerate(ginza.bunsetu_spans(doc)):
+            for token in span:
+                bunsetsu[token.i] = (j,span.text,span.start_char,span.end_char)
+        entity = {}
+        for j,span in enumerate(doc.ents):
+            for token in span:
+                entity[token.i] = (j,span.text,span.label_,span.start_char,span.end_char)
+        links = _coreference_spans(doc,resolver) if enable_coreference else []
+        for token in doc:
+            start,end = token.idx,token.idx+len(token.text)
+            matches = [link for link in links if link[0] < end and start < link[1]]
+            if len(matches)>1:
+                raise ValueError("Multiple coreference links for one token are unsupported")
+            coref = (None,)*7
+            if matches:
+                ms,me,mention,antecedent,a,b = matches[0]
+                coref = (mention,ms,me,antecedent,a,b,
+                         "heuristic" if resolver is None else "custom")
+            rows.append((
+                doc_id,*sentence.get(token.i,(None,)*4),
+                *bunsetsu.get(token.i,(None,)*4),
+                token.i,token.text,token.lemma_,token.pos_,token.tag_,
+                str(token.morph),start,end,token.head.i,token.dep_,
+                *entity.get(token.i,(None,)*5),*coref
+            ))
+    return pd.DataFrame(rows,columns=ANALYSIS_COLUMNS)
+
+def analyze_keyword_importance(data, *, method, text_column="text", id_column=None,
+                               model="ja_ginza", corpus=None,
+                               embedding_model="cl-nagoya/ruri-v3-130m"):
+    """Score all eligible keyword candidates without user-defined top-N filtering."""
+    return extract_keywords(data,method=method,text_column=text_column,
+                            id_column=id_column,model=model,top_n=None,
+                            corpus=corpus,embedding_model=embedding_model)
