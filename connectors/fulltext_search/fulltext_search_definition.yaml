@@ -26,3 +26,13 @@ connectors:
           query_text: {label: 検索文（事前分割方式の場合は空白区切り）, type: textarea, required: true}
           top_k: {label: 取得件数, type: integer, minimum: 1, default: 10, required: true}
           output_variable: {label: 出力変数, type: text, default: result, required: true}
+      search_levenshtein:
+        label: レーベンシュタイン距離検索
+        generation: fulltext_search.search_levenshtein
+        fields:
+          db_folder: {label: DBフォルダー, type: folder, required: true}
+          collection_name: {label: コレクション名, type: text, default: default, required: true}
+          query_text: {label: 検索語, type: text, required: true}
+          max_distance: {label: 最大編集距離, type: integer, minimum: 0, default: 2, required: true}
+          top_k: {label: 取得件数, type: integer, minimum: 1, default: 10, required: true}
+          output_variable: {label: 出力変数, type: text, default: result, required: true}

@@ -1,5 +1,6 @@
 """Local SQLite FTS5 index and BM25 retrieval; no NLP or network dependency."""
 from contextlib import closing
+from heapq import nsmallest
 from numbers import Integral
 from pathlib import Path
 import json
@@ -9,6 +10,7 @@ import pandas as pd
 
 _MODES = {"trigram": "trigram", "pretokenized": "unicode61"}
 _RESULT_COLUMNS = ["id", "text", "score", "rank"]
+_DISTANCE_COLUMNS = ["id", "text", "distance", "rank"]
 
 def _path(db_folder, collection_name):
     folder = Path(db_folder)
@@ -120,3 +122,54 @@ def search_fulltext_db(db_folder, collection_name, query_text, *, top_k=10):
     return pd.DataFrame([(json.loads(key),text,score,rank)
                          for rank,(key,text,score) in enumerate(rows,1)],
                         columns=_RESULT_COLUMNS)
+
+
+def _levenshtein_within(query, target, limit):
+    """Return the edit distance when it is within the limit."""
+    if abs(len(query) - len(target)) > limit:
+        return None
+
+    outside = limit + 1
+    previous = {column: column for column in range(min(len(target), limit) + 1)}
+    for row, character in enumerate(query, 1):
+        current = {0: row} if row <= limit else {}
+        start = max(1, row - limit)
+        end = min(len(target), row + limit)
+        for column in range(start, end + 1):
+            current[column] = min(
+                previous.get(column, outside) + 1,
+                current.get(column - 1, outside) + 1,
+                previous.get(column - 1, outside) + (character != target[column - 1]),
+            )
+        if min(current.values(), default=outside) > limit:
+            return None
+        previous = current
+    distance = previous.get(len(target), outside)
+    return distance if distance <= limit else None
+
+
+def search_levenshtein(db_folder, collection_name, query_text, *, max_distance=2, top_k=10):
+    """Rank complete stored search strings by their character edit distance."""
+    if not isinstance(query_text, str) or not query_text.strip() or "\x00" in query_text:
+        raise ValueError("query_text must be a nonempty string without NUL")
+    if not isinstance(max_distance, Integral) or isinstance(max_distance, bool) or max_distance < 0:
+        raise ValueError("max_distance must be a nonnegative integer")
+    if not isinstance(top_k, Integral) or isinstance(top_k, bool) or top_k < 1:
+        raise ValueError("top_k must be a positive integer")
+
+    path = _path(db_folder, collection_name)
+    if not path.is_file():
+        raise FileNotFoundError(path)
+    with closing(sqlite3.connect(path.as_uri() + "?mode=ro", uri=True)) as db:
+        documents = db.execute("SELECT rowid, id, text, search_text FROM documents")
+        candidates = (
+            (distance, rowid, key, text)
+            for rowid, key, text, target in documents
+            if (distance := _levenshtein_within(query_text, target, int(max_distance))) is not None
+        )
+        rows = nsmallest(int(top_k), candidates)
+    return pd.DataFrame(
+        [(json.loads(key), text, distance, rank)
+         for rank, (distance, _, key, text) in enumerate(rows, 1)],
+        columns=_DISTANCE_COLUMNS,
+    )

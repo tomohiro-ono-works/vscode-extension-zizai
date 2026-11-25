@@ -5,10 +5,12 @@ from ...connector_codegen import _identifier, _integer, _text, module_name_for, 
 
 BUILD = "fulltext_search.build_fulltext_db"
 SEARCH = "fulltext_search.search_fulltext_db"
+LEVENSHTEIN = "fulltext_search.search_levenshtein"
 COMMON = {"db_folder","collection_name","output_variable"}
 GENERATION_FIELDS = {
     BUILD: COMMON | {"input_variable","id_column","text_column","search_text_column","tokenizer"},
     SEARCH: COMMON | {"query_text","top_k"},
+    LEVENSHTEIN: COMMON | {"query_text","max_distance","top_k"},
 }
 DEFAULT_PATHS = {"db_folder":"config/fulltext-db"}
 RESET_DEFAULTS_ON_ACTION_CHANGE = ("output_variable",)
@@ -32,6 +34,8 @@ def generate(kind,values,module_path):
     else:
         params.update(query_text=_text(values,"query_text",required=True),
                       top_k=_integer(values,"top_k",1))
+        if kind == LEVENSHTEIN:
+            params["max_distance"] = _integer(values, "max_distance", 0)
     args = [ast.keyword(arg=k,value=ast.Constant(v)) for k,v in params.items()]
     if kind == BUILD:
         args.append(ast.keyword(arg="input_data",value=ast.Name(id=_identifier(values,"input_variable"),ctx=ast.Load())))
