@@ -1,0 +1,15 @@
+version: 1
+output_template: "{connector}.{action}のコードを生成"
+connectors:
+  statistics:
+    label: 統計分析
+    module_file: statistics_connector.py
+    actions:
+      describe:
+        label: 基本統計量
+        generation: statistics.describe
+        fields:
+          input_variable: {label: 入力DataFrame, type: text, required: true}
+          columns: {label: 分析対象列（1行に1列名）, type: textarea, required: true}
+          group_columns: {label: グループ列（任意・1行に1列名）, type: textarea}
+          output_variable: {label: 出力DataFrame, type: text, default: statistics_df, required: true}
