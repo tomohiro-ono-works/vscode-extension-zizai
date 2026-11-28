@@ -10,6 +10,6 @@ connectors:
         generation: statistics.describe
         fields:
           input_variable: {label: 入力DataFrame, type: text, required: true}
-          columns: {label: 分析対象列（1行に1列名）, type: textarea, required: true}
-          group_columns: {label: グループ列（任意・1行に1列名）, type: textarea}
+          columns: {label: 分析対象列（複数選択）, type: textarea, required: true}
+          group_columns: {label: グループ列（任意・複数選択）, type: textarea}
           output_variable: {label: 出力DataFrame, type: text, default: statistics_df, required: true}
