@@ -1,0 +1,18 @@
+version: 1
+output_template: "{connector}.{action}のコードを生成"
+connectors:
+  machine_learning:
+    label: 機械学習
+    module_file: machine_learning_connector.py
+    actions:
+      fit_linear_regression:
+        label: 重回帰分析
+        generation: machine_learning.fit_linear_regression
+        fields:
+          input_variable: {label: 入力DataFrame, type: text, required: true}
+          target: {label: 目的変数（列名）, type: text, required: true}
+          features: {label: 数値説明変数（1行に1列名）, type: textarea, required: true}
+          categories: {label: カテゴリ説明変数（任意・1行に1列名）, type: textarea}
+          interactions: {label: 数値変数とカテゴリ変数の交互作用を含める, type: checkbox, default: false}
+          scale: {label: 数値説明変数を標準化する, type: checkbox, default: false}
+          output_variable: {label: 出力モデル変数, type: text, default: model, required: true}
